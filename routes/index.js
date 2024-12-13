@@ -1,5 +1,5 @@
 import express from "express";
-import NTReadRoutes from "./Dashboard.routes.js";
+import NTReadRoutes from "./NTRead.routes.js";
 import DashboardRoutes from "./Dashboard.routes.js";
 const router = express.Router();
 

@@ -1,0 +1,6 @@
+function getVehicleDistance(){
+
+}
+
+
+export { getVehicleDistance };

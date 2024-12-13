@@ -1,9 +1,9 @@
 import express from "express";
+import { DashboardController } from "../controllers/index.js";
+
 
 const router = express.Router();
 
-router.get("/ProbWireTamp", ()=>{
-
-})
+router.post("/GetVehicleDistance", DashboardController.getVehicleDistance)
 
 export default router;
