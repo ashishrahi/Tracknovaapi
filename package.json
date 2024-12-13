@@ -1,0 +1,19 @@
+{
+  "name": "msspl-api-project",
+  "version": "1.0.0",
+  "description": "An official app for API deploy for MSSPL",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "MSSPL_Saurabh_Kushwaha",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
