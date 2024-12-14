@@ -14,6 +14,7 @@ import encryptData from "../utils/crypto/crypto.js";
 //-------------ProbWireTamp----------->
 async function probWireTamp(req, res) {
   const { date } = req.query;
+  console.log("date is", date)
   if (!date) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -24,21 +25,23 @@ async function probWireTamp(req, res) {
         )
       );
   }
-  const query = probWireTampQuery;
+  ;
+  
 
   try {
     const pool = await connectDB();
     const result = await pool
       .request()
       .input("date", sql.Date, date)
-      .query(query);
+      .query(probWireTampQuery);
+    
+    await pool.close();
 
     if (!result) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
     }
-
     return res
       .status(StatusCodes.OK)
       .json(
@@ -62,7 +65,6 @@ async function probWireTamp(req, res) {
 async function getVehicleNotMoved(req, res) {
   try {
     const { dateFrom, dateTo } = req.body;
-    console.log(dateFrom, dateTo);
     if ([dateFrom, dateTo].some((date) => date?.trim() === undefined || "")) {
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -80,6 +82,8 @@ async function getVehicleNotMoved(req, res) {
       .input("dateFrom", sql.Date, dateFrom)
       .input("dateTo", sql.Date, dateTo)
       .query(query);
+
+    await pool.close();
 
     if (!result) {
       return res
@@ -99,5 +103,6 @@ async function getVehicleNotMoved(req, res) {
     console.log(error);
   }
 }
+
 
 export { probWireTamp, getVehicleNotMoved };

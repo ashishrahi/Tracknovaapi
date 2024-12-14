@@ -95,4 +95,18 @@ LEFT JOIN ZN zn ON zn.ZoneID = v.VZoneID
 LEFT JOIN NTREC nr ON nr.devid = v.Devid
 LEFT JOIN NTMV nm ON nm.devid = v.Devid
 WHERE nr.devid IS NULL OR nm.devid IS NULL;
-`
+`;
+export const getVehicleDistanceQuery = {
+  distanceQuery: `SELECT devid, vehicleno, vehicletypeid, VehicleTypename, TrackDate, Distance
+FROM vDistanceTravelled
+WHERE vehicleno = @vehicleno
+  AND trackdate >= @datef
+  AND trackdate <= @datet
+ORDER BY trackdate;`,
+  idleQuery: `SELECT devid, vehicleno, vehicletypeid, VehicleTypename, TrackDate, SecondsIdle
+            FROM vVehicleIdle
+             WHERE vehicleno = 'UP78GT8446'
+              AND trackdate >= '2024-01-12 12:44:09.637'
+              AND trackdate <= '2024-01-12 10:39:45.130'
+            ORDER BY trackdate;`,
+};

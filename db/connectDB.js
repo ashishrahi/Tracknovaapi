@@ -12,9 +12,9 @@ const config = {
   options: {
     encrypt: true, // Encrypts the connection (use true if connecting to Azure)
     trustServerCertificate: true, // Use only for development/testing
-    multipleActiveResultSets: true, // Allows multiple active result sets
+    // multipleActiveResultSets: true, // Allows multiple active result sets
   },
-  requestTimeout: 2 * 60 * 1000, // 20 min
+  requestTimeout: 10 * 60 * 1000, // 20 min
   // requestTimeout: 15000, // 20 min
 };
 
