@@ -30,7 +30,7 @@ async function getVehicleDistance(req, res) {
   try {
     const pool = await connectDB();
   
-    const resultDistance = await pool
+    let resultDistance = await pool
       .request()
       .input("vehicleno", sql.VarChar, vehicleno)
       .input("datef", sql.Date, datef)
@@ -41,7 +41,7 @@ async function getVehicleDistance(req, res) {
     //   throw new Error(error.message);
     // }
   
-    const resultIdle = await pool
+    let resultIdle = await pool
       .request()
       .input("vehicleno", sql.VarChar, vehicleno)
       .input("datef", sql.Date, datef)
