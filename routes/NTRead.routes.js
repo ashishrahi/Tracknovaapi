@@ -3,6 +3,7 @@ import { NTReadController } from "../controllers/index.js";
 
 const router = express.Router();
 
-router.get("/ProbWireTamp", NTReadController.probWireTamp );
+router.get("/ProbWireTamp", NTReadController.probWireTamp);
+router.post("/GetVehicleNotMoved", NTReadController.getVehicleNotMoved);
 
 export default router;

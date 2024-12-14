@@ -2,8 +2,7 @@ import crypto from "crypto";
 
 
 const algorithm = 'aes-256-cbc';
-const key = "z3/9Y2V1zCWO3Us9fL9h5AQvcUDd+g5JCL5/vMDLYw8="; // 32-byte key
-;
+const key = process.env.CRYPTO_KEY;  // 32-byte key
 const iv = crypto.randomBytes(16);
 // const iv = "717e52d4264d80ae9aacdf260bf92a6d";
 

@@ -86,11 +86,12 @@ const encryptData = (data)=>{
 }
 
 export default encryptData;
-```javascript
+
+```
 
 # How to add environment variable in IIS Server
 
-- `Follow This Path: C:\Windows\System32\inetsrv\config.`
+- `Follow This Path: C:\Windows\System32\inetsrv\config\applicationHost.config.`
 - Find the Application Pool option
 
 ```javascript
