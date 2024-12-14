@@ -27,49 +27,60 @@ async function getVehicleDistance(req, res) {
       );
   }
 
-  const pool = await connectDB();
+  try {
+    const pool = await connectDB();
+  
+    const resultDistance = await pool
+      .request()
+      .input("vehicleno", sql.VarChar, vehicleno)
+      .input("datef", sql.Date, datef)
+      .input("datet", sql.Date, datet)
+      .query(getVehicleDistanceQuery.distanceQuery);
+    
+    // if(!resultDistance){
+    //   throw new Error(error.message);
+    // }
+  
+    const resultIdle = await pool
+      .request()
+      .input("vehicleno", sql.VarChar, vehicleno)
+      .input("datef", sql.Date, datef)
+      .input("datet", sql.Date, datet)
+      .query(getVehicleDistanceQuery.idleQuery);
 
-  const resultDistance = await pool
-    .request()
-    .input("vehicleno", sql.VarChar, vehicleno)
-    .input("datef", sql.Date, datef)
-    .input("datet", sql.Date, datet)
-    .query(getVehicleDistanceQuery.distanceQuery);
-
-  const resultIdle = await pool
-    .request()
-    .input("vehicleno", sql.VarChar, vehicleno)
-    .input("datef", sql.Date, datef)
-    .input("datet", sql.Date, datet)
-    .query(getVehicleDistanceQuery.idleQuery);
-
-
-  await pool.close();
-
-  if (!resultDistance) {
-    resultDistance = "No data Found";
+      if(!(resultIdle || resultDistance)){
+        throw new Error(error.message);
+      }
+  
+    await pool.close();
+  
+    if (!resultDistance) {
+      resultDistance = "No data Found";
+    }
+    if (!resultIdle) {
+      resultIdle = "No data Found";
+    }
+    const data = {
+      resultDistance,
+      resultIdle,
+    };
+  
+    if (!data) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
+    }
+  
+    return res.status(StatusCodes.OK).json(
+      new ApiSuccessResponse(
+        StatusCodes.OK,
+        "Successfully Fetched the data",
+        encryptData(data)
+      )
+    );
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
   }
-  if (!resultIdle) {
-    resultIdle = "No data Found";
-  }
-  const data = {
-    resultDistance,
-    resultIdle,
-  };
-
-  if (!data) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
-  }
-
-  return res.status(StatusCodes.OK).json(
-    new ApiSuccessResponse(
-      StatusCodes.OK,
-      "Successfully Fetched the data",
-      encryptData(data)
-    )
-  );
 }
 
 export { getVehicleDistance };
