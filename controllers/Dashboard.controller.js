@@ -87,36 +87,86 @@ async function getVehicleDistance(req, res) {
     //   datet: datet,
     // };
     await connectDBMongo();
-    const db = client.db("inventory");
-    const itemMasterData = await db.collection("ItemMaster").find({
-      VehicleNo: "UP78GT8446",
-    }).toArray();
-    console.log("ItemMasterData is: ", itemMasterData);
-    const validDevids = itemMasterData.map(item => item.devid);
-    console.log("Valid dev ids : ",validDevids)
+    const db = await client.db("inventory");
 
-    const result1 = await db.collection("NT").aggregate([ {
-      $match: {
-        TrackDate: {
-          $gte: new Date("2024-01-01T12:44:09.637Z"),
-          $lte: new Date("2024-01-30T10:39:45.130Z"),
+    const itemMasterData = await db
+      .collection("ItemMaster")
+      .find({
+        VehicleNo: "UP78GT8446",
+      })
+      .toArray();
+      
+     
+
+    // console.log("ItemMasterData is: ", itemMasterData);
+    // const validDevids = itemMasterData.map((item) => item.devid);
+    const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0]
+    console.log(devid)
+    // console.log("Valid dev ids : ", validDevids);
+    
+
+    const resultCursor = await db.collection("NT").aggregate([
+      {
+        $match: {
+          TrackDate: {
+            $gte: new Date("2024-01-01"),
+            $lte: new Date("2024-01-30"),
+          },
+          devid: devid, // Filter NT by the list of valid devids
         },
-        devid: { $in: validDevids},  // Filter NT by the list of valid devids
       },
-    },
-    {
-      $count: "documentCount",
-    },])
 
-
+      {
+        $lookup: {
+          from: "VehicleTypeMaster",
+          localField: "itemMaster.VehicleTypeId",
+          foreignField: "VehicleTypeId",
+          as: "vehicleTypeMaster",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            devid: "$devid",
+            VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
+            VehicleNo: VehicleNo,
+            VehicleTypeId: VehicleNo,
+            VehicleTypename: {
+              $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
+            },
+            TrackDate: "$TrackDate",
+          },
+          Distance: { $max: "$distance" },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id field
+          devid: "$_id.devid",
+          VehicleNo: "$_id.VehicleNo",
+          VehicleTypeId: "$_id.VehicleTypeId",
+          VehicleTypename: "$_id.VehicleTypename",
+          TrackDate: "$_id.TrackDate",
+          Distance: { $toDouble: "$Distance" }, // Convert Distance to double
+        },
+      },
+      {
+        $sort: { TrackDate: 1 }, // Sort by TrackDate if needed
+      },
+      // {
+      //   $count: "documentCount",
+      // },
+    ]);
+   
     // const result = await db
     //   .collection("NT")
     //   .aggregate(getDynamicAggregation(vehicleno, datef, datet),  {allowDiskUse: true})
     //   .toArray();
-
-    // console.log("result is : ",result);
+    const result1 = await resultCursor.toArray();
+    console.log("result is : ",result1);
     return res.status(200).json({ data: result1 });
   } catch (error) {
+    console.log(error)
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
