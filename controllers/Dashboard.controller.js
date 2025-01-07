@@ -106,64 +106,149 @@ async function getVehicleDistance(req, res) {
     
 
     const resultCursor = await db.collection("NT").aggregate([
-      {
-        $match: {
-          TrackDate: {
-            $gte: new Date("2024-01-01"),
-            $lte: new Date("2024-01-30"),
-          },
-          devid: devid, // Filter NT by the list of valid devids
-        },
-      },
-
-      {
-        $lookup: {
-          from: "VehicleTypeMaster",
-          localField: "itemMaster.VehicleTypeId",
-          foreignField: "VehicleTypeId",
-          as: "vehicleTypeMaster",
-        },
-      },
-      {
-        $group: {
-          _id: {
-            devid: "$devid",
-            VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
-            VehicleNo: VehicleNo,
-            VehicleTypeId: VehicleNo,
-            VehicleTypename: {
-              $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
+      
+        {
+          $match: {
+            TrackDate: {
+              $gte: new Date("2023-01-01"),
+              $lte: new Date("2024-01-30")
             },
-            TrackDate: "$TrackDate",
-          },
-          Distance: { $max: "$distance" },
+            devid: "861449050105383" // Filter NT by the list of valid devids
+          }
         },
-      },
-      {
-        $project: {
-          _id: 0, // Exclude _id field
-          devid: "$_id.devid",
-          VehicleNo: "$_id.VehicleNo",
-          VehicleTypeId: "$_id.VehicleTypeId",
-          VehicleTypename: "$_id.VehicleTypename",
-          TrackDate: "$_id.TrackDate",
-          Distance: { $toDouble: "$Distance" }, // Convert Distance to double
+      
+        {
+          $lookup: {
+            from: "ItemMaster",
+            localField: "devid",
+            foreignField: "devid",
+            as: "itemMaster"
+          }
         },
-      },
-      {
-        $sort: { TrackDate: 1 }, // Sort by TrackDate if needed
-      },
+      
+        {
+          $lookup: {
+            from: "VehicleTypeMaster",
+            localField: "itemMaster.VehicleTypeId",
+            foreignField: "VehicleTypeId",
+            as: "vehicleTypeMaster"
+          }
+        },
+      
+        {
+          $group: {
+            _id: {
+              devid: "$devid",
+              VehicleNo: {
+                $arrayElemAt: [
+                  "$itemMaster.VehicleNo",
+                  0
+                ]
+              },
+              // VehicleNo: VehicleNo ,
+              VehicleTypeId: {
+                $arrayElemAt: [
+                  "$vehicleTypeMaster.VehicleTypeId",
+                  0
+                ]
+              },
+              // VehicleTypeId : VehicleTypeId,
+              VehicleTypename: {
+                $arrayElemAt: [
+                  "$vehicleTypeMaster.VehicleTypename",
+                  0
+                ]
+              },
+              TrackDate: "$TrackDate"
+            },
+            Distance: { $max: "$distance" }
+          }
+        },
+        {
+          $project: {
+            _id: 0, // Exclude _id field
+            devid: "$_id.devid",
+            VehicleNo: "$_id.VehicleNo",
+            VehicleTypeId: "$_id.VehicleTypeId",
+            VehicleTypename: "$_id.VehicleTypename",
+            TrackDate: "$_id.TrackDate",
+            Distance: { $toDouble: "$Distance" } // Convert Distance to double
+          }
+        },
+        {
+          $sort: { TrackDate: 1 } // Sort by TrackDate if needed
+        }
+      
+      // {
+      //   $match: {
+      //     TrackDate: {
+      //       $gte: new Date("2023-01-01"),
+      //       $lte: new Date("2024-01-30"),
+      //     },
+      //     devid: devid, // Filter NT by the list of valid devids
+      //   },
+      // },
+      // // {
+      // //   $lookup: {
+      // //     from: "ItemMaster",
+      // //     localField: "devid",
+      // //     foreignField: "devid",
+      // //     as: "itemMaster"
+
+      // //   }
+      // // },
+
+
+      // // {
+      // //   $lookup: {
+      // //     from: "VehicleTypeMaster",
+      // //     localField: "itemMaster.VehicleTypeId",
+      // //     foreignField: "VehicleTypeId",
+      // //     as: "vehicleTypeMaster",
+      // //   },
+      // // },
+      // {
+      //   $group: {
+      //     _id: {
+      //       devid: "$devid",
+      //       // VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
+      //       VehicleNo: VehicleNo ,
+      //       // VehicleTypeId: {
+      //       //   $arrayElemAt: ["$vehicleTypeMaster.VehicleTypeId", 0]},
+      //       VehicleTypeId : VehicleTypeId,
+      //       VehicleTypename: {
+      //         $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
+      //       },
+      //       TrackDate: "$TrackDate",
+      //     },
+      //     Distance: { $max: "$distance" },
+      //   },
+      // },
+      // {
+      //   $project: {
+      //     _id: 0, // Exclude _id field
+      //     devid: "$_id.devid",
+      //     VehicleNo: "$_id.VehicleNo",
+      //     VehicleTypeId: VehicleTypeId,
+      //     VehicleTypename: "$_id.VehicleTypename",
+      //     TrackDate: "$_id.TrackDate",
+      //     Distance: { $toDouble: "$Distance" }, // Convert Distance to double
+      //   },
+      // },
+      // {
+      //   $sort: { TrackDate: 1 }, // Sort by TrackDate if needed
+      // },
       // {
       //   $count: "documentCount",
       // },
-    ]);
+    ], {allowDiskUse: true});
    
     // const result = await db
     //   .collection("NT")
     //   .aggregate(getDynamicAggregation(vehicleno, datef, datet),  {allowDiskUse: true})
     //   .toArray();
     const result1 = await resultCursor.toArray();
-    console.log("result is : ",result1);
+    // console.log("result is : ",result1);
     return res.status(200).json({ data: result1 });
   } catch (error) {
     console.log(error)
@@ -231,9 +316,9 @@ function getDynamicAggregation(vehicleno, datef, datet) {
         _id: {
           devid: "$devid",
           VehicleNo: "$itemMaster.VehicleNo",
-          VehicleTypeId: "$itemMaster.VehicleTypeId",
-          VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
-          VehicleTypeId: { $arrayElemAt: ["$itemMaster.VehicleTypeId", 0] },
+          // VehicleTypeId: "$itemMaster.VehicleTypeId",
+          // VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
+          // VehicleTypeId: { $arrayElemAt: ["$itemMaster.VehicleTypeId", 0] },
           VehicleTypename: {
             $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
           },
@@ -334,10 +419,57 @@ function getDynamicAggregation(vehicleno, datef, datet) {
   //   ]
 }
 
-// Example Usage:
+/**
+ *  const resultCursor = await db.collection("NT").aggregate([
+      {
+        $match: {
+          TrackDate: {
+            $gte: new Date("2023-01-01"),
+            $lte: new Date("2024-01-30"),
+          },
+          devid: devid, // Filter NT by the list of valid devids
+        },
+      },
 
-// Run the aggregation query
-// const result = db.nt.aggregate(getDynamicAggregation(input));
-
-// Print the results
-// result.forEach(doc => printjson(doc));
+      {
+        $lookup: {
+          from: "VehicleTypeMaster",
+          localField: "itemMaster.VehicleTypeId",
+          foreignField: "VehicleTypeId",
+          as: "vehicleTypeMaster",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            devid: "$devid",
+            VehicleNo: { $arrayElemAt: ["$itemMaster.VehicleNo", 0] },
+            VehicleNo: VehicleNo,
+            // VehicleTypeId: VehicleNo,
+            VehicleTypename: {
+              $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
+            },
+            TrackDate: "$TrackDate",
+          },
+          Distance: { $max: "$distance" },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id field
+          devid: "$_id.devid",
+          VehicleNo: "$_id.VehicleNo",
+          VehicleTypeId: "$_id.VehicleTypeId",
+          VehicleTypename: "$_id.VehicleTypename",
+          TrackDate: "$_id.TrackDate",
+          Distance: { $toDouble: "$Distance" }, // Convert Distance to double
+        },
+      },
+      {
+        $sort: { TrackDate: 1 }, // Sort by TrackDate if needed
+      },
+      // {
+      //   $count: "documentCount",
+      // },
+    ], {allowDiskUse: true});
+ */
