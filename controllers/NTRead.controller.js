@@ -10,8 +10,20 @@ import {
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
 import encryptData from "../utils/crypto/crypto.js";
+import { ntCurrentDay } from "../modals/NTCurrentDay.modal.js";
+
+//----------- Sample ---------------->
+
+async function sample(req, res) {
+  const { devid } = req.query;
+  console.log(devid)
+
+}
+
+
 
 //-------------ProbWireTamp----------->
+
 async function probWireTamp(req, res) {
   const { date } = req.query;
   console.log("date is", date)
@@ -61,6 +73,7 @@ async function probWireTamp(req, res) {
   }
 }
 
+
 //--------------GetVehicleNotMoved------>
 async function getVehicleNotMoved(req, res) {
   try {
@@ -104,5 +117,8 @@ async function getVehicleNotMoved(req, res) {
   }
 }
 
+//--------------
 
-export { probWireTamp, getVehicleNotMoved };
+
+
+export { probWireTamp, getVehicleNotMoved, sample };

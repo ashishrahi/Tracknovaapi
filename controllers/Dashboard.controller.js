@@ -92,7 +92,7 @@ async function getVehicleDistance(req, res) {
     const itemMasterData = await db
       .collection("ItemMaster")
       .find({
-        VehicleNo: "UP78GT8446",
+        VehicleNo: vehicleno,
       })
       .toArray();
       
@@ -110,13 +110,13 @@ async function getVehicleDistance(req, res) {
         {
           $match: {
             TrackDate: {
-              $gte: new Date("2023-01-01"),
-              $lte: new Date("2024-01-30")
+              $gte: new Date(datef),
+              $lte: new Date(datet)
             },
-            devid: "861449050105383" // Filter NT by the list of valid devids
+            devid: devid // Filter NT by the list of valid devids
           }
         },
-      
+        
         {
           $lookup: {
             from: "ItemMaster",

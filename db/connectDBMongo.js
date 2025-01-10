@@ -1,5 +1,5 @@
-// import mongoose from "mongoose";
-import  { MongoClient } from 'mongodb';
+import mongoose from "mongoose";
+// import  { MongoClient } from 'mongodb';
 
 
 let client;
@@ -14,6 +14,7 @@ async function connectDBMongo(){
         console.log(error)
     }
 }
+
 
 
 // export default connectDBMongo;
