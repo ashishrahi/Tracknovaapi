@@ -10,7 +10,7 @@ import {
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
 import encryptData from "../utils/crypto/crypto.js";
-import { ntCurrentDay } from "../modals/NTCurrentDay.modal.js";
+
 
 //----------- Sample ---------------->
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ntCurrentDaySchema = new mongoose.Schema({
+const NTCurrentDaySchema = new mongoose.Schema({
     acc : Boolean,
     AreaId: mongoose.Schema.Types.Mixed,
     BinVisited: String,
@@ -25,6 +25,6 @@ const ntCurrentDaySchema = new mongoose.Schema({
     StateInfo: String,
     TrackDate: mongoose.Schema.Types.Date,
     TrackTime: mongoose.Schema.Types.Date,
-}, {timestamps: true})
+}, {timestamps: true, collection: "NTCurrentDay"})
 
-export const ntCurrentDay = mongoose.model("User", ntCurrentDaySchema)
+export const NTCurrentDay = mongoose.model("NTCurrentDay", NTCurrentDaySchema)

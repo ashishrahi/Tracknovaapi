@@ -1,3 +1,3 @@
-import { ntCurrentDay } from "./NTCurrentDay.modal";
+import { NTCurrentDay } from "./NTCurrentDay.model";
 
-export { ntCurrentDay }
+export { NTCurrentDay }

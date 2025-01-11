@@ -8,7 +8,7 @@ async function connectMongoDB() {
     const dbName = String(process.env.DB_NAME)
     
     try {
-        const connection = await mongoose.connect(uri + "/" + dbName);
+        await mongoose.connect(uri + "/" + dbName);
         console.log("MongoDB Connected");
     } catch (error) {
         console.log(error);
@@ -30,6 +30,7 @@ mongoose.connection.on("disconnected", ()=>{
 
 process.on("SIGINT", async ()=>{
     await mongoose.connection.close()
+    console.log("Mongoose connection closed  ")
     process.exit(0);
 })
 
