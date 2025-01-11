@@ -1,21 +1,20 @@
-import { probWireTamp, getVehicleNotMoved, sample } from "./NTRead.controller.js";
-import { getVehicleDistance } from "./Dashboard.controller.js";
+import {getDashboard,getVehicleCurrentDay,getVehicleDistance,getAllBins,getMapBinsWardWise } from "./Dashboard.controller.js";
 
 
 
 
-export const NTReadController = {
-    probWireTamp: probWireTamp,
-    getVehicleNotMoved: getVehicleNotMoved,
-    sample: sample
 
-
-}
 
 
 
 export const DashboardController = {
-    getVehicleDistance: getVehicleDistance,
+    
+    getDashboard : getDashboard,
+    getVehicleCurrentDay : getVehicleCurrentDay,
+    getVehicleDistance : getVehicleDistance,
+    getAllBins : getAllBins,
+    getMapBinsWardWise:getMapBinsWardWise
+
 }
 
 
