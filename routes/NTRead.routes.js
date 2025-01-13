@@ -4,6 +4,7 @@ import { NTReadController } from "../controllers/index.js";
 const router = express.Router();
 
 router.get("/Sample", NTReadController.sample);
+router.get("/SmpCurr", NTReadController.SmpCurr);
 router.get("/ProbWireTamp", NTReadController.probWireTamp);
 router.post("/GetVehicleNotMoved", NTReadController.getVehicleNotMoved);
 

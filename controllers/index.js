@@ -1,4 +1,4 @@
-import { probWireTamp, getVehicleNotMoved, sample } from "./NTRead.controller.js";
+import { probWireTamp, getVehicleNotMoved, sample, SmpCurr } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
 
 
@@ -7,7 +7,8 @@ import { getVehicleDistance } from "./Dashboard.controller.js";
 export const NTReadController = {
     probWireTamp: probWireTamp,
     getVehicleNotMoved: getVehicleNotMoved,
-    sample: sample
+    sample: sample,
+    SmpCurr: SmpCurr
 
 
 }

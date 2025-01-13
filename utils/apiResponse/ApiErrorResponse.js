@@ -1,6 +1,6 @@
 class ApiErrorResponse{
     constructor(statusCode, error ){
-        this.status = false;
+        this.isSuccess =  false,
         this.statusCode = statusCode,
         this.error = error
     }

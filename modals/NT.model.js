@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const NTCurrentDaySchema = new mongoose.Schema({
+const NTSchema = new mongoose.Schema({
     acc : Boolean,
     AreaId: mongoose.Schema.Types.Mixed,
     BinVisited: String,
@@ -9,9 +9,11 @@ const NTCurrentDaySchema = new mongoose.Schema({
     devid: String,
     distance: mongoose.Schema.Types.Double,
     Flag: String,
-    id: Number,
+    Id: Number,
+    IdCom: mongoose.Schema.Types.Mixed,
     Lattitude: mongoose.Schema.Types.Double,
     Longitude: mongoose.Schema.Types.Double,
+    locationread: String,
     nearme: String,
     NTId: Number,
     overspeed: Boolean,
@@ -25,6 +27,6 @@ const NTCurrentDaySchema = new mongoose.Schema({
     StateInfo: String,
     TrackDate: mongoose.Schema.Types.Date,
     TrackTime: mongoose.Schema.Types.Date,
-}, {timestamps: true, collection: "NTCurrentDay"})
+}, {timestamps: true, collection: "NT"})
 
-export const NTCurrentDay = mongoose.model("NTCurrentDay", NTCurrentDaySchema)
+export const NT = mongoose.model("NT", NTSchema)
