@@ -1,10 +1,8 @@
 import {getDashboard,getVehicleCurrentDay,getVehicleDistance,getAllBins,getMapBinsWardWise } from "./Dashboard.controller.js";
+import {login,GetUserPermissions,AddUpdateUserPermissionMaster,GetUserPermissionMaster} from './Auth.controller.js'
 
 
-
-
-
-
+/////////////////////////////////////////    DashboardController   //////////////////////////////////////////////////////////////////
 
 
 export const DashboardController = {
@@ -14,7 +12,16 @@ export const DashboardController = {
     getVehicleDistance : getVehicleDistance,
     getAllBins : getAllBins,
     getMapBinsWardWise:getMapBinsWardWise
-
 }
 
+
+////////////////////////////////////////////////  AuthController   //////////////////////////////////////////////////////////////////
+
+
+export const AuthController = {
+    login : login,
+    GetUserPermissions:GetUserPermissions,
+    AddUpdateUserPermissionMaster : AddUpdateUserPermissionMaster,
+    GetUserPermissionMaster : GetUserPermissionMaster
+}
 
