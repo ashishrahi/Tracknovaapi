@@ -10,10 +10,9 @@ import {
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
 import encryptData from "../utils/crypto/crypto.js";
-import { NTCurrentDay, NT } from "../modals/index.js";
+import { NTCurrentDay, NT, ItemMaster } from "../modals/index.js";
 
 //----------- Sample ---------------->
-
 async function sample(req, res) {
   try {
     const { devid } = req.query;
@@ -70,7 +69,6 @@ async function sample(req, res) {
 }
 
 //-------------SmpCurr----------->
-
 async function SmpCurr(req, res){
   const { trackdate } = req.query;
 
@@ -203,9 +201,371 @@ async function Geofence (req, res){
 
 //-------------NTCurrent----------->
 async function NTCurrent(req, res){
+  // Problem Where is devid from swagger
+  const devids = null
+  const pipeline = [
+    {
+      $match: {
+          devid: { $in: devids?.length ? devids : [] }
+      }
+  },
+  {
+    $group: {
+        _id: "$devid",
+        latestRecord: { $first: { $sort: { TrackTime: -1 } } }  // Most recent record
+    }
+  },
+    {
+      $lookup: {
+          from: "ItemMaster",
+          localField: "latestRecord.devid",   // Match based on `devid`
+          foreignField: "Devid",
+          as: "vehicleData"
+      }
+  },
+  {
+    $unwind: "$vehicleData" // Flatten the array from the lookup
+  },
+  {
+    $lookup: {
+        from: "EmpMaster",
+        localField: "vehicleData.EmpId",
+        foreignField: "Empid",
+        as: "empData"
+    }
+  },
+
+  {
+    $unwind: "$empData" // Flatten the array from the lookup
+  },
   
+  {
+    $lookup: {
+        from: "Departmentmasters",
+        localField: "empData.EmpDeptId",
+        foreignField: "DepartmentId",
+        as: "departmentData"
+    }
+  },
+  {
+    $unwind: "$departmentData" // Flatten the array from the lookup
+  },
+  {
+    $project: {
+        _id: 0,
+        devid: "$latestRecord.devid",
+        tracktime: "$latestRecord.TrackTime",
+        trackdate: "$latestRecord.TrackDate",
+        speed: "$latestRecord.speed",
+        Lattitude: "$latestRecord.Lattitude",
+        Longitude: "$latestRecord.Longitude",
+        nearme: "$latestRecord.nearme",
+        distance: "$latestRecord.distance",
+        ignition: { $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"] },
+        flag: {
+            $switch: {
+                branches: [
+                    { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $gt: ["$latestRecord.speed", 0] }] }, then: "Running" },
+                    { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Idle" },
+                    { case: { $and: [{ $eq: ["$latestRecord.acc", false] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Stopped" }
+                ],
+                default: "Unknown"
+            }
+        },
+        vehicleData: {
+            VehicleNo: "$vehicleData.VehicleNo",
+            DepartmentName: "$departmentData.DepartmentName",
+            EmpName: "$empData.EmpName",
+            KmPerLitre: "$vehicleData.KmPerLitre",
+            LitrePerHr: "$vehicleData.LitrePerHr",
+            VehicleTypeId: "$vehicleData.VehicleTypeId",
+            VehicleTypename: "$vehicleData.VehicleTypename"
+        }
+    }
+  }
+  ];
+
+  // Stage 1: Match documents with `devid` filter (if provided)
+  pipeline.push({
+      $match: {
+          devid: { $in: devids.length ? devids : [] }
+      }
+  });
+
+  // Stage 2: Group by `devid` and get the most recent document based on `TrackTime`
+  pipeline.push({
+      $group: {
+          _id: "$devid",
+          latestRecord: { $first: { $sort: { TrackTime: -1 } } }  // Most recent record
+      }
+  });
+
+  // Stage 3: Perform a lookup to join with the `ItemMaster`, `EmpMaster`, and `Departmentmasters` collections
+  pipeline.push({
+      $lookup: {
+          from: "ItemMaster",
+          localField: "latestRecord.devid",   // Match based on `devid`
+          foreignField: "Devid",
+          as: "vehicleData"
+      }
+  });
+
+  pipeline.push({
+      $unwind: "$vehicleData" // Flatten the array from the lookup
+  });
+
+  pipeline.push({
+      $lookup: {
+          from: "EmpMaster",
+          localField: "vehicleData.EmpId",
+          foreignField: "Empid",
+          as: "empData"
+      }
+  });
+
+  pipeline.push({
+      $unwind: "$empData" // Flatten the array from the lookup
+  });
+
+  pipeline.push({
+      $lookup: {
+          from: "Departmentmasters",
+          localField: "empData.EmpDeptId",
+          foreignField: "DepartmentId",
+          as: "departmentData"
+      }
+  });
+
+  pipeline.push({
+      $unwind: "$departmentData" // Flatten the array from the lookup
+  });
+
+  // Stage 4: Process the fields to form the final output
+  pipeline.push({
+      $project: {
+          _id: 0,
+          devid: "$latestRecord.devid",
+          tracktime: "$latestRecord.TrackTime",
+          trackdate: "$latestRecord.TrackDate",
+          speed: "$latestRecord.speed",
+          Lattitude: "$latestRecord.Lattitude",
+          Longitude: "$latestRecord.Longitude",
+          nearme: "$latestRecord.nearme",
+          distance: "$latestRecord.distance",
+          ignition: { $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"] },
+          flag: {
+              $switch: {
+                  branches: [
+                      { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $gt: ["$latestRecord.speed", 0] }] }, then: "Running" },
+                      { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Idle" },
+                      { case: { $and: [{ $eq: ["$latestRecord.acc", false] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Stopped" }
+                  ],
+                  default: "Unknown"
+              }
+          },
+          vehicleData: {
+              VehicleNo: "$vehicleData.VehicleNo",
+              DepartmentName: "$departmentData.DepartmentName",
+              EmpName: "$empData.EmpName",
+              KmPerLitre: "$vehicleData.KmPerLitre",
+              LitrePerHr: "$vehicleData.LitrePerHr",
+              VehicleTypeId: "$vehicleData.VehicleTypeId",
+              VehicleTypename: "$vehicleData.VehicleTypename"
+          }
+      }
+  });
+
+  // Stage 5: Execute the aggregation pipeline
+  try {
+      const result = await db.collection("NTCurrentDay").aggregate(pipeline).toArray();
+
+      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Data Successfully fetched", result))
+      
+  } catch (ex) {
+      return {
+          IsSuccess: false,
+          Mesg: ex.message
+      };
+  }
 
 }
+
+//-------------VehCurrStat----------->
+async function VehCurrStat(req, res){
+
+  // const vehAll  = NTCurrentDay.aggregate([
+  //   {
+  //     $sort: { TrackTime: -1 }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$devid",
+  //       veh: { $first: "$$ROOT" }
+  //     }
+  //   },
+  //   {
+  //     $facet: {
+  //       run: [{ $match: { "veh.acc": true, "veh.speed": { $gt: 0 } } }],
+  //       engon: [{ $match: { "veh.acc": true, "veh.speed": 0 } }],
+  //       engff: [{ $match: { "veh.acc": false } }]
+  //     }
+  //   },
+  // ]) 
+
+  // const distCov = NTCurrentDay.aggregate([
+  //   {
+  //     $sort: { distance: -1 }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$devid",
+  //       dist: { $first: "$distance" }
+  //     }
+  //   },
+  //   {
+  //     $match: { dist: { $ne: null } }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: null,
+  //       totalDistance: { $sum: "$dist" }
+  //     }
+  //   }
+  // ]);
+
+  // const totVehGps = ItemMaster.aggregate([
+  //   {
+  //     $match: {
+  //       ItemFlag: { $ne: null, $regex: /^V$/i },
+  //       Devid: { $ne: null }
+  //     }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$ZoneName",
+  //       count: { $sum: 1 }
+  //     }
+  //   }
+  // ]);
+
+  // const totVehDeptGps = ItemMaster.aggregate([
+  //   {
+  //     $lookup: {
+  //       from: "Departmentmasters",
+  //       localField: "deptId",
+  //       foreignField: "DepartmentId",
+  //       as: "departmentInfo"
+  //     }
+  //   },
+  //   {
+  //     $unwind: { path: "$departmentInfo", preserveNullAndEmptyArrays: true }
+  //   },
+  //   {
+  //     $match: {
+  //       ItemFlag: { $ne: null, $regex: /^V$/i },
+  //       Devid: { $ne: null }
+  //     }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$departmentInfo.DepartmentName",
+  //       count: { $sum: 1 }
+  //     }
+  //   }
+  // ]);
+  
+  const vehAll = await NTCurrentDay.aggregate([
+    {
+      $group: {
+        _id: "$devid",
+        veh: { $first: "$$ROOT" },
+      },
+    },
+    // total got docs = 173
+  ]);
+
+  // Filter vehicles into categories
+  const run = vehAll.filter((d) => d.veh.acc === true && d.veh.speed > 0);
+  const engon = vehAll.filter((d) => d.veh.acc === true && d.veh.speed === 0);
+  const engff = vehAll.filter((d) => d.veh.acc === false);
+  const engonTot = vehAll.filter((d) => d.veh.acc === true);
+
+  // Calculate total distance
+  const distCov = await NTCurrentDay.aggregate([
+    {
+      $group: {
+        _id: "$devid",
+        dist: { $first: "$distance" },
+      },
+    },
+  ]);
+  const dist = distCov.reduce((sum, d) => sum + (d.dist || 0), 0);
+
+  // Fetch total vehicles with GPS
+  const totVehGps = await ItemMaster.find({
+    ItemFlag: { $exists: true, $regex: /^V$/i },
+    devid: { $ne: null },
+  }).select("Devid VZoneID ZoneName");
+  // console.log("totVehGps", totVehGps)
+
+  // Zone statistics
+  const zoneStats = totVehGps.reduce((acc, curr) => {
+    const zone = curr.ZoneName || "Unknown";
+    acc[zone] = (acc[zone] || 0) + 1;
+    return acc;
+  }, {});
+  // console.log("zoneStats is ",zoneStats)
+
+  // Department statistics
+  const totVehDeptGps = await ItemMaster.aggregate([
+    {
+      $lookup: {
+        from: "Department", // Replace with your actual department collection name
+        localField: "deptId",
+        foreignField: "DepartmentId",
+        as: "DepartmentData",
+      },
+    },
+    // total docs 1100
+  ]);
+
+  const deptStats = totVehDeptGps.reduce((acc, curr) => {
+    const department = curr.DepartmentData?.[0]?.DepartmentName || "Unknown";
+    acc[department] = (acc[department] || 0) + 1;
+    return acc;
+  }, {});
+
+  console.log("deptStats :",deptStats);
+
+  // Prepare response data
+  const stat = {
+    COT1: [engff.length, engonTot.length],
+    labels1: [`${engff.length} - Off`, `${engonTot.length} - On`],
+    COT3: Object.values(zoneStats),
+    labels3: Object.keys(zoneStats),
+    DEPT3: Object.values(deptStats),
+    labeldept: Object.keys(deptStats),
+    Runningveh: run.length,
+    Idleveh: engon.length,
+    Stopveh: engff.length,
+    Totalveh: run.length + engon.length + engff.length,
+    Vehtotal: totVehGps.length,
+    Totalvehall: await ItemMaster.countDocuments({
+      ItemFlag: { $exists: true, $regex: /^V$/i },
+    }),
+    TotDistance: Math.round(dist),
+  };
+
+  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Fetched the data", stat));
+
+  
+}
+
+//-------------GetDashData----------->
+async function GetDashData(req, res){
+
+}
+
 //-------------ProbWireTamp----------->
 
 async function probWireTamp(req, res) {
@@ -299,4 +659,187 @@ async function getVehicleNotMoved(req, res) {
 
 
 
-export { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent };
+export { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData };
+
+
+
+// For VehCurrStat
+
+/**
+ * const mongoose = require("mongoose");
+
+// MongoDB Schema Setup
+const NTCurrentDay = mongoose.model("NTCurrentDay", new mongoose.Schema({}));
+const ItemMaster = mongoose.model("ItemMaster", new mongoose.Schema({}));
+const Department = mongoose.model("Department", new mongoose.Schema({}));
+const OnRoadZonewise = mongoose.model("OnRoadZonewise", new mongoose.Schema({}));
+const OnRoadDeptwise = mongoose.model("OnRoadDeptwise", new mongoose.Schema({}));
+
+// Main function
+async function VehCurrStat() {
+  try {
+    // Fetch the latest vehicle data by devid
+    const vehAll = await NTCurrentDay.aggregate([
+      {
+        $sort: { TrackTime: -1 }, // Sort by TrackTime in descending order
+      },
+      {
+        $group: {
+          _id: "$devid",
+          veh: { $first: "$$ROOT" }, // Take the first document after sorting
+        },
+      },
+    ]);
+
+    // Categorize vehicles
+    const run = vehAll.filter((d) => d.veh.acc === true && d.veh.speed > 0);
+    const engon = vehAll.filter((d) => d.veh.acc === true && d.veh.speed === 0);
+    const engff = vehAll.filter((d) => d.veh.acc === false);
+    const engonTot = vehAll.filter((d) => d.veh.acc === true);
+
+    // Calculate total distance covered
+    const distCov = await NTCurrentDay.aggregate([
+      {
+        $sort: { distance: -1 }, // Sort by distance in descending order
+      },
+      {
+        $group: {
+          _id: "$devid",
+          dist: { $first: "$distance" }, // Take the first document after sorting
+        },
+      },
+    ]);
+    const dist = distCov.reduce((sum, d) => sum + (d.dist || 0), 0);
+
+    // Fetch all vehicles with GPS and zone data
+    const totVehGps = await ItemMaster.find({
+      ItemFlag: { $exists: true, $regex: /^V$/i },
+      Devid: { $ne: null },
+    }).select("Devid VZoneID ZoneName");
+
+    // Zone statistics
+    const zoneStats = totVehGps.reduce((acc, curr) => {
+      const zone = curr.ZoneName || "Unknown";
+      acc[zone] = (acc[zone] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Department statistics
+    const totVehDeptGps = await ItemMaster.aggregate([
+      {
+        $lookup: {
+          from: "departments", // Department collection
+          localField: "deptId",
+          foreignField: "DepartmentId",
+          as: "DepartmentData",
+        },
+      },
+    ]);
+
+    const deptStats = totVehDeptGps.reduce((acc, curr) => {
+      const department =
+        curr.DepartmentData?.[0]?.DepartmentName || "Unknown";
+      acc[department] = (acc[department] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Zonewise on-road statistics
+    const onRoadZonewise = await NTCurrentDay.aggregate([
+      {
+        $lookup: {
+          from: "itemmaster",
+          localField: "devid",
+          foreignField: "devid",
+          as: "ZoneData",
+        },
+      },
+      {
+        $unwind: "$ZoneData",
+      },
+      {
+        $group: {
+          _id: { ZoneName: "$ZoneData.ZoneName", ZoneID: "$ZoneData.VZoneID" },
+          zoneCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Department-wise on-road statistics
+    const onRoadDeptwise = await NTCurrentDay.aggregate([
+      {
+        $lookup: {
+          from: "itemmaster",
+          localField: "devid",
+          foreignField: "devid",
+          as: "DeptData",
+        },
+      },
+      {
+        $unwind: "$DeptData",
+      },
+      {
+        $lookup: {
+          from: "departments",
+          localField: "DeptData.deptId",
+          foreignField: "DepartmentId",
+          as: "DepartmentInfo",
+        },
+      },
+      {
+        $unwind: "$DepartmentInfo",
+      },
+      {
+        $group: {
+          _id: { DepartmentName: "$DepartmentInfo.DepartmentName" },
+          deptCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Build the response
+    const stat = {
+      // Categories
+      COT1: [engff.length, engonTot.length],
+      labels1: [`${engff.length} - Off`, `${engonTot.length} - On`],
+
+      // Zones
+      COT3: Object.values(zoneStats),
+      labels3: Object.keys(zoneStats),
+
+      // Departments
+      DEPT3: Object.values(deptStats),
+      labeldept: Object.keys(deptStats),
+
+      // On-road Zone Stats
+      OnRoadZone: onRoadZonewise.map((z) => z.zoneCount),
+      labelOnRoadZone: onRoadZonewise.map((z) => z._id.ZoneName || ""),
+
+      // On-road Department Stats
+      OnRoadDept: onRoadDeptwise.map((d) => d.deptCount),
+      labelOnRoaddept: onRoadDeptwise.map((d) => d._id.DepartmentName || ""),
+
+      // Vehicle counts
+      Runningveh: run.length,
+      Idleveh: engon.length,
+      Stopveh: engff.length,
+      Totalveh: run.length + engon.length + engff.length,
+      Vehtotal: totVehGps.length,
+      Totalvehall: await ItemMaster.countDocuments({
+        ItemFlag: { $exists: true, $regex: /^V$/i },
+      }),
+
+      // Distance
+      TotDistance: Math.round(dist),
+    };
+
+    return { isSuccess: true, data: stat };
+  } catch (error) {
+    console.error("Error in VehCurrStat:", error);
+    return { isSuccess: false, error: error.message };
+  }
+}
+
+// Example usage
+VehCurrStat().then((result) => console.log(result));
+
+ */
