@@ -10,7 +10,7 @@ import {
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
 import encryptData from "../utils/crypto/crypto.js";
-import { NTCurrentDay, NT, ItemMaster } from "../modals/index.js";
+import { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster } from "../modals/index.js";
 
 //----------- Sample ---------------->
 async function sample(req, res) {
@@ -561,10 +561,406 @@ async function VehCurrStat(req, res){
   
 }
 
-//-------------GetDashData----------->
+
 async function GetDashData(req, res){
 
 }
+
+  
+async function getVehicleNotMoved(req, res) {
+  try {
+    
+    const pipeline = [
+      // Step 1: Filter NT collection for the required date range and create flags for NTMV and NTREC
+      {
+        $match: {
+          TrackTime: { $gte: new Date("2024-11-12"), $lte: new Date("2024-11-12") },
+        },
+      },
+      {
+        $addFields: {
+          isNTMV: { $eq: ["$acc", 1] }, // Flag for NTMV
+        },
+      },
+    
+      // Step 2: Group NT data by devid to get distinct devices for NTMV and NTREC
+      {
+        $group: {
+          _id: "$devid",
+          hasNTMV: { $max: { $cond: ["$isNTMV", 1, 0] } }, // Indicates if the device is in NTMV
+        },
+      },
+    
+      // Step 3: Lookup additional details from other collections
+      {
+        $lookup: {
+          from: "ItemMaster",
+          localField: "id",
+          foreignField: "devid",
+          as: "vehicleDetails",
+        },
+      },
+      { $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true } },
+    
+      // Step 4: Join with Employee, Department, VehicleType, and Zone collections
+      {
+        $lookup: {
+          from: "EmpMaster",
+          localField: "vehicleDetails.EmpId",
+          foreignField: "Empid",
+          as: "employeeDetails",
+        },
+      },
+      { $unwind: { path: "$employeeDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "Department",
+          localField: "employeeDetails.EmpDeptId",
+          foreignField: "DepartmentId",
+          as: "departmentDetails",
+        },
+      },
+      { $unwind: { path: "$departmentDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "VehicleTypeMaster",
+          localField: "vehicleDetails.VehicleTypeId",
+          foreignField: "VehicleTypeId",
+          as: "vehicleTypeDetails",
+        },
+      },
+      { $unwind: { path: "$vehicleTypeDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "ZoneMaster",
+          localField: "vehicleDetails.VZoneID",
+          foreignField: "ZoneID",
+          as: "zoneDetails",
+        },
+      },
+      { $unwind: { path: "$zoneDetails", preserveNullAndEmptyArrays: true } },
+    
+      // Step 5: Project final output
+      {
+        $project: {
+          Devid: "$_id",
+          VehicleNo: "$vehicleDetails.VehicleNo",
+          VehicleTypename: "$vehicleTypeDetails.VehicleTypename",
+          EmpName: "$employeeDetails.EmpName",
+          EmpMobileNo: "$employeeDetails.EmpMobileNo",
+          DepartmentName: "$departmentDetails.DepartmentName",
+          ZoneName: "$zoneDetails.ZoneName",
+          NTRecord: "$hasNTMV", // 1 if NTMV, 0 otherwise
+        },
+      },
+    
+      // Step 6: Filter out devices not in NTMV
+      {
+        $match: {
+          NTRecord: 0, // Exclude records present in NTMV
+        },
+      },
+    
+      // Step 7: Sort and add row numbers
+      { $sort: { Devid: 1 } },
+      {
+        $setWindowFields: {
+          sortBy: { Devid: 1 },
+          output: {
+            SrNo: { $rank: {} },
+          },
+        },
+      },
+    ];
+    
+  
+    // Execute the pipeline
+    const results = await NT.aggregate(pipeline)
+    return res.json({data: results})
+  
+  } catch (error) {
+    console.log(error)
+  }
+  // const ntRecPipeline = [
+  //   {
+  //     $match: {
+  //       TrackTime: { $gte: new Date("2024-01-14"), $lte: new Date("2024-01-15") },
+  //     },
+  //   },
+  //   {
+  //     $group: {
+  //       _id: "$devid",
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       devid: "$_id",
+  //       _id: 0,
+  //     },
+  //   },
+  //   { $out: "NTREC" },
+  // ];
+
+  // const vehsPipeline = [
+  //   {
+  //     $lookup: {
+  //       from: "EmpMaster",
+  //       localField: "EmpId",
+  //       foreignField: "Empid",
+  //       as: "employeeDetails",
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "Department",
+  //       localField: "employeeDetails.EmpDeptId",
+  //       foreignField: "DepartmentId",
+  //       as: "departmentDetails",
+  //     },
+  //   },
+  //   {
+  //     $match: {
+  //       $expr: { $eq: [{ $toUpper: "$ItemFlag" }, "V"] },
+  //       Devid: { $ne: null },
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       Devid: 1,
+  //       VehicleNo: 1,
+  //       ItemName: 1,
+  //       VehicleTypeId: 1,
+  //       VZoneID: 1,
+  //       EmpName: { $arrayElemAt: ["$employeeDetails.EmpName", 0] },
+  //       EmpMobileNo: { $arrayElemAt: ["$employeeDetails.EmpMobileNo", 0] },
+  //       DepartmentName: { $arrayElemAt: ["$departmentDetails.DepartmentName", 0] },
+  //     },
+  //   },
+  //   { $out: "VEHS" },
+  // ];
+
+  // Aggregation for the final stage
+  
+
+  // Execute each pipeline
+ 
+
+  // try {
+  //   const { dateFrom, dateTo } = req.body;
+  //   if ([dateFrom, dateTo].some((date) => date?.trim() === undefined || "")) {
+  //     return res
+  //       .status(StatusCodes.BAD_REQUEST)
+  //       .json(
+  //         new ApiErrorResponse(
+  //           StatusCodes.BAD_REQUEST,
+  //           "Please Provide Valid Dates"
+  //         )
+  //       );
+  //   }
+  //   const query = getVehicleNotMovedQuery;
+  //   const pool = await connectDB();
+  //   const result = await pool
+  //     .request()
+  //     .input("dateFrom", sql.Date, dateFrom)
+  //     .input("dateTo", sql.Date, dateTo)
+  //     .query(query);
+
+  //   await pool.close();
+
+  //   if (!result) {
+  //     return res
+  //       .status(StatusCodes.NOT_FOUND)
+  //       .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
+  //   }
+  //   return res
+  //     .status(StatusCodes.OK)
+  //     .json(
+  //       new ApiSuccessResponse(
+  //         StatusCodes.OK,
+  //         "Successfully Fetched the data",
+  //         encryptData(result)
+  //       )
+  //     );
+  // } catch (error) {
+  //   console.log(error);
+  // }
+}
+
+
+//--------------GetNTDashboard------> 
+async function GetNTDashboard(req, res){
+  const ret = { data: null, isSuccess: false, message: "" };
+        // Step 1: Group NTCurrentDay by `devid` and get the latest record
+        // const ntCurrentDay = db.collection("NTCurrentDay");
+        const groupedData = await NTCurrentDay
+            .aggregate([
+                {
+                    $sort: { TrackTime: -1 }, // Sort by TrackTime descending
+                },
+                {
+                    $group: {
+                        _id: "$devid",
+                        latestRecord: { $first: "$$ROOT" }, // Take the first document after sorting
+                    },
+                },
+            ])
+          
+            // console.log(groupedData.latestRecord);
+
+        const deviceIds = groupedData.map((d) => d._id);
+        // console.log("devicesids", deviceIds)
+
+        // Step 2: Perform equivalent of multiple joins (ItemMaster, EmpMaster, DepartmentMasters, ZoneMasters)
+        // const itemMaster = db.collection("ItemMaster");
+        const vehicles = await ItemMaster
+            .aggregate([
+                {
+                    $lookup: {
+                        from: "EmpMaster",
+                        localField: "EmpId",
+                        foreignField: "Empid",
+                        as: "empData",
+                    },
+                },
+                { $unwind: { path: "$empData", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "Department",
+                        localField: "empData.EmpDeptId",
+                        foreignField: "DepartmentId",
+                        as: "departmentData",
+                    },
+                },
+                { $unwind: { path: "$departmentData", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "ZoneMaster",
+                        localField: "VZoneID",
+                        foreignField: "ZoneID",
+                        as: "zoneData",
+                    },
+                },
+                { $unwind: { path: "$zoneData", preserveNullAndEmptyArrays: true } },
+                {
+                    $match: {
+                        devid: { $in: deviceIds },
+                    },
+                },
+                {
+                    $project: {
+                        ItemName: 1,
+                        KmPerLitre: 1,
+                        LitrePerHr: 1,
+                        VehicleNo: 1,
+                        DepartmentName: { $ifNull: ["$departmentData.DepartmentName", "N/A"] },
+                        EmpDeptId: "$empData.EmpDeptId",
+                        EmpName: "$empData.EmpName",
+                        EmpMobileNo: "$empData.EmpMobileNo",
+                        VZoneID: 1,
+                        ZoneName: { $ifNull: ["$zoneData.ZoneName", "N/A"] },
+                        devid: 1,
+                        VehicleTypeId: 1,
+                        EmpId: 1,
+                        ItemMasterId: 1,
+                        PurchaseYear: 1,
+                        ModelNo: 1,
+                        SerialNo: 1,
+                        ChesisNo: 1,
+                        HSNCode: 1,
+                        VehicleWeight: 1,
+                        Mileage: 1,
+                    },
+                },
+            ])
+           
+          // console.log("vehicles", vehicles)
+        // Step 3: Join VehicleType with Vtypeinfo
+        // const vehicleType = db.collection("VehicleTypeMaster");
+        const vehicleTypes = await VehicleTypeMaster
+            .aggregate([
+                {
+                    $lookup: {
+                        from: "VehicleTypeChild",
+                        localField: "VehicleTypeId",
+                        foreignField: "VehicleTypeId",
+                        as: "typeInfo",
+                    },
+                },
+                { $unwind: { path: "$typeInfo", preserveNullAndEmptyArrays: true } },
+            ])
+          
+            // console.log("vehicleTypes",vehicleTypes)
+
+        // Step 4: Combine data into the final NT list
+        const ntList = [];
+        let sn = 1;
+
+        for (const group of groupedData) {
+            const record = group.latestRecord;
+            // console.log(record)
+            
+            const nt = {
+                Srno: sn++,
+                devid: record.devid,
+                acc: record.acc,
+                speed: record.speed,
+                TrackTime: record.TrackTime,
+                SecondsRun: record.SecondsRun,
+                SecondsIdle: record.SecondsIdle,
+                distance: record.distance,
+                Lattitude: record.Lattitude,
+                Longitude: record.Longitude,
+                nearme: record.nearme,
+                flag: record.acc && record.speed > 0 ? "Running" : record.acc ? "Idle" : "Stopped",
+                Ignition: record.acc ? "On" : "Off",
+                IdleTime: `${Math.floor(record.SecondsIdle / 3600)} Hr ${
+                    Math.floor((record.SecondsIdle % 3600) / 60)
+                } Min ${record.SecondsIdle % 60} Sec`,
+            };
+            // console.log("nt" ,nt);
+
+            const vehicle = vehicles.find((v) => v.devid === nt.devid);
+            
+
+          //  console.log("vehicle", vehicles);
+
+            if (vehicle) {
+                nt.VehicleNo = vehicle.VehicleNo;
+                nt.ZoneName = vehicle.ZoneName;
+                nt.DepartmentName = vehicle.DepartmentName;
+                nt.EmpMobileNo = vehicle.EmpMobileNo;
+                nt.EmpName = vehicle.EmpName;
+                nt.VehicleTypeId = vehicle.VehicleTypeId;
+                nt.KmPerLitre = vehicle.KmPerLitre;
+                nt.LitrePerHr = vehicle.LitrePerHr;
+
+                const vehicleTypeData = vehicleTypes.find((vt) => vt.VehicleTypeId === vehicle.VehicleTypeId);
+                if (vehicleTypeData) {
+                    nt.VehicleTypename = vehicleTypeData.VehicleTypename;
+
+                    // Fuel calculation
+                    if (vehicle.KmPerLitre && vehicle.KmPerLitre > 0) {
+                        nt.Fuel = nt.distance / vehicle.KmPerLitre;
+                    }
+                    if (vehicle.LitrePerHr && vehicle.LitrePerHr > 0) {
+                        nt.Fuel = ((nt.SecondsIdle + nt.SecondsRun) / 3600) * vehicle.LitrePerHr;
+                    }
+                }
+            }
+
+            ntList.push(nt);
+        }
+        // console.log("ntList", ntList)
+        // Filter out records without VehicleNo
+        
+        const data = ntList.filter((nt) => nt.VehicleNo);
+        console.log("data is", data);
+        return res.status(200).json(new ApiSuccessResponse(200, "done", data));
+        // ret.isSuccess = true;
+}
+
+
+
 
 //-------------ProbWireTamp----------->
 
@@ -614,52 +1010,11 @@ async function probWireTamp(req, res) {
   }
 }
 
-//--------------GetVehicleNotMoved------>
-async function getVehicleNotMoved(req, res) {
-  try {
-    const { dateFrom, dateTo } = req.body;
-    if ([dateFrom, dateTo].some((date) => date?.trim() === undefined || "")) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json(
-          new ApiErrorResponse(
-            StatusCodes.BAD_REQUEST,
-            "Please Provide Valid Dates"
-          )
-        );
-    }
-    const query = getVehicleNotMovedQuery;
-    const pool = await connectDB();
-    const result = await pool
-      .request()
-      .input("dateFrom", sql.Date, dateFrom)
-      .input("dateTo", sql.Date, dateTo)
-      .query(query);
-
-    await pool.close();
-
-    if (!result) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
-    }
-    return res
-      .status(StatusCodes.OK)
-      .json(
-        new ApiSuccessResponse(
-          StatusCodes.OK,
-          "Successfully Fetched the data",
-          encryptData(result)
-        )
-      );
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 
 
-export { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData };
+
+export { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData, GetNTDashboard };
 
 
 
