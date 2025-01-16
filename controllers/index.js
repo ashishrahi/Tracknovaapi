@@ -1,4 +1,4 @@
-import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard } from "./NTRead.controller.js";
+import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
 
 
@@ -12,7 +12,10 @@ export const NTReadController = {
     NTCurrent: NTCurrent,
     VehCurrStat: VehCurrStat,
     GetDashData: GetDashData,
-    GetNTDashboard: GetNTDashboard
+    GetNTDashboard: GetNTDashboard,
+    GetTopFuelCons: GetTopFuelCons,
+    GetTopFuelConsNT: GetTopFuelConsNT,
+    GetTopFuelConsNTOnOff: GetTopFuelConsNTOnOff
 
 
 }

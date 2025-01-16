@@ -1,8 +1,8 @@
 class ApiSuccessResponse{
-    constructor(statusCode, message, data){
+    constructor(statusCode,  data){
         this.isSuccess = true,
         this.statusCode = statusCode,
-        this.message = message,
+        this.message = "Data Successfully fetched",
         this.data = data
     }
 }

@@ -10,6 +10,9 @@ router.get("/VehCurrStat", NTReadController.VehCurrStat);
 router.post("/GetDashData", NTReadController.GetDashData);
 router.post("/GetVehicleNotMoved", NTReadController.getVehicleNotMoved);
 router.get("/GetNTDashboard", NTReadController.GetNTDashboard);
+router.get("/GetTopFuelCons", NTReadController.GetTopFuelCons);
+router.get("/GetTopFuelConsNT", NTReadController.GetTopFuelConsNT);
+router.get("/GetTopFuelConsNTOnOff", NTReadController.GetTopFuelConsNTOnOff);
 router.get("/ProbWireTamp", NTReadController.probWireTamp);
 
 export default router;

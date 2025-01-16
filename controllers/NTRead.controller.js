@@ -10,96 +10,100 @@ import {
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
 import encryptData from "../utils/crypto/crypto.js";
-import { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster } from "../modals/index.js";
+import {
+  NTCurrentDay,
+  NT,
+  ItemMaster,
+  VehicleTypeMaster,
+} from "../modals/index.js";
+import { GetNTDashboardPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
 
 //----------- Sample ---------------->
 async function sample(req, res) {
   try {
     const { devid } = req.query;
-    if(!devid){
-      return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Devid is must needed."))
+    if (!devid) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json(
+          new ApiErrorResponse(StatusCodes.NOT_FOUND, "Devid is must needed.")
+        );
     }
-    
+
     const sixHoursAgo = new Date();
     // 6 hours back time
     sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
-    const fourHoursBackTime = sixHoursAgo.toISOString().slice(0, -1).toString() + "+00:00";
+    const fourHoursBackTime =
+      sixHoursAgo.toISOString().slice(0, -1).toString() + "+00:00";
     // console.log("sixHoursAgo",  sixHoursAgo.toString());
-    console.log("tryeof: ", typeof fourHoursBackTime)
-    console.log("fourHoursBackTime", fourHoursBackTime)
-    const query = { 
-      ...(devid && {devid : devid}),
-      
-      TrackTime: { 
-        $gt:  new Date(fourHoursBackTime)
+    console.log("tryeof: ", typeof fourHoursBackTime);
+    console.log("fourHoursBackTime", fourHoursBackTime);
+    const query = {
+      ...(devid && { devid: devid }),
+
+      TrackTime: {
+        $gt: new Date(fourHoursBackTime),
         // $gt:  new Date("2024-11-12T00:05:00.343+00:00")
-      }
+      },
     };
 
     const data = await NTCurrentDay.find(query).limit(300);
 
-    if(data.length === 0) {
-      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true,
-        StatusCodes.OK,
-        "No data found", data));
+    if (data.length === 0) {
+      return res
+        .status(StatusCodes.OK)
+        .json(
+          new ApiSuccessResponse(true, StatusCodes.OK, "No data found", data)
+        );
     }
 
     return res
       .status(StatusCodes.OK)
       .json(
         new ApiSuccessResponse(
-          
           StatusCodes.OK,
-          "Data Successfully fetched",
           data
         )
       );
   } catch (error) {
-    
-
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
-        new ApiErrorResponse(
-          StatusCodes.INTERNAL_SERVER_ERROR,
-          error.message
-        )
+        new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
       );
   }
 }
 
 //-------------SmpCurr----------->
-async function SmpCurr(req, res){
+async function SmpCurr(req, res) {
   const { trackdate } = req.query;
 
   try {
     // Converting `currentDay` to a JavaScript Date object
     const currentDay = new Date(trackdate);
-    currentDay.setHours(0,0,0,0)
+    currentDay.setHours(0, 0, 0, 0);
     // Check if the provided day is today
     const today = new Date();
-    today.setHours(0,0,0,0)
-    ; // doing it so that only time portion set to 0000, only date is needed
-    
+    today.setHours(0, 0, 0, 0); // doing it so that only time portion set to 0000, only date is needed
+
     if (currentDay.getTime() === today.getTime()) {
-      console.log("I am inside if block")
      
       const result = await NTCurrentDay.aggregate([
         {
-          $sort: { TrackTime: -1 } 
+          $sort: { TrackTime: -1 },
         },
         {
           $group: {
-            _id: "$devid", 
-            latestRecord: { $first: "$$ROOT" } // $$ROOT does point to whole docs
-          }
+            _id: "$devid",
+            latestRecord: { $first: "$$ROOT" }, // $$ROOT does point to whole docs
+          },
         },
         {
-          $replaceRoot: { newRoot: "$latestRecord" } // Replace the root with the latest record
+          $replaceRoot: { newRoot: "$latestRecord" }, // Replace the root with the latest record
         },
       ]);
 
-      const mappedResult = result.map(doc => ({
+      const mappedResult = result.map((doc) => ({
         devid: doc.devid,
         TrackTime: doc.TrackTime,
         SecondsIdle: doc.SecondsIdle || 0,
@@ -107,69 +111,61 @@ async function SmpCurr(req, res){
         distance: doc.distance || 0,
         Lattitude: doc.Lattitude || null,
         Longitude: doc.Longitude || null,
-        nearme: doc.nearme || null
+        nearme: doc.nearme || null,
       }));
 
-
-      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Data Successfully fetched", mappedResult ))
-      
+      return res
+        .status(StatusCodes.OK)
+        .json(
+          new ApiSuccessResponse(
+            StatusCodes.OK,
+           
+            mappedResult
+          )
+        );
     } else {
       // If `currDay` is not today, query NT collection
-      console.log("I am from else block")
+     
       const result = await NT.aggregate([
         {
           $match: {
             TrackTime: {
-              $gte: new Date(
-                new Date(currentDay).setHours(
-                  0,
-                  0,
-                  0,
-                  0
-                )
-              ),
+              $gte: new Date(new Date(currentDay).setHours(0, 0, 0, 0)),
               // Start of `currDay`
-              $lt: new Date(
-                new Date(currentDay).setHours(
-                  23,
-                  59,
-                  59,
-                  999
-                )
-              ) // End of `currDay`
-            }
-          }
+              $lt: new Date(new Date(currentDay).setHours(23, 59, 59, 999)), // End of `currDay`
+            },
+          },
         },
         {
           $sort: {
-            TrackTime: -1
-          } // Sort by `TrackTime` descending
+            TrackTime: -1,
+          }, // Sort by `TrackTime` descending
         },
         {
           $group: {
             _id: "$devid",
             // Group by `devid`
             latestRecord: {
-              $first: "$$ROOT"
-            } // Pick the latest record per group
-          }
+              $first: "$$ROOT",
+            }, // Pick the latest record per group
+          },
         },
         {
           $replaceRoot: {
-            newRoot: "$latestRecord"
-          } // Replace the root with the latest record,
+            newRoot: "$latestRecord",
+          }, // Replace the root with the latest record,
         },
         {
           $addFields: {
-            Longitude: {$toDouble: "$Longitude"},
-            Lattitude: {$toDouble: "$Lattitude"},
-            distance: {$toDouble: "$distance"},
-            speedDecimal: {$toDouble: "$speedDecimal"}
-          }
-        }
+            Longitude: { $toDouble: "$Longitude" },
+            Lattitude: { $toDouble: "$Lattitude" },
+            distance: { $toDouble: "$distance" },
+            speedDecimal: { $toDouble: "$speedDecimal" },
+          },
+        },
       ]);
       // Map the result to the desired structure
-      const mappedResult = result.map(doc => ({
+      const mappedResult = result.map((doc) => ({
         devid: doc.devid,
         TrackTime: doc.TrackTime,
         SecondsIdle: doc.SecondsIdle || 0,
@@ -177,11 +173,19 @@ async function SmpCurr(req, res){
         distance: doc.distance || 0,
         Lattitude: doc.Lattitude || null,
         Longitude: doc.Longitude || null,
-        nearme: doc.nearme || null
+        nearme: doc.nearme || null,
       }));
 
       // ret.Data = mappedResult;
-      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Data Successfully fetched", mappedResult ))
+      return res
+        .status(StatusCodes.OK)
+        .json(
+          new ApiSuccessResponse(
+            StatusCodes.OK,
+           
+            mappedResult
+          )
+        );
     }
   } catch (error) {
     // ret.IsSuccess = false;
@@ -189,69 +193,64 @@ async function SmpCurr(req, res){
   }
 
   // return ret;
-
-
-
 }
 
 //-------------Geofence----------->
-async function Geofence (req, res){
-
-}
+async function Geofence(req, res) {}
 
 //-------------NTCurrent----------->
-async function NTCurrent(req, res){
+async function NTCurrent(req, res) {
   // Problem Where is devid from swagger
-  const devids = null
+  const devids = null;
   const pipeline = [
     {
       $match: {
-          devid: { $in: devids?.length ? devids : [] }
-      }
-  },
-  {
-    $group: {
+        devid: { $in: devids?.length ? devids : [] },
+      },
+    },
+    {
+      $group: {
         _id: "$devid",
-        latestRecord: { $first: { $sort: { TrackTime: -1 } } }  // Most recent record
-    }
-  },
+        latestRecord: { $first: { $sort: { TrackTime: -1 } } }, // Most recent record
+      },
+    },
     {
       $lookup: {
-          from: "ItemMaster",
-          localField: "latestRecord.devid",   // Match based on `devid`
-          foreignField: "Devid",
-          as: "vehicleData"
-      }
-  },
-  {
-    $unwind: "$vehicleData" // Flatten the array from the lookup
-  },
-  {
-    $lookup: {
+        from: "ItemMaster",
+        localField: "latestRecord.devid", // Match based on `devid`
+        foreignField: "Devid",
+        as: "vehicleData",
+      },
+    },
+    {
+      $unwind: "$vehicleData", // Flatten the array from the lookup
+    },
+    {
+      $lookup: {
         from: "EmpMaster",
         localField: "vehicleData.EmpId",
         foreignField: "Empid",
-        as: "empData"
-    }
-  },
+        as: "empData",
+      },
+    },
 
-  {
-    $unwind: "$empData" // Flatten the array from the lookup
-  },
-  
-  {
-    $lookup: {
+    {
+      $unwind: "$empData", // Flatten the array from the lookup
+    },
+
+    {
+      $lookup: {
         from: "Departmentmasters",
         localField: "empData.EmpDeptId",
         foreignField: "DepartmentId",
-        as: "departmentData"
-    }
-  },
-  {
-    $unwind: "$departmentData" // Flatten the array from the lookup
-  },
-  {
-    $project: {
+        as: "departmentData",
+      },
+    },
+    {
+      $unwind: "$departmentData", // Flatten the array from the lookup
+    },
+    {
+      $project: {
         _id: 0,
         devid: "$latestRecord.devid",
         tracktime: "$latestRecord.TrackTime",
@@ -261,138 +260,196 @@ async function NTCurrent(req, res){
         Longitude: "$latestRecord.Longitude",
         nearme: "$latestRecord.nearme",
         distance: "$latestRecord.distance",
-        ignition: { $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"] },
+        ignition: {
+          $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"],
+        },
         flag: {
-            $switch: {
-                branches: [
-                    { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $gt: ["$latestRecord.speed", 0] }] }, then: "Running" },
-                    { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Idle" },
-                    { case: { $and: [{ $eq: ["$latestRecord.acc", false] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Stopped" }
-                ],
-                default: "Unknown"
-            }
+          $switch: {
+            branches: [
+              {
+                case: {
+                  $and: [
+                    { $eq: ["$latestRecord.acc", true] },
+                    { $gt: ["$latestRecord.speed", 0] },
+                  ],
+                },
+                then: "Running",
+              },
+              {
+                case: {
+                  $and: [
+                    { $eq: ["$latestRecord.acc", true] },
+                    { $eq: ["$latestRecord.speed", 0] },
+                  ],
+                },
+                then: "Idle",
+              },
+              {
+                case: {
+                  $and: [
+                    { $eq: ["$latestRecord.acc", false] },
+                    { $eq: ["$latestRecord.speed", 0] },
+                  ],
+                },
+                then: "Stopped",
+              },
+            ],
+            default: "Unknown",
+          },
         },
         vehicleData: {
-            VehicleNo: "$vehicleData.VehicleNo",
-            DepartmentName: "$departmentData.DepartmentName",
-            EmpName: "$empData.EmpName",
-            KmPerLitre: "$vehicleData.KmPerLitre",
-            LitrePerHr: "$vehicleData.LitrePerHr",
-            VehicleTypeId: "$vehicleData.VehicleTypeId",
-            VehicleTypename: "$vehicleData.VehicleTypename"
-        }
-    }
-  }
+          VehicleNo: "$vehicleData.VehicleNo",
+          DepartmentName: "$departmentData.DepartmentName",
+          EmpName: "$empData.EmpName",
+          KmPerLitre: "$vehicleData.KmPerLitre",
+          LitrePerHr: "$vehicleData.LitrePerHr",
+          VehicleTypeId: "$vehicleData.VehicleTypeId",
+          VehicleTypename: "$vehicleData.VehicleTypename",
+        },
+      },
+    },
   ];
 
   // Stage 1: Match documents with `devid` filter (if provided)
   pipeline.push({
-      $match: {
-          devid: { $in: devids.length ? devids : [] }
-      }
+    $match: {
+      devid: { $in: devids.length ? devids : [] },
+    },
   });
 
   // Stage 2: Group by `devid` and get the most recent document based on `TrackTime`
   pipeline.push({
-      $group: {
-          _id: "$devid",
-          latestRecord: { $first: { $sort: { TrackTime: -1 } } }  // Most recent record
-      }
+    $group: {
+      _id: "$devid",
+      latestRecord: { $first: { $sort: { TrackTime: -1 } } }, // Most recent record
+    },
   });
 
   // Stage 3: Perform a lookup to join with the `ItemMaster`, `EmpMaster`, and `Departmentmasters` collections
   pipeline.push({
-      $lookup: {
-          from: "ItemMaster",
-          localField: "latestRecord.devid",   // Match based on `devid`
-          foreignField: "Devid",
-          as: "vehicleData"
-      }
+    $lookup: {
+      from: "ItemMaster",
+      localField: "latestRecord.devid", // Match based on `devid`
+      foreignField: "Devid",
+      as: "vehicleData",
+    },
   });
 
   pipeline.push({
-      $unwind: "$vehicleData" // Flatten the array from the lookup
+    $unwind: "$vehicleData", // Flatten the array from the lookup
   });
 
   pipeline.push({
-      $lookup: {
-          from: "EmpMaster",
-          localField: "vehicleData.EmpId",
-          foreignField: "Empid",
-          as: "empData"
-      }
+    $lookup: {
+      from: "EmpMaster",
+      localField: "vehicleData.EmpId",
+      foreignField: "Empid",
+      as: "empData",
+    },
   });
 
   pipeline.push({
-      $unwind: "$empData" // Flatten the array from the lookup
+    $unwind: "$empData", // Flatten the array from the lookup
   });
 
   pipeline.push({
-      $lookup: {
-          from: "Departmentmasters",
-          localField: "empData.EmpDeptId",
-          foreignField: "DepartmentId",
-          as: "departmentData"
-      }
+    $lookup: {
+      from: "Departmentmasters",
+      localField: "empData.EmpDeptId",
+      foreignField: "DepartmentId",
+      as: "departmentData",
+    },
   });
 
   pipeline.push({
-      $unwind: "$departmentData" // Flatten the array from the lookup
+    $unwind: "$departmentData", // Flatten the array from the lookup
   });
 
   // Stage 4: Process the fields to form the final output
   pipeline.push({
-      $project: {
-          _id: 0,
-          devid: "$latestRecord.devid",
-          tracktime: "$latestRecord.TrackTime",
-          trackdate: "$latestRecord.TrackDate",
-          speed: "$latestRecord.speed",
-          Lattitude: "$latestRecord.Lattitude",
-          Longitude: "$latestRecord.Longitude",
-          nearme: "$latestRecord.nearme",
-          distance: "$latestRecord.distance",
-          ignition: { $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"] },
-          flag: {
-              $switch: {
-                  branches: [
-                      { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $gt: ["$latestRecord.speed", 0] }] }, then: "Running" },
-                      { case: { $and: [{ $eq: ["$latestRecord.acc", true] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Idle" },
-                      { case: { $and: [{ $eq: ["$latestRecord.acc", false] }, { $eq: ["$latestRecord.speed", 0] }] }, then: "Stopped" }
-                  ],
-                  default: "Unknown"
-              }
-          },
-          vehicleData: {
-              VehicleNo: "$vehicleData.VehicleNo",
-              DepartmentName: "$departmentData.DepartmentName",
-              EmpName: "$empData.EmpName",
-              KmPerLitre: "$vehicleData.KmPerLitre",
-              LitrePerHr: "$vehicleData.LitrePerHr",
-              VehicleTypeId: "$vehicleData.VehicleTypeId",
-              VehicleTypename: "$vehicleData.VehicleTypename"
-          }
-      }
+    $project: {
+      _id: 0,
+      devid: "$latestRecord.devid",
+      tracktime: "$latestRecord.TrackTime",
+      trackdate: "$latestRecord.TrackDate",
+      speed: "$latestRecord.speed",
+      Lattitude: "$latestRecord.Lattitude",
+      Longitude: "$latestRecord.Longitude",
+      nearme: "$latestRecord.nearme",
+      distance: "$latestRecord.distance",
+      ignition: { $cond: [{ $eq: ["$latestRecord.acc", true] }, "On", "Off"] },
+      flag: {
+        $switch: {
+          branches: [
+            {
+              case: {
+                $and: [
+                  { $eq: ["$latestRecord.acc", true] },
+                  { $gt: ["$latestRecord.speed", 0] },
+                ],
+              },
+              then: "Running",
+            },
+            {
+              case: {
+                $and: [
+                  { $eq: ["$latestRecord.acc", true] },
+                  { $eq: ["$latestRecord.speed", 0] },
+                ],
+              },
+              then: "Idle",
+            },
+            {
+              case: {
+                $and: [
+                  { $eq: ["$latestRecord.acc", false] },
+                  { $eq: ["$latestRecord.speed", 0] },
+                ],
+              },
+              then: "Stopped",
+            },
+          ],
+          default: "Unknown",
+        },
+      },
+      vehicleData: {
+        VehicleNo: "$vehicleData.VehicleNo",
+        DepartmentName: "$departmentData.DepartmentName",
+        EmpName: "$empData.EmpName",
+        KmPerLitre: "$vehicleData.KmPerLitre",
+        LitrePerHr: "$vehicleData.LitrePerHr",
+        VehicleTypeId: "$vehicleData.VehicleTypeId",
+        VehicleTypename: "$vehicleData.VehicleTypename",
+      },
+    },
   });
 
   // Stage 5: Execute the aggregation pipeline
   try {
-      const result = await db.collection("NTCurrentDay").aggregate(pipeline).toArray();
+    const result = await db
+      .collection("NTCurrentDay")
+      .aggregate(pipeline)
+      .toArray();
 
-      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Data Successfully fetched", result))
-      
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        new ApiSuccessResponse(
+          StatusCodes.OK,
+         
+          result
+        )
+      );
   } catch (ex) {
-      return {
-          IsSuccess: false,
-          Mesg: ex.message
-      };
+    return {
+      IsSuccess: false,
+      Mesg: ex.message,
+    };
   }
-
 }
 
 //-------------VehCurrStat----------->
-async function VehCurrStat(req, res){
-
+async function VehCurrStat(req, res) {
   // const vehAll  = NTCurrentDay.aggregate([
   //   {
   //     $sort: { TrackTime: -1 }
@@ -410,7 +467,7 @@ async function VehCurrStat(req, res){
   //       engff: [{ $match: { "veh.acc": false } }]
   //     }
   //   },
-  // ]) 
+  // ])
 
   // const distCov = NTCurrentDay.aggregate([
   //   {
@@ -473,7 +530,7 @@ async function VehCurrStat(req, res){
   //     }
   //   }
   // ]);
-  
+
   const vehAll = await NTCurrentDay.aggregate([
     {
       $group: {
@@ -535,7 +592,7 @@ async function VehCurrStat(req, res){
     return acc;
   }, {});
 
-  console.log("deptStats :",deptStats);
+  console.log("deptStats :", deptStats);
 
   // Prepare response data
   const stat = {
@@ -556,25 +613,29 @@ async function VehCurrStat(req, res){
     TotDistance: Math.round(dist),
   };
 
-  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Fetched the data", stat));
-
-  
+  return res
+    .status(StatusCodes.OK)
+    .json(
+      new ApiSuccessResponse(
+        StatusCodes.OK,
+        "Successfully Fetched the data",
+        stat
+      )
+    );
 }
 
+async function GetDashData(req, res) {}
 
-async function GetDashData(req, res){
-
-}
-
-  
 async function getVehicleNotMoved(req, res) {
   try {
-    
     const pipeline = [
       // Step 1: Filter NT collection for the required date range and create flags for NTMV and NTREC
       {
         $match: {
-          TrackTime: { $gte: new Date("2024-11-12"), $lte: new Date("2024-11-12") },
+          TrackTime: {
+            $gte: new Date("2024-11-12"),
+            $lte: new Date("2024-11-12"),
+          },
         },
       },
       {
@@ -582,7 +643,7 @@ async function getVehicleNotMoved(req, res) {
           isNTMV: { $eq: ["$acc", 1] }, // Flag for NTMV
         },
       },
-    
+
       // Step 2: Group NT data by devid to get distinct devices for NTMV and NTREC
       {
         $group: {
@@ -590,7 +651,7 @@ async function getVehicleNotMoved(req, res) {
           hasNTMV: { $max: { $cond: ["$isNTMV", 1, 0] } }, // Indicates if the device is in NTMV
         },
       },
-    
+
       // Step 3: Lookup additional details from other collections
       {
         $lookup: {
@@ -600,8 +661,10 @@ async function getVehicleNotMoved(req, res) {
           as: "vehicleDetails",
         },
       },
-      { $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true } },
-    
+      {
+        $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true },
+      },
+
       // Step 4: Join with Employee, Department, VehicleType, and Zone collections
       {
         $lookup: {
@@ -611,7 +674,9 @@ async function getVehicleNotMoved(req, res) {
           as: "employeeDetails",
         },
       },
-      { $unwind: { path: "$employeeDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: { path: "$employeeDetails", preserveNullAndEmptyArrays: true },
+      },
       {
         $lookup: {
           from: "Department",
@@ -620,7 +685,12 @@ async function getVehicleNotMoved(req, res) {
           as: "departmentDetails",
         },
       },
-      { $unwind: { path: "$departmentDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$departmentDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $lookup: {
           from: "VehicleTypeMaster",
@@ -629,7 +699,12 @@ async function getVehicleNotMoved(req, res) {
           as: "vehicleTypeDetails",
         },
       },
-      { $unwind: { path: "$vehicleTypeDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$vehicleTypeDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $lookup: {
           from: "ZoneMaster",
@@ -639,7 +714,7 @@ async function getVehicleNotMoved(req, res) {
         },
       },
       { $unwind: { path: "$zoneDetails", preserveNullAndEmptyArrays: true } },
-    
+
       // Step 5: Project final output
       {
         $project: {
@@ -653,14 +728,14 @@ async function getVehicleNotMoved(req, res) {
           NTRecord: "$hasNTMV", // 1 if NTMV, 0 otherwise
         },
       },
-    
+
       // Step 6: Filter out devices not in NTMV
       {
         $match: {
           NTRecord: 0, // Exclude records present in NTMV
         },
       },
-    
+
       // Step 7: Sort and add row numbers
       { $sort: { Devid: 1 } },
       {
@@ -672,14 +747,12 @@ async function getVehicleNotMoved(req, res) {
         },
       },
     ];
-    
-  
+
     // Execute the pipeline
-    const results = await NT.aggregate(pipeline)
-    return res.json({data: results})
-  
+    const results = await NT.aggregate(pipeline);
+    return res.json({ data: results });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
   // const ntRecPipeline = [
   //   {
@@ -740,10 +813,8 @@ async function getVehicleNotMoved(req, res) {
   // ];
 
   // Aggregation for the final stage
-  
 
   // Execute each pipeline
- 
 
   // try {
   //   const { dateFrom, dateTo } = req.body;
@@ -786,184 +857,150 @@ async function getVehicleNotMoved(req, res) {
   // }
 }
 
-
-//--------------GetNTDashboard------> 
-async function GetNTDashboard(req, res){
-  const ret = { data: null, isSuccess: false, message: "" };
-        // Step 1: Group NTCurrentDay by `devid` and get the latest record
-        // const ntCurrentDay = db.collection("NTCurrentDay");
-        const groupedData = await NTCurrentDay
-            .aggregate([
-                {
-                    $sort: { TrackTime: -1 }, // Sort by TrackTime descending
-                },
-                {
-                    $group: {
-                        _id: "$devid",
-                        latestRecord: { $first: "$$ROOT" }, // Take the first document after sorting
-                    },
-                },
-            ])
-          
-            // console.log(groupedData.latestRecord);
-
-        const deviceIds = groupedData.map((d) => d._id);
-        // console.log("devicesids", deviceIds)
-
-        // Step 2: Perform equivalent of multiple joins (ItemMaster, EmpMaster, DepartmentMasters, ZoneMasters)
-        // const itemMaster = db.collection("ItemMaster");
-        const vehicles = await ItemMaster
-            .aggregate([
-                {
-                    $lookup: {
-                        from: "EmpMaster",
-                        localField: "EmpId",
-                        foreignField: "Empid",
-                        as: "empData",
-                    },
-                },
-                { $unwind: { path: "$empData", preserveNullAndEmptyArrays: true } },
-                {
-                    $lookup: {
-                        from: "Department",
-                        localField: "empData.EmpDeptId",
-                        foreignField: "DepartmentId",
-                        as: "departmentData",
-                    },
-                },
-                { $unwind: { path: "$departmentData", preserveNullAndEmptyArrays: true } },
-                {
-                    $lookup: {
-                        from: "ZoneMaster",
-                        localField: "VZoneID",
-                        foreignField: "ZoneID",
-                        as: "zoneData",
-                    },
-                },
-                { $unwind: { path: "$zoneData", preserveNullAndEmptyArrays: true } },
-                {
-                    $match: {
-                        devid: { $in: deviceIds },
-                    },
-                },
-                {
-                    $project: {
-                        ItemName: 1,
-                        KmPerLitre: 1,
-                        LitrePerHr: 1,
-                        VehicleNo: 1,
-                        DepartmentName: { $ifNull: ["$departmentData.DepartmentName", "N/A"] },
-                        EmpDeptId: "$empData.EmpDeptId",
-                        EmpName: "$empData.EmpName",
-                        EmpMobileNo: "$empData.EmpMobileNo",
-                        VZoneID: 1,
-                        ZoneName: { $ifNull: ["$zoneData.ZoneName", "N/A"] },
-                        devid: 1,
-                        VehicleTypeId: 1,
-                        EmpId: 1,
-                        ItemMasterId: 1,
-                        PurchaseYear: 1,
-                        ModelNo: 1,
-                        SerialNo: 1,
-                        ChesisNo: 1,
-                        HSNCode: 1,
-                        VehicleWeight: 1,
-                        Mileage: 1,
-                    },
-                },
-            ])
-           
-          // console.log("vehicles", vehicles)
-        // Step 3: Join VehicleType with Vtypeinfo
-        // const vehicleType = db.collection("VehicleTypeMaster");
-        const vehicleTypes = await VehicleTypeMaster
-            .aggregate([
-                {
-                    $lookup: {
-                        from: "VehicleTypeChild",
-                        localField: "VehicleTypeId",
-                        foreignField: "VehicleTypeId",
-                        as: "typeInfo",
-                    },
-                },
-                { $unwind: { path: "$typeInfo", preserveNullAndEmptyArrays: true } },
-            ])
-          
-            // console.log("vehicleTypes",vehicleTypes)
-
-        // Step 4: Combine data into the final NT list
-        const ntList = [];
-        let sn = 1;
-
-        for (const group of groupedData) {
-            const record = group.latestRecord;
-            // console.log(record)
-            
-            const nt = {
-                Srno: sn++,
-                devid: record.devid,
-                acc: record.acc,
-                speed: record.speed,
-                TrackTime: record.TrackTime,
-                SecondsRun: record.SecondsRun,
-                SecondsIdle: record.SecondsIdle,
-                distance: record.distance,
-                Lattitude: record.Lattitude,
-                Longitude: record.Longitude,
-                nearme: record.nearme,
-                flag: record.acc && record.speed > 0 ? "Running" : record.acc ? "Idle" : "Stopped",
-                Ignition: record.acc ? "On" : "Off",
-                IdleTime: `${Math.floor(record.SecondsIdle / 3600)} Hr ${
-                    Math.floor((record.SecondsIdle % 3600) / 60)
-                } Min ${record.SecondsIdle % 60} Sec`,
-            };
-            // console.log("nt" ,nt);
-
-            const vehicle = vehicles.find((v) => v.devid === nt.devid);
-            
-
-          //  console.log("vehicle", vehicles);
-
-            if (vehicle) {
-                nt.VehicleNo = vehicle.VehicleNo;
-                nt.ZoneName = vehicle.ZoneName;
-                nt.DepartmentName = vehicle.DepartmentName;
-                nt.EmpMobileNo = vehicle.EmpMobileNo;
-                nt.EmpName = vehicle.EmpName;
-                nt.VehicleTypeId = vehicle.VehicleTypeId;
-                nt.KmPerLitre = vehicle.KmPerLitre;
-                nt.LitrePerHr = vehicle.LitrePerHr;
-
-                const vehicleTypeData = vehicleTypes.find((vt) => vt.VehicleTypeId === vehicle.VehicleTypeId);
-                if (vehicleTypeData) {
-                    nt.VehicleTypename = vehicleTypeData.VehicleTypename;
-
-                    // Fuel calculation
-                    if (vehicle.KmPerLitre && vehicle.KmPerLitre > 0) {
-                        nt.Fuel = nt.distance / vehicle.KmPerLitre;
-                    }
-                    if (vehicle.LitrePerHr && vehicle.LitrePerHr > 0) {
-                        nt.Fuel = ((nt.SecondsIdle + nt.SecondsRun) / 3600) * vehicle.LitrePerHr;
-                    }
-                }
-            }
-
-            ntList.push(nt);
-        }
-        // console.log("ntList", ntList)
-        // Filter out records without VehicleNo
-        
-        const data = ntList.filter((nt) => nt.VehicleNo);
-        console.log("data is", data);
-        return res.status(200).json(new ApiSuccessResponse(200, "done", data));
-        // ret.isSuccess = true;
+// This APi is ready
+//--------------GetNTDashboard------>
+async function GetNTDashboard(req, res) {
+  try {
+    // Filter out records without VehicleNo
+    const ntList = await GetNTDashboardPipeline()
+    const data = ntList.filter((nt) => nt.VehicleNo);
+    return res.status(200).json(new ApiSuccessResponse(200, data));
+  } catch (error) {
+    return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+  }
+  
 }
 
+//--------------GetTopFuelCons------>
+async function GetTopFuelCons(req, res) {
+  let { pos } = req.query;
+  if(!pos) pos = 1;
+  try {
+    const ntList = await GetNTDashboardPipeline()
+    const fuelData = ntList.filter((nt) => nt.VehicleNo).slice(0, pos);
+    const result = fuelData.map((fu, index) => ({
+      SrNo: index + 1,
+      ConsDate: fu.TrackTime ? fu.TrackTime.toISOString().split("T")[0] : null,
+      TrackTime: fu.TrackTime,
+      Devid: fu.devid,
+      Departmentname: fu.DepartmentName,
+      VehicleNo: fu.VehicleNo,
+      Ignition: fu.Ignition,
+      EmpName: fu.EmpName,
+      EmpMobileNo: fu.EmpMobileNo,
+      ZoneName: fu.ZoneName,
+      speed: fu.speed,
+      SecondsIdle: fu.SecondsIdle || 0,
+      SecondsRun: fu.SecondsRun || 0,
+      VehicleTypename: fu.VehicleTypename,
+      IdleTime: fu.IdleTime,
+      FuelConsumed: fu.Fuel,
+      KmPerlitre: fu.KmPerLitre,
+      LitrePerhr: fu.LitrePerHr,
+      Flag: fu.flag,
+      PurchaseYear: fu.PurchaseYear,
+      ModelNo: fu.ModelNo,
+      SerialNo: fu.SerialNo,
+      ChesisNo: fu.ChesisNo,
+      HSNCode: fu.HSNCode,
+      VehicleWeight: fu.VehicleWeight,
+      Mileage: fu.Mileage,
+      FuelTankCapacity: "", // Add default value
+    }));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, result))
+  } catch (error) {
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+  }
+}
+
+//--------------GetTopFuelConsNT------>
+async function GetTopFuelConsNT(req, res){
+  try {
+    const { zoneid } = req.query;
+    if(!zoneid){
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide zone id"))
+    }
+  
+    const ntList = await GetNTDashboardPipeline();
+    const fuelData = ntList.filter((nt)=> nt.ZoneName === `Zone ${zoneid}`);
+  
+     // Map the data to the required structure
+     const result = fuelData.map((fu, index) => ({
+      Srno: index + 1,
+      TrackTime: fu.TrackTime,
+      devid: fu.devid,
+      DepartmentName: fu.DepartmentName,
+      VehicleNo: fu.VehicleNo,
+      Ignition: fu.Ignition,
+      EmpName: fu.EmpName,
+      EmpMobileNo: fu.EmpMobileNo,
+      ZoneName: fu.ZoneName,
+      speed: fu.speed,
+      SecondsIdle: fu.SecondsIdle,
+      SecondsRun: fu.SecondsRun,
+      VehicleTypename: fu.VehicleTypename,
+      IdleTime: fu.IdleTime,
+      Fuel: fu.Fuel,
+      flag: fu.flag,
+    }));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, result));
+  } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
+  }
+}
+
+//--------------GetTopFuelConsNTOnOff------>
+async function GetTopFuelConsNTOnOff(req, res){
+  try {
+  const { onoff } = req.query;
+  if(!onoff){
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide ignition type in true or false"))
+  }
+   const ntList = await GetNTDashboardPipeline();
+   let fuelData;
+   if(onoff === "true"){
+     fuelData = ntList.filter((nt)=> nt.Ignition === "On");
+   } else {
+    fuelData = ntList.filter((nt)=> nt.Ignition === "Off")
+   }
+
+   const result = fuelData.map((fu, index) => ({
+    Srno: index + 1,
+    TrackTime: fu.TrackTime,
+    devid: fu.devid,
+    DepartmentName: fu.DepartmentName,
+    VehicleNo: fu.VehicleNo,
+    Ignition: fu.Ignition,
+    EmpName: fu.EmpName,
+    EmpMobileNo: fu.EmpMobileNo,
+    ZoneName: fu.ZoneName,
+    speed: fu.speed,
+    SecondsIdle: fu.SecondsIdle,
+    SecondsRun: fu.SecondsRun,
+    VehicleTypename: fu.VehicleTypename,
+    IdleTime: fu.IdleTime,
+    Fuel: fu.Fuel,
+    PurchaseYear: fu.PurchaseYear,
+    ModelNo: fu.ModelNo,
+    SerialNo: fu.SerialNo,
+    ChesisNo: fu.ChesisNo,
+    HSNCode: fu.HSNCode,
+    VehicleWeight: fu.VehicleWeight,
+    Mileage: fu.Mileage,
+    flag: fu.flag, 
+  }));
+   
+  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, result));
+
+ } catch (error) {
+  return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
+ }
 
 
+
+}
 
 //-------------ProbWireTamp----------->
-
 async function probWireTamp(req, res) {
   const { date } = req.query;
   console.log("date is", date);
@@ -1010,13 +1047,20 @@ async function probWireTamp(req, res) {
   }
 }
 
-
-
-
-
-export { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData, GetNTDashboard };
-
-
+export {
+  probWireTamp,
+  getVehicleNotMoved,
+  sample,
+  SmpCurr,
+  Geofence,
+  NTCurrent,
+  VehCurrStat,
+  GetDashData,
+  GetNTDashboard,
+  GetTopFuelCons,
+  GetTopFuelConsNT,
+  GetTopFuelConsNTOnOff
+};
 
 // For VehCurrStat
 
