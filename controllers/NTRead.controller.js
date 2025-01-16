@@ -15,6 +15,8 @@ import {
   NT,
   ItemMaster,
   VehicleTypeMaster,
+  ZoneMaster,
+  Department
 } from "../modals/index.js";
 import { GetNTDashboardPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
 
@@ -49,11 +51,11 @@ async function sample(req, res) {
 
     const data = await NTCurrentDay.find(query).limit(300);
 
-    if (data.length === 0) {
+    if (data.length <= 0) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ApiSuccessResponse(true, StatusCodes.OK, "No data found", data)
+          new ApiSuccessResponse( StatusCodes.OK, "No data found")
         );
     }
 
@@ -996,8 +998,6 @@ async function GetTopFuelConsNTOnOff(req, res){
   return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
  }
 
-
-
 }
 
 //-------------ProbWireTamp----------->
@@ -1015,13 +1015,143 @@ async function probWireTamp(req, res) {
       );
   }
   try {
-    const pool = await connectDB();
-    const result = await pool
-      .request()
-      .input("date", sql.Date, date)
-      .query(probWireTampQuery);
+    // const pool = await connectDB();
+    // const result = await pool
+    //   .request()
+    //   .input("date", sql.Date, date)
+    //   .query(probWireTampQuery);
 
-    await pool.close();
+    // await pool.close();
+    const result = await NT.aggregate([
+      {
+        $match: {
+          TrackTime: {
+            $gte: new Date(
+              new Date(date).setHours(
+                0,
+                0,
+                0,
+                0
+              )
+            ),
+            $lt: new Date(
+              new Date(date).setHours(
+                23,
+                59,
+                59,
+                999
+              )
+            )
+          },
+          acc: false,
+          speed: { $gt: 10 }
+        }
+      },
+      // Stage 2: Group by `devid` to find the latest `TrackTime`
+      {
+        $group: {
+          _id: "$devid",
+          LatestTrackTime: { $max: "$TrackTime" }
+        }
+      },
+      // Stage 3: Lookup `ItemMaster` to join data
+      {
+        $lookup: {
+          from: "ItemMaster",
+          localField: "_id",
+          foreignField: "devid",
+          as: "itemData"
+        }
+      },
+      // Stage 4: Unwind the joined `itemData` array
+      {
+        $unwind: {
+          path: "$itemData",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      // Stage 5: Lookup `EmpMaster` for employee details
+      {
+        $lookup: {
+          from: "EmpMaster",
+          localField: "itemData.EmpId",
+          foreignField: "Empid",
+          as: "empData"
+        }
+      },
+      // Stage 6: Unwind the joined `empData` array
+      {
+        $unwind: {
+          path: "$empData",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Stage 7: Lookup `Department` for department details
+      {
+        $lookup: {
+          from: "Department",
+          localField: "empData.EmpDeptId",
+          foreignField: "DepartmentId",
+          as: "departmentData"
+        }
+      },
+      // Stage 8: Unwind the joined `departmentData` array
+      {
+        $unwind: {
+          path: "$departmentData",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Stage 9: Add fields for projections and calculated values
+      {
+        $addFields: {
+          Devid: "$_id",
+          ItemMasterId: "$itemData.ItemMasterId",
+          VehicleNo: {
+            $ifNull: ["$itemData.VehicleNo", ""]
+          },
+          EmpDeptId: {
+            $ifNull: ["$empData.EmpDeptId", 0]
+          },
+          DepartmentName: {
+            $ifNull: [
+              "$departmentData.DepartmentName",
+              ""
+            ]
+          }
+        }
+      },
+      // Stage 10: Project the final structure
+      {
+        $project: {
+          _id: 0,
+          srno: { $literal: null }, // Placeholder for sorting later
+          date: "$LatestTrackTime",
+          ItemMasterId: 1,
+          VehicleNo: 1,
+          Devid: 1,
+          DeptId: "$EmpDeptId",
+          DepartmentName: 1
+        }
+      },
+      // Stage 11: Sort by `Devid`
+      {
+        $sort: {
+          Devid: 1
+        }
+      },
+      // Stage 12: Add a sequential `srno` field
+      {
+        $setWindowFields: {
+          sortBy: { Devid: 1 },
+          output: {
+            srno: {
+              $documentNumber: {}
+            }
+          }
+        }
+      }
+    ])
 
     if (!result) {
       return res
@@ -1033,8 +1163,8 @@ async function probWireTamp(req, res) {
       .json(
         new ApiSuccessResponse(
           StatusCodes.OK,
-          "Successfully Fetched the data",
-          encryptData(result)
+          result
+          // encryptData(result)
         )
       );
   } catch (error) {
@@ -1046,6 +1176,202 @@ async function probWireTamp(req, res) {
       );
   }
 }
+
+//-------------GetRunningStatus----------->
+async function GetRunningStatus(req, res){
+  try {
+    const { stat } = req.query;
+    if(!stat){
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid running status"))
+    }
+    const ntList = await GetNTDashboardPipeline();
+    const flatNtList = ntList.flat();
+
+    let filter = {};
+
+    switch (stat.toLowerCase()) {
+      case "running":
+        filter = flatNtList.filter((ac) => ac.acc === true && ac.speed > 0);
+        break;
+      case "idle":
+        filter = flatNtList.filter((ac) => ac.acc === true && ac.speed === 0);
+        break;
+      case "stop":
+        filter = flatNtList.filter((ac) => ac.acc === false && ac.speed === 0);
+        break;
+      default:
+        throw new Error("Invalid status provided");
+    }
+
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, filter));
+  } catch (error) {
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+  }
+}
+
+//-------------GetLongIdleVeh----------->
+async function GetLongIdleVeh(req, res){
+  let { nos } = req.query;
+  if(!nos) nos = 1 
+
+  const ntList = await GetNTDashboardPipeline();
+
+  // Flatten the array of arrays into a single array
+  // const flatNtList = ntList.flat();
+
+  // Sort by SecondsIdle in descending order and take the top 'nos' records
+  const fuelNos = ntList
+    .sort((a, b) => b.SecondsIdle - a.SecondsIdle)
+    .slice(0, nos);
+
+  // Map the data to match the expected structure
+  const formattedData = fuelNos.map((fu, index) => ({
+    SrNo: index + 1,
+    ConsDate: fu.TrackTime, // MongoDB stores dates as ISO strings
+    TrackTime: fu.TrackTime,
+    Devid: fu.devid,
+    Departmentname: fu.DepartmentName,
+    VehicleNo: fu.VehicleNo,
+    Ignition: fu.Ignition,
+    EmpName: fu.EmpName,
+    EmpMobileNo: fu.EmpMobileNo,
+    ZoneName: fu.ZoneName,
+    speed: fu.speed,
+    SecondsIdle: fu.SecondsIdle,
+    SecondsRun: fu.SecondsRun,
+    VehicleTypename: fu.VehicleTypename,
+    IdleTime: fu.IdleTime,
+    FuelConsumed: fu.Fuel,
+    KmPerlitre: fu.KmPerLitre,
+    LitrePerhr: fu.LitrePerHr,
+    Flag: fu.flag,
+    PurchaseYear: fu.PurchaseYear,
+    ModelNo: fu.ModelNo,
+    SerialNo: fu.SerialNo,
+    ChesisNo: fu.ChesisNo,
+    HSNCode: fu.HSNCode,
+    VehicleWeight: fu.VehicleWeight,
+    Mileage: fu.Mileage,
+    FuelTankCapacity: "", // Same as in C# code
+  }));
+
+  return res.json( {
+    Data: formattedData,
+    IsSuccess: true,
+  });
+}
+
+//-------------GetVehicleMovement----------->
+async function GetVehicleMovement(req, res){
+  try {
+    const {dateFrom, dateTo, deptId, zoneId, lisVehicleNos} = req.body;
+  
+    if (!deptId && !zoneId && (!lisVehicleNos || lisVehicleNos.length === 0)) {
+     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Provide at least one of DeptId, ZoneId, or lisVehicleNos. Data is too large."));
+    }
+
+    const dateDiff = Math.floor((new Date(dateTo) - new Date(dateFrom)) / (1000 * 60 * 60 * 24));
+    if (dateDiff > 30 || dateDiff < 0) {
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Date range should be less than a month."));
+    }
+
+    // **Step 1: Get List of Relevant Vehicles (ItemMaster + EmpMaster)**
+    const vehicles = await ItemMaster.aggregate([
+      {
+        $lookup: {
+          from: "EmpMaster",
+          localField: "EmpId",
+          foreignField: "Empid",
+          as: "empData",
+        },
+      },
+      { $unwind: { path: "$empData", preserveNullAndEmptyArrays: true } },
+      {
+        $match: {
+          ItemFlag: "V",
+          ...(deptId ? { "empData.EmpDeptId": request.deptId } : {}),
+          ...(zoneId ? { VZoneID: request.zoneId } : {}),
+        },
+      },
+      {
+        $project: {
+          devid: "$devid",
+          ItemMasterId: 1,
+          ZoneId: "$VZoneID",
+          DeptId: "$empData.EmpDeptId",
+          Vehno: "$VehicleNo",
+        },
+      },
+    ])
+
+    if (!vehicles.length) {
+      return { IsSuccess: true, Data: [] };
+    }
+    // console.log("vehicles", vehicles)
+
+     // **Step 2: Filter by Vehicle Numbers (if provided)**
+     let filteredVehicles = vehicles;
+     if (lisVehicleNos && lisVehicleNos.length > 0) {
+       const vehicleSet = new Set(lisVehicleNos.map((v) => v.toUpperCase()));
+       filteredVehicles = vehicles.filter((v) => vehicleSet.has(v.Vehno.toUpperCase()));
+     }
+    //  console.log("filteredVehicles", filteredVehicles)
+     const deviceIds = filteredVehicles.map((v) => v.devid);
+     console.log("deviceIds", deviceIds)
+
+     const ntData = await NT.aggregate([
+      {
+        $match: {
+          devid: { $in: deviceIds },
+          TrackTime: {
+            $gte: new Date(dateFrom),
+            $lte: new Date(dateTo),
+          },
+        },
+      },
+      { $sort: { VehicleNo: 1, TrackTime: 1 } },
+    ])
+
+    if (!ntData.length) {
+      return res.status(StatusCodes.NO_CONTENT).json(new ApiSuccessResponse(StatusCodes.NO_CONTENT, []));
+    }
+
+     // **Step 4: Fetch Departments & Zones in One Query**
+     const deptIds = [...new Set(filteredVehicles.map((v) => v.DeptId))].filter(Boolean);
+     const zoneIds = [...new Set(filteredVehicles.map((v) => v.ZoneId))].filter(Boolean);
+
+     console.log("deptIds", deptIds)
+     console.log("zoneIds", zoneIds)
+    
+     const departments = await Department.find(
+      { DepartmentId: { $in: deptIds } },
+    //  { collationto: { locale: "en", strength: 2 } }
+      ).collation({ locale: "en", strength: 2 })
+
+      const zones = await ZoneMaster.find(
+        { ZoneID: { $in: zoneIds } }
+      //  , { collationto: { locale: "en", strength: 2 } }
+      ).collation({ locale: "en", strength: 2 })
+
+     const deptMap = new Map(departments.map((d) => [d.DepartmentId, d.DepartmentName]));
+     const zoneMap = new Map(zones.map((z) => [z.ZoneID, z.ZoneName]));
+     const vehicleMap = new Map(filteredVehicles.map((v) => [v.devid, v]));
+
+     for (const nt of ntData) {
+      const vehicle = vehicleMap.get(nt.devid) || "";
+      nt.DepartmentName = deptMap.get(vehicle?.DeptId) || "";
+      nt.ZoneName = zoneMap.get(vehicle?.ZoneId) || "";
+      nt.VehicleNo = vehicle?.Vehno || "";
+    }
+
+    return res.status(200).json(new ApiSuccessResponse(200, ntData))
+
+  } catch (error) {
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.status, error.message))
+  }
+}
+
 
 export {
   probWireTamp,
@@ -1059,7 +1385,11 @@ export {
   GetNTDashboard,
   GetTopFuelCons,
   GetTopFuelConsNT,
-  GetTopFuelConsNTOnOff
+  GetTopFuelConsNTOnOff,
+  GetRunningStatus,
+  GetLongIdleVeh,
+  GetVehicleMovement
+  
 };
 
 // For VehCurrStat
