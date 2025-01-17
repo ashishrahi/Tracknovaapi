@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.post("/GetCommGroup", CommController.GetCommGroup)
 router.post("/UpsertCommGroup", CommController.UpsertCommGroup)
+router.post("/DeleteCommGroup", CommController.DeleteCommGroup)
 
 
 export default router;

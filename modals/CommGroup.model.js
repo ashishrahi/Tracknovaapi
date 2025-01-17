@@ -1,12 +1,19 @@
 import mongoose from "mongoose";
 
 const CommGroupSchema = new mongoose.Schema({
-    CreatedBy: String,
-    Description: String,
     GroupId: mongoose.Schema.Types.Int32,
-    IsActive: Boolean,
-    Name: String,
+    Name: {
+        type: String,
+        required: [true, "Name is required"],
+        trim: true,
+        minlength: [3, 'Name must be at least 3 characters long'],
+        maxlength: [50, 'Name cannot exceed 50 characters'],
+        match: [/^[a-zA-Z ]+$/, 'Name can only contain letters and spaces']
+      },
     Type: String,
+    Description: String,
+    IsActive: Boolean,
+    CreatedBy: String,
     UpdatedBy: String,
 }, {timestamps: true, collection: "CommGroup"});
 
