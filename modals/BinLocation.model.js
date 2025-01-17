@@ -2,20 +2,20 @@ import mongoose from "mongoose";
 
 const BinLocationSchema = new mongoose.Schema({
 
-    AreaID: { type: mongoose.Schema.Types.ObjectId, ref: 'AreaWardMaster', required: true },
+    AreaID: Number,
     BinLocCode: String,
-    BinLocID: mongoose.Schema.Types.Int32,
+    BinLocID: Number,
     BinLocName: String,
-    CreatedBy: String,
-    CreatedOn: Date,
+    CreatedBy: {type: Object},
+    CreatedOn: {type: Object},
     Description: String,
     Latitude: mongoose.Schema.Types.Decimal128,
     LocationName: String,
     LocImage: String,
     Longitude: mongoose.Schema.Types.Decimal128,
     RFID: String,
-    UpdatedBy: String,
-    UpdatedOn: Date,
+    UpdatedBy: {type: Object},
+    UpdatedOn: {type: Object},
     ZoneID: mongoose.Schema.Types.Int32,
 
 }, {timestamps: true, collection: "BinLocation"})

@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-} from "../utils/apiResponse/index.js";
+import {ApiErrorResponse,ApiSuccessResponse} from "../utils/apiResponse/index.js";
 import connectDB from "../db/connectDB.js";
 import { getDashboardQuery,getVehicleQuery,BinLocationQuery } from "../utils/DBQueries/index.js";
 import { client, connectDBMongo } from "../db/connectDBMongo.js";
@@ -11,49 +8,47 @@ import { BinLocation } from "../modals/BinLocation.model.js";
 
 //-------------- getDashboard ------>
 
-async function getDashboard(req, res) {
+export async function getDashboard(req, res) {
   try {
     const CurDate = new Date();
     CurDate.setHours(0, 0, 0, 0);
     const summaryNTDash = await getDashboardQuery(CurDate);
     const successResponse = new ApiSuccessResponse(
       true,
-      200,
+      StatusCodes.OK,
       'Dashboard data fetched successfully',
       summaryNTDash
     );
     res.status(successResponse.statusCode).json(successResponse);
   } 
   catch (error) {
-    const errorResponse = new ApiErrorResponse(false, 500, 'Failed to fetch Dashboard');
+    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch Dashboard');
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
 
-
 //-----------------getVehicleCurrentDay --------------->
 
-async function getVehicleCurrentDay (req,res){
+export async function getVehicleCurrentDay (req,res){
   const vehicleNo = req.body.vehicleno;
 
   try {
     const retDat = await getVehicleQuery(vehicleNo);
     const successResponse = new ApiSuccessResponse(
       true,
-      200,
+      StatusCodes.OK,
       'VehicleCurrentDay data fetched successfully',
       retDat
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, 500, 'Failed to fetch vehicle current day');
+    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch vehicle current day');
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
-
 //-------------- getVehicleDistance ------>
 
-async function getVehicleDistance(req, res) {
+export async function getVehicleDistance(req, res) {
   const { vehicleno, datef, datet } = req.body;
   console.log(vehicleno, datef, datet);
   if (
@@ -177,42 +172,38 @@ async function getVehicleDistance(req, res) {
       .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
   }
 }
-
 //-------------- getAllBins ------>
-
-async function getAllBins(req,res) {
+export async function getAllBins(req,res) {
   try {
     const { flag } = req.query; 
     const result = await BinLocationQuery(flag);
 
     const successResponse = new ApiSuccessResponse(
       true,
-      200,
+      StatusCodes.OK,
       'AllBins data fetched successfully',
       result
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, 500, 'Failed to fetch All Bins');
+    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 };
-
-async function getMapBinsWardWise (req,res) {
-  const filter = req.query; // Assuming the query filter comes in the URL parameters
-
+export async function getMapBinsWardWise (req,res) {
+  const filter = req.query; 
   try {
     const binLocations = await BinsByWardNumberQuery(filter.Where);
 
     const successResponse = new ApiSuccessResponse(
       true,
-      200,
+      StatusCodes.OK,
       'MapBinsWardWise data fetched successfully',
       binLocations
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, 500, 'Failed to fetch All Bins');
+    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
@@ -389,4 +380,3 @@ async function getMapBinsWardWise (req,res) {
 
 
   
-  export { getDashboard, getVehicleDistance,getVehicleCurrentDay,getAllBins,getMapBinsWardWise };
