@@ -1,6 +1,6 @@
 import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
-import { GetCommGroup } from "./Comm.controller.js";
+import { GetCommGroup, UpsertCommGroup } from "./Comm.controller.js";
 
 
 
@@ -31,7 +31,8 @@ export const DashboardController = {
 }
 
 export const CommController = {
-    GetCommGroup: GetCommGroup
+    GetCommGroup: GetCommGroup,
+    UpsertCommGroup: UpsertCommGroup
 }
 
 

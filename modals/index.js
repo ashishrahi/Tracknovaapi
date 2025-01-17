@@ -6,6 +6,6 @@ import EmpMaster from "./EmpMaster.model.js";
 import Department from "./Department.model.js";
 import ZoneMaster from "./ZoneMaster.model.js";
 import Geofencing from "./Geofencing.model.js";
+import CommGroup from "./CommGroup.model.js";
 
-
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing }
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup }
