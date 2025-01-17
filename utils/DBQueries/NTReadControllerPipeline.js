@@ -155,4 +155,108 @@ async function GetNTDashboardPipeline(){
 }
 
 
-export { GetNTDashboardPipeline };
+async function NTCurrentPipeline(devids){
+  // const devids = devs; 
+  if(!devids) devids = null;
+    const latestRecords = await NTCurrentDay.aggregate([
+      {
+          $match: devids ? { devid: { $in: devids } } : {} // Filter if devids provided
+      },
+      {
+          $sort: { TrackTime: -1 } // Sort by TrackTime descending
+      },
+      {
+          $group: {
+              _id: "$devid",
+              latest: { $first: "$$ROOT" } // Get the latest record per device
+          }
+      },
+      {
+          $replaceRoot: { newRoot: "$latest" } // Flatten the result
+      }
+    ])
+    
+      // Step 2: Extract Unique Device IDs
+      const devidsNt = latestRecords.map(d => d.devid);
+      
+  // return res.json({devidsNt : devidsNt});
+       // Step 3: Perform Joins (Lookups)
+       const result = await ItemMaster.aggregate([
+        {
+            $match: { devid: { $in: devidsNt } } // Match only relevant devices
+        },
+        {
+            $lookup: {
+                from: "VehicleTypeMaster",
+                localField: "VehicleTypeId",
+                foreignField: "VehicleTypeId",
+                as: "vehicleType"
+            }
+        },
+        { $unwind: { path: "$vehicleType", preserveNullAndEmptyArrays: true } },
+        {
+            $lookup: {
+                from: "EmpMaster",
+                // localField: "EmpDeptId",
+                localField: "EmpId",
+                foreignField: "Empid",
+                as: "employee"
+            }
+        },
+        { $unwind: { path: "$employee", preserveNullAndEmptyArrays: true } },
+        {
+            $lookup: {
+                from: "Department",
+                localField: "employee.EmpDeptId",
+                foreignField: "DepartmentId",
+                as: "department"
+            }
+        },
+        { $unwind: { path: "$department", preserveNullAndEmptyArrays: true } },
+        {
+            $project: {
+                ItemMasterId: 1,
+                ItemName: 1,
+                KmPerLitre: 1,
+                LitrePerHr: 1,
+                VehicleNo: 1,
+                DepartmentName: "$department.DepartmentName",
+                EmpDeptId: "$employee.EmpDeptId",
+                EmpName: "$employee.EmpName",
+                devid: 1,
+                VehicleTypeId: 1,
+                VehicleTypename: "$vehicleType.VehicleTypename"
+            }
+        }
+      ]);
+  
+      // Step 4: Map Latest Records to Vehicle Data
+      const vehicleMap = new Map(result.map(v => [v.devid, v]));
+      const ntSummary = latestRecords.map(d => {
+          const vehicle = vehicleMap.get(d.devid) || {};
+          return {
+              id: d._id,
+              tracktime: d.TrackTime,
+              trackdate: d.TrackDate,
+              speed: d.speed,
+              Lattitude: d.Lattitude,
+              Longitude: d.Longitude,
+              nearme: d.nearme,
+              devid: d.devid,
+              distance: d.distance,
+              Ignition: d.acc ? "On" : "Off",
+              Flag: !d.acc && d.speed === 0 ? "Stopped" : d.acc && d.speed > 0 ? "Running" : "Idle",
+              vehicleno: vehicle.VehicleNo || "",
+              Departmentname: vehicle.DepartmentName || "",
+              EmpName: vehicle.EmpName || "",
+              KmPerLitre: vehicle.KmPerLitre || "",
+              LitrePerHr: vehicle.LitrePerHr || "",
+              VehicleTypeId: vehicle.VehicleTypeId || "",
+              VehicleTypename: vehicle.VehicleTypename || ""
+          };
+      });
+      // console.log("ntSummary", ntSummary)
+      return  ntSummary;
+}
+
+export { GetNTDashboardPipeline, NTCurrentPipeline };

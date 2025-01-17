@@ -5,9 +5,10 @@ const router = express.Router();
 
 router.get("/Sample", NTReadController.sample);
 router.get("/SmpCurr", NTReadController.SmpCurr);
+router.post("/Geofence", NTReadController.Geofence); // Partially Complete
 router.get("/NTCurrent", NTReadController.NTCurrent);
 router.get("/VehCurrStat", NTReadController.VehCurrStat);
-router.post("/GetDashData", NTReadController.GetDashData);
+router.post("/GetDashData", NTReadController.GetDashData); 
 router.post("/GetVehicleNotMoved", NTReadController.getVehicleNotMoved);
 router.get("/GetNTDashboard", NTReadController.GetNTDashboard);
 router.get("/GetTopFuelCons", NTReadController.GetTopFuelCons);

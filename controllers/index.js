@@ -1,6 +1,6 @@
-import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
+import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
-
+import { GetCommGroup } from "./Comm.controller.js";
 
 
 
@@ -9,6 +9,7 @@ export const NTReadController = {
     getVehicleNotMoved: getVehicleNotMoved,
     sample: sample,
     SmpCurr: SmpCurr,
+    Geofence: Geofence, 
     NTCurrent: NTCurrent,
     VehCurrStat: VehCurrStat,
     GetDashData: GetDashData,
@@ -27,6 +28,10 @@ export const NTReadController = {
 
 export const DashboardController = {
     getVehicleDistance: getVehicleDistance,
+}
+
+export const CommController = {
+    GetCommGroup: GetCommGroup
 }
 
 
