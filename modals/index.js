@@ -8,7 +8,7 @@ import ZoneMaster from "./ZoneMaster.model.js";
 import Geofencing from "./Geofencing.model.js";
 import CommGroup from "./CommGroup.model.js";
 import CommMembers from "./CommMembers.model.js";
+import EmailSetting from "./EmailSetting.model.js";
 
 
-
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers }
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting }

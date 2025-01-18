@@ -1,7 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { CommGroup } from "../modals/index.js";
+import { CommGroup, CommMembers, EmailSetting } from "../modals/index.js";
 import { ApiSuccessResponse, ApiErrorResponse } from "../utils/apiResponse/index.js"; 
 import mongoose from "mongoose";
+
+
 //-------------GetCommGroup-------->
 async function GetCommGroup(req, res){
     const { PageNo, PageSize, Name, Type } = req.body;
@@ -93,27 +95,32 @@ async function UpsertCommGroup(req, res){
 
 //-------------DeleteCommGroup-------->
 async function DeleteCommGroup(req, res){
-
+    // let session;
     try {
     const model = req.body;
 
-    let session = await mongoose.startSession();
-    session.startTransaction();
+    // session = await mongoose.startSession();
 
+    // session.startTransaction();
+   
+        // return 
         // Check if GroupId is used in CommMembers
-        const existingMember = await CommMembers.findOne({ GroupId: model.groupId }).session(session);
+        const existingMember = await CommMembers.findOne({ GroupId: model.groupId })
+        // .session(session);
         if (existingMember) {
-            await session.abortTransaction();
-            session.endSession();
+            // await session.abortTransaction();
+            // session.endSession();
             return res.status(StatusCodes.CONFLICT).json({ Status: "Failed", Message: "GroupId is used in CommMembers, so it can't be deleted." });
         }
 
         // Delete CommGroup and associated CommMembers
-        const deletedGroup = await CommGroup.findOneAndDelete({ GroupId: model.groupId }).session(session);
-        const deletedMembers = await CommMembers.deleteMany({ GroupId: model.groupId }).session(session);
+        const deletedGroup = await CommGroup.findOneAndDelete({ GroupId: model.groupId })
+        // .session(session);
+        const deletedMembers = await CommMembers.deleteMany({ GroupId: model.groupId })
+        // .session(session);
 
-        await session.commitTransaction();
-        session.endSession();
+        // await session.commitTransaction();
+        // session.endSession();
 
         if (!deletedGroup) {
             return res.status(StatusCodes.NOT_FOUND).json( { Status: "Failed", Message: "GroupId not found!" });
@@ -121,12 +128,88 @@ async function DeleteCommGroup(req, res){
 
         return res.status(StatusCodes.OK).json({ Status: "Success", Message: "Deleted Successfully" });
     } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
+        // await session.abortTransaction();
+        // session.endSession();
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ Status: "Failed", Error: error.message });
     }
 
 }
 
+//-------------GetCommGroupByEmpId-------->
+async function GetCommGroupByEmpId(req, res){
+    const { EmpId } = req.body;
+    console.log("EmpId", EmpId)
 
-export { GetCommGroup, UpsertCommGroup, DeleteCommGroup }
+    try {
+        const result = await CommGroup.aggregate([
+            {
+                $lookup: {
+                    from: "CommMembers", // Join with the CommMembers collection
+                    let: { groupId: "$GroupId" }, // Reference to the GroupId field in CommGroup
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$MemberId", EmpId] }, // Match the MemberId with EmpId
+                                        { $eq: ["$GroupId", "$$groupId"] } // Match the GroupId
+                                    ]
+                                }
+                            }
+                        },
+                        // { $project: { _id: 1 } } // Only return the Id field (similar to the SQL SELECT Id)
+                    ],
+                    as: "Member" // The result of the join is stored in "Member"
+                }
+            },
+            {
+                $project: {
+                    // Project the required fields from CommGroup
+                    Grp: 1,
+                    IsSelected: { 
+                        $cond: { if: { $gt: [{ $size: "$Member" }, 0] }, then: true, else: false } // If Member array is non-empty, set IsSelected to true
+                    }
+                }
+            }
+        ]);
+
+        return res.status(StatusCodes.OK).json({ 
+            Data: result, 
+            Status: "Success", 
+            RowCount: result.length 
+        });
+    } catch (error) {
+        return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+    }
+}
+
+//-------------GetAllEmailSetting-------->
+async function GetAllEmailSetting(req, res){
+    try {
+        let query = {};
+       const {id, name,email, pageNo, pageSize} = req.body;
+       
+       if(id) query.Id = id;
+       if(name) query.Name = name;
+       if(email) query.Email = email;
+    
+       const pageno = pageNo || 1;
+       const pagesize = pageSize || 10;
+       const skip = (pageno - 1) * pagesize
+    
+       const result = await EmailSetting.find(query).skip(skip).limit(pageSize);
+    
+       return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, result))
+    
+    } catch (error) {
+        return res.status(StatusCodes.BAD_REQUEST).json(new ApiSuccessResponse(StatusCodes.BAD_REQUEST, error.message))
+    }
+
+}
+
+//-------------UpsertEmailSetting-------->
+async function UpsertEmailSetting(req, res){
+
+}
+
+export { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting }

@@ -239,3 +239,6 @@ ORDER BY trackdate;`,
 
 
 ```
+
+
+``` EmpId Get method Controller: GetCommGroupByEmpId```
