@@ -13,6 +13,7 @@ router.get("/GetAllSmsSetting", CommController.GetCampaignDetailById)
 router.post("/GetCampaign", CommController.GetCampaign)
 router.post("/UpsertCampaign", CommController.UpsertCampaign)  // need to verify data
 router.post("/DeleteCampaign", CommController.DeleteCampaign)
+router.post("/GetCampaignTemplate", CommController.GetCampaignTemplate)
 
 
 export default router;

@@ -1,6 +1,6 @@
 import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
-import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign } from "./Comm.controller.js";
+import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate } from "./Comm.controller.js";
 
 
 
@@ -41,7 +41,8 @@ export const CommController = {
     GetCampaignDetailById: GetCampaignDetailById,
     GetCampaign: GetCampaign,
     UpsertCampaign: UpsertCampaign,
-    DeleteCampaign: DeleteCampaign
+    DeleteCampaign: DeleteCampaign,
+    GetCampaignTemplate: GetCampaignTemplate
 }
 
 
