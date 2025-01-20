@@ -460,13 +460,11 @@ async function UpsertCampaign(req, res) {
         CampaignName: model.campaignName,
       });
       if (existingCampaign) {
-        return res
-          .status(StatusCodes.OK)
-          .json({
-            status: "Failed",
-            message: "Record Already Exists!",
-            data: model,
-          });
+        return res.status(StatusCodes.OK).json({
+          status: "Failed",
+          message: "Record Already Exists!",
+          data: model,
+        });
       }
 
       // Get the last CampaignId and increment
@@ -607,15 +605,20 @@ async function DeleteCampaign(req, res) {
 async function GetCampaignTemplate(req, res) {
   try {
     let query = {};
-    const { templateId, templateType, SMSTemplateID, pageNo = 1, pageSize = 10} = req.body;
-    if(templateId) query.TemplateId = templateId
-    if(templateType) query.TemplateType = templateType
-    if(SMSTemplateID) query.SMSTemplateID = SMSTemplateID
+    const {
+      templateId,
+      templateType,
+      SMSTemplateID,
+      pageNo = 1,
+      pageSize = 10,
+    } = req.body;
+    if (templateId) query.TemplateId = templateId;
+    if (templateType) query.TemplateType = templateType;
+    if (SMSTemplateID) query.SMSTemplateID = SMSTemplateID;
     // Apply filtering dynamically using MongoDB query
     const campaignTemplateResult = await CampaignTemplate.find(query)
       .skip((pageNo - 1) * pageSize) // Pagination: Skip records
       .limit(pageSize); // Limit the number of results
-
 
     // Execute query to get the total count of documents
     const totalCount = await CampaignTemplate.countDocuments(query);
@@ -628,9 +631,90 @@ async function GetCampaignTemplate(req, res) {
       rowCount: totalCount,
     });
   } catch (error) {
-    
-      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
-    
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+  }
+}
+
+//-------------UpsertCampaignTemplate-------->
+async function UpsertCampaignTemplate(req, res) {
+  const model = req.body;
+  console.log(model);
+  const response = {
+    Status: "",
+    Message: "",
+    Data: model,
+  };
+
+  try {
+    if (model.templateId === 0) {
+      // Check if the template already exists
+      const existingTemplate = await CampaignTemplate.findOne({
+        Template: model.template,
+      });
+
+      if (existingTemplate) {
+        response.Status = "Failed";
+        response.Message = "Record Already Exists!";
+        response.Data = existingTemplate;
+        return res.status(StatusCodes.CONFLICT).json(response);
+      }
+
+      // Find the highest TemplateId and increment it
+      const lastTemplate = await CampaignTemplate.findOne().sort({
+        TemplateId: -1,
+      });
+      console.log("lastTemplate", lastTemplate);
+      const newTemplateId = parseInt(lastTemplate?.TemplateId ?? 0) + 1;
+
+      console.log("New TemplateId:", newTemplateId);
+
+      // Create new CampaignTemplate with valid TemplateId
+      const newTemplate = new CampaignTemplate({
+        TemplateId: newTemplateId,
+        Template: model.template,
+        TemplateType: model.templateType,
+        SMSTemplateID: model.SMSTemplateID,
+        CreatedBy: model.createdBy,
+        UpdatedBy: model.updatedBy,
+      });
+      console.log("newTemplate", newTemplate);
+      // const newSavedTemplate = await newTemplate.save();
+
+      response.Status = "Success";
+      response.Message = "Add Successfully";
+      response.Data = newTemplate;
+
+      return res.status(StatusCodes.OK).json(response);
+    } else {
+      // Update existing CampaignTemplate
+      const template = await CampaignTemplate.findOneAndUpdate(
+        { TemplateId: model.templateId },
+        {
+          templateId: model.templateId,
+          Template: model.template,
+          TemplateType: model.templateType,
+          SMSTemplateID: model.SMSTemplateID,
+          CreatedBy: model.createdBy,
+          UpdatedBy: model.updatedBy,
+        }
+      );
+      if (!template) {
+        response.Status = "Failed";
+        response.Message = "Template not found!";
+        return res.status(StatusCodes.FORBIDDEN).json(response);
+      }
+      response.Status = "Success";
+      response.Message = "Update Successfully";
+      response.Data = template;
+
+      return res.status(StatusCodes.OK).json(response);
+    }
+  } catch (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
   }
 }
 
@@ -647,4 +731,5 @@ export {
   UpsertCampaign,
   DeleteCampaign,
   GetCampaignTemplate,
+  UpsertCampaignTemplate,
 };
