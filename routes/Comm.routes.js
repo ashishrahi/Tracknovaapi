@@ -10,6 +10,9 @@ router.post("/GetAllEmailSetting", CommController.GetAllEmailSetting)
 router.post("/UpsertEmailSetting", CommController.UpsertEmailSetting)
 router.post("/GetAllSmsSetting", CommController.GetAllSmsSetting)
 router.get("/GetAllSmsSetting", CommController.GetCampaignDetailById)
+router.post("/GetCampaign", CommController.GetCampaign)
+router.post("/UpsertCampaign", CommController.UpsertCampaign)  // need to verify data
+router.post("/DeleteCampaign", CommController.DeleteCampaign)
 
 
 export default router;

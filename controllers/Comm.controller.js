@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail } from "../modals/index.js";
+import { CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign } from "../modals/index.js";
 import {
   ApiSuccessResponse,
   ApiErrorResponse,
@@ -388,8 +388,195 @@ async function GetCampaignDetailById(req, res){
 
 //-------------GetCampaign-------->
 async function GetCampaign(req, res){
+  try {
+    const { campaignId, campaignName, campaignDate, campaignType, status,  pageNo = 1, pageSize = 10 } = req.body;
+    
+    console.log(campaignId, campaignName, campaignDate, campaignType, status,)
+    const query = {};
+    if(campaignId) query.CampaignId = campaignId;
+    if(campaignName) query.CampaignName = campaignName;
+    if(campaignDate) query.CampaignDate = campaignDate;
+    if(campaignType) query.CampaignType = campaignType;
+    if(status) query.Status = status.toUpperCase();
+    
 
+    // Validate pagination inputs
+    const skip = (pageNo - 1) * pageSize;
+    const limit = parseInt(pageSize);
+
+    // Fetch campaign data with filtering and pagination
+    const campaigns = await Campaign.find(query)
+      .skip(skip)
+      .limit(limit)
+      // .lean(); // Improves performance by returning plain JS objects
+
+      console.log("campaigns",campaigns);
+    // Get total count of records matching the filter
+    const totalCount = await Campaign.countDocuments(query);
+
+    return res.status(StatusCodes.OK).json({
+      Data: campaigns,
+      Status: "Success",
+      PageNo: pageNo,
+      PageSize: pageSize,
+      RowCount: totalCount,
+    });
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      Status: "Failed",
+      Error: error.message,
+    });
+  }
 }
+
+//-------------UpsertCampaign-------->
+async function UpsertCampaign(req, res){
+  const response = { status: "Failed", message: "", data: null };
+  try {
+    const model = req.body;
+    if (!model.campaignId || model.campaignId === 0) {
+      // Check if campaign already exists
+      const existingCampaign = await Campaign.findOne({ CampaignName: model.campaignName });
+      if (existingCampaign) {
+        return res.status(StatusCodes.OK).json({ status: "Failed", message: "Record Already Exists!", data: model });
+      }
+
+      // Get the last CampaignId and increment
+      const lastCampaign = await Campaign.findOne().sort({ CampaignId: -1 });
+      model.campaignId = (lastCampaign?.CampaignId || 0) + 1;
+
+      // Get last Id from CampaignDetail
+      const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 });
+      let Id = (lastDetail?.Id || 0) + 1;
+
+      // Process Groups
+      const listGroups = model.ListGroups.filter((ii) => ii.isSelected);
+      listGroups.forEach((ii) => {
+        ii.Id = Id++;
+        ii.CampaignId = model.campaignId;
+        ii.Message = model.message;
+      });
+
+      if (listGroups.length > 0) {
+        await CampaignDetail.insertMany(listGroups);
+      }
+
+      // Process Members
+      const listMembers = model.ListMembers.filter((ii) => ii.isSelected);
+      listMembers.forEach((ii) => {
+        ii.Id = Id++;
+        ii.CampaignId = model.campaignId;
+        ii.Message = model.message;
+      });
+
+      if (listMembers.length > 0) {
+        await CampaignDetail.insertMany(listMembers);
+      }
+
+      // Insert new campaign
+      await Campaign.create(model);
+
+      response.status = "Success";
+      response.message = "Added Successfully";
+      // return res.status(StatusCodes.OK).json(response)
+    } else {
+      // Update existing campaign
+      await Campaign.findOneAndUpdate({ CampaignId: model.CampaignId }, model);
+      response.status = "Success";
+      response.message = "Updated Successfully";
+    }
+
+    if (model.IsExecute) {
+      // Send emails to selected members
+      const selectedMembers = model.ListMembers.filter((ii) => ii.IsSelected);
+      for (const member of selectedMembers) {
+        await sendMail(member.EmailId, model.CampaignName, member.Message);
+      }
+
+      // Send emails to employees in selected groups
+      const selectedGroups = model.ListGroups.filter(
+        (ii) => ii.IsSelected && ii.ReceiverType === "Employee"
+      );
+
+      for (const group of selectedGroups) {
+        const members = await CommMembers.find({ GroupId: group.GroupId });
+        for (const member of members) {
+          const emp = await EmpMaster.findOne({ Empid: member.MemberId });
+          if (emp) await sendMail(emp.Email, model.CampaignName, group.Message);
+        }
+      }
+
+      response.message = "Mail Sent!!";
+      return res.status(StatusCodes.OK).json(response)
+    }
+  } catch (error) {
+    response.status = "Failed";
+    response.message = error.message;
+    return res.status(StatusCodes.BAD_REQUEST).json(response)
+  }
+
+    return res.status(StatusCodes.OK).json(response);
+}
+
+//-------------DeleteCampaign-------->
+async function DeleteCampaign(req, res){
+  try {
+  const model = req.body;
+  const response = { status: "Failed", message: "" };
+  // const session = await mongoose.startSession();
+  
+    // session.startTransaction();
+
+    // Check if CampaignId is used in CampaignDetail
+    const cam = await CampaignDetail.findOne({ CampaignId: model.campaignId })
+    // .session(session);
+    if (cam) {
+      response.status = "Failed";
+      response.message = "Campaign Id is used in CampaignDetail, so it can't be deleted.";
+      return res.status(StatusCodes.CONFLICT).json(response);
+    }
+
+    if (model.campaignId !== 0) {
+      // Delete Campaign
+      const campaign = await Campaign.findOne({ CampaignId: model.campaignId })
+      // .session(session);
+      if (campaign) {
+        await Campaign.deleteOne({ CampaignId: model.campaignId })
+        // .session(session);
+      }
+
+      // Delete CampaignDetails
+      const campaignDetails = await CampaignDetail.find({ CampaignId: model.campaignId })
+      // .session(session);
+      if (campaignDetails.length > 0) {
+        await CampaignDetail.deleteMany({ CampaignId: model.campaignId })
+        // .session(session);
+      }
+    }
+
+    // Commit Transaction
+    // await session.commitTransaction();
+    // session.endSession();
+
+    response.status = "Success";
+    response.message = "Deleted Successfully";
+    return res.status(StatusCodes.OK).json(response)
+  } catch (error) {
+    // Rollback Transaction on Error
+    // await session.abortTransaction();
+    // session.endSession();
+
+    response.status = "Failed";
+    response.message = error.message;
+    return res.status(StatusCodes.BAD_REQUEST).json(response)
+  }
+}
+
+
+
+
+
+
 
 export {
   GetCommGroup,
@@ -400,5 +587,7 @@ export {
   UpsertEmailSetting,
   GetAllSmsSetting,
   GetCampaignDetailById,
-  GetCampaign
+  GetCampaign,
+  UpsertCampaign,
+  DeleteCampaign
 };

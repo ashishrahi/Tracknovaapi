@@ -19,9 +19,6 @@
 //     { $limit: 10 }
 //   ]);
 
-  
-
-
 //   db.nt.aggregate([
 //     // Step 1: Join with itemMaster
 //     {
@@ -33,7 +30,7 @@
 //       }
 //     },
 //     { $unwind: { path: "$itemDetails", preserveNullAndEmptyArrays: true } },
-  
+
 //     // Step 2: Join with vehicleTypeMaster
 //     {
 //       $lookup: {
@@ -44,7 +41,7 @@
 //       }
 //     },
 //     { $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true } },
-  
+
 //     // Step 3: Group by devId and trackDate
 //     {
 //       $group: {
@@ -56,7 +53,7 @@
 //         distance: { $max: "$distance" }
 //       }
 //     },
-  
+
 //     // Step 4: Apply date filter and vehicleNo
 //     {
 //       $match: {
@@ -67,12 +64,12 @@
 //         }
 //       }
 //     },
-  
+
 //     // Step 5: Sort by trackDate
 //     {
 //       $sort: { "_id.trackDate": 1 }
 //     },
-  
+
 //     // Step 6: Project required fields
 //     {
 //       $project: {
@@ -86,8 +83,6 @@
 //     }
 //   ]);
 
-
-
 // console.log("Hi")
 // console.lo("Hi")
 
@@ -96,10 +91,16 @@
 // console.log("1" + 1);
 // console.log("1" - 1);
 
-
 // if(true){
 //   let num = 1;
 // }
 
+// console.log(num)
+const fn = (value) => {
+  return value
+    .split(" ") // Split string into words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+    .join(" ");
+}; // Join words back into a single string;
 
-console.log(num)
+console.log(fn("weferg erfergr errgvreg"));
