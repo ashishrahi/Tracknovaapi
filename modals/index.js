@@ -9,6 +9,9 @@ import Geofencing from "./Geofencing.model.js";
 import CommGroup from "./CommGroup.model.js";
 import CommMembers from "./CommMembers.model.js";
 import EmailSetting from "./EmailSetting.model.js";
+import SmsSetting from "./SmsSetting.model.js";
+import CampaignDetail from "./CampaignDetail.model.js";
 
 
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting }
+
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail }

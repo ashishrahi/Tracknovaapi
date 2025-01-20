@@ -7,7 +7,7 @@ const DepartmentSchema = new mongoose.Schema({
     DepartmentShortname: String,
     HOD: mongoose.Schema.Types.Int32,
     UpdatedBy: String,
-}, {timestamps: true, collation: "Department"})
+}, {timestamps: true, collection: "Department"})
 
 const Department = mongoose.model("Department", DepartmentSchema)
 
