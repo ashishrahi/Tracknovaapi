@@ -7,7 +7,7 @@ import {
   CampaignDetail,
   Campaign,
   CampaignTemplate,
-  EventSetting
+  EventSetting,
 } from "../modals/index.js";
 import {
   ApiSuccessResponse,
@@ -653,7 +653,7 @@ async function UpsertCampaignTemplate(req, res) {
       // Check if the template already exists
       const existingTemplate = await CampaignTemplate.findOne({
         Template: model.template,
-      }); 
+      });
 
       if (existingTemplate) {
         response.Status = "Failed";
@@ -703,7 +703,7 @@ async function UpsertCampaignTemplate(req, res) {
           UpdatedBy: model.updatedBy,
         },
         {
-          returnOriginal: true
+          returnOriginal: true,
         }
       );
       // return res.json(template)
@@ -711,7 +711,7 @@ async function UpsertCampaignTemplate(req, res) {
       if (!template) {
         response.Status = "Failed";
         response.Message = "Template not found!";
-        response.Data = null
+        response.Data = null;
         return res.status(StatusCodes.FORBIDDEN).json(response);
       }
 
@@ -729,27 +729,32 @@ async function UpsertCampaignTemplate(req, res) {
 }
 
 //-------------DeleteCampaignTemplate-------->
-async function DeleteCampaignTemplate(req, res){
+async function DeleteCampaignTemplate(req, res) {
   // const session = await mongoose.startSession();
   // session.startTransaction();
   try {
-  const model = req.body;
-  const response = { status: "", message: "" };
+    const model = req.body;
+    const response = { status: "", message: "" };
 
-    const existingCampaign = await Campaign.findOne({ TemplateId: model.templateId })
+    const existingCampaign = await Campaign.findOne({
+      TemplateId: model.templateId,
+    });
     // .session(session);
-    
+
     if (existingCampaign) {
       response.status = "Failed";
-      response.message = "Template ID is used in a campaign, so it can't be deleted.";
+      response.message =
+        "Template ID is used in a campaign, so it can't be deleted.";
       // await session.abortTransaction();
       // session.endSession();
       return res.status(StatusCodes.CONFLICT).json(response);
     }
 
     if (model.templateId) {
-      let deletedTemplate = await CampaignTemplate.findOne({TemplateId: model.templateId})
-      
+      let deletedTemplate = await CampaignTemplate.findOne({
+        TemplateId: model.templateId,
+      });
+
       // .session(session);
       if (!deletedTemplate) {
         response.status = "Failed";
@@ -759,46 +764,146 @@ async function DeleteCampaignTemplate(req, res){
         return res.status(StatusCodes.OK).json(response);
       }
 
-      deletedTemplate =  await CampaignTemplate.deleteOne({TemplateId: model.templateId});
+      deletedTemplate = await CampaignTemplate.deleteOne({
+        TemplateId: model.templateId,
+      });
       response.status = "Success";
       response.message = "Deleted successfully.";
-    return res.status(StatusCodes.OK).json(response);
+      return res.status(StatusCodes.OK).json(response);
     }
 
     // await session.commitTransaction();
     // session.endSession();
-
-    
   } catch (error) {
     // await session.abortTransaction();
     // session.endSession();
     // console.log(error);
-    
-    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
-  }
 
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+  }
 }
 
 //-------------GetEventSetting-------->
-async function GetEventSetting(req, res){
+async function GetEventSetting(req, res) {
   try {
+    const {
+      eventId,
+      eventName,
+      eventType,
+      sendingType,
+      isActive,
+      pageNo = 1,
+      pageSize = 10,
+    } = req.body;
+    let query = {};
     // Apply dynamic filter and fetch event settings
-    const eventSettings = await EventSetting.find(filter.where, filter.parameterValues);
+    if (eventId) query.EventId = eventId;
+    if (eventName) query.EventName = eventName;
+    if (eventType) query.EventType = eventType;
+    if (sendingType) query.SendingType = sendingType;
+    if (isActive) query.IsActive = isActive;
+    console.log(query);
+    const eventSettings = await EventSetting.find(query)
+      .skip((pageNo - 1) * pageSize)
+      .limit(pageSize);
 
-    return {
+    return res.status(StatusCodes.OK).json({
       data: eventSettings,
       status: "Success",
-      pageNo: filter.pageNo,
-      pageSize: filter.pageSize,
+      pageNo: pageNo,
+      pageSize: pageSize,
       rowCount: eventSettings.length,
-    };
+    });
   } catch (error) {
-    return {
+    return res.status(StatusCodes.BAD_REQUEST).json({
       status: "Failed",
       error: error.message,
-    };
+    });
   }
 }
+
+//-------------UpsertEventSetting-------->
+async function UpsertEventSetting(req, res) {
+  try {
+    const model = req.body;
+    if (model.eventId === 0) {
+      const existingEvent = await EventSetting.findOne({
+        EventName: model.eventName,
+      });
+      if (existingEvent) {
+        return res
+          .status(StatusCodes.NOT_MODIFIED)
+          .json({
+            status: "Failed",
+            message: "Record Already Exists!",
+            data: existingEvent,
+          });
+      }
+
+      const lastEvent = await EventSetting.findOne().sort({ EventId: -1 });
+      model.eventId = (lastEvent?.EventId || 0) + 1;
+      const newEvent = new EventSetting({
+        EventId: model.eventId,
+        EventName: model.eventName,
+        EventType: model.eventType,
+        SendingType: model.sendingType.toUpperCase(),
+        Message: model.message,
+        IsActive: model.isActive,
+        CreatedBy: model.createdBy,
+        UpdatedBy: model.updatedBy,
+      });
+      await newEvent.save();
+      return res
+        .status(StatusCodes.OK)
+        .json({ status: "Success", message: "Added Successfully", });
+    } else {
+      await EventSetting.findOneAndUpdate(
+        { EventId: model.eventId },
+        {
+          EventId: model.eventId,
+          EventName: model.eventName,
+          EventType: model.eventType,
+          SendingType: model.sendingType.toUpperCase(),
+          Message: model.message,
+          IsActive: model.isActive,
+          CreatedBy: model.createdBy,
+          UpdatedBy: model.updatedBy,
+        },
+        { new: true }
+      );
+      return res.status(StatusCodes.OK).json({ status: "Success", message: "Updated Successfully" });
+    }
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ status: "Failed", error: error.message });
+  }
+}
+
+//-------------DeleteEventSetting-------->
+async function DeleteEventSetting(req, res){
+  try {
+    const model = req.body;
+    if (!model.eventId) {
+      return res.status(StatusCodes.NOT_MODIFIED).json({ status: "Failed", message: "Invalid Event ID" });
+    }
+   
+    const deletedEvent = await EventSetting.findOneAndDelete({ EventId: model.eventId });
+      if (!deletedEvent) {
+        return res.status(StatusCodes.NOT_FOUND).json({ status: "Failed", message: "Event not found!" });
+      }
+      return res.status(StatusCodes.OK).json({ status: "Success", message: "Deleted Successfully" });
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ status: "Failed", error: error.message });
+  }
+}
+
+//-------------GetMasters-------->
+async function GetMasters(req, res){
+
+}
+
+
 
 
 
@@ -817,5 +922,8 @@ export {
   GetCampaignTemplate,
   UpsertCampaignTemplate,
   DeleteCampaignTemplate,
-  GetEventSetting
+  GetEventSetting,
+  UpsertEventSetting,
+  DeleteEventSetting,
+  GetMasters
 };

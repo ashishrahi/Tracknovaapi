@@ -17,6 +17,8 @@ router.post("/GetCampaignTemplate", CommController.GetCampaignTemplate)
 router.post("/UpsertCampaignTemplate", CommController.UpsertCampaignTemplate)
 router.post("/DeleteCampaignTemplate", CommController.DeleteCampaignTemplate)
 router.post("/GetEventSetting", CommController.GetEventSetting)
+router.post("/UpsertEventSetting", CommController.UpsertEventSetting)
+router.post("/DeleteEventSetting", CommController.DeleteEventSetting)
 
 
 export default router;
