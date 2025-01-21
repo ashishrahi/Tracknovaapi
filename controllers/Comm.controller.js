@@ -7,6 +7,7 @@ import {
   CampaignDetail,
   Campaign,
   CampaignTemplate,
+  EventSetting
 } from "../modals/index.js";
 import {
   ApiSuccessResponse,
@@ -640,7 +641,7 @@ async function GetCampaignTemplate(req, res) {
 //-------------UpsertCampaignTemplate-------->
 async function UpsertCampaignTemplate(req, res) {
   const model = req.body;
-  console.log(model);
+  // console.log(model);
   const response = {
     Status: "",
     Message: "",
@@ -652,7 +653,7 @@ async function UpsertCampaignTemplate(req, res) {
       // Check if the template already exists
       const existingTemplate = await CampaignTemplate.findOne({
         Template: model.template,
-      });
+      }); 
 
       if (existingTemplate) {
         response.Status = "Failed";
@@ -667,24 +668,26 @@ async function UpsertCampaignTemplate(req, res) {
       });
       console.log("lastTemplate", lastTemplate);
       const newTemplateId = parseInt(lastTemplate?.TemplateId ?? 0) + 1;
-
+      // return res.json({lastTemplate})
       console.log("New TemplateId:", newTemplateId);
 
       // Create new CampaignTemplate with valid TemplateId
       const newTemplate = new CampaignTemplate({
-        TemplateId: newTemplateId,
+        // TemplateId
+        TemplateId: Number(newTemplateId),
         Template: model.template,
         TemplateType: model.templateType,
-        SMSTemplateID: model.SMSTemplateID,
+        SMSTemplateId: model.SMSTemplateId,
         CreatedBy: model.createdBy,
         UpdatedBy: model.updatedBy,
       });
-      console.log("newTemplate", newTemplate);
+      const savedTemplate = await newTemplate.save();
+      // console.log("newTemplate", savedTemplate);
       // const newSavedTemplate = await newTemplate.save();
 
       response.Status = "Success";
       response.Message = "Add Successfully";
-      response.Data = newTemplate;
+      response.Data = savedTemplate;
 
       return res.status(StatusCodes.OK).json(response);
     } else {
@@ -695,16 +698,23 @@ async function UpsertCampaignTemplate(req, res) {
           templateId: model.templateId,
           Template: model.template,
           TemplateType: model.templateType,
-          SMSTemplateID: model.SMSTemplateID,
+          SMSTemplateId: model.SMSTemplateId,
           CreatedBy: model.createdBy,
           UpdatedBy: model.updatedBy,
+        },
+        {
+          returnOriginal: true
         }
       );
+      // return res.json(template)
+
       if (!template) {
         response.Status = "Failed";
         response.Message = "Template not found!";
+        response.Data = null
         return res.status(StatusCodes.FORBIDDEN).json(response);
       }
+
       response.Status = "Success";
       response.Message = "Update Successfully";
       response.Data = template;
@@ -717,6 +727,80 @@ async function UpsertCampaignTemplate(req, res) {
       .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
   }
 }
+
+//-------------DeleteCampaignTemplate-------->
+async function DeleteCampaignTemplate(req, res){
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
+  try {
+  const model = req.body;
+  const response = { status: "", message: "" };
+
+    const existingCampaign = await Campaign.findOne({ TemplateId: model.templateId })
+    // .session(session);
+    
+    if (existingCampaign) {
+      response.status = "Failed";
+      response.message = "Template ID is used in a campaign, so it can't be deleted.";
+      // await session.abortTransaction();
+      // session.endSession();
+      return res.status(StatusCodes.CONFLICT).json(response);
+    }
+
+    if (model.templateId) {
+      let deletedTemplate = await CampaignTemplate.findOne({TemplateId: model.templateId})
+      
+      // .session(session);
+      if (!deletedTemplate) {
+        response.status = "Failed";
+        response.message = "Template not found.";
+        // await session.abortTransaction();
+        // session.endSession();
+        return res.status(StatusCodes.OK).json(response);
+      }
+
+      deletedTemplate =  await CampaignTemplate.deleteOne({TemplateId: model.templateId});
+      response.status = "Success";
+      response.message = "Deleted successfully.";
+    return res.status(StatusCodes.OK).json(response);
+    }
+
+    // await session.commitTransaction();
+    // session.endSession();
+
+    
+  } catch (error) {
+    // await session.abortTransaction();
+    // session.endSession();
+    // console.log(error);
+    
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+  }
+
+}
+
+//-------------GetEventSetting-------->
+async function GetEventSetting(req, res){
+  try {
+    // Apply dynamic filter and fetch event settings
+    const eventSettings = await EventSetting.find(filter.where, filter.parameterValues);
+
+    return {
+      data: eventSettings,
+      status: "Success",
+      pageNo: filter.pageNo,
+      pageSize: filter.pageSize,
+      rowCount: eventSettings.length,
+    };
+  } catch (error) {
+    return {
+      status: "Failed",
+      error: error.message,
+    };
+  }
+}
+
+
 
 export {
   GetCommGroup,
@@ -732,4 +816,6 @@ export {
   DeleteCampaign,
   GetCampaignTemplate,
   UpsertCampaignTemplate,
+  DeleteCampaignTemplate,
+  GetEventSetting
 };

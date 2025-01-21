@@ -15,6 +15,8 @@ router.post("/UpsertCampaign", CommController.UpsertCampaign)  // need to verify
 router.post("/DeleteCampaign", CommController.DeleteCampaign)
 router.post("/GetCampaignTemplate", CommController.GetCampaignTemplate)
 router.post("/UpsertCampaignTemplate", CommController.UpsertCampaignTemplate)
+router.post("/DeleteCampaignTemplate", CommController.DeleteCampaignTemplate)
+router.post("/GetEventSetting", CommController.GetEventSetting)
 
 
 export default router;

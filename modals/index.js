@@ -13,8 +13,9 @@ import SmsSetting from "./SmsSetting.model.js";
 import CampaignDetail from "./CampaignDetail.model.js";
 import Campaign from "./Campaign.model.js";
 import CampaignTemplate from "./CampaignTemplate.model.js";
+import EventSetting from "./EventSetting.model.js";
 
 
 
 
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate }
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting }

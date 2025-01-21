@@ -30,9 +30,11 @@ const CampaignSchema = new mongoose.Schema(
       required: true,
       uppercase: true, // Prevents invalid types
     },
-    TamplateId: {
-      type: mongoose.Schema.Types.Mixed, // Supports both null and ObjectId
-      default: null,
+    TemplateId: {
+      type: mongoose.Schema.Types.Int32,
+      required: true,
+       // Supports both null and ObjectId
+      // default: null,
     },
     Message: {
       type: String,

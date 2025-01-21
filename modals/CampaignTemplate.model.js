@@ -2,8 +2,8 @@ import mongoose from   "mongoose";
 
 const CampaignTemplateSchema = new mongoose.Schema({
         TemplateId: {
-          type: Number,
-          // required: true,
+          type: mongoose.Schema.Types.Int32,
+          required: true,
           unique: true
         },
         Template: {
