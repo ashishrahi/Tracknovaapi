@@ -13,7 +13,7 @@ async function AddUpdateItemCategory(req, res) {
     });
 
     if (!model.itemCategoryId || model.itemCategoryId === 0) {
-      // Insert new category
+      
       if (existingCategory) {
         response.status = "Failed";
         response.error = new Error("Category Already Exists...!!!!!");
@@ -24,12 +24,12 @@ async function AddUpdateItemCategory(req, res) {
       const lastCategory = await ItemCategoryMaster.findOne().sort({
         ItemCategoryId: -1,
       });
-      model.ItemCategoryId = lastCategory ? lastCategory.ItemCategoryId + 1 : 0;
+      const newItemCategoryId = lastCategory ? lastCategory.ItemCategoryId + 1 : 0;
 
       const newCategory = new ItemCategoryMaster({
-        ItemCategoryId: model.itemCategoryId,
+        ItemCategoryId: newItemCategoryId,
         ItemCategory: model.itemCategory,
-        ItemCategoryAbbre: model.ItemCategoryAbbre,
+        ItemCategoryAbbre: model.itemCategoryAbbre,
         ParentId: model.parentId,
         TaxId: model.taxId,
         CreatedBy: model.createdBy,
@@ -149,7 +149,17 @@ async function GetItemCategory(req, res) {
 
 //-------------DeleteItemCategory------->
 async function DeleteItemCategory(req, res){
-
+    try {
+    const model = req.body;
+        if (!model.itemCategoryId) throw new Error("ItemCategoryId is required");
+        
+        const entity = await ItemCategoryMaster.findOneAndDelete({ ItemCategoryId: model.itemCategoryId });
+        if (!entity) throw new Error("Category not found");
+        
+        return res.status(StatusCodes.OK).json({ status: "Success", message: "Successfully Deleted" });
+    } catch (error) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ status: "Failed", error: error.message });
+    }
 }
 
 
