@@ -8,6 +8,15 @@ import {
   Campaign,
   CampaignTemplate,
   EventSetting,
+  ZoneMaster,
+  ItemTypeMaster,
+  ItemCategoryMaster,
+  UnitMaster,
+  TaxMaster,
+  EmpMaster,
+  FuelType,
+  BrandMaster,
+  VehicleTypeMaster
 } from "../modals/index.js";
 import {
   ApiSuccessResponse,
@@ -900,7 +909,48 @@ async function DeleteEventSetting(req, res){
 
 //-------------GetMasters-------->
 async function GetMasters(req, res){
+  const query =  req.body;
+  try {
+    let mastersData = {};
 
+    if (!query.list1 || query.list1.length === 0) {
+      mastersData = {
+        zone: await ZoneMaster.find().lean(),
+        itemType: await ItemTypeMaster.find().lean(),
+        itemCategory: await ItemCategoryMaster.find().lean(),
+        unit: await UnitMaster.find().lean(),
+        tax: await TaxMaster.find().lean(),
+        emp: await EmpMaster.find().lean(),
+        brand: await BrandMaster.find().lean(),
+        fuel: await FuelType.find().lean(),
+        vehicleType: await VehicleTypeMaster.find().lean(),
+      };
+    } else {
+      mastersData.filtered = await ZoneMaster.find({
+        someField: { $in: query.list1 },
+      }).lean();
+    }
+
+    return { status: "Success", data: mastersData };
+  } catch (error) {
+    return { status: "Failed", message: error.message };
+  }
+}
+
+//-------------UpsertSmsSetting-------->
+async function UpsertSmsSetting(req, res){
+  const model = req.body;
+  try {
+    await SmsSetting.updateMany({}, { $set: { IsActive: false } }); // Deactivate all
+    await SmsSetting.findOneAndUpdate(
+      { Id: model.Id },
+      { $set: { IsActive: true } },
+      { new: true }
+    );
+    return req.status(StatusCodes.OK).json({ status: "Success", message: "Updated Successfully" });
+  } catch (error) {
+    return req.status(StatusCodes.OK).json({ status: "Failed", error: error.message });
+  }
 }
 
 
@@ -925,5 +975,6 @@ export {
   GetEventSetting,
   UpsertEventSetting,
   DeleteEventSetting,
-  GetMasters
+  GetMasters,
+  UpsertSmsSetting
 };

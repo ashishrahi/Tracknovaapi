@@ -104,3 +104,12 @@ const fn = (value) => {
 }; // Join words back into a single string;
 
 console.log(fn("weferg erfergr errgvreg"));
+
+set: (value) => {
+  return value
+    .split(" ") // Split string into words
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ) // Capitalize each word
+    .join(" ");
+}

@@ -1,7 +1,7 @@
 import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getVehicleDistance } from "./Dashboard.controller.js";
-import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters } from "./Comm.controller.js";
-
+import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
+import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
 
 
 export const NTReadController = {
@@ -23,8 +23,6 @@ export const NTReadController = {
 
 
 }
-
-
 
 export const DashboardController = {
     getVehicleDistance: getVehicleDistance,
@@ -48,7 +46,15 @@ export const CommController = {
     GetEventSetting: GetEventSetting,
     UpsertEventSetting: UpsertEventSetting,
     DeleteEventSetting: DeleteEventSetting,
-    GetMasters: GetMasters
+    GetMasters: GetMasters,
+    UpsertSmsSetting: UpsertSmsSetting
 }
+
+export const ItemCategoryController = {
+    AddUpdateItemCategory: AddUpdateItemCategory,
+    GetItemCategory: GetItemCategory,
+    DeleteItemCategory: DeleteItemCategory
+}
+
 
 
