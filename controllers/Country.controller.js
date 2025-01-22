@@ -4,18 +4,18 @@ import {
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
-  AddUpdateBinLocationQuery,
-  GetBinLocationQuery,
-  DeleteBinLocationQuery,
+  AddUpdateCountryMasterQuery,
+  GetCountryMasterQuery,
+  DeleteCountryQuery,
 } from "../utils/DBQueries/index.js";
 
-////////////////////////////////////////////// AddUpdateBinLocation /////////////////////////////////////////////////////////
+///////////////////////////// AddUpdateCountryMaster /////////////////////////////////////////////////////////////
 
-export async function AddUpdateBinLocation(req, res) {
+export async function AddUpdateCountryMaster(req, res) {
   try {
     const model = req.body;
     const { data, isSuccess, message, statusCode } =
-      await AddUpdateBinLocationQuery(model);
+      await AddUpdateCountryMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -33,21 +33,18 @@ export async function AddUpdateBinLocation(req, res) {
   }
 }
 
-/////////////////////////////////// GetBinLocation /////////////////////////////////////////////////
-
-export async function GetBinLocation(req, res) {
+////////////////////////////  GetCountryMaster //////////////////////////////////////////////////////////
+export async function GetCountryMaster(req, res) {
   try {
     const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
-      await GetBinLocationQuery(model);
+
+    const { data, isSuccess, message, statusCode } =
+      await GetCountryMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
       message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
+      data
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
@@ -60,13 +57,14 @@ export async function GetBinLocation(req, res) {
   }
 }
 
-/////////////////////////////////// DeleteBinLocation /////////////////////////////////////////////////
+////////////////////////////  DeleteCountryMaster  //////////////////////////////////////////////////////////
 
-export async function DeleteBinLocation(req, res) {
+export async function DeleteCountryMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await DeleteBinLocationQuery(model);
+    const { data, isSuccess, message, statusCode } = await DeleteCountryQuery(
+      model
+    );
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -77,8 +75,8 @@ export async function DeleteBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

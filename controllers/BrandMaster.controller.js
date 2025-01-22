@@ -4,50 +4,21 @@ import {
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
-  AddUpdateBinLocationQuery,
-  GetBinLocationQuery,
-  DeleteBinLocationQuery,
+  AddUpdateBrandMasterQuery,
+  GetBrandQuery,
+  DeleteBrandQuery,
 } from "../utils/DBQueries/index.js";
 
-////////////////////////////////////////////// AddUpdateBinLocation /////////////////////////////////////////////////////////
-
-export async function AddUpdateBinLocation(req, res) {
+export async function AddUpdateBrandMaster(req, res) {
   try {
     const model = req.body;
     const { data, isSuccess, message, statusCode } =
-      await AddUpdateBinLocationQuery(model);
+      await AddUpdateBrandMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
       message,
       data
-    );
-    res.status(successResponse.statusCode).json(successResponse);
-  } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
-  }
-}
-
-/////////////////////////////////// GetBinLocation /////////////////////////////////////////////////
-
-export async function GetBinLocation(req, res) {
-  try {
-    const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
-      await GetBinLocationQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
@@ -59,14 +30,10 @@ export async function GetBinLocation(req, res) {
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
-
-/////////////////////////////////// DeleteBinLocation /////////////////////////////////////////////////
-
-export async function DeleteBinLocation(req, res) {
+export async function GetBrand(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await DeleteBinLocationQuery(model);
+    const { data, isSuccess, message, statusCode } = await GetBrandQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -77,8 +44,31 @@ export async function DeleteBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
+    );
+    res.status(errorResponse.statusCode).json(errorResponse);
+  }
+}
+export async function DeleteBrand(req, res) {
+  try {
+    const model = req.body;
+
+    const { data, isSuccess, message, statusCode } = await DeleteBrandQuery(
+      model
+    );
+    const successResponse = new ApiSuccessResponse(
+      isSuccess,
+      statusCode,
+      message,
+      data
+    );
+    res.status(successResponse.statusCode).json(successResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

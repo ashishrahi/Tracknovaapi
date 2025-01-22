@@ -1,38 +1,24 @@
 import { BinLocation,Route,RouteAreaBinDetail } from "../../modals/index.js";
 
-
+import { StatusCodes } from "http-status-codes";
 
 
 ////////////////////////////// AddUpdateBinLocationQuery //////////////////////////////////////////
 
 
 export const AddUpdateBinManageQuery = async (model) => {
- 
-    try {
-      // Loop through RouteAreaBinDetailCmd items
-      for (let i = 0; i < model.RouteAreaBinDetailCmd.length; i++) {
-        const cmd = model.RouteAreaBinDetailCmd[i];
-  
-        // Check if the record exists
-        let binDetail = await RouteAreaBinDetail.findOne({ RouteDetailBinId: cmd.RouteDetailBinId });
-  
-        if (binDetail) {
-          // Update existing record
-          binDetail = await RouteAreaBinDetail.findByIdAndUpdate(binDetail._id, {
-            RouteDetailId: cmd.RouteDetailId,
-            BinID: cmd.BinID,
-            RouteID: cmd.RouteID,
-            AreaID: cmd.AreaID,
-            SerialNo: cmd.SerialNo,
-            Timing: cmd.Timing,
-            CreatedBy: cmd.CreatedBy,
-            UpdatedBy: cmd.UpdatedBy,
-            CreatedOn: cmd.CreatedOn,
-            UpdatedOn: cmd.UpdatedOn,
-          }, { new: true });
-        } else {
-          // Create new record
-          binDetail = new RouteAreaBinDetail({
+  try {
+    const results = []; 
+
+    for (const cmd of model.RouteAreaBinDetailCmd) {
+      const existingBinDetail = await RouteAreaBinDetail.findOne({
+        RouteDetailBinId: cmd.RouteDetailBinId,
+      });
+
+      if (existingBinDetail) {
+        const updatedBinDetail = await RouteAreaBinDetail.findOneAndUpdate(
+          { RouteDetailBinId: cmd.RouteDetailBinId },
+          {
             RouteDetailBinId: cmd.RouteDetailBinId,
             RouteDetailId: cmd.RouteDetailId,
             BinID: cmd.BinID,
@@ -44,31 +30,73 @@ export const AddUpdateBinManageQuery = async (model) => {
             UpdatedBy: cmd.UpdatedBy,
             CreatedOn: cmd.CreatedOn,
             UpdatedOn: cmd.UpdatedOn,
-          });
-          await binDetail.save();
+          },
+          { new: true }
+        );
+
+
+        results.push({
+          action: 'updated',
+          message: `Successfully updated ${cmd.RouteDetailBinId}.`,
+          data: updatedBinDetail,
+        });
+        return{
+          isSuccess: 'success',
+          statusCode: StatusCodes.OK,
+          message: `Successfully updated ${cmd.RouteDetailBinId}.`,
+          data: updatedBinDetail,
         }
-  
-        // Add the bin detail to the response data
-        res.data = model;
+      } else {
+        // Create a new document
+        const newBinDetail = new RouteAreaBinDetail({
+          RouteDetailBinId: cmd.RouteDetailBinId,
+          RouteDetailId: cmd.RouteDetailId,
+          BinID: cmd.BinID,
+          RouteID: cmd.RouteID,
+          AreaID: cmd.AreaID,
+          SerialNo: cmd.SerialNo,
+          Timing: cmd.Timing,
+          CreatedBy: cmd.CreatedBy,
+          UpdatedBy: cmd.UpdatedBy,
+          CreatedOn: cmd.CreatedOn,
+          UpdatedOn: cmd.UpdatedOn,
+        });
+
+        await newBinDetail.save();
+        results.push({
+          action: 'added',
+          message: `"${newBinDetail.RouteDetailBinId}" has been successfully added.`,
+          data: newBinDetail,
+        });
       }
-  
-      res.status = 'Success';
-      res.message = 'Successfully added or updated bin manage details';
-    } catch (err) {
-      res.status = 'Failed';
-      res.message = err.message;
     }
-  
-    return res;
+
+    // Aggregate results
+    const addedCount = results.filter((item) => item.action === 'added').length;
+    const updatedCount = results.filter((item) => item.action === 'updated').length;
+
+    return {
+      isSuccess: 'success',
+      statusCode: StatusCodes.OK,
+      message: `Successfully added ${addedCount} record(s) and updated ${updatedCount} record(s).`,
+      data: results,
+    };
+  } catch (err) {
+    return {
+      isSuccess: 'failed',
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: err.message,
+    };
+  }
   };
 
 ////////////////////////////// GetBinManageQuery //////////////////////////////////////////
 
 
-export const GetBinManageQuery = async (filter) => {
+export const GetBinManageQuery = async (model) => {
 
   try {
-  const { pageNo, pageSize} = filter;
+  const { pageNo, pageSize} = model;
     const pipeline = [
       {
         $lookup: {
@@ -130,9 +158,17 @@ export const GetBinManageQuery = async (filter) => {
       { $limit: parseInt(pageSize, 10) },
     ];
 
-    const result = await Route.aggregate(pipeline);
+    const data = await Route.aggregate(pipeline);
     const rowCount = await Route.countDocuments();
-    return { result, rowCount };
+    return { 
+      isSuccess:'success',
+      statusCode: StatusCodes.OK,
+      message: 'Data fetched successfully',
+      data: data,
+      pageNo:pageNo, 
+      pageSize:pageSize,
+      rowCount:rowCount };
+      
   } catch (error) {
     throw new Error(`Error in GetBinManageQuery: ${error.message}`);
   }

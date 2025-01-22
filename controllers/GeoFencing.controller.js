@@ -1,21 +1,20 @@
 import { StatusCodes } from "http-status-codes";
 import {
-  ApiErrorResponse,
   ApiSuccessResponse,
+  ApiErrorResponse,
 } from "../utils/apiResponse/index.js";
 import {
-  AddUpdateBinLocationQuery,
-  GetBinLocationQuery,
-  DeleteBinLocationQuery,
-} from "../utils/DBQueries/index.js";
+  AddUpdateGeoFencingQuery,
+  GetGeoFencingQuery,
+  DeleteGeoFencingQuery,
+} from "../utils/DBQueries/GeoFencing.Query.js";
+/////////////////////////////////////////////// AddUpdateGeoFencing //////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////// AddUpdateBinLocation /////////////////////////////////////////////////////////
-
-export async function AddUpdateBinLocation(req, res) {
+export async function AddUpdateGeoFencing(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await AddUpdateBinLocationQuery(model);
+    const { isSuccess, statusCode, message, data } =
+      await AddUpdateGeoFencingQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -26,47 +25,45 @@ export async function AddUpdateBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Error occurred while updating",
+      error
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
-
-/////////////////////////////////// GetBinLocation /////////////////////////////////////////////////
-
-export async function GetBinLocation(req, res) {
+//////////////////////////////////////////////// GetGeoFencing //////////////////////////////////////////////////////////////////
+export async function GetGeoFencing(req, res) {
   try {
     const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
-      await GetBinLocationQuery(model);
+    const { isSuccess, message, statusCode, data } = await GetGeoFencingQuery(
+      model
+    );
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
       message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
+      data
     );
+
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.BAD_REQUEST,
-      error.message
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Error occurred while getting",
+      error
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
 
-/////////////////////////////////// DeleteBinLocation /////////////////////////////////////////////////
-
-export async function DeleteBinLocation(req, res) {
+//////////////////////////////////////////////// DeleteGeoFencing //////////////////////////////////////////////////////////////////
+export async function DeleteGeoFencing(req, res) {
   try {
     const model = req.body;
     const { data, isSuccess, message, statusCode } =
-      await DeleteBinLocationQuery(model);
+      await DeleteGeoFencingQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -77,8 +74,9 @@ export async function DeleteBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Error occurred while deleting",
+      error
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

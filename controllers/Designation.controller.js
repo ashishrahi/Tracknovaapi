@@ -4,18 +4,17 @@ import {
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
-  AddUpdateBinLocationQuery,
-  GetBinLocationQuery,
-  DeleteBinLocationQuery,
+  AddUpdateDesignationMasterQuery,
+  GetDesignationMasterQuery,
+  DeleteDesignationMasterQuery,
 } from "../utils/DBQueries/index.js";
+/////////////////////////////////////// AddUpdateDesignationMaster //////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////// AddUpdateBinLocation /////////////////////////////////////////////////////////
-
-export async function AddUpdateBinLocation(req, res) {
+export async function AddUpdateDesignationMaster(req, res) {
   try {
     const model = req.body;
     const { data, isSuccess, message, statusCode } =
-      await AddUpdateBinLocationQuery(model);
+      await AddUpdateDesignationMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -33,21 +32,18 @@ export async function AddUpdateBinLocation(req, res) {
   }
 }
 
-/////////////////////////////////// GetBinLocation /////////////////////////////////////////////////
+//////////////////////////////////////   GetDesignationMaster      ///////////////////////////////////////////////////////////////
 
-export async function GetBinLocation(req, res) {
+export async function GetDesignationMaster(req, res) {
   try {
     const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
-      await GetBinLocationQuery(model);
+    const { data, isSuccess, message, statusCode } =
+      await GetDesignationMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
       message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
+      data
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
@@ -60,13 +56,13 @@ export async function GetBinLocation(req, res) {
   }
 }
 
-/////////////////////////////////// DeleteBinLocation /////////////////////////////////////////////////
+//////////////////////////////////////  DeleteDesignationMaster //////////////////////////////////////////////////////////////////////
 
-export async function DeleteBinLocation(req, res) {
+export async function DeleteDesignationMaster(req, res) {
   try {
     const model = req.body;
     const { data, isSuccess, message, statusCode } =
-      await DeleteBinLocationQuery(model);
+      await DeleteDesignationMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -77,8 +73,8 @@ export async function DeleteBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

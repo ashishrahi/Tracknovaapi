@@ -4,18 +4,17 @@ import {
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
-  AddUpdateBinLocationQuery,
-  GetBinLocationQuery,
-  DeleteBinLocationQuery,
-} from "../utils/DBQueries/index.js";
+  AddUpdateFuelTypeQuery,
+  GetFuelTypeQuery,
+  DeleteFuelTypeQuery,
+} from "../utils/DBQueries/FuelType.Query.js";
 
-////////////////////////////////////////////// AddUpdateBinLocation /////////////////////////////////////////////////////////
-
-export async function AddUpdateBinLocation(req, res) {
+/////////////////////////////////////// AddUpdateFuelType //////////////////////////////////////////////////////////////////////////////////////////////////
+export async function AddUpdateFuelType(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await AddUpdateBinLocationQuery(model);
+    const { isSuccess, statusCode, message, data } =
+      await AddUpdateFuelTypeQuery(model);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -33,40 +32,37 @@ export async function AddUpdateBinLocation(req, res) {
   }
 }
 
-/////////////////////////////////// GetBinLocation /////////////////////////////////////////////////
-
-export async function GetBinLocation(req, res) {
+///////////////////////////////////////  GetFuelType //////////////////////////////////////////////////////////////////
+export async function GetFuelType(req, res) {
   try {
     const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
-      await GetBinLocationQuery(model);
+    const { data, isSuccess, message, statusCode } = await GetFuelTypeQuery(
+      model
+    );
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
       message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
+      data
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.BAD_REQUEST,
-      error.message
+      StatusCodes.NOT_FOUND,
+      "Failed to grant Access Permission"
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
 
-/////////////////////////////////// DeleteBinLocation /////////////////////////////////////////////////
-
-export async function DeleteBinLocation(req, res) {
+/////////////////////////////////////// DeleteFuelType //////////////////////////////////////////////////////////////////
+export async function DeleteFuelType(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await DeleteBinLocationQuery(model);
+    const { data, isSuccess, message, statusCode } = await DeleteFuelTypeQuery(
+      model
+    );
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
