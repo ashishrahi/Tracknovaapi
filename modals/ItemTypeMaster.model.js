@@ -1,27 +1,27 @@
 import mongoose, { trusted } from "mongoose";
 
 const ItemTypeMasterSchema = new mongoose.Schema({
-  itemTypeMasterId: {
+  ItemTypeMasterId: {
     type: Number,
     required: true,
     unique: true,
   },
-  itemType: {
+  ItemType: {
     type: String,
     required: true,
     trim: true
   },
-  itemTypeCode: {
+  ItemTypecode: {
     type: String,
     required: true,
     trim: true
   },
-  createdBy: {
+  CreatedBy: {
     type: String,
     required: true,
     trim: true
   },
-  updatedBy: {
+  UpdatedBy: {
     type: String,
     trim: true
   },

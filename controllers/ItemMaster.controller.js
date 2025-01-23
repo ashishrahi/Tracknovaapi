@@ -197,7 +197,7 @@ async function AddUpdateItemMaster( req, res, next){
 }
 
 //--------------GetItemMaster-------->
-async function GetItemMaster(req, res){
+async function GetItemMaster(req, res, next){
 
     try {
         const { itemMasterId, vehicleNo } = req.body;
@@ -320,48 +320,62 @@ async function GetItemMaster(req, res){
         const result = await ItemMaster.aggregate(query);
         const message = result.length > 0 ? "Data fetched successfully" : "No records found."
         return res.status(StatusCodes.OK).json( new ApiSuccessResponse(StatusCodes.OK, message, result ));
-    } catch (error) {
-        return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+    } catch (err) {
+        const error = new Error(err.message);
+        error.status = StatusCodes.BAD_REQUEST;
+        return next(error);
+        // return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
     }
 }
 
 //--------------DeleteItemMaster-------->
-async function DeleteItemMaster(req, res){
+async function DeleteItemMaster(req, res, next){
     try {
     const { itemMasterId } = req.body;
-    const response = { status: "Failed", message: "" };
+        // const response = { status: "Failed", message: "" };
 
         // Check if ItemMasterId exists in ContractorMaster
         const cam = await ContractorMaster.findOne({ ItemId: itemMasterId });
 
         if (cam) {
-            response.message = "Item Id is used in ContractorMaster, so it can't be deleted.";
-            return res.status(StatusCodes.CONFLICT).json(response);
+            const error = new Error("Item Id is used in ContractorMaster, so it can't be deleted.")
+            error.status = StatusCodes.CONFLICT;
+            return next(error)
+            // response.message = "Item Id is used in ContractorMaster, so it can't be deleted.";
+
+            // return res.status(StatusCodes.CONFLICT).json(response);
         }
 
-        if (model.ItemMasterId) {
+        if (itemMasterId || itemMasterId === 0) {
             // Check if the item exists in ItemMasters
-            const entity = await db.collection("ItemMasters").findOne({ _id: model.ItemMasterId });
+            const entity = await ItemMaster.findOne({ ItemMasterId: itemMasterId });
 
             if (entity && entity.NTRecord && entity.NTRecord.toLowerCase() === "y") {
-                throw new Error("Vehicle Movement found, cannot be deleted.");
+                const error = new Error("Vehicle Movement found, cannot be deleted.");
+                error.status = StatusCodes.CONFLICT;
+                return next(error); 
+                // throw new Error("Vehicle Movement found, cannot be deleted.");
             }
 
             // Perform the delete operation
-            const deleteResult = await db.collection("ItemMasters").deleteOne({ _id: model.ItemMasterId });
+            const deleteResult = await ItemMaster.deleteOne({ ItemMasterId: itemMasterId });
 
             if (deleteResult.deletedCount === 1) {
-                res.status = "Success";
-                res.message = "Successfully Deleted";
+                return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Deleted"))
+               
             } else {
-                res.message = "ItemMaster not found.";
+                const error = new Error("ItemMaster not found.");
+                error.status = StatusCodes.NOT_FOUND;
+                return next(error);
+                
             }
         }
-    } catch (error) {
-        res.message = error.message || "An error occurred during deletion.";
+    } catch (err) {
+        const error = new Error(err.message);
+        error.status = StatusCodes.BAD_REQUEST
+        return next(error);
+        // res.message = error.message || "An error occurred during deletion.";
     }
-
-    return res;
 
 }
 
