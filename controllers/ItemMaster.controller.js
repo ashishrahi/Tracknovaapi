@@ -1,7 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import { ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
+import { ContractorMaster, ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
+import ApiErrorResponse from "../utils/apiResponse/ApiErrorResponse.js";
+import ApiSuccessResponse from "../utils/apiResponse/ApiSuccessResponse.js";
 
-async function AddUpdateItemMaster(req, res){
+//--------------AddUpdateItemMaster-------->
+async function AddUpdateItemMaster( req, res, next){
     // const session = await mongoose.startSession();
     // session.startTransaction();
     try {
@@ -13,7 +16,11 @@ async function AddUpdateItemMaster(req, res){
         if (model.itemMasterId === 0) {
             const existingVehicle = await ItemMaster.findOne({ VehicleNo: model.vehicleNo })
             // .session(session);
-            if (existingVehicle) throw new Error("Vehicle No Already Exists...!!!!!");
+            if (existingVehicle){
+                const error = new Error("Vehicle No. Already Exists...!!!!!")
+                error.status = StatusCodes.CONFLICT;
+                return next(error);
+            };
             
             const lastItem = await ItemMaster.findOne().sort({ ItemMasterId: -1 })
             // .session(session);
@@ -61,17 +68,25 @@ async function AddUpdateItemMaster(req, res){
               }                                    
               ).save(); // save({session})
             // await session.commitTransaction();
-            return res.status(StatusCodes.OK).json({ status: "Success", message: "Successfully Added", data: savedData });
+            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Added", savedData));
         } else{
             // now updating
         const entity = await ItemMaster.findOne({ ItemMasterId: model.itemMasterId })
         // .session(session);
-        if (!entity) throw new Error("Item not found");
+        if (!entity){
+            const error = new Error("Item not found");
+            error.status = StatusCodes.NOT_FOUND;
+            return  next(error);
+        }
         
         if (entity.VehicleNo !== model.vehicleNo) {
             const vehicleExists = await ItemMaster.findOne({ VehicleNo: model.vehicleNo })
             // .session(session);
-            if (vehicleExists) throw new Error("Vehicle No. Already Exists...!!!!!");
+            if (vehicleExists) {
+                const error = new Error("Vehicle No. Already Exists...!!!!!");
+                error.status = StatusCodes.CONFLICT;
+                return next(error)
+            };
         }
 
         if (model.simNo && model.simNo !== model.existSimNo) {
@@ -115,7 +130,10 @@ async function AddUpdateItemMaster(req, res){
 
 
                 if(!newVehicleAddTempInfo){
-                    return res.status(StatusCodes.OK).json({status: "Failed", message: "Internal issue. Try Again",})
+                    const error = new Error("Internal issue. Try Again")
+                    error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+                    return next(error)
+                    // res.status(StatusCodes.OK).json({status: "Failed", message: "Internal issue. Try Again",})
                 }
             }
             
@@ -166,14 +184,187 @@ async function AddUpdateItemMaster(req, res){
         }, {new: true})
         // .session(session);
         // await session.commitTransaction();
-        return res.status(StatusCodes.OK).json({ status: "Success", message: "Successfully Updated", data: updatedItemMaster });
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Updated", updatedItemMaster));
         }
 
         
-    } catch (error) {
-        // await session.abortTransaction();
-        return res.status(StatusCodes.OK).json({ status: "Failed", error: error.message });
+    } catch (err) {
+        const error = new Error(err.message)
+        error.status = StatusCodes.BAD_REQUEST;
+        return next(error)
+        // return res.status(StatusCodes.OK).json({ status: "Failed", error: error.message });
     }
 }
 
-export { AddUpdateItemMaster };
+//--------------GetItemMaster-------->
+async function GetItemMaster(req, res){
+
+    try {
+        const { itemMasterId, vehicleNo } = req.body;
+        let query = [];
+        if (itemMasterId === -1) {
+            query.push(
+                {
+                    $lookup: {
+                        from: "Department",
+                        localField: "deptId",
+                        foreignField: "DepartmentId",
+                        as: "departmentData",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "Designation",
+                        localField: "desigId",
+                        foreignField: "DesignationId",
+                        as: "designationData",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "vehicletypes",
+                        localField: "VehicleTypeId",
+                        foreignField: "VehicleTypeId",
+                        as: "vehicleTypeData",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$departmentData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$designationData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$vehicleTypeData",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $match: {
+                      VehicleNo: {
+                        $regex: vehicleNo,
+                        $options: "i"
+                      }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        ItemMasterId: 1,
+                        ItemName: { $ifNull: ["$ItemName", ""] },
+                        ItemCode: { $ifNull: ["$ItemCode", ""] },
+                        ItemTypeId: 1,
+                        ItemFlag: 1,
+                        ItemCategoryId: 1,
+                        UnitId: 1,
+                        EmpId: 1,
+                        TaxId: 1,
+                        PurchaseYear: { $ifNull: ["$PurchaseYear", 0] },
+                        ModelNo: { $ifNull: ["$ModelNo", ""] },
+                        SerialNo: { $ifNull: ["$SerialNo", ""] },
+                        VehicleNo: { $ifNull: ["$VehicleNo", ""] },
+                        VZoneID: 1,
+                        HSNCode: { $ifNull: ["$HSNCode", ""] },
+                        ChesisNo: { $ifNull: ["$ChesisNo", ""] },
+                        QCApplicable: { $ifNull: ["$QCApplicable", false] },
+                        DepreciationRate: { $ifNull: ["$DepreciationRate", 0] },
+                        CreatedBy: 1,
+                        UpdatedBy: 1,
+                        devid: { $ifNull: ["$Devid", ""] },
+                        SimNo: { $ifNull: ["$SimNo", ""] },
+                        SimCompany: { $ifNull: ["$SimCompany", ""] },
+                        SimType: { $ifNull: ["$SimType", ""] },
+                        DeviceTypeId: 1,
+                        ZoneName: { $ifNull: ["$ZoneName", ""] },
+                        CreatedOn: 1,
+                        UpdatedOn: 1,
+                        Mileage: { $ifNull: ["$Mileage", 0] },
+                        LitrePerHr: { $ifNull: ["$LitrePerHr", 0] },
+                        KmPerLitre: { $ifNull: ["$KmPerLitre", 0] },
+                        FuelAlloted: { $ifNull: ["$FuelAlloted", 0] },
+                        VehicleTypeId: 1,
+                        VehicleTypeName: { $ifNull: ["$vehicleTypeData.VehicleTypename", ""] },
+                        BrandTypeId: 1,
+                        FuelTypeId: 1,
+                        NTRecord: 1,
+                        VehicleWeight: { $ifNull: ["$VehicleWeight", 0] },
+                        deptId: 1,
+                        desigId: 1,
+                        DepartmentName: { $ifNull: ["$departmentData.DepartmentName", ""] },
+                        DesignationName: { $ifNull: ["$designationData.DesignationName", ""] },
+                        rfid: { $ifNull: ["$Rfid", ""] },
+                        rfid2: { $ifNull: ["$Rfid2", ""] },
+                        SpeedLimit: 1,
+                        Contractorid: 1,
+                    },
+                }
+            );
+        } else {
+            query.push({
+                $match: {
+                    $or: [
+                        { ItemMasterId: itemMasterId },
+                        { VehicleNo: { $regex: vehicleNo, $options: "i" } },
+                    ],
+                },
+            });
+        }
+
+        const result = await ItemMaster.aggregate(query);
+        const message = result.length > 0 ? "Data fetched successfully" : "No records found."
+        return res.status(StatusCodes.OK).json( new ApiSuccessResponse(StatusCodes.OK, message, result ));
+    } catch (error) {
+        return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+    }
+}
+
+//--------------DeleteItemMaster-------->
+async function DeleteItemMaster(req, res){
+    try {
+    const { itemMasterId } = req.body;
+    const response = { status: "Failed", message: "" };
+
+        // Check if ItemMasterId exists in ContractorMaster
+        const cam = await ContractorMaster.findOne({ ItemId: itemMasterId });
+
+        if (cam) {
+            response.message = "Item Id is used in ContractorMaster, so it can't be deleted.";
+            return res.status(StatusCodes.CONFLICT).json(response);
+        }
+
+        if (model.ItemMasterId) {
+            // Check if the item exists in ItemMasters
+            const entity = await db.collection("ItemMasters").findOne({ _id: model.ItemMasterId });
+
+            if (entity && entity.NTRecord && entity.NTRecord.toLowerCase() === "y") {
+                throw new Error("Vehicle Movement found, cannot be deleted.");
+            }
+
+            // Perform the delete operation
+            const deleteResult = await db.collection("ItemMasters").deleteOne({ _id: model.ItemMasterId });
+
+            if (deleteResult.deletedCount === 1) {
+                res.status = "Success";
+                res.message = "Successfully Deleted";
+            } else {
+                res.message = "ItemMaster not found.";
+            }
+        }
+    } catch (error) {
+        res.message = error.message || "An error occurred during deletion.";
+    }
+
+    return res;
+
+}
+
+
+
+export { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster };

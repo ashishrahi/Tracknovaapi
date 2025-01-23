@@ -21,8 +21,9 @@ import UnitMaster from "./UnitMaster.model.js";
 import TaxMaster from "./TaxMaster.model.js";
 import BrandMaster from "./BrandMaster.model.js";
 import VehicleAddTempInfo from "./VehicleAddTempInfo.model.js";
+import ContractorMaster from "./ContractorMaster.model.js";
 
 
 
 
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting, FuelType, ItemTypeMaster, ItemCategoryMaster, UnitMaster, TaxMaster, BrandMaster, VehicleAddTempInfo }
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting, FuelType, ItemTypeMaster, ItemCategoryMaster, UnitMaster, TaxMaster, BrandMaster, VehicleAddTempInfo, ContractorMaster }

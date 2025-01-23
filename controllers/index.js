@@ -2,7 +2,7 @@ import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent,
 import { getVehicleDistance } from "./Dashboard.controller.js";
 import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
 import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
-import { AddUpdateItemMaster } from "./ItemMaster.controller.js";
+import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 
 export const NTReadController = {
     probWireTamp: probWireTamp,
@@ -57,7 +57,9 @@ export const ItemCategoryController = {
 }
 
 export const ItemMasterController = {
-    AddUpdateItemMaster: AddUpdateItemMaster
+    AddUpdateItemMaster: AddUpdateItemMaster,
+    GetItemMaster: GetItemMaster,
+    DeleteItemMaster: DeleteItemMaster
 }
 
 
