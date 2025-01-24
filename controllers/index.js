@@ -7,7 +7,7 @@ import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from
 import { GetMapVehicleData } from "./MapVehicleData.controller.js"
 import { AddUpdateNewNodeMaster} from "./NewNodeMaster.controller.js"
 import { AddUpdateNodePermission } from "./NodePermission.controller.js";
-
+import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
 
 export const NTReadController = {
     probWireTamp: probWireTamp,
@@ -85,5 +85,10 @@ export const NodePermissionController = {
     AddUpdateNodePermission: AddUpdateNodePermission
 }
 
+export const VehicleAuditInfoController = {
+    AddUpdateVehicleAuditInfo: AddUpdateVehicleAuditInfo,
+    GetVehicleAuditInfo: GetVehicleAuditInfo,
+    DeleteVehicleAuditInfo: DeleteVehicleAuditInfo
+}
 
 

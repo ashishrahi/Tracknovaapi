@@ -24,8 +24,4 @@ import VehicleAddTempInfo from "./VehicleAddTempInfo.model.js";
 import ContractorMaster from "./ContractorMaster.model.js";
 import NodePermission from "./NodePermission.model.js";
 
-
-
-
-
 export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting, FuelType, ItemTypeMaster, ItemCategoryMaster, UnitMaster, TaxMaster, BrandMaster, VehicleAddTempInfo, ContractorMaster, NodePermission }

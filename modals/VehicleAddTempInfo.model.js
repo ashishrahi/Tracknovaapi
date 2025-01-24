@@ -10,7 +10,7 @@ const VehicleAddTempInfoSchema = new mongoose.Schema(
     ProblemType: { type: String,  },
     Remark: {
       type: String,
-      required: true,
+      default: null,
       set: (value) => {
         return value
           .split(" ") // Split string into words

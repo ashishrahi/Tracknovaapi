@@ -8,7 +8,7 @@ import ItemTypeMasterRoutes from "./ItemTypeMaster.routes.js";
 import MapVehicleDataRoutes from "./MapVehicleData.routes.js"
 import NewNodeMasterRoutes from "./NewNodeMaster.routes.js";
 import NodePermissionRoutes from "./NodePermission.routes.js";
-
+import VehicleAuditInfoRoutes from "./VehicleAuditInfo.routes.js"
 
 const router = express.Router();
 
@@ -22,5 +22,7 @@ router.use("/ItemTypeMaster", ItemTypeMasterRoutes);
 router.use("/MapVehicleData", MapVehicleDataRoutes);
 router.use("/NewNodeMaster", NewNodeMasterRoutes); // skipped this api because of table is not present
 router.use("/NodePermission", NodePermissionRoutes); // skipped this api because of table is not present
+router.use("/VehicleAuditInfo", VehicleAuditInfoRoutes); 
+
 
 export default router;

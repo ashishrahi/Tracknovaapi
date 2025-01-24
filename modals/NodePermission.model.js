@@ -7,13 +7,12 @@ const NodePermissionSchema = new mongoose.Schema({
         unique: true
     },
     UserId: {
-        type: Number,
+        type:  String,
         required: true,
-        unique: true
+        // unique: true
     },
     NodeId: {
         type: Number,
-        
     },
     ParentId :{
         type: Number,
