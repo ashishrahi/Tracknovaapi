@@ -67,6 +67,7 @@ async function GetItemTypeMaster(req, res, next){
     
         return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK,"default" , data))
       } catch (error) {
+        
         return res.json({
           isSuccess: false,
           message: error.message,
@@ -74,4 +75,30 @@ async function GetItemTypeMaster(req, res, next){
       }
 }
 
-export{ AddUpdateItemTypeMaster, GetItemTypeMaster }
+async function DeleteItemTypeMaster(req, res, next){
+  try {
+    const { itemTypeMasterId }  = req.body;
+    if(!itemTypeMasterId){
+      const error = new Error("Please Provide ItemTypeMasterId");
+      error.status = StatusCodes.BAD_REQUEST;
+      return next(error);
+    }
+    const deletedItems = await ItemTypeMaster.deleteMany({ ItemTypeMasterId: itemTypeMasterId });
+
+    if(deletedItems.deletedCount > 0){
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK,"Successfully deleted" ));
+    } else {
+      const error = new Error("Item Type Id Not Found!")
+      error.status = StatusCodes.NOT_FOUND;
+      return next(error);
+        // return { IsSuccess: false, Mesg: "Item Type Id Not Found!" };
+    }
+} catch (err) {
+    const error = new Error(err.message);
+    error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+    return next(error);
+    // return { IsSuccess: false, Mesg: error.message || "An error occurred" };
+}
+}
+
+export{ AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster }
