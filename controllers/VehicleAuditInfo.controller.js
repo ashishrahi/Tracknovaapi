@@ -155,7 +155,36 @@ async function GetVehicleAuditInfo(req, res, next) {
 
 //-------------DeleteVehicleAuditInfo------->
 async function DeleteVehicleAuditInfo(req, res, next){
-
+    try {
+        let query = { };
+    
+        let { id, vehicleNo, vehicleId, simNo, deviceNo, problemType, serviceEngg, olddeviceNo, oldSimNo, empName, empMobileNo, empId, deviceType, simType, repair,  } = req.body;
+    
+        if (id) query.Id = id;
+        if (vehicleNo) query.VehicleNo = vehicleNo;
+        if (vehicleId) query.VehicleId = vehicleId;
+        if (simNo) query.simNo = simNo;
+        if (deviceNo) query.DeviceNo = deviceNo;
+        if (problemType) query.ProblemType = problemType;
+        if (serviceEngg) query.ServiceEngg = serviceEngg;
+        if (olddeviceNo) query.OlddeviceNo = olddeviceNo;
+        if (oldSimNo) query.OldSimNo = oldSimNo;
+        if (empName) query.EmpName = empName;
+        if (empMobileNo) query.EmpMobileNo = empMobileNo;
+        if (empId) query.EmpId = empId;
+        if (deviceType) query.DeviceType = deviceType;
+        if (simType) query.simType = simType;
+        if (repair) query.Repair = repair;
+        
+        // Apply dynamic filters using Mongoose's `find` method
+        const data = await VehicleAddTempInfo.findOneAndDelete(query)
+        
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, data, pageNo, pageSize, data.length ));
+      } catch (err) {
+        const error = new Error(err.message);
+        error.status = StatusCodes.BAD_REQUEST;
+        return next(error);
+      }
 }
 
 
