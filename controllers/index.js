@@ -5,6 +5,8 @@ import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./It
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from "./ItemTypeMaster.controller.js";
 import { GetMapVehicleData } from "./MapVehicleData.controller.js"
+import { AddUpdateNewNodeMaster} from "./NewNodeMaster.controller.js"
+import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 
 
 export const NTReadController = {
@@ -73,6 +75,14 @@ export const ItemTypeMasterController = {
 
 export const MapVehicleDataController = {
     GetMapVehicleData: GetMapVehicleData
+}
+
+export const NewNodeMasterController = {
+    AddUpdateNewNodeMaster: AddUpdateNewNodeMaster
+}
+
+export const NodePermissionController = {
+    AddUpdateNodePermission: AddUpdateNodePermission
 }
 
 
