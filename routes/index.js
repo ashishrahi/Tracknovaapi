@@ -9,6 +9,10 @@ import MapVehicleDataRoutes from "./MapVehicleData.routes.js"
 import NewNodeMasterRoutes from "./NewNodeMaster.routes.js";
 import NodePermissionRoutes from "./NodePermission.routes.js";
 import VehicleAuditInfoRoutes from "./VehicleAuditInfo.routes.js"
+import VehicleFuelDateRangeRoutes from "./VehicleFuelDateRange.routes.js"
+import VehicleMovingRoutes from "./VehicleMoving.routes.js"
+import VehicleTypeRoutes from "./VehicleType.routes.js";
+
 
 const router = express.Router();
 
@@ -23,6 +27,9 @@ router.use("/MapVehicleData", MapVehicleDataRoutes);
 router.use("/NewNodeMaster", NewNodeMasterRoutes); // skipped this api because of table is not present
 router.use("/NodePermission", NodePermissionRoutes); // skipped this api because of table is not present
 router.use("/VehicleAuditInfo", VehicleAuditInfoRoutes); 
+router.use("/VehicleFuelDateRange", VehicleFuelDateRangeRoutes); // Skipped
+router.use("/VehicleMoving", VehicleMovingRoutes); // Skipped
+router.use("/VehicleType", VehicleTypeRoutes); // Skipped
 
 
 export default router;

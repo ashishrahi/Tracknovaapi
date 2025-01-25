@@ -173,13 +173,18 @@ async function DeleteVehicleAuditInfo(req, res, next){
         if (empMobileNo) query.EmpMobileNo = empMobileNo;
         if (empId) query.EmpId = empId;
         if (deviceType) query.DeviceType = deviceType;
-        if (simType) query.simType = simType;
+        if (simType) query.SimType = simType;
         if (repair) query.Repair = repair;
         
         // Apply dynamic filters using Mongoose's `find` method
         const data = await VehicleAddTempInfo.findOneAndDelete(query)
-        
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, data, pageNo, pageSize, data.length ));
+        if(data){
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully deleted" ));
+        }else{
+          const error = new Error("Document not found or already deleted")
+          error.status = StatusCodes.NOT_FOUND;
+          next(error)
+        }
       } catch (err) {
         const error = new Error(err.message);
         error.status = StatusCodes.BAD_REQUEST;
