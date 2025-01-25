@@ -81,7 +81,60 @@ async function AddUpdateVehicleType(req, res, next) {
 
 //-----------GetVehicleType------>
 async function GetVehicleType(req, res, next){
+        
+      try {
+        const model = req.body;
+        
+        const filter = {};
+        if (model.vehicleTypeId !== 0) filter.VehicleTypeId = model.vehicleTypeId;
+        if (model.vehicleTypename) {
+          filter.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
+        }
+    
+        // Query the VehicleTypeMaster collection
+        const result = await VehicleTypeMaster.find(filter);
+    
+       let msg;
+       result.length > 0 ? msg = "default" : msg = "No Record Found!!"
+       return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, result))
 
+      } catch (error) {
+        const err = new Error(error.message)
+        err.status = StatusCodes.INTERNAL_SERVER_ERROR
+        return next(err)
+      }
 }
 
-export { AddUpdateVehicleType, GetVehicleType };
+//-----------DeleteVehicleType------>
+async function DeleteVehicleType(req, res, next){
+      try {
+        const model = req.body;
+        if (model.vehicleTypeId === 0) {
+            const error = new Error("Invalid VehicleTypeId");
+            error.status = StatusCodes.BAD_REQUEST;
+            return next(error);
+        }
+    
+        // Delete the document from the VehicleTypeMaster collection
+        const result = await VehicleTypeMaster.deleteOne({ VehicleTypeId: model.vehicleTypeId });
+    
+        // If no document was deleted, the operation was not successful
+        if (result.deletedCount === 0) {
+            const error = new Error("VehicleType not found");
+            error.status = StatusCodes.NOT_FOUND;
+            return next(error);
+        }
+    
+        // Set the response message for a successful deletion
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, 'VehicleType successfully deleted'))
+      } catch (error) {
+        const err = new Error(error.message);
+        error.status = StatusCodes.BAD_REQUEST;
+        return next(err);
+      }
+    
+     
+}
+
+
+export { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType };

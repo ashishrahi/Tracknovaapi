@@ -10,7 +10,7 @@ import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
 import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
 import { VehicleTrack } from "./VehicleMoving.controller.js";
-import { AddUpdateVehicleType, GetVehicleType } from "./VehicleType.controller.js";
+import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType } from "./VehicleType.controller.js";
 
 
 export const NTReadController = {
@@ -105,5 +105,6 @@ export const VehicleMovingController = {
 
 export const VehicleTypeController = {
     AddUpdateVehicleType: AddUpdateVehicleType,
-    GetVehicleType: GetVehicleType
+    GetVehicleType: GetVehicleType,
+    DeleteVehicleType: DeleteVehicleType
 }
