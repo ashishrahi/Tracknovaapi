@@ -87,7 +87,7 @@ export const GetFuelTypeQuery = async (model) => {
     // Return the result
    
     return {
-            isSuccess:'success',
+            isSuccess:true,
             statusCode:StatusCodes.OK,
             message:`fuel type ${filter.FuelTypename} details have been fetched successfully"`,
             data: fuelTypes
@@ -116,14 +116,14 @@ export const DeleteFuelTypeQuery = async (model) => {
 
         if (!result) {
             return {
-              isSuccess:'failed',
+              isSuccess:false,
               statusCode:StatusCodes.NOT_FOUND,
               message:`fuel type ${fuelTypeId} not found`,
               data: result
             }
         } else {
              return {
-              isSuccess:'success',
+              isSuccess:true,
               statusCode:StatusCodes.OK,
               message:`fuel type ${result.FuelTypename} has been deleted successfully`,
               data: result
@@ -137,10 +137,5 @@ export const DeleteFuelTypeQuery = async (model) => {
           message: error.message,
         }
     }
-
-    return {
-      isSuccess:'error',
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
-    };   
+   
 }

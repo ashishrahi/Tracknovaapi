@@ -30,10 +30,17 @@ import {AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery} from 
 import {AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
 
 //FuelCorrectionQuery
-import {AddUpdateFuelCorrectionQuery,GetFuelCorrectionQuery,DeleteFuelCorrectionQuery} from './FuelCorrection.Query.js'
+import {AddUpdateFuelCorrectionQuery,GetVehListQuery} from './FuelCorrection.Query.js'
+
+//PetrolPump
+import {AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery} from './Petrol_Pump_tbl.Query.js'
+
+//PetrolPump
+import {AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery} from './Setting.Query.js'
 
 
 export {
+    
     getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery,
     AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery,
     AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery,
@@ -44,6 +51,8 @@ export {
     AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteEmployeeQuery,
     AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery,
     AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery,
-    AddUpdateFuelCorrectionQuery,GetFuelCorrectionQuery,DeleteFuelCorrectionQuery
+    AddUpdateFuelCorrectionQuery,GetVehListQuery,
+    AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery,
+    AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery
 
 }

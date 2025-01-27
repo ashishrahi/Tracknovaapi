@@ -15,23 +15,95 @@ import GeoFencingRoutes from "./GeoFencing.route.js";
 import HandheldMasterRoutes from "./HandheldMaster.route.js";
 import CityMasterRoutes from "./CityMaster.route.js";
 import FuelCorrectionRoutes from "./FuelCorrection.route.js";
+import MapVehicleDataRoutes from "./MapVehicleData.route.js";
+import MenuMasterRoutes from './MenuMaster.route.js'
+import PetrolPumpRoutes from './Petrol_Pump_tbl.routes.js'
+import RosterPlanRoutes from './RosterPlan.route.js'
+import RouteRoutes from './Route.route.js'
+import StateRoutes from './State.route.js'
+import TaxMasterRoutes from './TaxMaster.route.js'
 
 
+
+
+
+
+
+//Dashboard
 router.use("/Dashboard", DashboardRoutes);
+
+ //Auth
 router.use("/Auth", AuthRoutes);
+
+//BinLocation
 router.use("/BinLocation", BinlLocationRoutes);
+
+//BinManage
 router.use("/BinManage", BinManageRoutes);
+
+//Brand
 router.use("/Brand", BrandRoutes);
+
+//CountryMaster
 router.use("/Country", CountryMasterRoutes);
+
+//DepartmentMaster
 router.use("/Department", DepartmentRoutes);
+
+//DesignationMaster
 router.use("/Designation", DesignationRoutes);
+
+//DeviceType
 router.use("/DeviceType", DeviceTypeRoutes);
+
+//EmployeeMaster
 router.use("/Employee", EmpMasterRoutes);
+
+//FuelType
 router.use("/FuelType", FuelTypeRoutes);
+
+//GeoFencing
 router.use("/GeoFencing", GeoFencingRoutes);
+
+//HandheldMaster
 router.use("/HandheldMaster", HandheldMasterRoutes);
+
+//CityMaster
 router.use("/DistrictMaster", CityMasterRoutes);
+
+//FuelCorrection
 router.use("/FuelCorrection", FuelCorrectionRoutes);
+
+//MapVehicleData
+router.use("/MapVehicleData", MapVehicleDataRoutes);
+
+//MenuMaster
+router.use("/MenuMaster", MenuMasterRoutes);
+
+//PetrolPump
+router.use("/PetrolPump", PetrolPumpRoutes);
+
+//RosterPlan
+
+router.use("/RosterPlan", RosterPlanRoutes);
+
+//Route
+
+router.use("/Route", RouteRoutes);
+
+//State
+
+router.use("/State", StateRoutes);
+
+// TaxMaster
+router.use("/TaxMaster", TaxMasterRoutes);
+
+
+
+
+
+
+
 
 
 

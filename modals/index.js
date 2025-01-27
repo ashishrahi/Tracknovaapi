@@ -3,7 +3,7 @@ import {NT} from "./NT.model.js";
 import {ItemMaster} from './ItemMaster.model.js'
 import {BinLocation} from "./BinLocation.model.js";
 import {UserPermission} from './UserPermission.model.js'
-import {Menu} from './MenuMaster.mode.js'
+import {Menu} from './MenuMaster.model.js'
 import {RoleMaster} from './RoleMaster.modal.js'
 import {RolePermission} from "./RolePermission.model.js";
 import {Route} from './Route.model.js'
@@ -20,7 +20,11 @@ import {Geofencing} from './GeoFencing.model.js'
 import {HandheldMaster} from "./HandheldMaster.model.js"
 import {CityMaster} from "./CityMaster.model.js"
 import {FuelCorrection} from "./FuelCorrection.model.js"
-
+import {Petrol_Pump_tbl} from './Petrol_Pump_tbl.model.js'
+import { RosterPlan } from "./RosterPlan.model.js";
+import {RosterPlanDetail} from './RosterPlanDetail.model.js'
+import {RouteAreaDetail} from './RouteAreaDetail.model.js'
+import {TaxMaster} from './TaxMaster.model.js'
 
 
 export { NTCurrentDay,NT,
@@ -43,5 +47,10 @@ export { NTCurrentDay,NT,
     Geofencing,
     HandheldMaster,
     CityMaster,
-    FuelCorrection
+    FuelCorrection,
+    Petrol_Pump_tbl,
+    RosterPlan,
+    RosterPlanDetail,
+    RouteAreaDetail,
+    TaxMaster
 }

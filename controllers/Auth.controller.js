@@ -37,15 +37,14 @@ export async function login(req, res) {
 
 export async function GetUserPermissions(req, res) {
   try {
-    const { userId, roleId } = req.body;
-    console.log(userId);
-
-    const result = await GetUserPermissionQuery(userId, roleId);
+    const model = req.body;
+    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Grant Access successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data,
+      rowCount
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
@@ -62,34 +61,20 @@ export async function GetUserPermissions(req, res) {
 
 export async function AddUpdateUserPermissionMaster(req, res) {
   try {
-    const { userId, userPermission } = req.body;
-    if (!userId || userId.trim() === "") {
-      const errorResponse = new ApiErrorResponse(
-        false,
-        StatusCodes.NOT_FOUND,
-        "User Id is required"
-      );
-      return res.status(errorResponse.statusCode).json(errorResponse);
-    }
+             const model = req.body ;   
+    const {isSuccess,statusCode,message,data} = await AddUpdateUserPermissionMasterQuery(model);
 
-    const result = await AddUpdateUserPermissionMasterQuery(
-      userId,
-      userPermission
-    );
-
-    console.log(result);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Grant Access successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -100,21 +85,20 @@ export async function AddUpdateUserPermissionMaster(req, res) {
 
 export async function GetUserPermissionMaster(req, res) {
   try {
-    const { UserId } = req.body;
-    const result = await GetUserPermissionMasterQuery(UserId);
-    console.log(result);
+    const model = req.body;
+    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Grant Access successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data,
+      rowCount
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -125,20 +109,19 @@ export async function GetUserPermissionMaster(req, res) {
 
 export async function GetUserPermissionList(req, res) {
   try {
-    const { UserId } = req.body;
-    const result = await GetUserPermissionListQuery(UserId);
+    const model  = req.body;
+    const {isSuccess,statusCode,message,data} = await GetUserPermissionListQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Grant Access successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -149,22 +132,20 @@ export async function GetUserPermissionList(req, res) {
 
 export async function DeleteUserPermissionMaster(req, res) {
   try {
-    const { userId } = req.params;
-    console.log(userId);
+    const model = req.body;
+    console.log(model);
 
-    const result = await DeleteUserPermissionMasterQuery(userId);
+    const {isSuccess,statusCode,message} = await DeleteUserPermissionMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Delete successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission to Delete",
+      "failed",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -175,19 +156,18 @@ export async function DeleteUserPermissionMaster(req, res) {
 
 export async function AddUpdateRoleMaster(req, res) {
   try {
-    const result = await AddUpdateRoleMasterQuery();
+    const {isSuccess,statusCode,message,data} = await AddUpdateRoleMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Update successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -198,21 +178,22 @@ export async function AddUpdateRoleMaster(req, res) {
 
 export async function GetRoleMaster(req, res) {
   try {
-    const roles = await RoleMaster.find().exec();
+    const {isSuccess,statusCode,message,data,rowCount} = await GetRoleMasterQuery();
+
 
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Grant Access successfully",
-      roles
+      isSuccess,
+      statusCode,
+      message,
+      data,
+      rowCount
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (err) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
-      error.message
+      StatusCodes.BAD_REQUEST,
+      err.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -222,14 +203,13 @@ export async function GetRoleMaster(req, res) {
 
 export async function DeleteRoleMaster(req, res) {
   try {
-    const { roleId } = req.params;
+    const model = req.body;
 
-    const result = await DeleteRoleMasterQuery(roleId);
+    const {isSuccess,statusCode,message} = await DeleteRoleMasterQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Deleted successfully",
-      result
+      isSuccess,
+      statusCode,
+      message
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {

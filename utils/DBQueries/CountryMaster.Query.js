@@ -10,7 +10,8 @@ export const AddUpdateCountryMasterQuery = async (model) => {
         if (!model.CountryName) {
             
       return{
-                status: StatusCodes.BAD_REQUEST,
+                isSuccess: true,
+                statusCode: StatusCodes.BAD_REQUEST,
                 message: 'Country Name Is Required'
             }
         }
@@ -30,7 +31,7 @@ export const AddUpdateCountryMasterQuery = async (model) => {
             await existingCountry.save();
             
             return{
-                isSuccess:'success',
+                isSuccess:true,
                 statusCode: StatusCodes.OK,
                 message: `${existingCountry.CountryName} Successfully Updated`,
                 data: existingCountry
@@ -49,7 +50,7 @@ export const AddUpdateCountryMasterQuery = async (model) => {
             if (countryNameExists) {
                 
              return{
-                    isSuccess:'failure',
+                    isSuccess:false,
                     statusCode: StatusCodes.CONFLICT,
                     message: `${countryNameExists.CountryName} Already Exists`,
                     data: countryNameExists
@@ -68,17 +69,20 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 
            const newCountryname = await newCountry.save()
             return {
-                    isSuccess:'success',
+                    isSuccess:true,
                     statusCode:StatusCodes.CREATED,
                     message:`${newCountryname.CountryName} has been Added successfully`,
                     data:newCountryname
                 }
         }
     } catch (error) {
-        response.message = error.message || 'An error occurred';
+        return{
+            isSuccess:false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error.message,
+        }
     }
 
-    return response;
 }
 
 
@@ -93,7 +97,7 @@ export const GetCountryMasterQuery = async (model) => {
             const country = await CountryMaster.find({}).lean();
           
             return {
-                   isSuccess:'success',
+                   isSuccess:true,
                    statusCode: StatusCodes.OK,
                    message:'Country Data has been fetched successfully',
                    data: country                 
@@ -102,7 +106,7 @@ export const GetCountryMasterQuery = async (model) => {
             // Fetch specific country by CountryId
             const country = await CountryMaster.findOne({ CountryId })
             return {
-                isSuccess: 'Success',
+                isSuccess: true,
                 statusCode: StatusCodes.OK,
                 message:`${country.CountryName} details has been fetched successfully`,
                 data:country,
@@ -110,12 +114,12 @@ export const GetCountryMasterQuery = async (model) => {
             }
         }
     } catch (error) {
-        returnData.IsSuccess = false;
-        returnData.Mesg = error.message || "An error occurred.";
-    }
-
-
-}
+        return{
+            isSuccess:false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error.message,
+        }
+    }}
 
 /////////////////////////////  DeleteCountryQuery  /////////////////////////////////////////////////
 
@@ -128,7 +132,8 @@ export const DeleteCountryQuery = async (model) => {
         if (stateReference) {
           return {
             isSuccess:'success',
-            message :`${CountryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`};
+            statusCode: StatusCodes.CONFLICT,
+            message : `${CountryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`};
         }
     
         // Find and delete the country
@@ -137,18 +142,23 @@ export const DeleteCountryQuery = async (model) => {
           await CountryMaster.deleteMany({ countryId: model.countryId });
           return{
             isSuccess:'success',
+            statusCode:StatusCodes.OK,
             message:`${countryId} deleted successfully` };
         } else {
           return{
             isSuccess:'failed',
+            statusCode: StatusCodes.NOT_FOUND,
             message:`"${countryId} not found!` };
         }
         
       } catch (error) {
-        returnData.isSuccess = false;
-        returnData.mesg = `${error.message}; ${error.stack}`;
+        return{
+            isSuccess: false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error.message,
+            data: error.stack,
+        }
       }
     
-      return returnData;
 
 }

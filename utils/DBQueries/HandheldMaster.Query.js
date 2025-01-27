@@ -13,7 +13,7 @@ export async function AddUpdateHandheldMasterQuery(model) {
             if (existingRecord) {
         
         return{
-                isSuccess:'failed',
+                isSuccess:false,
                 statusCode: StatusCodes.CONFLICT,
                 message: 'Record Already Exist!'
                }
@@ -25,7 +25,7 @@ export async function AddUpdateHandheldMasterQuery(model) {
             const newRecord = new HandheldMaster(model);
             await newRecord.save();
             return{
-                    isSuccess:'success',
+                    isSuccess:true,
                     statusCode: StatusCodes.CREATED,
                      message: `HandheldName ${newRecord.HandheldName} Successfully Added `,
                      data: newRecord,
@@ -36,14 +36,14 @@ export async function AddUpdateHandheldMasterQuery(model) {
                 await HandheldMaster.updateOne({ ID: model.ID }, { $set: model });
               
                 return{
-                    isSuccess:'success',
+                    isSuccess:true,
                     statusCode: StatusCodes.OK,
                     message: `HandheldName ${existingRecord.ID} Successfully Updated `,
                     data: existingRecord,
                 }
             } else {
                  return{
-                    isSuccess:'failed',
+                    isSuccess:false,
                     statusCode: StatusCodes.NOT_FOUND,
                     message: 'Record Not Found!',
                 }
@@ -51,18 +51,11 @@ export async function AddUpdateHandheldMasterQuery(model) {
         }
     } catch (error) {
         return{
-            isSuccess:'failed',
+            isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: 'An unexpected error occurred',
         }
-    }
-
-    return {
-        isSuccess:'failed',
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An unexpected error occurred',
-    };
-}
+    }}
 
 
 ////////////////////////////////////////// GetHandheldMasterQuery //////////////////////////////////////////////////////////////////
@@ -83,7 +76,7 @@ export async function GetHandheldMasterQuery(model) {
         const rowCount = await HandheldMaster.countDocuments();
 
         return {
-            isSuccess:'success',
+            isSuccess:true,
             statusCode:StatusCodes.OK,
             message:' HandheldMaster data fetch successfully',
             data: data,
@@ -93,8 +86,9 @@ export async function GetHandheldMasterQuery(model) {
         };
     } catch (ex) {
         return {
-            Status: 'Failed',
-            Message: ex.message
+            isSuccess:false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: 'An unexpected error occurred',
         };
     }
 

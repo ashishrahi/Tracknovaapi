@@ -5,7 +5,6 @@ const router = express.Router();
 
 // BinManage Routes
 router.post("/AddUpdateFuelCorrection", FuelCorrectionController.AddUpdateFuelCorrection);
-router.post("/GetFuelCorrection", FuelCorrectionController.GetFuelCorrection);
-router.delete("/DeleteFuelCorrection", FuelCorrectionController.DeleteFuelCorrection);
+router.post("/GetVehList", FuelCorrectionController.GetVehList);
 
 export default router;

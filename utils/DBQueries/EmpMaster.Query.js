@@ -101,7 +101,7 @@ export const GetEmployeeQuery = async (model) => {
     const rowCount = await EmpMaster.countDocuments(where);
 
     return {
-      isSuccess:'success',
+      isSuccess:true,
       statusCode:StatusCodes.OK,
       message: 'Employee data fetched successfully',
       data,
@@ -110,8 +110,11 @@ export const GetEmployeeQuery = async (model) => {
       rowCount,
     };
   } catch (error) {
-    console.error('Error in GetEmployeeQuery:', error);
-    throw new Error('Database query failed');
+     return{
+      isSuccess:false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    }
   }}
 
 

@@ -9,7 +9,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
     try {
       if (!DesignationName || DesignationName.trim() === '') {
         return { 
-              isSuccess: 'failed', 
+              isSuccess: false, 
               statusCode:StatusCodes.NOT_FOUND,
               message: 'Designation Name is required' };
       }
@@ -26,7 +26,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
   
         await designation.save();
         return { 
-              isSuccess: 'Success',
+              isSuccess: true,
               statusCode:StatusCodes.CREATED,
               message: `${designation.DesignationName} Successfully Updated`,
               data: designation
@@ -39,7 +39,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         if (existingDesignation) {
           return { 
                   isSuccess: false,
-                  statusCode:StatusCodes.CREATED,
+                  statusCode:StatusCodes.CONFLICT,
                   message: `${existingDesignation.DesignationName} Already Exist`, 
                   data: existingDesignation
                    };
@@ -61,7 +61,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
   
         const data = await newDesignation.save();
         return {
-                 isSuccess: 'success',
+                 isSuccess: true,
                  statusCode:StatusCodes.OK, 
                  message: `${data.DesignationName} has been Successfully Added`,
                  data: data
@@ -71,12 +71,15 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       if (error.code === 11000) {
         return {
                  isSuccess: false,
-                 statusCode:StatusCodes.OK,
+                 statusCode:StatusCodes.CONFLICT,
                  message: `${data.DesignationName}" Already Exist`, 
                 };
       }
   
-      return { isSuccess: false, message: error.message };
+      return { 
+        isSuccess: false, 
+        message: error.message
+       };
     }
 }
 
@@ -126,22 +129,24 @@ export const DeleteDesignationMasterQuery = async (model) => {
         if (designation && designation.length > 0) {
             await Designation.deleteMany({ DesignationId: model.DesignationId }).exec();
             return{
-              isSuccess:'success',
+              isSuccess:true,
               statusCode:StatusCodes.OK,
               message:`DesignationId ${model.DesignationId} Successfully deleted`
             };
         } else {
             
     return {
-      isSuccess: 'failed', 
+      isSuccess: true, 
       statusCode:StatusCodes.NOT_FOUND,
       message: `DesignationId "${designation.DesignationId}" Not Found!`
     }    
           }
     } catch (error) {
-        response.isSuccess = false;
-        response.message = `${error.message}; ${error.cause || ''}`;
+        return{
+          isSuccess:false,
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          message: 'An unexpected error occurred'
+        }
     }
 
-    return response;
 }

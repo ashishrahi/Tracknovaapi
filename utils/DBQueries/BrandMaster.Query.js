@@ -7,52 +7,72 @@ import { brandMaster } from "../../modals/BrandMaster.model.js";
 
 
 export const AddUpdateBrandMasterQuery = async (model) => {
-    const { brandId, brandname, brandshortname, brandCode, createdBy, updatedBy, createdOn, updatedOn } = model;
     try {
+    let brandData = model
 
-      let brand = await brandMaster.findOne({ brandId:brandId });
-      if (brand) {
-        brand.brandname = brandname || brand.brandname;
-        brand.brandshortname = brandshortname || brand.brandshortname;
-        brand.brandCode = brandCode || brand.brandCode;
-        brand.CreatedBy = brand.CreatedBy || brand.CreatedBy;
-        brand.UpdatedBy = updatedBy || brand.UpdatedBy;
-        brand.UpdatedOn = updatedOn || brand.UpdatedOn;
-  
-      const data =  await brand.save();
-        return {
-            isSuccess:'success',
-            statusCode:StatusCodes.OK,
-            message:`BrandId ${data.brandId} updated successfully`,
-            data: data
-             };
-      } else {
-        // Add new brand
-        const newBrand = new brandMaster({
-          brandId: brandId || -1, 
-          brandname,
-          brandshortname,
-          brandCode,
-          createdBy,
-          updatedBy,
-          createdOn,
-          updatedOn
-        });
-  
-        await newBrand.save();
-        return { isSuccess:'success',
-                statusCodes:StatusCodes.OK ,
-                message: `Brand ${brandId} added successfully`, 
-                data: newBrand 
-              }
+        let brand 
+        if (brandData.brandId === 0 || brandData.brandId === -1) {
+          // Create new brand
+          const maxBrandId = await brandMaster.findOne({}, {}, { sort: { brandId: -1 } });
+          brandData.brandId = (maxBrandId ? maxBrandId.brandId : 0) + 1;
+          brandData.createdOn = new Date();
+          brandData.updatedOn = new Date();
+    
+          brand = await brandMaster.create(brandData);
+          return {
+            isSuccess: true,
+            statusCode: StatusCodes.CREATED, 
+            message: 'Brand Added Successfully',
+            data: brand, 
+          };
+        } else {
+          // Update existing brand
+          const existingBrand = await brandMaster.findOne({ brandId: brandData.brandId });
+    
+          if (existingBrand) {
+            // Check if the brand is associated with any vehicles
+            const hasAssociatedVehicles = await brandMaster.findOne({ 
+              brandId: brandData.brandId, 
+              'vehicles': { $exists: true, $not: { $size: 0 } } 
+            });
+    
+            if (hasAssociatedVehicles) {
+              return {
+                isSuccess: false,
+                statusCode: StatusCodes.CONFLICT, // Use appropriate status code
+                message: 'Brand in Vehicle has movement record NOT updated',
+              };
+            }
+    
+            brandData.updatedOn = new Date();
+            brand = await brandMaster.findOneAndUpdate(
+              { brandId: brandData.brandId },
+              brandData,
+              { new: true }
+            );
+    
+            return {
+              isSuccess: true,
+              statusCode: StatusCodes.OK, // Use appropriate status code
+              message: 'Brand Updated Successfully',
+              data: brand, 
+            };
+          } else {
+            return {
+              isSuccess: false,
+              statusCode: StatusCodes.NOT_FOUND, // Use appropriate status code
+              message: 'Brand not found',
+            };
+          }
+        }
+      } catch (error) {
+        return{
+            isSuccess: false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR, // Use appropriate status code
+            message: error.message,
+        }
+       
       }
-    } catch (error) {
-      return { 
-        isSuccess: 'failed',
-        statusCode:StatusCodes.NOT_FOUND, 
-        message: error.message 
-           };
-    }
 }
 
 //////////////////////////  GetBrandQuery  //////////////////////////////////////////////////////////////
@@ -75,7 +95,7 @@ export const GetBrandQuery = async (model) => {
 
 
     return {
-        isSuccess:'Success',
+        isSuccess:true,
         statusCode:StatusCodes.OK,
         message:`Details of Brand${brandId} has been fetched successfully`,
         data:brands
@@ -101,18 +121,18 @@ export const DeleteBrandQuery = async (model) => {
 
         if (!brand) {
             return {
-                 isSuccess: failed,
+                 isSuccess: false,
                  statusCode:StatusCodes.NOT_FOUND,
                  message: `brandId${brandId} not found` };
         }
 
         return { 
-                isSuccess:'success',
+                isSuccess:true,
                 statusCode:StatusCodes.OK, 
                 message: `brandId ${brandId} deleted successfully` 
               };
     } catch (error) {
-        return { isSuccess: 'failed', 
+        return { isSuccess: false, 
             message: error.message };
     }
 }

@@ -41,7 +41,7 @@ export const AddUpdateBinManageQuery = async (model) => {
           data: updatedBinDetail,
         });
         return{
-          isSuccess: 'success',
+          isSuccess: true,
           statusCode: StatusCodes.OK,
           message: `Successfully updated ${cmd.RouteDetailBinId}.`,
           data: updatedBinDetail,
@@ -76,14 +76,14 @@ export const AddUpdateBinManageQuery = async (model) => {
     const updatedCount = results.filter((item) => item.action === 'updated').length;
 
     return {
-      isSuccess: 'success',
+      isSuccess: true,
       statusCode: StatusCodes.OK,
       message: `Successfully added ${addedCount} record(s) and updated ${updatedCount} record(s).`,
       data: results,
     };
   } catch (err) {
     return {
-      isSuccess: 'failed',
+      isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: err.message,
     };
@@ -161,7 +161,7 @@ export const GetBinManageQuery = async (model) => {
     const data = await Route.aggregate(pipeline);
     const rowCount = await Route.countDocuments();
     return { 
-      isSuccess:'success',
+      isSuccess:true,
       statusCode: StatusCodes.OK,
       message: 'Data fetched successfully',
       data: data,

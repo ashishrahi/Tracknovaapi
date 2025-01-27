@@ -44,7 +44,7 @@ export async function AddUpdateGeoFencingQuery(model){
             if (!existingFence) {
                
                 return{
-                    isSuccess:'failed',
+                    isSuccess:false,
                     statusCode: StatusCodes.NOT_FOUND,
                     message: `${model.FenceName} Fence not found!`,
                     data: model,
@@ -60,7 +60,7 @@ export async function AddUpdateGeoFencingQuery(model){
 
           
           return{
-            isSuccess:'success',
+            isSuccess:true,
             statusCode: StatusCodes.OK,
             message: `${model.FenceName} Fence updated successfully`,
             data: updatedFence,
@@ -68,52 +68,51 @@ export async function AddUpdateGeoFencingQuery(model){
         }
     } catch (error) {
         return{
-            isSuccess:'failed',
+            isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message,
         }
     }
 
-    return {
-        isSuccess:'success',
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An unexpected error occurred while processing your request.',
-    };
+   
 }
 
 /////////////////////////////////// GetGeoFencingQuery  //////////////////////////////////////
 
 export async function GetGeoFencingQuery(model){
     try {
-        const { where, parameterValues, pageNo = 1, pageSize = 10 } = model;
+        const { where, parameterValues, pageNo, pageSize } = model;
+        console.log('model: ', model);
 
-        const filter = JSON.parse(where || '{}'); 
-        const parameters = JSON.parse(parameterValues || '{}'); 
+        // Check if 'where' and 'parameterValues' are already objects, if so, skip parsing
+        const filter = typeof where === 'string' ? JSON.parse(where) : where;
+        const parameters = typeof parameterValues === 'string' ? JSON.parse(parameterValues) : parameterValues;
 
+        // Fetch geofencing data with pagination
         const geofencingData = await Geofencing.find(filter, parameters)
             .skip((pageNo - 1) * pageSize)
             .limit(Number(pageSize))
             .exec();
+
+        // Get the total count of documents for pagination
         const rowCount = await Geofencing.countDocuments(filter);
 
-        return{
-            isSuccess:'success',
+        return {
+            isSuccess: true,
             statusCode: StatusCodes.OK,
-            message: "Geofencing fetched successfully ",
-            data:geofencingData,
+            message: "Geofencing fetched successfully",
+            data: geofencingData,
             pageNo: Number(pageNo),
             pageSize: Number(pageSize),
             rowCount,
-        }
+        };
     } catch (error) {
-       
-     return{
-            isSuccess:'Failed',
+        return {
+            isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message,
-        }
+        };
     }
-    
 }
 
 ////////////////////////////////////// DeleteGeoFencingQuery //////////////////////////////////  
@@ -126,21 +125,21 @@ export async function DeleteGeoFencingQuery(model){
 
             if (entity) {
                  return {
-                    isSuccess: 'success',
+                    isSuccess: true,
                     statusCode:StatusCodes.OK,
                     message: `FenceId ${entity.FenceId} Successfully Deleted `,
                 }
             } else {
                 
                 return{
-                    isSuccess: 'failed',
+                    isSuccess: false,
                     statusCode: StatusCodes.NOT_FOUND,
                     message: `${entity.FenceId} not found`,
                 }
             }
         } else {
             return{
-                isSuccess: 'failed',
+                isSuccess: false,
                 statusCode: StatusCodes.BAD_REQUEST,
                 message: 'Fence ID is required',
             }
@@ -148,15 +147,8 @@ export async function DeleteGeoFencingQuery(model){
     } catch (error) {
         
     return{
-            isSuccess: 'failed',
+            isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: 'An unexpected error occurred while processing your request.',
         }
-    }
-
-    return {
-        isSuccess: 'failed',
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An unexpected error occurred while processing your request.',
-    };
-}
+    }}

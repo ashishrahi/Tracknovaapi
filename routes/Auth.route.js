@@ -13,7 +13,7 @@ router.post(
 router.post("/GetUserPermissionMaster", AuthController.GetUserPermissionMaster);
 router.post("/GetUserPermissionList", AuthController.GetUserPermissionList);
 router.delete(
-  "/DeleteUserPermissionMaster/:userId",
+  "/DeleteUserPermissionMaster",
   AuthController.DeleteUserPermissionMaster
 );
 
@@ -21,7 +21,7 @@ router.delete(
 
 router.post("/AddUpdateRoleMaster", AuthController.AddUpdateRoleMaster);
 router.get("/GetRoleMaster", AuthController.GetRoleMaster);
-router.delete("/DeleteRoleMaster/:roleId", AuthController.DeleteRoleMaster);
+router.delete("/DeleteRoleMaster", AuthController.DeleteRoleMaster);
 
 // RolePermissionMasters Routes
 

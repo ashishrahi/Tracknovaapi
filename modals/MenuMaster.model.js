@@ -16,6 +16,6 @@ export const MenuSchema = new mongoose.Schema({
     "IsExport":Boolean,
     "IsRelease":Boolean,
     "IsPost":Boolean,
-    },{collection:'Menu'})
+    },{timestamps:true, collection:'Menu'})
     
- export const Menu = mongoose.model('Menu',MenuSchema)
+ export const Menu = mongoose.model('Menu', MenuSchema)

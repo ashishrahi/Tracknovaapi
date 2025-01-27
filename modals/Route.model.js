@@ -5,7 +5,7 @@ const RouteSchema = new mongoose.Schema({
     CreatedOn: Date,
     Description: String,
     RouteDate: Date,
-    RouteID: mongoose.Schema.Types.Int32,
+    RouteID: Number,
     RouteName:String,
     UpdatedBy:String,
     UpdatedOn:Date,

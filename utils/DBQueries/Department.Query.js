@@ -10,7 +10,7 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           
           return{
             isSuccess: false,
-            statusCode:StatusCodes.OK,
+            statusCode:StatusCodes.NOT_FOUND,
             message: 'Department Name Is Required'
           }
         }
@@ -68,7 +68,7 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           await newDepartment.save();
     
           return{
-            isSuccess: "success",
+            isSuccess: true,
             statusCode: StatusCodes.CREATED,
             message: `${newDepartment.DepartmentName} Department Successfully Added`,
             data: newDepartment
@@ -78,7 +78,7 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
         response.Mesg = err.message;
         if (err.code === 11000) { // Duplicate key error
           return{
-            isSuccess: 'failed',
+            isSuccess: false,
             statusCode: StatusCodes.OK,
             message: `${model.DepartmentName} Already Exists`
           }
@@ -110,21 +110,21 @@ export const GetDepartmentMasterQuery = async (model) => {
       .exec();
 
     return {
-      isSuccess: "success",
+      isSuccess: true,
       statusCode: StatusCodes.OK,
       message: `Department Details of ${result.DepartmentName} department has been fetched successfully`,
       data: result,
     };
   } catch (ex) {
     return {
-      isSuccess: "failed",
+      isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: ex.message,
     };
   }
 
   return {
-    isSuccess: "failed",
+    isSuccess: false,
     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     message: "An unexpected error occurred",
   };
@@ -140,13 +140,13 @@ export const DeleteDepartmentMasterQuery = async (model) => {
             await Department.deleteMany({ DepartmentId: model.DepartmentId });
 
             return {
-                isSuccess: 'success',
+                isSuccess: true,
                 statusCode:StatusCodes.OK,
                 message: `DepartmentId ${model.DepartmentId} Successfully deleted`
             };
         } else {
             return {
-                isSuccess: "failed",
+                isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
                 message: `DepartmentId ${model.DepartmentId} not found`
             };

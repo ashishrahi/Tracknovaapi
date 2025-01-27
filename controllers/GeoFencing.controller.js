@@ -36,6 +36,7 @@ export async function AddUpdateGeoFencing(req, res) {
 export async function GetGeoFencing(req, res) {
   try {
     const model = req.body;
+    
     const { isSuccess, message, statusCode, data } = await GetGeoFencingQuery(
       model
     );
@@ -50,9 +51,8 @@ export async function GetGeoFencing(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Error occurred while getting",
-      error
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

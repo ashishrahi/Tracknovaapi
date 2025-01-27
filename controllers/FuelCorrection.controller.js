@@ -5,8 +5,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateFuelCorrectionQuery,
-    GetFuelCorrectionQuery,
-    DeleteFuelCorrectionQuery,
+    GetVehListQuery,
 } from "../utils/DBQueries/index.js";
 
 //////////////////////////// AddUpdateFuelCorrection /////////////////////////////////// 
@@ -33,11 +32,11 @@ export async function AddUpdateFuelCorrection(req, res) {
     }
   }
 /////////////////////////////////  GetFuelCorrection //////////////////////////////
-export async function GetFuelCorrection(req, res) {
+export async function GetVehList(req, res) {
     try {
       const model = req.body;
       const { data, isSuccess, message, statusCode } =
-        await GetFuelCorrectionQuery(model);
+        await GetVehListQuery(model);
       const successResponse = new ApiSuccessResponse(
         isSuccess,
         statusCode,
@@ -55,26 +54,3 @@ export async function GetFuelCorrection(req, res) {
     }
   }
 
-///////////////////////////////////   DeleteFuelCorrection /////////////////////////////////////////////////////
-
-export async function DeleteFuelCorrection(req, res) {
-    try {
-      const model = req.body;
-      const { data, isSuccess, message, statusCode } =
-        await DeleteFuelCorrectionQuery(model);
-      const successResponse = new ApiSuccessResponse(
-        isSuccess,
-        statusCode,
-        message,
-        data
-      );
-      res.status(successResponse.statusCode).json(successResponse);
-    } catch (error) {
-      const errorResponse = new ApiErrorResponse(
-        false,
-        StatusCodes.BAD_REQUEST,
-        error.message
-      );
-      res.status(errorResponse.statusCode).json(errorResponse);
-    }
-  }

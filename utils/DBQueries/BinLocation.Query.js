@@ -14,6 +14,7 @@ export const AddUpdateBinLocationQuery = async (model) => {
       const existingRecord = await BinLocation.findOne({ BinLocName: model.BinLocName });
       if (existingRecord) {
                 return {
+                  isSuccess:true,
           status: StatusCodes.CONFLICT,
           message: 'Record Already Exists!',
           data: model,
@@ -30,7 +31,7 @@ export const AddUpdateBinLocationQuery = async (model) => {
 
       
       return{
-        isSuccess: 'Success',
+        isSuccess: true,
         statusCode: StatusCodes.CREATED,
         message: 'Add Successfully',
         data: newBinLocation,
@@ -40,6 +41,7 @@ export const AddUpdateBinLocationQuery = async (model) => {
       const existingEntity = await BinLocation.findOne({ BinLocID: model.BinLocID });
       if (!existingEntity) {
         return {
+          isSuccess:false,
           status: StatusCodes.NOT_FOUND,
           message: 'Bin location not found!',
           data: model,
@@ -52,22 +54,20 @@ export const AddUpdateBinLocationQuery = async (model) => {
 
       
       return{
-        isSuccess: 'Success',
+        isSuccess: true,
         statusCode: StatusCodes.OK,
         message: 'Update Successfully',
         data: existingEntity,
       }
     }
-    response.data = model;
   } catch (error) {
     return{
-      isSuccess: 'Failed',
+      isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: error.message,
     }
   }
 
-  return response;
   };
   
 ////////////////////////////// GetBinLocationQuery //////////////////////////////////////////
@@ -197,7 +197,7 @@ export const GetBinLocationQuery = async (model) => {
 
     if (result.length > 0) {
       return {
-        isSuccess: 'Success',
+        isSuccess: true,
         statusCode: StatusCodes.OK,
         message: 'Bin Locations retrieved successfully',
         data: result,
@@ -228,7 +228,7 @@ export const DeleteBinLocationQuery = async (model) => {
 
             if (!entity) {
                 return {
-                    isSuccess: 'Failed',
+                    isSuccess: false,
                     statusCode: StatusCodes.NOT_FOUND,
                     message: 'Bin Location not found',
                     data: model,
@@ -240,14 +240,14 @@ export const DeleteBinLocationQuery = async (model) => {
         }
 
         return {
-            isSuccess: 'Success',
+            isSuccess: true,
             statusCode: StatusCodes.NO_CONTENT,
             message: 'Delete Successfully',
             data: model,
         };
     } catch (error) {
         return {
-            isSuccess: 'Failed',
+            isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: 'Server Error',
             data: model,

@@ -103,10 +103,66 @@ import {
 // FuelCorrection
 import {
   AddUpdateFuelCorrection,
-  GetFuelCorrection,
-  DeleteFuelCorrection,
+  GetVehList,
 } from "./FuelCorrection.controller.js";
 
+// MapVehicleData
+import {
+  GetMapVehicleData,
+} from "./MapVehicleData.controller.js";
+
+// MenuMaster
+import {
+  AddUpdateMenuMaster,
+  GetMenuMaster,
+  GetParentMenuMaster,
+  GetChildMenuMaster,
+  DeleteMenuMaster
+} from "./Menu.controller.js";
+
+// PetrolPump
+import {
+  AddUpdatePetrolPump,
+  GetPetrolPumpVehicle,
+  GetPetrolPump,
+  DeletePetrolPump,
+} from "./Petrol_Pump_tbl.controller.js";
+
+// RosterPlan
+import {
+  AddUpdateRosterPlan,
+  GetRosterPlan,
+  DeleteRosterPlan,
+} from "./RosterPlan.controller.js";
+
+// Routes
+import {
+  AddUpdateRoutes,
+  GetRoutes,
+  DeleteRoutes,
+} from "./Route.controller.js";
+
+// Setting
+import {
+  AddUpdateSetting,
+  GetSetting,
+  DeleteSetting,
+} from "./Setting.controller.js";
+
+// State
+import {
+  AddUpdateState,
+  GetState,
+  DeleteState,
+} from "./State.controller.js";
+
+
+// TaxMaster
+import {
+  AddUpdateTaxMaster,
+  GetTaxMaster,
+  DeleteTaxMaster,
+} from "./TaxMaster.controller.js";
 
 
 
@@ -237,6 +293,77 @@ export const CityMasterController = {
 
 export const FuelCorrectionController = {
   AddUpdateFuelCorrection: AddUpdateFuelCorrection,
-  GetFuelCorrection: GetFuelCorrection,
-  DeleteFuelCorrection: DeleteFuelCorrection,
+  GetVehList: GetVehList,
 };
+
+
+//////////////////////////////////////////  MapVehicleDataController //////////////////////////////////////////////////////////////////////////
+
+export const MapVehicleDataController = {
+  GetMapVehicleData: GetMapVehicleData,
+};
+
+//////////////////////////////////////////  MenuMasterController //////////////////////////////////////////////////////////////////////////
+
+
+export const MenuMasterController = {
+AddUpdateMenuMaster,
+GetMenuMaster,
+GetParentMenuMaster,
+GetChildMenuMaster,
+DeleteMenuMaster
+}
+
+//////////////////////////////////////////  PetrolPumpController //////////////////////////////////////////////////////////////////////////
+
+export const PetrolPumpController = {
+AddUpdatePetrolPump,
+  GetPetrolPumpVehicle,
+  GetPetrolPump,
+  DeletePetrolPump,
+}
+
+//////////////////////////////////////////  PetrolPumpController //////////////////////////////////////////////////////////////////////////
+
+export const RosterPlanController = {
+
+  AddUpdateRosterPlan,
+  GetRosterPlan,
+  DeleteRosterPlan,
+}
+
+//////////////////////////////////////////  RoutesController //////////////////////////////////////////////////////////////////////////
+
+export const RoutesController = {
+
+  AddUpdateRoutes,
+  GetRoutes,
+  DeleteRoutes,
+}
+
+//////////////////////////////////////////  SettingController //////////////////////////////////////////////////////////////////////////
+
+
+export const SettingController = {
+AddUpdateSetting,
+  GetSetting,
+  DeleteSetting
+}
+
+
+//////////////////////////////////////////  StateController //////////////////////////////////////////////////////////////////////////
+
+
+export const StateController ={
+AddUpdateState,
+  GetState,
+  DeleteState,
+}
+
+//////////////////////////////////////////  TaxMasterController //////////////////////////////////////////////////////////////////////////
+
+export const TaxMasterController ={
+AddUpdateTaxMaster,
+  GetTaxMaster,
+  DeleteTaxMaster
+}

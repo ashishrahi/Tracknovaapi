@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const brandMasterSchema = new mongoose.Schema({
 
     brandCode: String,
-    brandId: mongoose.Schema.Types.Int32,
+    brandId: Number,
     brandname: String,
     brandshortname: String,
     CreatedBy: String,

@@ -6,68 +6,88 @@ import { CityMaster,StateMaster } from "../../modals/index.js";
 
 export const AddUpdateCityMasterQuery = async (model) => {
    
-    const response = {
+  try {
+
+
+    // Validate CityName
+    if (!model.CityName || model.CityName.trim() === '') {
+      return {
         isSuccess: false,
-        message: '',
-        statusCode: 200,
-        data: [],
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'City Name is required',
       };
-    
-      try {
-        if (!model.CityName || model.CityName.trim() === '') {
-          response.message = 'City Name is Required';
-          return response;
-        }
-    
-        if (!model.CityId || model.CityId === 0) {
-          response.message = 'City Id is Required';
-          return response;
-        }
-    
-        const existingCity = await CityMaster.findOne({ CityId: model.CityId });
-    
-        if (existingCity) {
-          // Update the existing district
-          existingCity.CityName = model.CityName || existingCity.CityName;
-          existingCity.StateId = model.StateId || existingCity.StateId;
-    
-          await existingCity.save();
-    
-          response.isSuccess = true;
-          response.message = 'Successfully Updated';
-        } else {
-          // Generate a new CityId if not provided or invalid
-          let tempID = model.CityId;
-          if (tempID === -1 || tempID === null || tempID === 0) {
-            const maxIdCity = await CityMaster.findOne().sort({ CityId: -1 });
-            tempID = maxIdCity ? maxIdCity.CityId + 1 : 1;
-          }
-    
-          // Create a new city document
-          const newCity = new CityMaster({
-            CityId: tempID,
-            CityName: model.CityName,
-            StateId: model.StateId,
-            CreatedBy: model.CreatedBy,
-            UpdatedBy: model.UpdatedBy,
-            CreatedOn: model.CreatedOn,
-            UpdatedOn: model.UpdatedOn,
-          });
-    console.log('Newcity',newCity);
-          await newCity.save();
-    
-          response.isSuccess = true;
-          response.message = 'Successfully Added';
-        }
-      } catch (error) {
-        if (error.code === 11000) {
-          response.message = 'District Name Already Exists';
-        } else {
-          response.message = error.message || 'An unexpected error occurred';
-        }
+    }
+
+    // Validate CityId
+    if (!model.CityId || model.CityId == 0) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.BAD_REQUEST, // 400 for invalid input
+        message: 'City Id is required',
+      };
+    }
+
+    // Check if the city already exists
+    const existingCity = await CityMaster.findOne({ CityId: model.CityId });
+
+    if (existingCity) {
+      // Update the existing city
+      existingCity.CityName = model.CityName || existingCity.CityName;
+      existingCity.StateId = model.StateId || existingCity.StateId;
+      existingCity.UpdatedBy = model.UpdatedBy;
+
+      await existingCity.save();
+
+      return {
+        isSuccess: true,
+        statusCode: StatusCodes.CREATED,
+        message: `${existingCity.CityName} City Successfully Updated`,
+        data: existingCity,
+      };
+    } else {
+      let tempID = model.CityId;
+      if (tempID === -1 || tempID === null || tempID === 0) {
+        const maxIdCity = await CityMaster.findOne().sort({ CityId: -1 });
+        tempID = maxIdCity ? maxIdCity.CityId + 1 : 1;
       }
-    
-      return response;
+
+      // Create a new city document
+      const newCity = new CityMaster({
+        CityId: tempID,
+        CityName: model.CityName,
+        StateId: model.StateId,
+        CreatedBy: model.CreatedBy,
+        UpdatedBy: model.UpdatedBy,
+        CreatedOn: model.CreatedOn || new Date(),
+        UpdatedOn: model.UpdatedOn || new Date(),
+      });
+
+      await newCity.save();
+
+      return {
+        isSuccess: true,
+        statusCode: StatusCodes.CREATED, 
+        message: `${newCity.CityName} City Successfully Created`,
+        data: newCity,
+      };
+    }
+  } catch (error) {
+    // Handle specific error cases
+    if (error.code === 11000) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.CONFLICT, // 409 for duplicate key
+        message: 'City Name already exists',
+      };
+    }
+
+    // Handle general server errors
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR, // 500 for other errors
+      message: error.message,
+    };
+  }
     
 }
 ////////////////////////////////////////////  GetCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,59 +111,63 @@ export const AddUpdateCityMasterQuery = async (model) => {
                 const state = await StateMaster.findOne({ StateID: city.StateId }).lean();
                 return {
                   ...city,
-                  StateName: state ? state.StateName : null,
+                  // StateName: state ? state.StateName : null,
                 };
               })
             );
         
         
             return{
-                isSuccess:'success',
+                isSuccess:true,
                 statusCode: StatusCodes.OK,
-                message: `City Details retrieved successfully`,
+                message: `Details of CityId ${model.CityId} and StateId ${model.StateId} retrieved successfully`,
                 data: enrichedCities,
   
             }
           } catch (error) {
-            response.message = `${error.message}${error.innerException ? `; ${error.innerException.message}` : ''}`;
+         return{
+          isSuccess: false,
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          message: error.message,
+         }
           }
         
-          return response;
     }
 
 ////////////////////////////////////////////// DeleteCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const DeleteCityMasterQuery = async (model) => {
 
-          try {
-        const districts = await CityMaster.find({ cityId: model.cityId });
-    
-        if (districts && districts.length > 0) {
-          await CityMaster.deleteMany({ cityId: model.cityId });
+try {
+    // Find districts by CityId
+    const districts = await CityMaster.find({ CityId: model.CityId }).lean();
 
-          return{
-            isSuccess:'success',
-            statusCode: StatusCodes.OK,
-            message: `CityId "${model.cityId}" deleted successfully` };
-          }
-        else {
-          
-          return{
-            isSuccess:'failed',
-            statusCode: StatusCodes.NOT_FOUND,
-            message:`City "${model.cityId}" not found!` };
-          }
-        
-      } catch (error) {
-        returnData.isSuccess = false;
-        returnData.message = error.message || "An unexpected error occurred.";
-        return{
-            isSuccess:'failed',
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: "An unexpected error occurred." };
-            
+    if (districts.length > 0) {
+        // Delete districts
+        await CityMaster.deleteMany({ CityId: model.CityId });
+
+      return{
+          isSuccess: true,
+          statusCode: StatusCodes.OK,
+          message: `Cities of CityId ${model.CityId} successfully deleted`,
         }
-        return returnData;
+    } else {
+        
+        return{
+          isSuccess: false,
+          statusCode: StatusCodes.NOT_FOUND,
+          message: `No Citiess found for CityId ${model.cityId}`,
+        }
+    }
+} catch (error) {
+  
+    return{
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message + ";" + (error.innerException? error.innerException : error.message)
+    }
+}
+
       }
     
     

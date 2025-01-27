@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes";
 import { DeviceType } from "../../modals/DeviceType.model.js"; 
 
 ///////////////////////////////// GetDeviceTypeQuery //////////////////////////////////////////
@@ -15,8 +16,8 @@ export const GetDeviceTypeQuery = async (model) => {
         const rowCount = await DeviceType.countDocuments();
     
         return  {
-          isSuccess:'success',
-          statusCode: 200,
+          isSuccess:true,
+          statusCode: StatusCodes.OK,
           message:`${model.pageNo} of ${model.pageSize} Device types fetched successfully`,
           data:deviceTypes,
           pageNo:pageNo,
@@ -25,10 +26,11 @@ export const GetDeviceTypeQuery = async (model) => {
          };
           
       } catch (err) {
-        console.error(err);
         return {
-          status: 'failed',
-          message: 'An error occurred while fetching device types.',
+          isSuccess: false,
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          message: 'Error fetching DeviceType data',
+          error: err.message,
         };
       }
 

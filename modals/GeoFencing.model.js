@@ -12,6 +12,6 @@ export const GeofencingSchema = new mongoose.Schema({
     "flag": Boolean,
     "AreaId": Number,
     "polycord": String,
-}, { collection: "Geofencing" })
+}, {timestamps:true, collection: "Geofencing" })
 
 export const Geofencing = mongoose.model("Geofencing", GeofencingSchema);
