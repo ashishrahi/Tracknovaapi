@@ -11,12 +11,9 @@ const AreaWardMasterSchema = new mongoose.Schema(
     UpdatedBy: { type: String },
     UpdatedOn: mongoose.Schema.Types.Date,
     WardNumber: String,
-    ZoneID: mongoose.Schema.Types.Decimal128,
+    ZoneID: Number,
   },
   { timestamps: true, collection: "AreaWardMaster" }
 );
 
-export const AreaWardMaster = mongoose.model(
-  "AreaWardMaster",
-  AreaWardMasterSchema
-);
+export const AreaWardMaster = mongoose.model("AreaWardMaster",AreaWardMasterSchema);

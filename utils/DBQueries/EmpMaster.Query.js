@@ -129,18 +129,16 @@ export const UpsertEmpPermissionQuery = async (model) => {
 
 export const DeleteEmployeeQuery = async (model) => {
     
-    let response = {
-        status: 'failed',
-        message: ''
-      };
-    
-      try {
+     try {
         // Find the employee by Empid
         const employee = await EmpMaster.findOne(model.Empid);
     
         if (!employee) {
-          response.message = 'Employee not found';
-          return response;
+        return{
+          isSuccess: false,
+          statusCode: StatusCodes.NOT_FOUND,
+          message: 'Employee not found',
+        }
         }
     
         // Remove the employee
@@ -149,11 +147,17 @@ export const DeleteEmployeeQuery = async (model) => {
         // Find and remove the associated user permissions
         await UserPermission.deleteMany({ UserId: model.UserId });
     
-        response.status = 'success';
-        response.message = 'Successfully Deleted';
+        return{
+          isSuccess: true,
+          statusCode: StatusCodes.OK,
+          message: 'Successfully deleted',
+        }
       } catch (error) {
-        response.message = error.message || 'An error occurred';
+       return{
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: error.message,
+       }
       }
     
-      return response;
 }

@@ -26,8 +26,8 @@ export async function AddUpdateBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

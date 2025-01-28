@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { Department } from "../../modals/Department.model.js";
+import { Department } from "../../modals/Department.modal.js";
 
 /////////////////////////////////// AddUpdateDepartmentMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 export const AddUpdateDepartmentMasterQuery = async (model) => {
@@ -123,11 +123,7 @@ export const GetDepartmentMasterQuery = async (model) => {
     };
   }
 
-  return {
-    isSuccess: false,
-    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-    message: "An unexpected error occurred",
-  };
+
 };
 
 /////////////////////////////////// DeleteDepartmentMasterQuery //////////////////////////////////////////////////////////////////

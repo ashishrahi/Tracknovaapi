@@ -15,9 +15,9 @@ export const AddUpdateBinLocationQuery = async (model) => {
       if (existingRecord) {
                 return {
                   isSuccess:true,
-          status: StatusCodes.CONFLICT,
-          message: 'Record Already Exists!',
-          data: model,
+                  status: StatusCodes.CONFLICT,
+                  message: 'Record Already Exists!',
+                  data: existingRecord,
         };
       }
 
@@ -63,7 +63,7 @@ export const AddUpdateBinLocationQuery = async (model) => {
   } catch (error) {
     return{
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      statusCode: StatusCodes.BAD_REQUEST,
       message: error.message,
     }
   }
@@ -206,13 +206,22 @@ export const GetBinLocationQuery = async (model) => {
         rowCount: totalCount,
       };
     } else {
-      return {
-        message: 'No bin locations found',
-      };
+      return{
+        isSuccess: false,
+        statusCode: StatusCodes.NO_CONTENT,
+        message: 'No Bin Locations found',
+        data: [],
+        pageNo: pageNo,
+        pageSize: pageSize,
+        rowCount: totalCount,
+      }
     }
   } catch (error) {
-    console.error(error);
-    throw new Error('Server Error');
+   return{
+     isSuccess: false,
+     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+     message: error.message,
+   }
   }
 }
 

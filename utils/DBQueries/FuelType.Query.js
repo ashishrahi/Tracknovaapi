@@ -58,11 +58,7 @@ export const AddUpdateFuelTypeQuery = async (model) => {
         message: error.message,
       }
     }
-    return {
-      isSuccess:'error',
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
-    };
+
 
 }
 
@@ -82,7 +78,6 @@ export const GetFuelTypeQuery = async (model) => {
 
     // Query MongoDB
     const fuelTypes = await FuelType.find(filter);
-    console.log(fuelTypes)
 
     // Return the result
    

@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { brandMaster } from "../../modals/BrandMaster.model.js";
+import { brandMaster } from "../../modals/BrandMaster.modal.js";
 
 
 
@@ -101,8 +101,11 @@ export const GetBrandQuery = async (model) => {
         data:brands
          };
     } catch (error) {
-        // Return error response
-        throw new Error(error.message);
+        return{
+          isSuccess: false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: `Error in GetBrandQuery: ${error.message}`,
+        }
     }
 }
 
@@ -132,7 +135,9 @@ export const DeleteBrandQuery = async (model) => {
                 message: `brandId ${brandId} deleted successfully` 
               };
     } catch (error) {
-        return { isSuccess: false, 
+        return {
+           isSuccess: false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message };
     }
 }

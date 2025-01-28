@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { DeviceType } from "../../modals/DeviceType.model.js"; 
+import { DeviceType } from "../../modals/DeviceType.modal.js"; 
 
 ///////////////////////////////// GetDeviceTypeQuery //////////////////////////////////////////
 

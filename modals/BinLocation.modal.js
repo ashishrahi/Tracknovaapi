@@ -12,11 +12,11 @@ const BinLocationSchema = new mongoose.Schema(
     Latitude: mongoose.Schema.Types.Decimal128,
     LocationName: String,
     LocImage: String,
-    Longitude: mongoose.Schema.Types.Decimal128,
+    Longitude: Number,
     RFID: String,
     UpdatedBy: { type: Object },
     UpdatedOn: { type: Object },
-    ZoneID: mongoose.Schema.Types.Int32,
+    ZoneID: Number,
   },
   { timestamps: true, collection: "BinLocation" }
 );

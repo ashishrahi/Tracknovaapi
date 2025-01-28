@@ -170,7 +170,11 @@ export const GetBinManageQuery = async (model) => {
       rowCount:rowCount };
       
   } catch (error) {
-    throw new Error(`Error in GetBinManageQuery: ${error.message}`);
+   return{
+    isSuccess:false,
+    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    message: error.message,
+   }
   }
 };
 

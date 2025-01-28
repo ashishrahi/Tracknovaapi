@@ -8,11 +8,12 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
     try {
       // Check for blank Petrol Pump name
       if (!model.PetroPump || model.PetroPump.trim() === '') {
-      return{
-        status: false,
+     return{
+        isSuccess: false,
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Petrol Pump Name is required',
-      }
+ 
+     }
       }
   
       if (model.id === 0) {
@@ -79,7 +80,6 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
 ////////////////////////////////////////  GetPetrolPumpVehicleQuery //////////////////////////////////////////////////////////////////
 
 export const GetPetrolPumpVehicleQuery = async (model) => {
-    const response = { data: null, message: null };
 
     try {
       
@@ -126,12 +126,20 @@ export const GetPetrolPumpVehicleQuery = async (model) => {
             { $sort: { VehicleNo: 1 } }, // Sort by 'VehicleNo'
         ]);
 
-        response.data = vehicles;
+        return {
+            isSuccess: true,
+            statusCode: StatusCodes.OK,
+            message: 'Vehicle data fetched successfully',
+            data: vehicles,
+        };
     } catch (error) {
-        response.message = error.message;
+       return{
+         isSuccess: false,
+         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+         message: error.message + ';' + (error.innerException? error.innerException : error.message),
+       }
     }
 
-    return response;
 }
 
 
@@ -214,7 +222,8 @@ export const DeletePetrolPumpQuery = async (model) => {
     } catch (error) {
         return{
             isSuccess: false,
-            message: error.message,
+            statusCode:StatusCodes.ERROR,
+           message: error.message,
         }
     }
 

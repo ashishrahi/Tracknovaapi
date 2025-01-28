@@ -106,32 +106,31 @@ try {
                 await HandheldMaster.deleteOne({ID: model.ID }); 
                 
                 return{
-                    isSuccess:'success',
+                    isSuccess:true,
                     statusCode: StatusCodes.OK,
                     message: `HandheldMaster with ID ${model.ID} Successfully Deleted`,
                 }
             } else {
                 return{
-                    isSuccess:'failed',
+                    isSuccess:false,
                     statusCode: StatusCodes.NOT_FOUND,
                     message: `HandheldMaster with ID ${model.ID} not found`,
                 }
             }
         } else {
             return{
-                isSuccess:'failed',
+                isSuccess:false,
                 statusCode: StatusCodes.BAD_REQUEST,
                 message: 'Invalid ID',
             }
         }
     } catch (err) {
         return{
-            isSuccess:'failed',
+            isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: 'An unexpected error occurred',
         }
     }
 
-    return response;
 
 }

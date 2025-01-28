@@ -82,7 +82,6 @@ export async function AddUpdateGeoFencingQuery(model){
 export async function GetGeoFencingQuery(model){
     try {
         const { where, parameterValues, pageNo, pageSize } = model;
-        console.log('model: ', model);
 
         // Check if 'where' and 'parameterValues' are already objects, if so, skip parsing
         const filter = typeof where === 'string' ? JSON.parse(where) : where;

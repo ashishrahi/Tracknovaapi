@@ -164,6 +164,40 @@ import {
   DeleteTaxMaster,
 } from "./TaxMaster.controller.js";
 
+// Traccar
+import {
+  AddUpdatelocation,
+  GetlocationClient,
+} from "./Traccar.controller.js";
+
+// TripStart
+import {
+  TripStartEnd,
+} from "./TripStart.controller.js";
+
+// UnitMaster
+import {
+  AddUpdateUnitMaster,
+  GetUnitMaster,
+  DeleteUnitMaster
+} from "./UnitMaster.controller.js";
+
+// WardMaster
+import {
+  AddUpdateWardMaster,
+  GetWardMaster,
+  DeletetWardMaster
+} from "./WardMaster.controller.js";
+
+
+// ZoneMaster
+import {
+  AddUpdateZoneMaster,
+  GetZoneMaster,
+  DeleteZoneMaster
+} from "./ZoneMaster.controller.js";
+
+
 
 
 
@@ -366,4 +400,45 @@ export const TaxMasterController ={
 AddUpdateTaxMaster,
   GetTaxMaster,
   DeleteTaxMaster
+}
+
+
+//////////////////////////////////////////  TraccarController //////////////////////////////////////////////////////////////////////////
+
+export const TraccarController ={
+  AddUpdatelocation,
+  GetlocationClient
+}
+
+//////////////////////////////////////////  TripStartController //////////////////////////////////////////////////////////////////////////
+
+export const TripStartController ={
+  TripStartEnd,
+}
+
+//////////////////////////////////////////  UnitMasterController //////////////////////////////////////////////////////////////////////////
+
+export const UnitMasterController ={
+
+AddUpdateUnitMaster,
+  GetUnitMaster,
+  DeleteUnitMaster
+}
+
+//////////////////////////////////////////  WardMasterController //////////////////////////////////////////////////////////////////////////
+
+export const WardMasterController ={
+
+AddUpdateWardMaster,
+  GetWardMaster,
+  DeletetWardMaster
+}
+
+//////////////////////////////////////////  ZoneMasterController //////////////////////////////////////////////////////////////////////////
+
+
+export const ZoneMasterController ={
+AddUpdateZoneMaster,
+  GetZoneMaster,
+  DeleteZoneMaster
 }

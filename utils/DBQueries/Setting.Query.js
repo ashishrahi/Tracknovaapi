@@ -45,7 +45,11 @@ export const AddUpdateSettingQuery = async (model) => {
           }
         }
     } catch (ex) {
-        result.IsSuccess = false;
+       return{
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: `Error in AddUpdateSettingQuery: ${ex.message}`
+       }
         if (ex.name === 'MongoError' && ex.code === 11000) {
             return{
                 isSuccess: false,

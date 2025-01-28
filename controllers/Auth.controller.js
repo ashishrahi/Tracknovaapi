@@ -37,8 +37,8 @@ export async function login(req, res) {
 
 export async function GetUserPermissions(req, res) {
   try {
-    const model = req.body;
-    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionQuery(model);
+    const modal = req.body;
+    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -61,8 +61,8 @@ export async function GetUserPermissions(req, res) {
 
 export async function AddUpdateUserPermissionMaster(req, res) {
   try {
-             const model = req.body ;   
-    const {isSuccess,statusCode,message,data} = await AddUpdateUserPermissionMasterQuery(model);
+             const modal = req.body ;   
+    const {isSuccess,statusCode,message,data} = await AddUpdateUserPermissionMasterQuery(modal);
 
     const successResponse = new ApiSuccessResponse(
       isSuccess,
@@ -85,8 +85,8 @@ export async function AddUpdateUserPermissionMaster(req, res) {
 
 export async function GetUserPermissionMaster(req, res) {
   try {
-    const model = req.body;
-    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionMasterQuery(model);
+    const modal = req.body;
+    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -109,8 +109,8 @@ export async function GetUserPermissionMaster(req, res) {
 
 export async function GetUserPermissionList(req, res) {
   try {
-    const model  = req.body;
-    const {isSuccess,statusCode,message,data} = await GetUserPermissionListQuery(model);
+    const modal  = req.body;
+    const {isSuccess,statusCode,message,data} = await GetUserPermissionListQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -132,10 +132,9 @@ export async function GetUserPermissionList(req, res) {
 
 export async function DeleteUserPermissionMaster(req, res) {
   try {
-    const model = req.body;
-    console.log(model);
+    const modal = req.body;
 
-    const {isSuccess,statusCode,message} = await DeleteUserPermissionMasterQuery(model);
+    const {isSuccess,statusCode,message} = await DeleteUserPermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -156,7 +155,8 @@ export async function DeleteUserPermissionMaster(req, res) {
 
 export async function AddUpdateRoleMaster(req, res) {
   try {
-    const {isSuccess,statusCode,message,data} = await AddUpdateRoleMasterQuery(model);
+    const modal = req.body;
+    const {isSuccess,statusCode,message,data} = await AddUpdateRoleMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -203,9 +203,9 @@ export async function GetRoleMaster(req, res) {
 
 export async function DeleteRoleMaster(req, res) {
   try {
-    const model = req.body;
+    const modal = req.body;
 
-    const {isSuccess,statusCode,message} = await DeleteRoleMasterQuery(model);
+    const {isSuccess,statusCode,message} = await DeleteRoleMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,
@@ -227,7 +227,8 @@ export async function DeleteRoleMaster(req, res) {
 
 export async function AddUpdateRolePermissionMaster(req, res) {
   try {
-    const result = await AddUpdateRolePermissionMasterQuery(req.body);
+    const modal = req.body;
+    const result = await AddUpdateRolePermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
@@ -250,8 +251,8 @@ export async function AddUpdateRolePermissionMaster(req, res) {
 
 export async function GetRolePermissionMaster(req, res) {
   try {
-    const { roleId } = req.query;
-    const result = await GetRolePermissionMasterQuery(roleId);
+    const modal = req.body;
+    const result = await GetRolePermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
@@ -274,9 +275,9 @@ export async function GetRolePermissionMaster(req, res) {
 
 export async function GetRolePermission(req, res) {
   try {
-    const { roleId } = req.query;
+    const modal = req.body;
 
-    const result = await GetRolePermissionQuery(roleId);
+    const result = await GetRolePermissionQuery(modal);
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,

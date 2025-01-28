@@ -95,9 +95,9 @@ export const GetUserPermissionQuery = async (model) => {
   
 //////////////////////////////////////////////// addUpdateUserPermissionMasterQuery //////////////////////////////////
 
-export const AddUpdateUserPermissionMasterQuery = async (model) => {
+export const AddUpdateUserPermissionMasterQuery = async (modal) => {
   try {
-    const {userId, userPermission} = model;
+    const {userId, userPermission} = modal;
        await UserPermission.deleteMany({ userId });
        const newPermissions = userPermission.map(permission => ({
       userId:permission.userId,
@@ -130,19 +130,27 @@ export const AddUpdateUserPermissionMasterQuery = async (model) => {
         data: result,
       };
     } catch (err) {
-      throw err;
+    return{
+      isSuccess: "Failed",
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: err.message,
+    }
     }
   } catch (error) {
-    throw new Error(error.message);
+    return{
+      isSuccess: "Failed",
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    }
   }
 };
 
 //////////////////////////////////////////////  GetUserPermissionMaster  ////////////////////////////////////////////////////////////////
 
-export const GetUserPermissionMasterQuery = async(model)=>{
+export const GetUserPermissionMasterQuery = async(modal)=>{
 
     try {
-      const {UserId} = model;
+      const {UserId} = modal;
 
       if (UserId === '-1') {
         const  usersPermission = await UserPermission.find().lean();
@@ -203,19 +211,22 @@ export const GetUserPermissionMasterQuery = async(model)=>{
     
     } 
     catch (error) {
-      console.error('Error fetching user permissions:', error);
-      throw new Error('Failed to fetch user permissions');
+     return{
+       isSuccess:false,
+       statusCode: 500,
+       message: error.message,
+     }
     }
   };
   
 
 //////////////////////////////////////////////  GetUserPermissionList  ////////////////////////////////////////////////////////////////
 
- export const GetUserPermissionListQuery = async(model)=>{
+ export const GetUserPermissionListQuery = async(modal)=>{
  
  
   try {
-  const {UserId} = model;
+  const {UserId} = modal;
 
     const userPermissions = await UserPermission.aggregate([
       {
@@ -280,10 +291,10 @@ export const GetUserPermissionMasterQuery = async(model)=>{
 
 //////////////////////////////////////////////  DeleteUserPermissionMaster  ////////////////////////////////////////////////////////////////
 
-export const DeleteUserPermissionMasterQuery = async(model)=>{
+export const DeleteUserPermissionMasterQuery = async(modal)=>{
   
 try {
-  const {UserId} = model;
+  const {UserId} = modal;
     const permissions = await UserPermission.find({ UserId: UserId });
 
     if (permissions.length > 0) {
@@ -297,68 +308,75 @@ try {
           }
          else {
         return {
-            isSuccess: false,
-            message: 'User Permission Id Not Found!',
+           
+           isSuccess: false,
+            statusCode: StatusCodes.NOT_FOUND,
+            message: `UserId ${UserId} does not exist`,
+  
         };
     }
 } catch (error) {
     return {
-        isSuccess: false,
-        message: error.message || 'An unexpected error occurred',
+      isSuccess: false,
+      statusCode: StatusCodes.NOT_FOUND,
+      message: error.message,
     };}}
   
 
 //////////////////////////////////////////////  AddUpdateRoleMaster  ////////////////////////////////////////////////////////////////
 
-export const AddUpdateRoleMasterQuery = async(model)=>{
+export const AddUpdateRoleMasterQuery = async(modal)=>{
   try {
-    if (!model.RoleId) {
+    if (!modal.RoleId) {
       // Check if the role already exists
-      const roleExists = await RoleMaster.findOne({ name: model.RoleName });
+      const roleExists = await RoleMaster.findOne({ name: modal.RoleName });
       if (roleExists) {
-        return {
-          status: 'Failed',
-          message: 'Role already exists!',
-        };
+       return{
+        isSuccess: false,
+        statusCode: StatusCodes.CONFLICT,
+        message: 'Role already exists!',
+       }
       }
 
       // Create a new role
-      await Role.create({ name: model.RoleName });
+      await Role.create({ name: modal.RoleName });
     } else {
       // If RoleId exists, update the role
-      const roleExists = await Role.findOne({ name: model.RoleName });
+      const roleExists = await Role.findOne({ name: modal.RoleName });
       if (roleExists) {
-        roleExists.name = model.RoleName;
+        roleExists.name = modal.RoleName;
         await roleExists.save();
       }
     }
 
     // Handle RolePermissions
-    const roleId = model.RolePermissions.map((permission) => permission.RoleId)[0];
+    const roleId = modal.RolePermissions.map((permission) => permission.RoleId)[0];
     if (!roleId) {
-      return {
-        status: 'Failed',
-        message: 'Invalid RolePermissions data!',
-      };
+     return{
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Role not found!',
+     }
     }
 
     // Remove existing permissions for the role
     await RolePermission.deleteMany({ RoleId: roleId });
 
     // Add new permissions
-    await RolePermission.insertMany(model.RolePermissions);
+    await RolePermission.insertMany(modal.RolePermissions);
 
-    return {
-      data: null,
-      status: 'Success',
-      message: 'Record Saved!!',
-    };
+   return{
+     isSuccess: true,
+     statusCode: StatusCodes.OK,
+     message: 'Role updated successfully',
+    
+   }
   } catch (error) {
-    return {
-      data: null,
-      status: 'Failed',
-      message: error.message,
-    };
+   return{
+     isSuccess: false,
+     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+     message: error.message,
+   }
   }
 
 }
@@ -388,9 +406,9 @@ export const GetRoleMasterQuery = async()=>{
 
 //////////////////////////////////////////////  Delete / RoleMaster  ////////////////////////////////////////////////////////////////
 
-export const DeleteRoleMasterQuery = async(model)=>{
+export const DeleteRoleMasterQuery = async(modal)=>{
   try {
-           const {RoleID} = model
+           const {RoleID} = modal
     const roleExists = await RoleMaster.findOne({RoleID:RoleID});
 
     if (!roleExists) {
@@ -423,34 +441,34 @@ export const DeleteRoleMasterQuery = async(model)=>{
 //////////////////////////////////////////////  AddUpdate / RolePermissionMaster  ////////////////////////////////////////////////////////////////
 
 export const AddUpdateRolePermissionMasterQuery = async(modal)=>{
-  const result = {
-    IsSuccess: false,
-    Mesg: '',
-};
+ 
  const{RoleId} = modal
 try {
     if (!RoleId || RoleId === "0") {
-        result.IsSuccess = false;
-        result.Mesg = "Role ID Is Required";
-        return result;
+        return{
+          isSuccess: false,
+          statusCode: StatusCodes.NOT_FOUND,
+          message: `RoleID  Not Found!`,
+        }
     }
         
     // If RoleId already exists
 
     const existingRole = await RolePermission.findOne({ RoleId: RoleId })
-    console.log(existingRole)
        if (existingRole) {
         // Update the existing RolePermission
         existingRole.RoleId = RoleId;
         await existingRole.save();
-      result.IsSuccess = true;
-        result.Mesg = "Successfully Updated";
+    return{
+      isSuccess: true,
+      statusCode: StatusCodes.OK,
+      message: `RoleID  updated successfully`,
+    }
     }
    
     // If New RoleId exists
     else {
         let tempZoneID = 0;
-       console.log( RoleId)
 
         
 
@@ -469,28 +487,27 @@ try {
         const newRolePermission = new RolePermission(modal);
         await newRolePermission.save();
 
-        result.IsSuccess = true;
-        result.Mesg = "Successfully Added";
+        return{
+          isSuccess: true,
+          statusCode: StatusCodes.OK,
+          message: `RoleID  created successfully`,
+        }
     }
 
-    return result;
 } catch (error) {
-    result.IsSuccess = false;
-    result.Mesg = `Error: ${error.message}; ${error.innerException ? error.innerException.message : ''}`;
-    return result;
+   return{
+    isSuccess: false,
+    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    message: error.message,
+   }
 }
 }
 
 //////////////////////////////////////////////  Get / RolePermissionMaster  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionMasterQuery = async(roleId)=>{
-  const response = {
-    isSuccess: false,
-    data: null,
-    message: '',
-  };
 
-  try {
+try {
     let data;
 
     if (roleId === '-1') {
@@ -499,13 +516,20 @@ export const GetRolePermissionMasterQuery = async(roleId)=>{
       data = await RolePermission.findOne({RoleId: roleId }).lean();
     }
 
-    response.isSuccess = true;
-    response.data = data;
+   return{
+    isSuccess:'success',
+    statusCode: StatusCodes.OK,
+    message: 'Role Permission fetched successfully',
+    data: data,
+   }
   } catch (error) {
-    response.message = `${error.message};${error.cause || ''}`;
+    return{
+      isSuccess: 'failed',
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    }
   }
 
-  return response;
 
 }
 
@@ -559,12 +583,24 @@ export const GetRolePermissionQuery = async()=>{
     const result = await Menu.aggregate(aggregationPipeline);
 
     if (result.length > 0) {
-      return { ParentMenu: result };
+      return{
+        isSuccess:'success',
+        statusCode: StatusCodes.OK,
+        message: 'Menu permissions fetched successfully',
+        data: result,
+      }
     } else {
-      return { message: 'No user permissions found' };
+     return{
+      isSuccess: 'failed',
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'No menu permissions found!',
+     }
     }
   } catch (error) {
-    console.error(error);
-    throw new Error('Server Error');
+   return{
+    isSuccess: 'failed',
+    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    message: error.message,
+   }
   }
 }

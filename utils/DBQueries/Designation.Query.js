@@ -77,7 +77,8 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       }
   
       return { 
-        isSuccess: false, 
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: error.message
        };
     }
@@ -113,8 +114,11 @@ export const GetDesignationMasterQuery = async (model) => {
       }}
        
     } catch (err) {
-        console.error(err);
-        throw new Error(err.message) 
+        return{
+          isSuccess:false,
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          message: 'An unexpected error occurred'
+        }
     }
 
 }

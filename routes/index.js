@@ -22,6 +22,19 @@ import RosterPlanRoutes from './RosterPlan.route.js'
 import RouteRoutes from './Route.route.js'
 import StateRoutes from './State.route.js'
 import TaxMasterRoutes from './TaxMaster.route.js'
+import TraccarRoutes from './Traccar.route.js'
+import TripStartEndRoutes from './TripStart.route.js'
+import UnitMasterRoutes from './UnitMaster.route.js'
+import WardMasterRoutes from './WardMaster.route.js'
+// import WeatherForecastRoutes from './WeatherForecast.route.js'
+import ZoneMasterRoutes from './ZoneMaster.route.js'
+
+
+
+
+
+
+
 
 
 
@@ -97,6 +110,31 @@ router.use("/State", StateRoutes);
 
 // TaxMaster
 router.use("/TaxMaster", TaxMasterRoutes);
+
+// Traccar
+router.use("/Traccar", TraccarRoutes);
+
+// Traccar
+router.use("/TripStartEnd", TripStartEndRoutes);
+
+// UnitMaster
+router.use("/UnitMaster", UnitMasterRoutes);
+
+// WardMaster
+router.use("/WardMaster", WardMasterRoutes);
+
+// WeatherForecast
+// router.use("/WeatherForecast", WeatherForecastRoutes);
+
+// ZoneMaster
+router.use("/ZoneMaster", ZoneMasterRoutes);
+
+
+
+
+
+
+
 
 
 
