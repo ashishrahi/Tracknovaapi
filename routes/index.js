@@ -12,6 +12,7 @@ import VehicleAuditInfoRoutes from "./VehicleAuditInfo.routes.js"
 import VehicleFuelDateRangeRoutes from "./VehicleFuelDateRange.routes.js"
 import VehicleMovingRoutes from "./VehicleMoving.routes.js"
 import VehicleTypeRoutes from "./VehicleType.routes.js";
+import VendorMasterRoutes from "./VendorMaster.routes.js"
 
 
 const router = express.Router();
@@ -29,7 +30,8 @@ router.use("/NodePermission", NodePermissionRoutes); // skipped this api because
 router.use("/VehicleAuditInfo", VehicleAuditInfoRoutes); 
 router.use("/VehicleFuelDateRange", VehicleFuelDateRangeRoutes); // Skipped
 router.use("/VehicleMoving", VehicleMovingRoutes); // Skipped
-router.use("/VehicleType", VehicleTypeRoutes); // Skipped
+router.use("/VehicleType", VehicleTypeRoutes); 
+router.use("/VendorMaster", VendorMasterRoutes); 
 
 
 export default router;

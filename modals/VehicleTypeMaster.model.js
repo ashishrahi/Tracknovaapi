@@ -23,7 +23,7 @@ const VehicleTypeMasterSchema = new Schema({
               ) // Capitalize each word
               .join(" ");
         },
-        // uppercase: true
+        uppercase: true
     },
 }, {timestamps: true, collection: "VehicleTypeMaster"})
 

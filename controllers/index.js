@@ -10,8 +10,9 @@ import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
 import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
 import { VehicleTrack } from "./VehicleMoving.controller.js";
-import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType } from "./VehicleType.controller.js";
+import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType } from "./VehicleType.controller.js";
 
+import { AddUpdateVendorMaster } from "./VendorMaster.controller.js";
 
 export const NTReadController = {
     probWireTamp: probWireTamp,
@@ -106,5 +107,12 @@ export const VehicleMovingController = {
 export const VehicleTypeController = {
     AddUpdateVehicleType: AddUpdateVehicleType,
     GetVehicleType: GetVehicleType,
-    DeleteVehicleType: DeleteVehicleType
+    DeleteVehicleType: DeleteVehicleType,
+    AddUpdateEscrapVehicleType: AddUpdateEscrapVehicleType,
+    DeleteEscrapVehicleType: DeleteEscrapVehicleType,
+    GetEscrapVehicleType: GetEscrapVehicleType
+}
+
+export const VendorMasterController = {
+    AddUpdateVendorMaster: AddUpdateVendorMaster
 }
