@@ -1,8 +1,7 @@
 import express from "express";
-import { MapVehicleDataController } from "../controllers/index.js"
 const router = express.Router();
+import { MapVehicleDataController } from "../controllers/index.js";
 
-router.post("/GetMapVehicleData", MapVehicleDataController.GetMapVehicleData)
-
+router.get("/GetMapVehicleData", MapVehicleDataController.GetMapVehicleData);
 
 export default router;

@@ -190,6 +190,8 @@ export async function getAllBins(req,res) {
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 };
+
+
 export async function getMapBinsWardWise (req,res) {
   const filter = req.query; 
   try {

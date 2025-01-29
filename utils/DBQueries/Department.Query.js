@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { Department } from "../../modals/Department.modal.js";
+import  { Department }  from "../../modals/index.js";
 
 /////////////////////////////////// AddUpdateDepartmentMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 export const AddUpdateDepartmentMasterQuery = async (model) => {

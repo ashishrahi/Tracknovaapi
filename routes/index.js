@@ -1,12 +1,13 @@
 import express from "express";
-<<<<<<< HEAD
+const router = express.Router();
+
 import NTReadRoutes from "./NTRead.routes.js";
 import DashboardRoutes from "./Dashboard.routes.js";
 import CommRoutes from "./Comm.routes.js";
 import ItemCategoryRoutes from "./ItemCategory.routes.js";
 import ItemMasterRoutes from "./ItemMaster.routes.js";
 import ItemTypeMasterRoutes from "./ItemTypeMaster.routes.js";
-import MapVehicleDataRoutes from "./MapVehicleData.routes.js"
+// import MapVehicleDataRoutes from "./MapVehicleData.routes.js"
 import NewNodeMasterRoutes from "./NewNodeMaster.routes.js";
 import NodePermissionRoutes from "./NodePermission.routes.js";
 import VehicleAuditInfoRoutes from "./VehicleAuditInfo.routes.js"
@@ -16,41 +17,38 @@ import VehicleTypeRoutes from "./VehicleType.routes.js";
 import VendorMasterRoutes from "./VendorMaster.routes.js"
 
 
-=======
->>>>>>> ashish
-const router = express.Router();
-import DashboardRoutes from "./Dashboard.routes.js";
-import AuthRoutes from "./Auth.route.js";
-import AreaWardMasterRoutes from './AreaWardMaster.route.js'
-import BinlLocationRoutes from "./BinLocation.route.js";
-import BinManageRoutes from "./BinManage.route.js";
-import BrandRoutes from "./brandMaster.route.js";
-import CountryMasterRoutes from "./Country.route.js";
-import DepartmentRoutes from "./Department.route.js";
-import DesignationRoutes from "./Designation.route.js";
-import DeviceTypeRoutes from "./DeviceType.route.js";
-import EmpMasterRoutes from "./EmpMaster.route.js";
-import FuelTypeRoutes from "./FuelType.route.js";
-import GeoFencingRoutes from "./GeoFencing.route.js";
-import HandheldMasterRoutes from "./HandheldMaster.route.js";
-import CityMasterRoutes from "./CityMaster.route.js";
-import FuelCorrectionRoutes from "./FuelCorrection.route.js";
-import MapVehicleDataRoutes from "./MapVehicleData.route.js";
-import MenuMasterRoutes from './MenuMaster.route.js'
+// import DashboardRoutes from "./Dashboard.routes.js";
+import AuthRoutes from "./Auth.routes.js";
+import AreaWardMasterRoutes from './AreaWardMaster.routes.js'
+import BinlLocationRoutes from "./BinLocation.routes.js";
+import BinManageRoutes from "./BinManage.routes.js";
+import BrandRoutes from "./brandMaster.routes.js";
+import CountryMasterRoutes from "./Country.routes.js";
+import DepartmentRoutes from "./Department.routes.js";
+import DesignationRoutes from "./Designation.routes.js";
+import DeviceTypeRoutes from "./DeviceType.routes.js";
+import EmpMasterRoutes from "./EmpMaster.routes.js";
+import FuelTypeRoutes from "./FuelType.routes.js";
+import GeoFencingRoutes from "./GeoFencing.routes.js";
+import HandheldMasterRoutes from "./HandheldMaster.routes.js";
+import CityMasterRoutes from "./CityMaster.routes.js";
+import FuelCorrectionRoutes from "./FuelCorrection.routes.js";
+import MapVehicleDataRoutes from "./MapVehicleData.routes.js";
+import MenuMasterRoutes from './MenuMaster.routes.js'
 import PetrolPumpRoutes from './Petrol_Pump_tbl.routes.js'
-import RosterPlanRoutes from './RosterPlan.route.js'
-import RouteRoutes from './Route.route.js'
-import StateRoutes from './State.route.js'
-import TaxMasterRoutes from './TaxMaster.route.js'
-import TraccarRoutes from './Traccar.route.js'
-import TripStartEndRoutes from './TripStart.route.js'
-import UnitMasterRoutes from './UnitMaster.route.js'
-import WardMasterRoutes from './WardMaster.route.js'
+import RosterPlanRoutes from './RosterPlan.routes.js'
+import RouteRoutes from './Route.routes.js'
+import StateRoutes from './State.routes.js'
+import TaxMasterRoutes from './TaxMaster.routes.js'
+import TraccarRoutes from './Traccar.routes.js'
+import TripStartEndRoutes from './TripStart.routes.js'
+import UnitMasterRoutes from './UnitMaster.routes.js'
+import WardMasterRoutes from './WardMaster.routes.js'
 // import WeatherForecastRoutes from './WeatherForecast.route.js'
 
-import VtypeinfoRoutes from './Vtypeinfo.route.js'
-import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.route.js'
-import vVehicletrackHisRoutes from './vVehicletrackHis.route.js'
+import VtypeinfoRoutes from './Vtypeinfo.routes.js'
+import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.routes.js'
+import vVehicletrackHisRoutes from './vVehicletrackHis.routes.js'
 
 import ZoneMasterRoutes from './ZoneMaster.route.js'
 
@@ -69,6 +67,8 @@ router.use("/AreaWardMaster", AreaWardMasterRoutes);
 
 
 //Dashboard
+
+router.use("/NTRead", NTReadRoutes);
 router.use("/Dashboard", DashboardRoutes);
 router.use("/Comm", CommRoutes);
 router.use("/ItemCategory", ItemCategoryRoutes);

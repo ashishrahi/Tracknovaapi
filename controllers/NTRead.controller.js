@@ -1,7 +1,7 @@
-import {
-  getVehicleNotMovedQuery,
-  probWireTampQuery,
-} from "../utils/DBQueries/index.js";
+// import {
+//   getVehicleNotMovedQuery,
+//   probWireTampQuery,
+// } from "../utils/DBQueries/index.js";
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
@@ -9,7 +9,9 @@ import {
 } from "../utils/apiResponse/index.js";
 import connectDB from "../db/connectDB.js";
 import sql from "mssql";
-import encryptData from "../utils/crypto/crypto.js";
+// import encryptData from "../utils/crypto/crypto.js";
+
+
 import {
   NTCurrentDay,
   NT,

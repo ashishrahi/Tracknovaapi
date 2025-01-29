@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { brandMaster } from "../../modals/BrandMaster.modal.js";
+import BrandMaster  from "../../modals/BrandMaster.model.js";
 
 
 
@@ -13,12 +13,12 @@ export const AddUpdateBrandMasterQuery = async (model) => {
         let brand 
         if (brandData.brandId === 0 || brandData.brandId === -1) {
           // Create new brand
-          const maxBrandId = await brandMaster.findOne({}, {}, { sort: { brandId: -1 } });
+          const maxBrandId = await BrandMaster.findOne({}, {}, { sort: { brandId: -1 } });
           brandData.brandId = (maxBrandId ? maxBrandId.brandId : 0) + 1;
           brandData.createdOn = new Date();
           brandData.updatedOn = new Date();
     
-          brand = await brandMaster.create(brandData);
+          brand = await BrandMaster.create(brandData);
           return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED, 
@@ -27,11 +27,11 @@ export const AddUpdateBrandMasterQuery = async (model) => {
           };
         } else {
           // Update existing brand
-          const existingBrand = await brandMaster.findOne({ brandId: brandData.brandId });
+          const existingBrand = await BrandMaster.findOne({ brandId: brandData.brandId });
     
           if (existingBrand) {
             // Check if the brand is associated with any vehicles
-            const hasAssociatedVehicles = await brandMaster.findOne({ 
+            const hasAssociatedVehicles = await BrandMaster.findOne({ 
               brandId: brandData.brandId, 
               'vehicles': { $exists: true, $not: { $size: 0 } } 
             });
@@ -45,7 +45,7 @@ export const AddUpdateBrandMasterQuery = async (model) => {
             }
     
             brandData.updatedOn = new Date();
-            brand = await brandMaster.findOneAndUpdate(
+            brand = await BrandMaster.findOneAndUpdate(
               { brandId: brandData.brandId },
               brandData,
               { new: true }
@@ -91,7 +91,7 @@ export const GetBrandQuery = async (model) => {
     
     try {
         // Fetch brands from the database based on the query
-        const brands = await brandMaster.find(brandQuery);
+        const brands = await BrandMaster.find(brandQuery);
 
 
     return {
@@ -120,7 +120,7 @@ export const DeleteBrandQuery = async (model) => {
         }
 
         // Find and delete the brand by brandId
-        const brand = await brandMaster.findOneAndDelete({brandId:brandId});
+        const brand = await BrandMaster.findOneAndDelete({brandId:brandId});
 
         if (!brand) {
             return {

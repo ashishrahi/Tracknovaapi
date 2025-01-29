@@ -1,11 +1,11 @@
 
 import { probWireTamp, getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
-import { getVehicleDistance } from "./Dashboard.controller.js";
+import { getDashboard, getVehicleCurrentDay, getVehicleDistance, getAllBins, getMapBinsWardWise } from "./Dashboard.controller.js";
 import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
 import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from "./ItemTypeMaster.controller.js";
-import { GetMapVehicleData } from "./MapVehicleData.controller.js"
+// import { GetMapVehicleData } from "./MapVehicleData.controller.js"
 import { AddUpdateNewNodeMaster} from "./NewNodeMaster.controller.js"     
 import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
@@ -43,13 +43,13 @@ import {
 
 
 // Dashboar
-import {
-  getDashboard,
-  getVehicleCurrentDay,
-  getVehicleDistance,
-  getAllBins,
-  getMapBinsWardWise,
-} from "./Dashboard.controller.js";
+// import {
+//   getDashboard,
+//   getVehicleCurrentDay,
+//   getVehicleDistance,
+//   getAllBins,
+//   getMapBinsWardWise,
+// } from "./Dashboard.controller.js";
 
 // Authentication
 import {

@@ -56,7 +56,9 @@ const ItemMasterSchema = new mongoose.Schema(
     SimType: { type: String },
     SimCompany: { type: String },
   },
-  { collection: "ItemMaster" }
+  { timestamps: true, collection: "ItemMaster" }
 );
 
-export const ItemMaster = mongoose.model("ItemMaster", ItemMasterSchema);
+ const ItemMaster = mongoose.model("ItemMaster", ItemMasterSchema);
+
+ export default ItemMaster;
