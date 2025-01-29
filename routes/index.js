@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import DashboardRoutes from "./Dashboard.routes.js";
 import AuthRoutes from "./Auth.route.js";
+import AreaWardMasterRoutes from './AreaWardMaster.route.js'
 import BinlLocationRoutes from "./BinLocation.route.js";
 import BinManageRoutes from "./BinManage.route.js";
 import BrandRoutes from "./brandMaster.route.js";
@@ -27,6 +28,11 @@ import TripStartEndRoutes from './TripStart.route.js'
 import UnitMasterRoutes from './UnitMaster.route.js'
 import WardMasterRoutes from './WardMaster.route.js'
 // import WeatherForecastRoutes from './WeatherForecast.route.js'
+
+import VtypeinfoRoutes from './Vtypeinfo.route.js'
+import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.route.js'
+import vVehicletrackHisRoutes from './vVehicletrackHis.route.js'
+
 import ZoneMasterRoutes from './ZoneMaster.route.js'
 
 
@@ -39,7 +45,8 @@ import ZoneMasterRoutes from './ZoneMaster.route.js'
 
 
 
-
+// AreaWardMaster
+router.use("/AreaWardMaster", AreaWardMasterRoutes);
 
 
 //Dashboard
@@ -126,8 +133,28 @@ router.use("/WardMaster", WardMasterRoutes);
 // WeatherForecast
 // router.use("/WeatherForecast", WeatherForecastRoutes);
 
+
+// ZoneMaster
+router.use("/Vtypeinfo", VtypeinfoRoutes);
+
+// vVehicleTrackForOverSpeedRoutes
+router.use("/vVehicleTrackForOverSpeed", vVehicleTrackForOverSpeedRoutes);
+
+// vVehicleTrackForOverSpeedRoutes
+router.use("/vVehicleTrackForOverSpeed", vVehicleTrackForOverSpeedRoutes);
+
+
+// vVehicletrackHis
+router.use("/vVehicletrackHis", vVehicletrackHisRoutes);
+
+
+
+
 // ZoneMaster
 router.use("/ZoneMaster", ZoneMasterRoutes);
+
+
+
 
 
 

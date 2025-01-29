@@ -228,19 +228,18 @@ export async function DeleteRoleMaster(req, res) {
 export async function AddUpdateRolePermissionMaster(req, res) {
   try {
     const modal = req.body;
-    const result = await AddUpdateRolePermissionMasterQuery(modal);
+    const {isSuccess,statusCode,message,data} = await AddUpdateRolePermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Updated successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
       StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -252,19 +251,18 @@ export async function AddUpdateRolePermissionMaster(req, res) {
 export async function GetRolePermissionMaster(req, res) {
   try {
     const modal = req.body;
-    const result = await GetRolePermissionMasterQuery(modal);
+    const {isSuccess,statusCode,message,data} = await GetRolePermissionMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Fetch successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
       StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -276,20 +274,18 @@ export async function GetRolePermissionMaster(req, res) {
 export async function GetRolePermission(req, res) {
   try {
     const modal = req.body;
-
-    const result = await GetRolePermissionQuery(modal);
+    const {isSuccess,statusCode,message,data} = await GetRolePermissionQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Fetch successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
       StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);

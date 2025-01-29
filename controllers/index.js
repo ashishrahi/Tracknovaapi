@@ -1,3 +1,12 @@
+// AreaWardMaster
+import {
+  AddUpdateAreaWardMaster,
+  GetAreaWardMaster,
+  DeleteAreaWardMaster,
+  } from "./AreaWardMaster.controller.js";
+
+
+
 // Dashboar
 import {
   getDashboard,
@@ -190,6 +199,24 @@ import {
 } from "./WardMaster.controller.js";
 
 
+// Vtypeinfo
+import {
+  AddUpdateVtypeinfo,
+  getVtypeinfo,
+  DeleteVtypeinfo
+} from "./Vtypeinfo.controller.js";
+
+// VehicleTrackForOverSpeed
+import {
+  GetOverSpeedAlert
+} from "./vVehicleTrackForOverSpeed.controller.js";
+
+// GetvVehicletrackHis
+import {
+  GetvVehicletrackHis
+} from "./vVehicletrackHis.controller.js";
+
+
 // ZoneMaster
 import {
   AddUpdateZoneMaster,
@@ -198,7 +225,12 @@ import {
 } from "./ZoneMaster.controller.js";
 
 
+///////////////////////////////////////////// DashboardController //////////////////////////////////////////////////////////////////
 
+export const AreaMasterController = {
+AddUpdateAreaWardMaster,
+  GetAreaWardMaster,
+  DeleteAreaWardMaster}
 
 
 ///////////////////////////////////////////// DashboardController //////////////////////////////////////////////////////////////////
@@ -441,4 +473,26 @@ export const ZoneMasterController ={
 AddUpdateZoneMaster,
   GetZoneMaster,
   DeleteZoneMaster
+}
+
+//////////////////////////////////////////  VtypeinfoController //////////////////////////////////////////////////////////////////////////
+
+
+export const VtypeinfoController ={
+AddUpdateVtypeinfo,
+  getVtypeinfo,
+  DeleteVtypeinfo}
+
+
+//////////////////////////////////////////  vVehicleTrackForOverSpeedController //////////////////////////////////////////////////////////////////////////
+
+
+export const vVehicleTrackForOverSpeedController ={
+  GetOverSpeedAlert,}
+
+
+/////////////////////////////////////////////////   vVehicletrackHis //////////////////////////////////////////////////////////////////////////////////////////////////
+  
+export const vVehicletrackHisController ={
+  GetvVehicletrackHis
 }

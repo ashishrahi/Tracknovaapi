@@ -28,6 +28,8 @@ import {TaxMaster} from './TaxMaster.modal.js'
 import { UnitMaster } from "./UnitMaster.modal.js";
 import { ZoneMaster } from "./ZoneMaster.modal.js";
 import { AreaWardMaster } from "./AreaWardMaster.modal.js";
+import { VehicleTypeMaster } from "./VehicleTypeMaster.modal.js";
+import {VehicleTypeChild} from './VehicleTypeChild.modal.js'
 
 
 export { NTCurrentDay,NT,
@@ -58,5 +60,7 @@ export { NTCurrentDay,NT,
     TaxMaster,
     UnitMaster,
     ZoneMaster,
-    AreaWardMaster
+    AreaWardMaster,
+    VehicleTypeMaster,
+    VehicleTypeChild
 }

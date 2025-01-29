@@ -29,7 +29,7 @@ router.post(
   "/AddUpdateRolePermissionMaster",
   AuthController.AddUpdateRolePermissionMaster
 );
-router.get("/GetRolePermissionMaster", AuthController.GetRolePermissionMaster);
+router.post("/GetRolePermissionMaster", AuthController.GetRolePermissionMaster);
 // router.post("/Register", AuthController.Register)
 router.get("/GetRolePermission", AuthController.GetRolePermission);
 
