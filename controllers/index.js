@@ -9,7 +9,7 @@ import { AddUpdateNewNodeMaster} from "./NewNodeMaster.controller.js"
 import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
 import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
-import { VehicleTrack } from "./VehicleMoving.controller.js";
+import { VehicleTrack, VehicleMovingTrackStatusdetnew, GetVechicleMileageSummary } from "./VehicleMoving.controller.js";
 import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType } from "./VehicleType.controller.js";
 
 import { AddUpdateVendorMaster, GetVendorMaster, DeleteVendorMaster } from "./VendorMaster.controller.js";
@@ -101,7 +101,9 @@ export const VehicleFuelDateRangeController = {
 }
 
 export const VehicleMovingController = {
-    VehicleTrack: VehicleTrack
+    VehicleTrack: VehicleTrack,
+    VehicleMovingTrackStatusdetnew: VehicleMovingTrackStatusdetnew,
+    GetVechicleMileageSummary: GetVechicleMileageSummary
 }
 
 export const VehicleTypeController = {

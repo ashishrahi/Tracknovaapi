@@ -1,127 +1,190 @@
 import { StatusCodes } from "http-status-codes";
-import { ItemMaster, NT } from "../modals/index.js"
-import { getVehicleTrack } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
+import { ItemMaster, NT } from "../modals/index.js";
+import {
+  trackDetailsNT,
+  VehicleMovingStatusdetnew,
+} from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 
-async function VehicleTrack(req, res, next){
-    const response = { Status: 'Failed', Message: '', Data: [] };
+//-----------VehicleTrack-------->
+async function VehicleTrack(req, res, next) {
+  const response = { Status: "Failed", Message: "", Data: [] };
 
-    try {
+  try {
+    const filter = req.body;
 
-        const filter = req.body;
-        // console.log("previous filter", filter)
-        // await client.connect();
-        // const db = client.db('your_database_name'); // Replace with your database name
-        // const vehicleCollection = db.collection('ItemMaster'); // Replace with your collection name
-        // const trackCollection = db.collection('TrackDetails'); // Replace with your collection name
+    // Convert dates to MongoDB-compatible format
+    const startDate = new Date(filter.date1);
+    const endDate = new Date(filter.date2);
 
-        // Convert dates to MongoDB-compatible format
-        const startDate = new Date(filter.date1)
-        const endDate = new Date(filter.date2)
+    // Step 1: Filter vehicles based on input criteria
+    let vehicleFilter = { ItemFlag: "v" }; // Assuming 'v' indicates vehicles
+    if (filter.str1) {
+      vehicleFilter.VehicleNo = filter.str1; // Filter by vehicle number
+    }
+    if (filter.intnotnullvalue1 > 0) {
+      vehicleFilter.EmpId = filter.intnotnullvalue1; // Filter by employee ID
+    }
+    if (filter.intnotnullvalue2 > 0) {
+      vehicleFilter.VehicleTypeId = filter.intnotnullvalue2; // Filter by vehicle type ID
+    }
 
-        // let startDate = new Date(filter.date1).toISOString().slice(0, -1);
-        // let endDate = new Date(endDate).toISOString().slice(0, -1);
+    // Fetch relevant vehicles
+    const vehicles = await ItemMaster.find(vehicleFilter).lean();
+    // return res.json({vehicles})
+    const devIds = vehicles.map((v) => v.devid).filter((devid) => devid); // Extract DevIds
+    // console.log("devIds", devIds);
 
+    // Step 2: Fetch track details for the filtered vehicles within the date range
+    const trackFilter = {
+      DevID: { $in: devIds }, // Filter by DevIds
+      TrackDate: { $gte: startDate, $lte: endDate },
+    };
+    // Add additional filters if provided
+    if (filter.list1 && filter.list1.length > 0) {
+      trackFilter.VehicleNo = { $in: filter.list1 }; // Filter by vehicle numbers
+    }
+    if (filter.listInt1 && filter.listInt1.length > 0) {
+      trackFilter.VehicleTypeID = { $in: filter.listInt1 }; // Filter by vehicle type IDs
+    }
 
-        
+    const trackDetails = await trackDetailsNT(trackFilter);
+    // console.log("trackDetails", trackDetails)
+    // Step 3: Transform track details into the desired format
+    const transformedData = trackDetails.map((track) => {
+      const runningTime = track.Running
+        ? track.Running.split(/[\s:]+/)
+        : [0, 0, 0];
+      const runningInSec =
+        parseInt(runningTime[0]) * 3600 +
+        parseInt(runningTime[1]) * 60 +
+        parseInt(runningTime[2]);
 
-        // Step 1: Filter vehicles based on input criteria
-        let vehicleFilter = { ItemFlag: 'v' }; // Assuming 'v' indicates vehicles
-        if (filter.str1) {
-            vehicleFilter.VehicleNo = filter.str1; // Filter by vehicle number
-        }
-        if (filter.intnotnullvalue1 > 0) {
-            vehicleFilter.EmpId = filter.intnotnullvalue1; // Filter by employee ID
-        }
-        if (filter.intnotnullvalue2 > 0) {
-            vehicleFilter.VehicleTypeId = filter.intnotnullvalue2; // Filter by vehicle type ID
-        }
+      return {
+        TrackDate: track.TrackDate,
+        VehicleNo: track.VehicleNo || "NA",
+        DevId: track.DevID,
+        DriverName: track.DriverName,
+        MobileNo: track.MobileNo,
+        Department: track.Department,
+        VehicleType: track.VehicleType || "NA",
+        DistanceKM: track.DistanceKM || 0,
+        Running: track.Running,
+        hr: parseInt(runningTime[0]),
+        min: parseInt(runningTime[1]),
+        sec: parseInt(runningTime[2]),
+        runninginsec: runningInSec,
+        Idle: track.Idle,
+        StartTime: track.StartTime,
+        EndTime: track.EndTime,
+        StartLoc: track.StartLoc,
+        EndLoc: track.EndLoc,
+        FuelConsumption: track.FuelConsumption || "0.00",
+        FuelAlloted: track.FuelAlloted || "0.00",
+        OpeningBalance: track.OpeningBalance || "0",
+        StopTime: track.StopTime,
+        ModelNo: track.ModelNo || "NA",
+        KmPerLitre: track.KmPerLitre || 0,
+        LitrePerHr: track.LitrePerHr || 0,
+        AvgSpeed: track.AvgSpeed || 0,
+        MaxSpeed: track.MaxSpeed || 0,
+        RunningIdleTime: track.RunningIdleTime,
+        DriverMob: `${track.DriverName}\nMobile:[${track.MobileNo}]`,
+        DepartVtype: `${track.Department}\nVehicleType:[${track.VehicleType}]`,
+        VehicleDev: `${track.VehicleNo}\nDeviceId:[${track.DevId}]`,
+      };
+    });
 
-        // Fetch relevant vehicles
-        const vehicles = await ItemMaster.find(vehicleFilter).lean();
-        // return res.json({vehicles})
-        const devIds = vehicles.map(v => v.devid).filter(devid => devid); // Extract DevIds
-        // console.log("devIds", devIds);
+    // Step 4: Apply additional filtering based on Condition2 and intvalue4
+    if (filter.Condition2 && filter.intvalue4 > 0) {
+      const vehicleCounts = {};
+      transformedData.forEach((track) => {
+        vehicleCounts[track.VehicleNo] =
+          (vehicleCounts[track.VehicleNo] || 0) + 1;
+      });
 
-        // Step 2: Fetch track details for the filtered vehicles within the date range
-        const trackFilter = {
-            DevID:  { "$in": devIds }  , // Filter by DevIds
-            TrackDate: { "$gte" : startDate, "$lte": endDate }
-            // FromDate: startDate,
-            // ToDate: endDate
-            // TrackDate: { $gte: startDate, $lte: endDate }, // Filter by date range
-        };
-        // Add additional filters if provided
-        if (filter.list1 && filter.list1.length > 0) {
-            trackFilter.VehicleNo = { "$in": filter.list1 } ; // Filter by vehicle numbers
-        }
-        if (filter.listInt1 && filter.listInt1.length > 0) {
-            trackFilter.VehicleTypeID = { "$in": filter.listInt1 } ; // Filter by vehicle type IDs
-        }
-
-        const trackDetails = await getVehicleTrack(trackFilter); 
-        // console.log("trackDetails", trackDetails)
-        // Step 3: Transform track details into the desired format
-        const transformedData = trackDetails.map(track => {
-            const runningTime = track.Running ? track.Running.split(/[\s:]+/) : [0, 0, 0];
-            const runningInSec = (parseInt(runningTime[0]) * 3600) + (parseInt(runningTime[1]) * 60) + parseInt(runningTime[2]);
-
-            return {
-                TrackDate: track.TrackDate,
-                VehicleNo: track.VehicleNo || 'NA',
-                DevId: track.DevID,
-                DriverName: track.DriverName,
-                MobileNo: track.MobileNo,
-                Department: track.Department,
-                VehicleType: track.VehicleType || 'NA',
-                DistanceKM: track.DistanceKM || 0,
-                Running: track.Running,
-                hr: parseInt(runningTime[0]),
-                min: parseInt(runningTime[1]),
-                sec: parseInt(runningTime[2]),
-                runninginsec: runningInSec,
-                Idle: track.Idle,
-                StartTime: track.StartTime,
-                EndTime: track.EndTime,
-                StartLoc: track.StartLoc,
-                EndLoc: track.EndLoc,
-                FuelConsumption: track.FuelConsumption || '0.00',
-                FuelAlloted: track.FuelAlloted || '0.00',
-                OpeningBalance: track.OpeningBalance || '0',
-                StopTime: track.StopTime,
-                ModelNo: track.ModelNo || 'NA',
-                KmPerLitre: track.KmPerLitre || 0,
-                LitrePerHr: track.LitrePerHr || 0,
-                AvgSpeed: track.AvgSpeed || 0,
-                MaxSpeed: track.MaxSpeed || 0,
-                RunningIdleTime: track.RunningIdleTime,
-                DriverMob: `${track.DriverName}\nMobile:[${track.MobileNo}]`,
-                DepartVtype: `${track.Department}\nVehicleType:[${track.VehicleType}]`,
-                VehicleDev: `${track.VehicleNo}\nDeviceId:[${track.DevId}]`,
-            };
-        });
-
-        // Step 4: Apply additional filtering based on Condition2 and intvalue4
-        if (filter.Condition2 && filter.intvalue4 > 0) {
-            const vehicleCounts = {};
-            transformedData.forEach(track => {
-                vehicleCounts[track.VehicleNo] = (vehicleCounts[track.VehicleNo] || 0) + 1;
-            });
-
-            const filteredData = transformedData.filter(track => vehicleCounts[track.VehicleNo] <= filter.intvalue4);
-            response.Data = filteredData;
-        } else {
-            response.Data = transformedData;
-        }
-        response.Status = 'Success';
-        response.Message = 'Data retrieved successfully';
-        return res.status(StatusCodes.OK).json(response)
-    } catch (ex) {
-       const error = new Error(ex.message);
-       error.status = StatusCodes.BAD_REQUEST;
-       return next(error);
-    } 
-
-    return response;
+      const filteredData = transformedData.filter(
+        (track) => vehicleCounts[track.VehicleNo] <= filter.intvalue4
+      );
+      response.Data = filteredData;
+    } else {
+      response.Data = transformedData;
+    }
+    response.Status = "Success";
+    response.Message = "Data retrieved successfully";
+    return res.status(StatusCodes.OK).json(response);
+  } catch (ex) {
+    const error = new Error(ex.message);
+    error.status = StatusCodes.BAD_REQUEST;
+    return next(error);
+  }
 }
 
-export { VehicleTrack }
+//-----------VehicleMovingTrackStatusdetnew-------->
+async function VehicleMovingTrackStatusdetnew(req, res, next) {}
+
+//-----------GetVechicleMileageSummary-------->
+async function GetVechicleMileageSummary(req, res, next) {
+  try {
+    const filter = req.body;
+    const { Data } = await VehicleMovingStatusdetnew(req.body);
+    const vehicleData = Data;
+    // return res.json({vehicleData})
+
+    // Filter drivers with "jit" in their name
+    const filteredData = vehicleData.filter((v) =>
+      v.DriverName?.toLowerCase().includes("jit")
+    );
+
+    if (filter.show) {
+      return res.json(filteredData);
+    }
+
+    // Handle Export (PDF/XLS)
+    const exportFile = await handleExport(filteredData, filter.ExportOption);
+    return res.json({ file: exportFile });
+  } catch (error) {
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_REQUEST;
+    return next(err);
+    // return res.status(500).json({ error: error.message });
+}
+
+async function handleExport (data, exportOption) {
+    
+        const basePath = path.join(__dirname, "exports");
+        if (!fs.existsSync(basePath)) fs.mkdirSync(basePath);
+    
+        const fileName = `FuelConsumption.${
+          exportOption === ".pdf" ? "pdf" : "xlsx"
+        }`;
+        const filePath = path.join(basePath, fileName);
+    
+        if (exportOption === ".pdf") {
+          const doc = new pdf();
+          doc.pipe(fs.createWriteStream(filePath));
+          doc.fontSize(14).text("Fuel Consumption Report", { align: "center" });
+          data.forEach((item, i) =>
+            doc.text(`${i + 1}. ${item.DriverName} - ${item.vehicleTypeId}`)
+          );
+          doc.end();
+        } else {
+          const workbook = new exceljs.Workbook();
+          const sheet = workbook.addWorksheet("Fuel Consumption");
+          sheet.addRow(["Driver Name", "Vehicle Type ID"]);
+          data.forEach((item) =>
+            sheet.addRow([item.DriverName, item.vehicleTypeId])
+          );
+          await workbook.xlsx.writeFile(filePath);
+        }
+    
+        return filePath;
+      }
+   
+}
+
+
+export {
+  VehicleTrack,
+  VehicleMovingTrackStatusdetnew,
+  GetVechicleMileageSummary,
+};

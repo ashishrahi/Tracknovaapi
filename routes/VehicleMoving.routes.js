@@ -3,5 +3,8 @@ import { VehicleMovingController } from "../controllers/index.js"
 const router = express.Router();
 
 router.post("/VehicleTrack", VehicleMovingController.VehicleTrack);
+router.post("/VehicleMovingTrackStatusdetnew", VehicleMovingController.VehicleMovingTrackStatusdetnew); // InComplete
+router.post("/GetVechicleMileageSummary", VehicleMovingController.GetVechicleMileageSummary); 
+
 
 export default router;
