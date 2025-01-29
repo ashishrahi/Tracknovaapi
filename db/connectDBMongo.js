@@ -9,6 +9,9 @@ async function connectDBMongo(){
             // useNewUrlParser: true,
             // useUnifiedTopology: true,
           });
+
+     
+
           await client.connect();
     } catch (error) {
         console.log(error)

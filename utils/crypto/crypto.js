@@ -7,7 +7,7 @@ const iv = crypto.randomBytes(16);
 // const iv = "717e52d4264d80ae9aacdf260bf92a6d";
 
 //  encrypting data
-const encryptData = (data)=>{
+export const encryptData = (data)=>{
   if(!data){
     throw new Error("Data is not coming")
   }
@@ -21,4 +21,3 @@ const encryptData = (data)=>{
     };
 }
 
-export default encryptData;

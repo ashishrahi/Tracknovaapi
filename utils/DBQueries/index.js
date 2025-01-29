@@ -1,80 +1,17 @@
-export const probWireTampQuery = `WITH FilteredNT AS (
-  SELECT  devid, MAX(TrackTime) AS LatestTrackTime
-  FROM NT
-  WHERE cast(TrackTime as date) = @date
-    AND acc = 0
-    AND speed > 10 group by devid
-),
-JoinedData AS (
-  SELECT 
-    im.Devid,
-    im.ItemMasterId,
-    ISNULL(im.VehicleNo, '') AS VehicleNo,
-    im.EmpId,
-    ISNULL(em.EmpDeptId, 0) AS EmpDeptId,
-    ISNULL(dm.DepartmentName, '') AS DepartmentName
-  FROM ItemMaster im
-  INNER JOIN FilteredNT fn ON im.Devid = fn.devid
-  LEFT JOIN EmpMaster em ON im.EmpId = em.Empid
-  LEFT JOIN Department dm ON em.EmpDeptId = dm.DepartmentId
-)
 
-SELECT
-  ROW_NUMBER() OVER (ORDER BY jd.Devid) AS srno,
-  lt.LatestTrackTime AS date,
-  jd.ItemMasterId,
-  jd.VehicleNo,
-  jd.Devid,
-  jd.EmpDeptId AS DeptId,
-  jd.DepartmentName
-FROM JoinedData jd
-LEFT JOIN FilteredNT lt ON jd.Devid = lt.devid
-`;
+// Dashboard Queries
+import { getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery } from "./Dashboard.Query.js";
 
-export const getVehicleNotMovedQuery = `WITH NTMV AS (
-    SELECT DISTINCT devid
-    FROM NT
-    WHERE TrackTime >= @dateFrom
-      AND TrackTime <= @dateTo
-      AND acc = 1
-),
+// BrandMaster Queries
+import { AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery} from "./BrandMaster.Query.js";
 
--- Get distinct device IDs that match the conditions in ntrec
-NTREC AS (
-    SELECT DISTINCT devid
-    FROM NT
-    WHERE TrackTime >= @dateFrom
-      AND TrackTime <= @dateTo
-),
--- Fetch vehicle details with employee and department information
-VEHS AS (
-    SELECT 
-        im.Devid,
-        im.VehicleNo,
-        im.ItemName,
-        im.VehicleTypeId,
-        im.VZoneID,
-        em.EmpName,
-        em.EmpMobileNo,
-        d.DepartmentName
-    FROM ItemMaster im
-    LEFT JOIN EmpMaster em ON im.EmpId = em.Empid
-    LEFT JOIN Department d ON em.EmpDeptId = d.DepartmentId
-    WHERE UPPER(im.ItemFlag) = 'V' 
-      AND im.Devid IS NOT NULL
-),
+// BinLocation Queries
+import { AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery } from "./BinLocation.Query.js"
 
--- Fetch vehicle types
-VT AS (
-    SELECT VehicleTypeId, VehicleTypename
-    FROM VehicleTypeMaster
-),
--- Fetch zone information
-ZN AS (
-    SELECT ZoneID, ZoneName
-    FROM ZoneMaster
-)
+// CountryMaster Queries
+import { AddUpdateCountryMasterQuery,GetCountryMasterQuery,DeleteCountryQuery } from "./CountryMaster.Query.js";
 
+<<<<<<< HEAD
 -- Combine results
 SELECT
     ROW_NUMBER() OVER (ORDER BY v.Devid) AS SrNo,
@@ -112,3 +49,50 @@ ORDER BY trackdate;`,
 };
 
 export {}
+=======
+// DepartmentMaster Queries
+import { AddUpdateDepartmentMasterQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery } from "./Department.Query.js";
+
+// DesignationMaster Queries
+import { AddUpdateDesignationMasterQuery,GetDesignationMasterQuery,DeleteDesignationMasterQuery } from "./Designation.Query.js";
+
+//DeviceTypeQuery
+import {GetDeviceTypeQuery} from './DeviceType.Query.js'
+
+//DeviceTypeQuery
+import {AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteEmployeeQuery} from './EmpMaster.Query.js'
+
+//GeoFencingQuery
+import {AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery} from './GeoFencing.Query.js'
+
+//CityMasterQuery
+import {AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
+
+//FuelCorrectionQuery
+import {AddUpdateFuelCorrectionQuery,GetVehListQuery} from './FuelCorrection.Query.js'
+
+//PetrolPump
+import {AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery} from './Petrol_Pump_tbl.Query.js'
+
+//PetrolPump
+import {AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery} from './Setting.Query.js'
+
+
+export {
+    
+    getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery,
+    AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery,
+    AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery,
+    AddUpdateCountryMasterQuery,GetCountryMasterQuery,DeleteCountryQuery,
+    AddUpdateDepartmentMasterQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery,
+    AddUpdateDesignationMasterQuery, GetDesignationMasterQuery, DeleteDesignationMasterQuery,
+    GetDeviceTypeQuery,
+    AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteEmployeeQuery,
+    AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery,
+    AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery,
+    AddUpdateFuelCorrectionQuery,GetVehListQuery,
+    AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery,
+    AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery
+
+}
+>>>>>>> ashish

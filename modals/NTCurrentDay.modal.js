@@ -10,8 +10,13 @@ const NTCurrentDaySchema = new mongoose.Schema({
     distance: mongoose.Schema.Types.Double,
     Flag: String,
     id: Number,
+<<<<<<< HEAD:modals/NTCurrentDay.model.js
     Lattitude: mongoose.Schema.Types.Double,
     Longitude: mongoose.Schema.Types.Double,
+=======
+    Lattitude: { type: mongoose.Schema.Types.Decimal128, required: true },
+    Longitude: { type: mongoose.Schema.Types.Decimal128, required: true },
+>>>>>>> ashish:modals/NTCurrentDay.modal.js
     nearme: String,
     NTId: Number,
     overspeed: Boolean,
