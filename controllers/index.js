@@ -12,7 +12,7 @@ import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
 import { VehicleTrack } from "./VehicleMoving.controller.js";
 import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType } from "./VehicleType.controller.js";
 
-import { AddUpdateVendorMaster } from "./VendorMaster.controller.js";
+import { AddUpdateVendorMaster, GetVendorMaster, DeleteVendorMaster } from "./VendorMaster.controller.js";
 
 export const NTReadController = {
     probWireTamp: probWireTamp,
@@ -114,5 +114,7 @@ export const VehicleTypeController = {
 }
 
 export const VendorMasterController = {
-    AddUpdateVendorMaster: AddUpdateVendorMaster
+    AddUpdateVendorMaster: AddUpdateVendorMaster,
+    GetVendorMaster: GetVendorMaster,
+    DeleteVendorMaster: DeleteVendorMaster
 }
