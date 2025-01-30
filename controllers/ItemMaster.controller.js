@@ -68,7 +68,7 @@ async function AddUpdateItemMaster( req, res, next){
               }                                    
               ).save(); // save({session})
             // await session.commitTransaction();
-            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Added", savedData));
+            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Added", savedData));
         } else{
             // now updating
         const entity = await ItemMaster.findOne({ ItemMasterId: model.itemMasterId })
@@ -184,7 +184,7 @@ async function AddUpdateItemMaster( req, res, next){
         }, {new: true})
         // .session(session);
         // await session.commitTransaction();
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Updated", updatedItemMaster));
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Updated", updatedItemMaster));
         }
 
         
@@ -319,7 +319,7 @@ async function GetItemMaster(req, res, next){
 
         const result = await ItemMaster.aggregate(query);
         const message = result.length > 0 ? "Data fetched successfully" : "No records found."
-        return res.status(StatusCodes.OK).json( new ApiSuccessResponse(StatusCodes.OK, message, result ));
+        return res.status(StatusCodes.OK).json( new ApiSuccessResponse(true, StatusCodes.OK, message, result ));
     } catch (err) {
         const error = new Error(err.message);
         error.status = StatusCodes.BAD_REQUEST;
@@ -361,7 +361,7 @@ async function DeleteItemMaster(req, res, next){
             const deleteResult = await ItemMaster.deleteOne({ ItemMasterId: itemMasterId });
 
             if (deleteResult.deletedCount === 1) {
-                return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Deleted"))
+                return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true ,StatusCodes.OK, "Successfully Deleted"))
                
             } else {
                 const error = new Error("ItemMaster not found.");

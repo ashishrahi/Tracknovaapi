@@ -44,7 +44,7 @@ async function AddUpdateVendorMaster(req, res, next){
                 error.status = StatusCodes.INTERNAL_SERVER_ERROR;
                 return next(error);
             }
-            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully added", newDoc))
+            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully added", newDoc))
 
             
         } else {
@@ -67,7 +67,7 @@ async function AddUpdateVendorMaster(req, res, next){
                 return next(error);
             }
 
-            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully updated!!",updatedDoc ))
+            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully updated!!",updatedDoc ))
         }    
     } catch (error) {
         const err = new Error(error.message);
@@ -91,7 +91,7 @@ async function GetVendorMaster(req, res, next){
             : await VendorMaster.find({ VenderId: venderId }).lean();
 
         const msg = vendors.length > 0 ?  "default" : "No Record Found"
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, vendors));
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, vendors));
 
     } catch (error) {
         const err = new Error(error.message);
@@ -113,7 +113,7 @@ async function DeleteVendorMaster(req, res, next){
             return next(error);
         }
 
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully deleted" ));
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully deleted" ));
     } catch (error) {
         const err = new Error(error.message);
         err.status = StatusCodes.INTERNAL_SERVER_ERROR;

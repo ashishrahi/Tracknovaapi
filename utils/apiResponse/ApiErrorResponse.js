@@ -10,7 +10,7 @@ class ApiErrorResponse{
     //     this.statusCode = statusCode,
     //     this.error = error
 
-    }
+     }
 }
 
 export default ApiErrorResponse;

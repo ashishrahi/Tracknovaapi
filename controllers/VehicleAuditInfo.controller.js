@@ -48,6 +48,7 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
           .status(StatusCodes.CREATED)
           .json(
             new ApiSuccessResponse(
+              true,
               StatusCodes.CREATED,
               "Added Successfully",
               newVehicle
@@ -103,6 +104,7 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
         .status(StatusCodes.OK)
         .json(
           new ApiSuccessResponse(
+            true,
             StatusCodes.OK,
             "Updated Successfully",
             updatedVehicle
@@ -145,7 +147,7 @@ async function GetVehicleAuditInfo(req, res, next) {
     const data = await VehicleAddTempInfo.find(query).skip((pageNo - 1) * pageSize).limit(pageSize);
     let msg;
     data?.length === 0 ? msg = "No Record found" : msg= "default"
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, data, pageNo, pageSize, data.length ));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, data, pageNo, pageSize, data.length ));
   } catch (err) {
     const error = new Error(err.message);
     error.status = StatusCodes.BAD_REQUEST;
@@ -179,7 +181,7 @@ async function DeleteVehicleAuditInfo(req, res, next){
         // Apply dynamic filters using Mongoose's `find` method
         const data = await VehicleAddTempInfo.findOneAndDelete(query)
         if(data){
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully deleted" ));
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully deleted" ));
         }else{
           const error = new Error("Document not found or already deleted")
           error.status = StatusCodes.NOT_FOUND;

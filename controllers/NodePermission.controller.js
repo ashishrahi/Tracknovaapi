@@ -28,15 +28,11 @@ async function AddUpdateNodePermission(req, res, next){
             data = await NodePermission.insertMany(newPermissions);
         }
 
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Successfully Added", data));
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Added", data));
     } catch (err) {
         const error = new Error(err.message);
         error.status = StatusCodes.BAD_REQUEST;
         return next(error);
-        // return {
-        //     isSuccess: false,
-        //     message: error.code === 11000 ? "Department Name Already Exists" : error.message
-        // };
     }
 }
 
