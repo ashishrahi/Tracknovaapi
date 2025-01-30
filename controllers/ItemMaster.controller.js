@@ -103,9 +103,6 @@ async function AddUpdateItemMaster( req, res, next){
                     Id: simId,
                     // UpdatedOn: new Date(),
                     CompanyName: model.simCompany,
-                    CreatedBy: model.createdBy,
-                    // CreatedOn: new Date(),
-                    UpdatedBy: model.updatedBy,
                     VehicleId: model.itemMasterId,
                     VehicleNo: model.vehicleNo,
                     DeviceType: model.deviceTypeId,
@@ -124,7 +121,7 @@ async function AddUpdateItemMaster( req, res, next){
                     Repair: model.repair,
                     Remark: model.simNoRemark?.trim() || "",
                     CreatedBy: model.createdBy,
-                    UpdatedBy: model.UpdatedBy
+                    UpdatedBy: model.updatedBy
 
                 }).save();  // save({session})
 

@@ -113,7 +113,7 @@ export const GetBrandQuery = async (model) => {
 
 export const DeleteBrandQuery = async (model) => {
     try {
-        const { brandId } = model;
+        let { brandId } = model;
 
         if (!brandId || brandId === 0) {
             brandId = -1;

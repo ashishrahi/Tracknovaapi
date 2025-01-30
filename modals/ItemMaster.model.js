@@ -34,8 +34,6 @@ const ItemMasterSchema = new mongoose.Schema(
     DepreciationRate: { type: Number },
     CreatedBy: { type: String },
     UpdatedBy: { type: String },
-    CreatedOn: { type: Date },
-    UpdatedOn: { type: Date },
     VehicleTypeId: { type: Number },
     FuelTypeId: { type: Number },
     BrandTypeId: { type: Number },

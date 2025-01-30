@@ -38,8 +38,6 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
         Replacement: model.replacement,
         Repair: model.repair,
         Remark: model.remark,
-        CreatedBy: model.createdBy,
-        UpdatedBy: model.UpdatedBy,
       });
       const savedVehicle = await newVehicle.save();
 
@@ -65,8 +63,6 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
         {
           // Id: newNextid,
           CompanyName: model.companyName,
-          CreatedBy: model.createdBy,
-          UpdatedBy: model.updatedBy,
           VehicleId: model.vehicleId,
           VehicleNo: model.vehicleNo,
           DeviceType: model.deviceType,
@@ -85,7 +81,7 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
           Repair: model.repair,
           Remark: model.remark,
           CreatedBy: model.createdBy,
-          UpdatedBy: model.UpdatedBy,
+          UpdatedBy: model.updatedBy,
         },
         { new: true }
       );

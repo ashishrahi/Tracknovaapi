@@ -38,8 +38,6 @@ export const AddUpdateFuelTypeQuery = async (model) => {
             FuelCode: model.FuelCode || '',
             CreatedBy: model.CreatedBy || '',
             UpdatedBy: model.UpdatedBy || '',
-            UpdatedBy: model.UpdatedBy || '',
-            UpdatedOn: model.UpdatedOn || new Date(),
           },
           { new: true, upsert: true } // 'upsert' creates a new document if no match is found
         );

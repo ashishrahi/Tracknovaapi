@@ -23,8 +23,6 @@ const VehicleAddTempInfoSchema = new mongoose.Schema(
     ImageFile: { type: Buffer }, // To store binary data
     Createdby: { type: String,  trim: true },
     UpdatedBy: { type: String,  trim: true },
-    CreatedOn: { type: Date, default: Date.now },
-    UpdatedOn: { type: Date, default: Date.now },
     Id: { type: Number, required: true },
     ServiceEngg: {
       type: String,
