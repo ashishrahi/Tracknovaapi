@@ -48,12 +48,13 @@ async function GetCommGroup(req, res) {
   // Step 5: Return Response
   return res.status(StatusCodes.OK).json(
     {
-      Data: lNM,
       Status: "Success",
       PageNo: pageNo,
       PageSize: pageSize,
       RowCount: totalCount, // Total records count
       TotalPages: Math.ceil(totalCount / pageSize),
+      Data: lNM,
+     
     } // Calculate total pages
   );
 
@@ -72,19 +73,17 @@ async function UpsertCommGroup(req, res) {
   try {
     let { groupId, name, description, type, isActive, createdBy, updatedBy } =
       req.body;
-    console.log(req.body);
 
     let existingGroup = await CommGroup.findOne({ Name: name });
-    console.log("existingGroup", existingGroup);
 
     // Check if it's a new record
     // zero means we are updating the record
     if (!groupId || groupId === 0) {
       if (existingGroup) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          Data: req.body,
           Status: "Failed",
           Message: "Record Already Exists!",
+          Data: req.body,
         });
       }
 
@@ -203,7 +202,6 @@ async function DeleteCommGroup(req, res) {
 //-------------GetCommGroupByEmpId-------->
 async function GetCommGroupByEmpId(req, res) {
   const { EmpId } = req.body;
-  console.log("EmpId", EmpId);
 
   try {
     const result = await CommGroup.aggregate([
@@ -250,7 +248,7 @@ async function GetCommGroupByEmpId(req, res) {
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+      .json(new ApiErrorResponse(false,StatusCodes.BAD_REQUEST, error.message));
   }
 }
 
@@ -272,16 +270,16 @@ async function GetAllEmailSetting(req, res) {
 
     return res
       .status(StatusCodes.OK)
-      .json(new ApiSuccessResponse(StatusCodes.OK, result));
+      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default", result));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiSuccessResponse(StatusCodes.BAD_REQUEST, error.message));
+      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
   }
 }
 
 //-------------UpsertEmailSetting-------->
-async function UpsertEmailSetting(req, res) {
+async function UpsertEmailSetting(req, res, next) {
   try {
     const model = req.body;
     // let updated;
@@ -306,9 +304,12 @@ async function UpsertEmailSetting(req, res) {
 
       updated = await updated.save();
     }
-    return res.json({ updated });
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Updated Successfully", updated ));
   } catch (error) {
-    return res.json({ msg: error.message });
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_REQUEST;
+    return next(err);
+    // return res.json({ msg: error.message });
   }
 }
 
@@ -345,7 +346,7 @@ async function GetAllSmsSetting(req, res) {
 
     return res
       .status(StatusCodes.OK)
-      .json(new ApiSuccessResponse(StatusCodes.OK, result));
+      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default" , result));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -354,61 +355,67 @@ async function GetAllSmsSetting(req, res) {
 }
 
 //-------------GetCampaignDetailById-------->
-async function GetCampaignDetailById(req, res) {
-  const { CampaignId } = req.query;
-  console.log(CampaignId);
-
-  const result = await CampaignDetail.aggregate([
-    {
-      $match: {
-        CampaignId: Number(CampaignId),
-      },
-    },
-    {
-      $lookup: {
-        // Lookup CommGroup to get group details
-        from: "CommGroup",
-        localField: "GroupId",
-        foreignField: "GroupId",
-        as: "GroupDetails",
-      },
-    },
-    {
-      $lookup: {
-        from: "EmpMaster",
-        // Lookup EmpMaster to get employee details
-        localField: "MemberId",
-        foreignField: "Empid",
-        as: "MemberDetails",
-      },
-    },
-    { $unwind: { path: "$MemberDetails", preserveNullAndEmptyArrays: true } },
-    {
-      $project: {
-        CampaignId: 1,
-        GroupId: 1,
-        MemberId: 1,
-        Message: 1,
-        EmailId: 1,
-        MobileNo: 1,
-        ReceiverType: {
-          $literal: "Employee",
+async function GetCampaignDetailById(req, res, next) {
+  try {
+    const { CampaignId } = req.query;
+    
+  
+    const result = await CampaignDetail.aggregate([
+      {
+        $match: {
+          CampaignId: Number(CampaignId),
         },
-        Name: "$MemberDetails.EmpName",
-        IsSelected: {
-          $cond: [
-            {
-              $eq: ["$MemberId", null],
-            },
-            0,
-            1,
-          ],
-        }, // If MemberId is null, set IsSelected to 0, otherwise 1
       },
-    },
-  ]);
-
-  return res.json(result);
+      {
+        $lookup: {
+          // Lookup CommGroup to get group details
+          from: "CommGroup",
+          localField: "GroupId",
+          foreignField: "GroupId",
+          as: "GroupDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "EmpMaster",
+          // Lookup EmpMaster to get employee details
+          localField: "MemberId",
+          foreignField: "Empid",
+          as: "MemberDetails",
+        },
+      },
+      { $unwind: { path: "$MemberDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          CampaignId: 1,
+          GroupId: 1,
+          MemberId: 1,
+          Message: 1,
+          EmailId: 1,
+          MobileNo: 1,
+          ReceiverType: {
+            $literal: "Employee",
+          },
+          Name: "$MemberDetails.EmpName",
+          IsSelected: {
+            $cond: [
+              {
+                $eq: ["$MemberId", null],
+              },
+              0,
+              1,
+            ],
+          }, // If MemberId is null, set IsSelected to 0, otherwise 1
+        },
+      },
+    ]);
+  
+    return res.status(StatusCodes.OK).json(true,StatusCodes.OK, "default", result);
+  } catch (error) {
+      const err = new Error(error.message);
+      err.status = StatusCodes.BAD_REQUEST;
+      return next(err);
+  }
 }
 
 //-------------GetCampaign-------->
@@ -440,7 +447,6 @@ async function GetCampaign(req, res) {
     const campaigns = await Campaign.find(query).skip(skip).limit(limit);
     // .lean(); // Improves performance by returning plain JS objects
 
-    console.log("campaigns", campaigns);
     // Get total count of records matching the filter
     const totalCount = await Campaign.countDocuments(query);
 
@@ -551,7 +557,7 @@ async function UpsertCampaign(req, res) {
     return res.status(StatusCodes.BAD_REQUEST).json(response);
   }
 
-  return res.status(StatusCodes.OK).json(response);
+  // return res.status(StatusCodes.OK).json(response);
 }
 
 //-------------DeleteCampaign-------->
@@ -908,7 +914,7 @@ async function DeleteEventSetting(req, res){
 }
 
 //-------------GetMasters-------->
-async function GetMasters(req, res){
+async function GetMasters(req, res, next){
   const query =  req.body;
   try {
     let mastersData = {};
@@ -931,9 +937,12 @@ async function GetMasters(req, res){
       }).lean();
     }
 
-    return { status: "Success", data: mastersData };
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", mastersData ));
   } catch (error) {
-    return { status: "Failed", message: error.message };
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_REQUEST;
+    return next(err);
+    // return { status: "Failed", message: error.message };
   }
 }
 

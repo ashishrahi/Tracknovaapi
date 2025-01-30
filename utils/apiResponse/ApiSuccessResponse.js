@@ -1,6 +1,6 @@
 class ApiSuccessResponse{
 
-    // constructor(statusCode,  message = "Data Successfully fetched", data,   pageNo, pageSize, rowCount,){
+    // constructor( statusCode,  message = "Data Successfully fetched", data,   pageNo, pageSize, rowCount,){
     //     this.isSuccess = true;
     //     this.statusCode = statusCode;
     //     message ==="default" ? this.message = "Data Successfully fetched" : this.message = message;
@@ -13,7 +13,7 @@ class ApiSuccessResponse{
     constructor(isSuccess,statusCode, message, data, pageNo, pageSize, rowCount){
         if(isSuccess) this.isSuccess = isSuccess|| true;
         if(statusCode) this.statusCode = statusCode,
-        this.message = message || "Data fetched the successfully",
+        message ==="default" ? this.message = "Data Successfully fetched" : this.message = message;
         this.data = data
         if(pageNo) this.pageNo = pageNo;
         if(pageSize) this.pageSize = pageSize;

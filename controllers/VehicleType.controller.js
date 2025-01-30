@@ -31,7 +31,7 @@ async function AddUpdateVehicleType(req, res, next) {
         return res
           .status(StatusCodes.OK)
           .json(
-            new ApiSuccessResponse(StatusCodes.OK, "Successfully Added", newDoc)
+            new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Added", newDoc)
           );
       } else {
         const error = new Error("Failed to save. Please try again");
@@ -67,6 +67,7 @@ async function AddUpdateVehicleType(req, res, next) {
       .status(StatusCodes.OK)
       .json(
         new ApiSuccessResponse(
+          true,
           StatusCodes.OK,
           "Record is successfully updated.",
           updatedDoc
@@ -96,7 +97,7 @@ async function GetVehicleType(req, res, next){
     
        let msg;
        result.length > 0 ? msg = "default" : msg = "No Record Found!!"
-       return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, result))
+       return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, result))
 
       } catch (error) {
         const err = new Error(error.message)
@@ -126,7 +127,7 @@ async function DeleteVehicleType(req, res, next){
         }
     
         // Set the response message for a successful deletion
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, 'VehicleType successfully deleted'))
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, 'VehicleType successfully deleted'))
       } catch (error) {
         const err = new Error(error.message);
         error.status = StatusCodes.BAD_REQUEST;
@@ -293,7 +294,7 @@ async function DeleteEscrapVehicleType(req, res, next){
             return next(error);
           }
 
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, 'Successfully Deleted'))
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, 'Successfully Deleted'))
       } else {
         const error = new Error("Invalid VehicleTypeId");
         error.status = StatusCodes.BAD_REQUEST;
@@ -327,7 +328,7 @@ async function GetEscrapVehicleType(req, res, next){
 
     let msg;
     rowCount > 0 ? msg = "default" : msg = "No Record Found!!"
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, msg, vehicleTypes,pageNo, pageSize, rowCount))
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, vehicleTypes,pageNo, pageSize, rowCount))
 
    } catch (error) {
      const err = new Error(error.message)

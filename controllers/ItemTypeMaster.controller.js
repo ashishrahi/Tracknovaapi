@@ -24,7 +24,7 @@ async function AddUpdateItemTypeMaster(req, res, next){
     
           await existingItem.save();
     
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Item Type Successfully Updated"));
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Updated"));
         } else {
              // Check if ItemType already exists
           const duplicate = await ItemTypeMaster.findOne({ ItemType: itemType });
@@ -46,7 +46,7 @@ async function AddUpdateItemTypeMaster(req, res, next){
             UpdatedBy: updatedBy
           });
           await newItem.save();
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "Item Type Successfully Added", newItem));
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Added", newItem));
         }
       } catch (error) {
         const err = new Error(error.message);
@@ -65,7 +65,7 @@ async function GetItemTypeMaster(req, res, next){
     
         const data = await ItemTypeMaster.find(query).lean(); // Optimized query
     
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK,"default" , data))
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK,"default" , data))
       } catch (error) {
         
         return res.json({
@@ -86,7 +86,7 @@ async function DeleteItemTypeMaster(req, res, next){
     const deletedItems = await ItemTypeMaster.deleteMany({ ItemTypeMasterId: itemTypeMasterId });
 
     if(deletedItems.deletedCount > 0){
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK,"Successfully deleted" ));
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK,"Successfully deleted" ));
     } else {
       const error = new Error("Item Type Id Not Found!")
       error.status = StatusCodes.NOT_FOUND;
