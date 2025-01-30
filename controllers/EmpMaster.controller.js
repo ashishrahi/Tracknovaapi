@@ -17,17 +17,16 @@ export async function AddUpdateEmployee(req, res) {
     const { data, isSuccess, message, statusCode } =
       await AddUpdateEmployeeQuery(model);
     const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Employee Data Fetched Successfully",
-      result
+      isSuccess,
+      statusCode,
+      message,
+      data
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -53,9 +52,8 @@ export async function GetEmployee(req, res) {
     res.status(200).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -77,9 +75,8 @@ export async function UpsertEmpPermission(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -102,9 +99,8 @@ export async function DeleteEmployee(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+     error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

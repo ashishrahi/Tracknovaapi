@@ -2,6 +2,17 @@ import { model } from "mongoose";
 import { UserPermission,RolePermission,Menu, RoleMaster } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 
+
+///////////////////////////////////////////////// loginQuery //////////////////////////////////////////////////
+
+export const loginQuery = async (modal) => {}
+
+
+
+
+
+
+
 //////////////////////////////////////////////  GetUserPermissionQuery  ////////////////////////////////////////////////////////////////
 
 export const GetUserPermissionQuery = async (model) => {

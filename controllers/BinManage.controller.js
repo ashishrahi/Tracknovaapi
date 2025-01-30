@@ -25,9 +25,8 @@ export async function AddUpdateBinManage(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.INTERNAL_SERVER_ERROR,
-      "Failed to grant Access Permission"
+     error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -53,7 +52,6 @@ export async function GetBinManage(req, res) {
     res.status(successResponse.statusCode).json({ successResponse });
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      "failed",
       StatusCodes.BAD_REQUEST,
       error.message
     );

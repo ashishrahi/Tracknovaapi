@@ -6,7 +6,7 @@ const ZoneMasterSchema = new mongoose.Schema({
     ZoneAbbrevation: String,
     ZoneID: mongoose.Schema.Types.Int32,
     ZoneName: String
-})
+}, {timestamps: true, collection: "ZoneMaster" });
 
 const ZoneMaster = mongoose.model("ZoneMaster", ZoneMasterSchema)
 

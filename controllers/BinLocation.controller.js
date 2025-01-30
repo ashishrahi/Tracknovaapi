@@ -25,7 +25,6 @@ export async function AddUpdateBinLocation(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -52,7 +51,6 @@ export async function GetBinLocation(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -76,7 +74,6 @@ export async function DeleteBinLocation(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.NOT_FOUND,
       "Failed to grant Access Permission"
     );

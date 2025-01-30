@@ -25,9 +25,8 @@ export async function AddUpdateCountryMaster(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -49,7 +48,6 @@ export async function GetCountryMaster(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -74,7 +72,6 @@ export async function DeleteCountryMaster(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );

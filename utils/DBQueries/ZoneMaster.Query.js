@@ -1,4 +1,5 @@
-import { ZoneMaster,BinLocation,AreaWardMaster } from "../../modals/index.js";
+import {BinLocation,AreaWardMaster } from "../../modals/index.js";
+import ZoneMaster from "../../modals/ZoneMaster.model.js";
 import { StatusCodes } from "http-status-codes";
 
 /////////////////////////////////////////// AddUpdateZoneMasterQuery //////////////////////////////////////////
@@ -56,13 +57,24 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
 
 export const GetZoneMasterQuery = async (modal) => {
     try {
+        console.log('modal',modal)
         let records = [];
 if (modal.ZoneID === -1) {
-    records = await ZoneMaster.find({})
-    .select("ZoneID ZoneName ZoneAbbrevation CreatedOn UpdatedOn CreatedBy UpdatedBy")
-    .lean();
+    records = await ZoneMaster.find().lean();
+    return{
+        isSuccess: true,
+        statusCode: StatusCodes.OK,
+        message: `ZoneMaster Records has been fetched successfully`,
+        data: records,
+    }
 }else{
-    records = await ZoneMaster.find({ ZoneID: modal.ZoneID }).lean();
+    records = await ZoneMaster.findOne({ ZoneID: modal.ZoneID }).lean();
+    return{
+        isSuccess: true,
+        statusCode: StatusCodes.OK,
+        message: `ZoneMaster Records has been fetched successfully`,
+        data: records,
+    }
 }
 if (records && records.length > 0) {
     return{

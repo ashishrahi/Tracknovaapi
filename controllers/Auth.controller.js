@@ -4,34 +4,48 @@ import {
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
+    //  Login
+    loginQuery,
+   // UserPermissions
   DeleteUserPermissionMasterQuery,
   GetUserPermissionQuery,
   AddUpdateUserPermissionMasterQuery,
   GetUserPermissionMasterQuery,
   GetUserPermissionListQuery,
+  // RolePermission 
   GetRolePermissionQuery,
+  AddUpdateRolePermissionMasterQuery,
+  GetRolePermissionMasterQuery,
+  // RoleMaster
   GetRoleMasterQuery,
   AddUpdateRoleMasterQuery,
   DeleteRoleMasterQuery,
-  AddUpdateRolePermissionMasterQuery,
-  GetRolePermissionMasterQuery,
+  
 } from "../utils/DBQueries/Auth.Query.js";
 import { RoleMaster } from "../modals/RoleMaster.modal.js";
 
-/////////////////////////////////// User_Login /////////////////////////////////////////////////
+/////////////////////////////////// Login /////////////////////////////////////////////////
 
 export async function login(req, res) {
-  const { USER_ID, PASSWORD } = req.body;
   try {
-    if (!USER_ID) {
-      response.mesg = "Please Enter UserID";
-      return res.status(400).json(response);
-    }
-    if (!PASSWORD) {
-      response.mesg = "Please Enter Password";
-      return res.status(400).json(response);
-    }
-  } catch (error) {}
+    const modal = req.body;
+    const {isSuccess,statusCode,message,data,rowCount} = await loginQuery(modal);
+    const successResponse = new ApiSuccessResponse(
+      isSuccess,
+      statusCode,
+      message,
+      data,
+      rowCount
+    );
+    res.status(successResponse.statusCode).json(successResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.BAD_REQUEST,
+     error.message
+    );
+    res.status(errorResponse.statusCode).json(errorResponse);
+  }
 }
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////
 
@@ -50,8 +64,8 @@ export async function GetUserPermissions(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.OK,
-      "Failed to grant Access Permission"
+      StatusCodes.BAD_REQUEST,
+     error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -143,7 +157,7 @@ export async function DeleteUserPermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      "failed",
+      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -215,8 +229,7 @@ export async function DeleteRoleMaster(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -239,7 +252,7 @@ export async function AddUpdateRolePermissionMaster(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -262,7 +275,7 @@ export async function GetRolePermissionMaster(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -285,7 +298,7 @@ export async function GetRolePermission(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
-      StatusCodes.NOT_FOUND,
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);

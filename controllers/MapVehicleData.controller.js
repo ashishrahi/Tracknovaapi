@@ -13,7 +13,9 @@ export async function GetMapVehicleData(req, res) {
         const successResponse = new ApiSuccessResponse(isSuccess, statusCode, message, data);
         res.status(statusCode).json(successResponse);
     } catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error", error.message);
+        const apiErrorResponse = new ApiErrorResponse( 
+          StatusCodes.BAD_REQUEST, 
+          error.message);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(apiErrorResponse);
     }
  }

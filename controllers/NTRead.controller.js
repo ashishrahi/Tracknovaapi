@@ -7,7 +7,7 @@ import {
   ApiErrorResponse,
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
-import connectDB from "../db/connectDB.js";
+import connectDB from "../db/connectDBSql.js";
 import sql from "mssql";
 // import encryptData from "../utils/crypto/crypto.js";
 

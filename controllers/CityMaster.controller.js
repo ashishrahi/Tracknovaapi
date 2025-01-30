@@ -25,7 +25,6 @@ export async function AddUpdateCityMaster(req, res) {
       res.status(successResponse.statusCode).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
-        false,
         StatusCodes.BAD_REQUEST,
         error.message
       );
@@ -53,7 +52,6 @@ export async function GetCityMaster(req, res) {
       res.status(successResponse.statusCode).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
-        false,
         StatusCodes.BAD_REQUEST,
         error.message
       );
@@ -78,7 +76,6 @@ export async function DeleteCityMaster(req, res) {
       res.status(successResponse.statusCode).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
-        false,
         StatusCodes.BAD_REQUEST,
         error.message
       );

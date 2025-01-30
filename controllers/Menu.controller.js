@@ -26,7 +26,10 @@ export async function AddUpdateMenuMaster(req,res){
         res.status(StatusCodes.OK).json(successResponse);
 
     } catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.BAD_REQUEST, error.message);
+        const apiErrorResponse = new ApiErrorResponse(
+            false, 
+            StatusCodes.BAD_REQUEST,
+             error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }
 }
@@ -46,7 +49,9 @@ export async function GetMenuMaster(req,res){
         res.status(successResponse.statusCode).json(successResponse);
 }
     catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.INTERNAL_SERVER_ERROR, error.message);
+        const apiErrorResponse = new ApiErrorResponse(
+            StatusCodes.BAD_REQUEST,
+             error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }}
 /////////////////////// GetParentMenuMaster //////////////////////////////////////////////////
@@ -64,7 +69,9 @@ export async function GetParentMenuMaster(req,res){
         res.status(successResponse.statusCode).json(successResponse);
 }
     catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.INTERNAL_SERVER_ERROR, error.message);
+        const apiErrorResponse = new ApiErrorResponse(
+             StatusCodes.BAD_REQUEST, 
+             error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }
 }
@@ -84,7 +91,9 @@ export async function GetChildMenuMaster(req,res){
         res.status(successResponse.statusCode).json(successResponse);
 }
     catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.INTERNAL_SERVER_ERROR, error.message);
+        const apiErrorResponse = new ApiErrorResponse(
+            StatusCodes.INTERNAL_SERVER_ERROR, 
+            error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }}
 /////////////////////// DeleteMenuMaster //////////////////////////////////////////////////
@@ -102,6 +111,8 @@ export async function DeleteMenuMaster(req,res){
         res.status(successResponse.statusCode).json(successResponse);
 }
     catch (error) {
-        const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.BAD_REQUEST, error.message);
+        const apiErrorResponse = new ApiErrorResponse(
+             StatusCodes.BAD_REQUEST, 
+             error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }}

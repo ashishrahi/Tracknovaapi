@@ -24,10 +24,8 @@ export async function AddUpdateGeoFencing(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Error occurred while updating",
-      error
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -50,7 +48,6 @@ export async function GetGeoFencing(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -73,10 +70,8 @@ export async function DeleteGeoFencing(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Error occurred while deleting",
-      error
+      StatusCodes.BAD_REQUEST,
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

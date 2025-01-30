@@ -24,7 +24,6 @@ export async function AddUpdateFuelCorrection(req, res) {
       res.status(successResponse.statusCode).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
-        false,
         StatusCodes.BAD_REQUEST,
         error.message
       );
@@ -46,7 +45,6 @@ export async function GetVehList(req, res) {
       res.status(successResponse.statusCode).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
-        false,
         StatusCodes.BAD_REQUEST,
         error.message
       );

@@ -24,9 +24,7 @@ export async function AddUpdateHandheldMaster(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Internal Server Error",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -52,9 +50,7 @@ export async function GetHandheldMaster(req, res) {
     res.status(200).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Internal Server Error",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
@@ -77,9 +73,7 @@ export async function DeleteHandheldMaster(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Internal Server Error",
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     return res.status(errorResponse.statusCode).json(errorResponse);
