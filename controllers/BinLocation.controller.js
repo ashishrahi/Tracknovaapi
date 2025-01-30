@@ -75,7 +75,7 @@ export async function DeleteBinLocation(req, res) {
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.NOT_FOUND,
-      "Failed to grant Access Permission"
+      error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);
   }

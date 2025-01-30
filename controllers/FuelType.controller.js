@@ -24,7 +24,6 @@ export async function AddUpdateFuelType(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );

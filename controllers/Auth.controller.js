@@ -40,7 +40,6 @@ export async function login(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
      error.message
     );
@@ -63,7 +62,6 @@ export async function GetUserPermissions(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
      error.message
     );
@@ -87,7 +85,6 @@ export async function AddUpdateUserPermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -111,7 +108,6 @@ export async function GetUserPermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -134,7 +130,6 @@ export async function GetUserPermissionList(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -157,7 +152,6 @@ export async function DeleteUserPermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -180,7 +174,6 @@ export async function AddUpdateRoleMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -205,7 +198,7 @@ export async function GetRoleMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (err) {
     const errorResponse = new ApiErrorResponse(
-      false,
+      
       StatusCodes.BAD_REQUEST,
       err.message
     );
@@ -228,7 +221,6 @@ export async function DeleteRoleMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -251,7 +243,6 @@ export async function AddUpdateRolePermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -274,7 +265,6 @@ export async function GetRolePermissionMaster(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
@@ -297,7 +287,6 @@ export async function GetRolePermission(req, res) {
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      false,
       StatusCodes.BAD_REQUEST,
       error.message
     );
