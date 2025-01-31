@@ -4,7 +4,7 @@ import { ItemMaster, SummaryNT } from "../../modals/index.js";
 async function trackDetailsNT(trackFilter) {
   try {
 
-    console.log("trackFilter", trackFilter)
+    // console.log("trackFilter", trackFilter)
     
     let results = await SummaryNT.find(trackFilter);
    

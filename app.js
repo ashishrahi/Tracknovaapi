@@ -5,15 +5,28 @@ import cors from "cors";
 import connectMongoDB from "./db/connectMongoDB.js";
 import compression from "compression";
 import ApiErrorResponse from "./utils/apiResponse/ApiErrorResponse.js";
+import { StatusCodes } from "http-status-codes";
 
 
 dotenv.config();
 
 // connectDBMongo();
-connectMongoDB()
+connectMongoDB().catch((error) => {
+    console.error("Failed to connect to MongoDB:", error.message);
+    app.set("dbConnectionFailed", true);
+});
+
 
 const app = express();
 
+app.use((req, res, next) => {
+    if (app.get("dbConnectionFailed")) {
+        const err = new Error("Database connection failed. Please try again later.");
+        err.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        next(err);
+    }
+    next();
+});
 app.use(cors());
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
