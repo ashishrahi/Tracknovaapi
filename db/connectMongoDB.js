@@ -1,18 +1,18 @@
+import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
-
-
 
 async function connectMongoDB() {
 
+    try {
     const uri = String(process.env.MONGODB_SERVER_URI)
     const dbName = String(process.env.DB_NAME)
     
-    try {
-        await mongoose.connect("mongodb://192.168.1.50:27017/vts");
+        await mongoose.connect(uri + "/" + dbName);
         console.log("MongoDB Connected");
     } catch (error) {
-        console.log(error);
-        // throw new Error(error.message);
+        console.error("Database Connection Error:", error.message);
+        error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        throw error;
     }
 }
 

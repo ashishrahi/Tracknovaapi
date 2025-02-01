@@ -1,9 +1,7 @@
 import { StatusCodes } from "http-status-codes";
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
-import {
-  trackDetailsNT,
-  VehicleMovingStatusdetnew,
-} from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
+import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 
 //-----------VehicleTrack-------->
 async function VehicleTrack(req, res, next) {
@@ -111,7 +109,7 @@ async function VehicleTrack(req, res, next) {
     }
     response.Status = "Success";
     response.Message = "Data retrieved successfully";
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, response.Message, response.Data));
   } catch (ex) {
     const error = new Error(ex.message);
     error.status = StatusCodes.BAD_REQUEST;
@@ -136,7 +134,7 @@ async function GetVechicleMileageSummary(req, res, next) {
     );
 
     if (filter.show) {
-      return res.json(filteredData);
+      return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, "default", filteredData));
     }
 
     // Handle Export (PDF/XLS)
@@ -146,11 +144,9 @@ async function GetVechicleMileageSummary(req, res, next) {
     const err = new Error(error.message);
     err.status = StatusCodes.BAD_REQUEST;
     return next(err);
-    // return res.status(500).json({ error: error.message });
 }
 
 async function handleExport (data, exportOption) {
-    
         const basePath = path.join(__dirname, "exports");
         if (!fs.existsSync(basePath)) fs.mkdirSync(basePath);
     
@@ -176,12 +172,9 @@ async function handleExport (data, exportOption) {
           );
           await workbook.xlsx.writeFile(filePath);
         }
-    
         return filePath;
       }
-   
 }
-
 
 export {
   VehicleTrack,
