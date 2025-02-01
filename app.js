@@ -10,6 +10,8 @@ import { StatusCodes } from "http-status-codes";
 
 dotenv.config();
 
+const app = express();
+
 // connectDBMongo();
 connectMongoDB().catch((error) => {
     console.error("Failed to connect to MongoDB:", error.message);
@@ -17,13 +19,13 @@ connectMongoDB().catch((error) => {
 });
 
 
-const app = express();
+
 
 app.use((req, res, next) => {
     if (app.get("dbConnectionFailed")) {
         const err = new Error("Database connection failed. Please try again later.");
         err.status = StatusCodes.INTERNAL_SERVER_ERROR;
-        next(err);
+        return next(err);
     }
     next();
 });
