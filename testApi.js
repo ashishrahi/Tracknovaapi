@@ -115,5 +115,8 @@ set: (value) => {
 }
 
 
+const correctKey = Object.keys({hello: "sdc"}).map(key => key.charAt(0).toUpperCase() + key.slice(2, key.length))
 
+console.log(correctKey);
 
+console.log(crypto.randomUUID())

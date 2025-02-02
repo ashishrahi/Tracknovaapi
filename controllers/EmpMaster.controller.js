@@ -10,52 +10,47 @@ import {
   DeleteEmployeeQuery,
 } from "../utils/DBQueries/EmpMaster.Query.js";
 
-//////////////////////////////  AddUpdateEmployee //////////////////////////////////////////////////////////////////
-export async function AddUpdateEmployee(req, res) {
+//--------------------AddUpdateEmployee---------->
+export async function AddUpdateEmployee(req, res, next) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await AddUpdateEmployeeQuery(model);
+    const response  = await AddUpdateEmployeeQuery(model, next);
+  
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data
+      true,
+      StatusCodes.OK,
+      response.message,
+      response.data
     );
     res.status(successResponse.statusCode).json(successResponse);
-  } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(error);
   }
 }
 
 //////////////////////////////  GetEmployee  //////////////////////////////////////////////////////////////////
 
-export async function GetEmployee(req, res) {
+export async function GetEmployee(req, res, next) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data, pageNo, pageSize, rowCount } =
-      await GetEmployeeQuery(model);
+    const response = await GetEmployeeQuery(model);
 
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data,
-      pageNo,
-      pageSize,
-      rowCount
+      response.status,
+      StatusCodes.OK,
+      "default",
+      response.data,
+      response.pageNo,
+      response.pageSize,
+      response.rowCount
     );
-    res.status(200).json(successResponse);
-  } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(error);
   }
 }
 

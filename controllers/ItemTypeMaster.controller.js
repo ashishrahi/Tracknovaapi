@@ -20,11 +20,13 @@ async function AddUpdateItemTypeMaster(req, res, next){
           // Update existing record
           existingItem.ItemType = itemType || existingItem.ItemType;
           existingItem.ItemTypecode = itemTypecode || existingItem.ItemTypecode;
+          existingItem.UpdatedBy = updatedBy || existingItem.UpdatedBy;
+          existingItem.CreatedBy = createdBy || existingItem.CreatedBy;
        
     
-          await existingItem.save();
+          const savedItem = await existingItem.save();
     
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Updated"));
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Updated", savedItem));
         } else {
              // Check if ItemType already exists
           const duplicate = await ItemTypeMaster.findOne({ ItemType: itemType });
@@ -39,14 +41,14 @@ async function AddUpdateItemTypeMaster(req, res, next){
           const newItemTypeMasterId = maxItem ? maxItem.ItemTypeMasterId + 1 : 1;
     
           const newItem = new ItemTypeMaster({
-            ItemTypeMasterId: itemTypeMasterId,
+            ItemTypeMasterId: newItemTypeMasterId,
             ItemType: itemType,
             ItemTypecode: itemTypecode,
             CreatedBy: createdBy,
             UpdatedBy: updatedBy
           });
-          await newItem.save();
-          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Added", newItem));
+          const savedNewItem = await newItem.save();
+          return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Item Type Successfully Added", savedNewItem));
         }
       } catch (error) {
         const err = new Error(error.message);

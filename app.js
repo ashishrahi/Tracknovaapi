@@ -50,7 +50,7 @@ app.use((req, res, next)=>{
 // Global error handeling
 // here error get access we passed inside next() fn
 app.use((err, req, res, next) => {
-    const statusCode = err.status || 500;  // Default to 500 if undefined
+    const statusCode = err.status|| err.statusCode || 500;  // Default to 500 if undefined
     return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message || "Internal Server Error"));
 });
 
