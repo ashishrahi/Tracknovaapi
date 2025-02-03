@@ -36,7 +36,7 @@ export const AddUpdateEmployeeQuery = async (model, next) => {
       // .session(session);
    
       validFormedData.Empid = (lastEmployee?.Empid || 0) + 1;
-      validFormedData.UserId = crypto.randomUUID();
+      // validFormedData.UserId = crypto.randomUUID();
 
       // Insert New Employee
       const newUser = await new EmpMaster(validFormedData).save();
@@ -210,7 +210,73 @@ export const GetEmployeeQuery = async (model) => {
 /////////////////////////////////////////////// UpsertEmpPermissionQuery //////////////////////////////////////////////////////////////////
 
 export const UpsertEmpPermissionQuery = async (model) => {
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
 
+  let response = { status: "Failed", message: "" };
+
+  try {
+      const auth = new AuthRepository(userManager, roleManager, config);
+
+      // If UserId is empty, register the user first
+      if (!model.UserId && model.RegisterModel?.Username) {
+          const registerResponse = await auth.register(model.RegisterModel);
+          if (registerResponse.status === "Failed") throw new Error(registerResponse.message);
+
+          model.UserId = registerResponse.data;
+          model.UserPermission.forEach((perm) => (perm.UserId = model.UserId));
+
+          // Upsert User Permissions
+          const upsertResponse = await auth.upsertUserPermission(model.UserPermission);
+          if (upsertResponse.status === "Failed") throw new Error(upsertResponse.message);
+      }
+
+      // If UserId already exists, just update permissions
+      if (model.UserId && model.RegisterModel?.Username) {
+          model.UserPermission.forEach((perm) => (perm.UserId = model.UserId));
+
+          // Bulk update permissions
+          await UserPermission.bulkWrite(
+              model.UserPermission.map((perm) => ({
+                  updateOne: {
+                      filter: { UserId: perm.UserId, MenuId: perm.MenuId },
+                      update: { $set: perm },
+                      upsert: true,
+                  },
+              })),
+              { session }
+          );
+      }
+
+      // Update Employee Data
+      const empUpdateResult = await EmpMaster.findOneAndUpdate(
+          { _id: model.Empid },
+          {
+              $set: {
+                  UserId: model.UserId,
+                  RoleId: model.RoleId,
+                  UserPermission: model.UserPermission,
+              },
+          },
+          { new: true, session }
+      );
+
+      if (!empUpdateResult) throw new Error("Employee not found");
+
+      await session.commitTransaction();
+      session.endSession();
+
+      response.status = "Success";
+      response.message = "Update successful";
+  } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+
+      response.status = "Failed";
+      response.message = error.message;
+  }
+
+  return response;
 }
 
 

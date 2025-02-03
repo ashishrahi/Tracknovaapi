@@ -78,7 +78,7 @@ export async function UpsertEmpPermission(req, res) {
 }
 
 //-------------------DeleteEmployee------->
-export async function DeleteEmployee(req, res) {
+export async function DeleteEmployee(req, res, next) {
   try {
     const model = req.body;
     const response = await DeleteEmployeeQuery(model);
@@ -89,10 +89,8 @@ export async function DeleteEmployee(req, res) {
     );
     return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-     error.message
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    const err = new Error(error.message);
+    err.status = error.statusCode || StatusCodes.BAD_REQUEST;
+    return next(error);
   }
 }

@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
+import { ApiErrorResponse } from "../utils/apiResponse/index.js";
+import { StatusCodes } from "http-status-codes";
 
 const AspNetUsersSchema = new mongoose.Schema( {
     Id: {
       type: String,
-      default: () => crypto.randomUUID(), // Generates UUID by default
+      default: null,
+      // default: () => crypto.randomUUID(), // Generates UUID by default
     },
     UserName: {
       type: String,
@@ -14,7 +18,7 @@ const AspNetUsersSchema = new mongoose.Schema( {
     },
     NormalizedUserName: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       uppercase: true, // Ensures consistency
     },
@@ -28,9 +32,8 @@ const AspNetUsersSchema = new mongoose.Schema( {
     },
     NormalizedEmail: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
-      uppercase: true,
     },
     EmailConfirmed: {
       type: Boolean,
@@ -42,11 +45,12 @@ const AspNetUsersSchema = new mongoose.Schema( {
     },
     SecurityStamp: { // Access Token
       type: String,
-      required: true,
+      // required: true,
     },
     ConcurrencyStamp: {
       type: String,
-      required: true,
+      // required: true,
+      default: null
     },
     PhoneNumber: {
       type: String,
@@ -77,13 +81,27 @@ const AspNetUsersSchema = new mongoose.Schema( {
   },{timestamps: true, collection: "AspNetUsers"});
 
 // Pre-save middleware to automatically set NormalizedEmail
-AspNetUsersSchema.pre('save', function (next) {
-    // For first time or when update then
-    if (this.isModified('Email') || this.isNew) {
-      this.NormalizedEmail = this.Email.toUpperCase(); // Convert Email to uppercase
+AspNetUsersSchema.pre('save', async function (next) {
+    try {
+      // For first time or when update then
+      if (this.isModified('Email') || this.isNew) {
+        this.NormalizedEmail = this.Email.toUpperCase(); // Convert Email to uppercase
+      }
+      if (this.isModified('UserName') || this.isNew) {
+        this.NormalizedUserName = this.UserName.toUpperCase(); // Convert Email to uppercase
+      }
+      // generating hashed password
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(this.PasswordHash, salt);
+      this.PasswordHash = hashedPassword;
+
+      next();
+    } catch (error) {
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST,error.message);
     }
-    next();
 });
+
+
 
 
 const AspNetUsers = mongoose.model("AspNetUsers", AspNetUsersSchema);
