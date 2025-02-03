@@ -30,7 +30,7 @@ export async function AddUpdateEmployee(req, res, next) {
   }
 }
 
-//////////////////////////////  GetEmployee  //////////////////////////////////////////////////////////////////
+//-------------------GetEmployee------->
 
 export async function GetEmployee(req, res, next) {
   try {
@@ -77,21 +77,17 @@ export async function UpsertEmpPermission(req, res) {
   }
 }
 
-//////////////////////////////  DeleteEmployee  //////////////////////////////////////////////////////////////////
-
+//-------------------DeleteEmployee------->
 export async function DeleteEmployee(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await DeleteEmployeeQuery(
-      model
-    );
+    const response = await DeleteEmployeeQuery(model);
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data
+      true,
+      StatusCodes.OK,
+      response.message,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

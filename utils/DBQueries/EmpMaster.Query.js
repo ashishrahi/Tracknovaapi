@@ -218,35 +218,34 @@ export const UpsertEmpPermissionQuery = async (model) => {
 
 export const DeleteEmployeeQuery = async (model) => {
     
-     try {
-        // Find the employee by Empid
-        const employee = await EmpMaster.findOne(model.Empid);
-    
-        if (!employee) {
-        return{
-          isSuccess: false,
-          statusCode: StatusCodes.NOT_FOUND,
-          message: 'Employee not found',
-        }
-        }
-    
-        // Remove the employee
-        await EmpMaster.findOneAndDelete(model.Empid);
-    
-        // Find and remove the associated user permissions
-        await UserPermission.deleteMany({ UserId: model.UserId });
-    
-        return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: 'Successfully deleted',
-        }
-      } catch (error) {
-       return{
-        isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
-       }
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
+  
+  const response = { status: "Failed", message: "" };
+
+  try {
+      // Delete Employee Record
+      const empDeleteResult = await EmpMaster.deleteOne({ Empid : model.empid })
+      // .session(session);
+
+      if (empDeleteResult.deletedCount === 0) {
+          throw new ApiErrorResponse(StatusCodes.NOT_FOUND, "Employee not found");
       }
-    
+
+      // Delete User Permissions in one query
+      await UserPermission.deleteMany({ UserId: model.UserId })
+      // .session(session);
+
+      // Commit the transaction
+      // await session.commitTransaction();
+      // session.endSession();
+
+      response.status = "Success";
+      response.message = "Successfully Deleted";
+      return response;
+  } catch (error) {
+      // await session.abortTransaction();
+      // session.endSession();
+    throw error;
+  }
 }
