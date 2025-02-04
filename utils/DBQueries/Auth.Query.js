@@ -1,6 +1,7 @@
-import { model } from "mongoose";
-import { UserPermission,RolePermission,Menu, RoleMaster } from "../../modals/index.js";
+
+import { UserPermission,RolePermission,Menu, RoleMaster, AspNetUsers } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { ApiErrorResponse } from "../apiResponse/index.js";
 
 
 ///////////////////////////////////////////////// loginQuery //////////////////////////////////////////////////
@@ -8,12 +9,47 @@ import { StatusCodes } from "http-status-codes";
 export const loginQuery = async (modal) => {}
 
 
+//---------------RegisterQuery---------->
 
+export const RegisterQuery = async (model) => {
+  try {
+    
+    // Check if user already exists
+    const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
+    if (userExists) {
+      throw new ApiErrorResponse(StatusCodes.CONFLICT, "User already exists!")
+    }
 
+    // Create new user
+    const newUser = new AspNetUsers({
+      Id: model.id,
+      UserName: model.username,
+      Email: model.email,
+      PasswordHash: model.password,
+      // securityStamp: new Date().toISOString(),
+      // role: model.role || "user", // Default role if none provided
+    });
 
+    // Save user to database
+    const savedNewUser = await newUser.save()
+    if(!savedNewUser){
+      throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a new user.")
+    }
 
-//////////////////////////////////////////////  GetUserPermissionQuery  ////////////////////////////////////////////////////////////////
+    
+    return savedNewUser;
+    // return res.status(StatusCodes.CREATED).json(new ApiSuccessResponse(true, StatusCodes.CREATED, "User created successfully!", savedNewUser))
+
+  } catch (err) {
+    throw err;
+      // const error = new Error(err.message);
+      // error.status = err.statusCode || StatusCodes.BAD_REQUEST;
+      // return next(error);
+  }
+}
+
+//-------------GetUserPermissionQuery-------->
 
 export const GetUserPermissionQuery = async (model) => {
   try {
@@ -106,51 +142,51 @@ export const GetUserPermissionQuery = async (model) => {
   
 //////////////////////////////////////////////// addUpdateUserPermissionMasterQuery //////////////////////////////////
 
-export const AddUpdateUserPermissionMasterQuery = async (modal) => {
+export const AddUpdateUserPermissionMasterQuery = async (userId, userPermission ) => {
   try {
-    const {userId, userPermission} = modal;
-       await UserPermission.deleteMany({ userId });
-       const newPermissions = userPermission.map(permission => ({
-      userId:permission.userId,
-      MenuId: permission.MenuId,
-      IsAdd: permission.IsAdd || false,
-      IsDel: permission.IsDel || false,
-      IsEdit: permission.IsEdit || false,
-      IsExport: permission.IsExport || false,
-      IsPost: permission.IsPost || false,
-      IsPrint: permission.IsPrint || false,
-      IsRelease: permission.IsRelease || false,
-      IsView: permission.IsView || false,
-      ParentId: permission.ParentId || null,
+    // const { userId, userPermission } = modal;
+    // console.log("modal", modal)
+
+    const deleted = await UserPermission.deleteMany({ UserId:  userId});
+    console.log("userId: ", userId)
+    console.log("userPermission: ", userPermission)
+
+    const newPermissions = userPermission.map(permission => ({
+    UserId: permission.userId,
+    ParentId: permission.parentId ,
+    MenuId: permission.menuId,
+    IsAdd: permission.isAdd || false,
+    IsDel: permission.isDel || false,
+    IsEdit: permission.isEdit || false,
+    IsExport: permission.isExport || false,
+    IsPost: permission.isPost || false,
+    IsPrint: permission.isPrint || false,
+    IsRelease: permission.isRelease || false,
+    IsView: permission.isView || false,
     }));
 
 
     if (newPermissions.length === 0) {
-      return{
+      return {
         isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
+        statusCode: StatusCodes.NOT_IMPLEMENTED,
+        message: "No permission found",
       }
     }
-    try {
-      const result = await UserPermission.insertMany(newPermissions);
-      return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "User Permission Details updated successfully",
-        data: result,
-      };
-    } catch (err) {
-    return{
-      isSuccess: "Failed",
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: err.message,
-    }
-    }
+    
+    const result = await UserPermission.insertMany(newPermissions);
+
+    console.log("result for permissoon", result)
+    return {
+      isSuccess: true,
+      statusCode: StatusCodes.OK,
+      message: "User Permission Details updated successfully",
+      data: result,
+    };
   } catch (error) {
     return{
-      isSuccess: "Failed",
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      isSuccess: false,
+      statusCode: error.statusCode || StatusCodes.BAD_REQUEST,
       message: error.message,
     }
   }

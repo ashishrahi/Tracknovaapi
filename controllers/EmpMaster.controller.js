@@ -56,24 +56,23 @@ export async function GetEmployee(req, res, next) {
 
 //////////////////////////////  UpsertEmpPermission  //////////////////////////////////////////////////////////////////
 
-export async function UpsertEmpPermission(req, res) {
+export async function UpsertEmpPermission(req, res, next) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const response =
       await UpsertEmpPermissionQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data
-    );
-    res.status(successResponse.statusCode).json(successResponse);
+    // const successResponse = new ApiSuccessResponse(
+    //   isSuccess,
+    //   statusCode,
+    //   message,
+    //   data 
+    // );
+    return res.status(200).json(response);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    const err = new Error(error.message);
+    err.status = error.statusCode || StatusCodes.BAD_REQUEST
+    console.log(error)
+    return next(err);
   }
 }
 

@@ -6,6 +6,7 @@ import {
 import {
     //  Login
     loginQuery,
+    RegisterQuery,
    // UserPermissions
   DeleteUserPermissionMasterQuery,
   GetUserPermissionQuery,
@@ -23,42 +24,25 @@ import {
   
 } from "../utils/DBQueries/Auth.Query.js";
 // import { RoleMaster } from "../modals/RoleMaster.modal.js";
-import { AspNetUsers } from "../modals/index.js";
+
 
 //--------------Register-------->
 export async function Register(req, res, next){
   try {
     const model = req.body;
-    // Check if user already exists
-    const userExists = await AspNetUsers.findOne({ UserName: model.username });
-    if (userExists) {
-      throw new ApiErrorResponse(StatusCodes.CONFLICT, "User already exists!")
-    }
-
-    // Create new user
-    const newUser = new AspNetUsers({
-      UserName: model.username,
-      Email: model.email,
-      PasswordHash: model.password,
-      // securityStamp: new Date().toISOString(),
-      // role: model.role || "user", // Default role if none provided
-    });
-
-    // Save user to database
-    const savedNewUser = await newUser.save()
-    if(!savedNewUser){
-      throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a new user.")
-    }
-
-
-    return res.status(StatusCodes.CREATED).json(new ApiSuccessResponse(true, StatusCodes.CREATED, "User created successfully!", savedNewUser))
-
-} catch (err) {
+    const savedNewUser = await RegisterQuery(model);
+    const successResponse = new ApiSuccessResponse(
+      true,
+      StatusCodes.CREATED,
+      "User created successfully!",
+      savedNewUser
+    );
+    res.status(successResponse.statusCode).json(successResponse);
+  } catch (err) {
     const error = new Error(err.message);
     error.status = err.statusCode || StatusCodes.BAD_REQUEST;
-   return next(error);
-}
-
+    return next(error);
+  }
 }
 
 /////////////////////////////////// Login /////////////////////////////////////////////////
@@ -110,8 +94,8 @@ export async function GetUserPermissions(req, res) {
 
 export async function AddUpdateUserPermissionMaster(req, res) {
   try {
-             const modal = req.body ;   
-    const {isSuccess,statusCode,message,data} = await AddUpdateUserPermissionMasterQuery(modal);
+    const modal = req.body ;   
+    const { isSuccess,statusCode,message,data } = await AddUpdateUserPermissionMasterQuery(modal);
 
     const successResponse = new ApiSuccessResponse(
       isSuccess,

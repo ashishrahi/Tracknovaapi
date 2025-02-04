@@ -1,6 +1,12 @@
-import { EmpMaster,  UserPermission } from '../../modals/index.js'
+import { AspNetUsers, EmpMaster,  UserPermission } from '../../modals/index.js'
 import { StatusCodes } from 'http-status-codes';
 import ApiErrorResponse from '../apiResponse/ApiErrorResponse.js';
+import { AuthController } from '../../controllers/index.js';
+import { AddUpdateUserPermissionMasterQuery, RegisterQuery } from "../DBQueries/Auth.Query.js"
+
+
+
+
 
 //---------AddUpdateEmployeeQuery------> 
 export const AddUpdateEmployeeQuery = async (model, next) => {
@@ -204,79 +210,82 @@ export const GetEmployeeQuery = async (model) => {
   } catch (error) {
     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message);
   }
-  }
+}
 
 
 /////////////////////////////////////////////// UpsertEmpPermissionQuery //////////////////////////////////////////////////////////////////
 
 export const UpsertEmpPermissionQuery = async (model) => {
-  // const session = await mongoose.startSession();
-  // session.startTransaction();
-
   let response = { status: "Failed", message: "" };
 
   try {
-      const auth = new AuthRepository(userManager, roleManager, config);
-
       // If UserId is empty, register the user first
-      if (!model.UserId && model.RegisterModel?.Username) {
-          const registerResponse = await auth.register(model.RegisterModel);
-          if (registerResponse.status === "Failed") throw new Error(registerResponse.message);
+      model.registerModel.id = crypto.randomUUID();
 
-          model.UserId = registerResponse.data;
-          model.UserPermission.forEach((perm) => (perm.UserId = model.UserId));
+      // if userId is given
+      if (!model.userId  && model.registerModel?.username || !model.userId.trim() === "" && model.registerModel?.username) {
+          
+        // it register user in AspNetUsers Table
+        const newAspUser = await RegisterQuery(model.registerModel);
 
-          // Upsert User Permissions
-          const upsertResponse = await auth.upsertUserPermission(model.UserPermission);
-          if (upsertResponse.status === "Failed") throw new Error(upsertResponse.message);
+        if (!newAspUser) throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!");
+        model.userPermission.forEach((perm) => (perm.userId = model.registerModel.id));
+        
+        // Upsert User Permissions
+        const upsertResponse = await AddUpdateUserPermissionMasterQuery(model.registerModel.id, model.userPermission);
+        if (upsertResponse.isSuccess === false) throw new Error(upsertResponse.message);
       }
 
       // If UserId already exists, just update permissions
-      if (model.UserId && model.RegisterModel?.Username) {
-          model.UserPermission.forEach((perm) => (perm.UserId = model.UserId));
+      if (model.userId && model.registerModel?.username) {
+        await UserPermission.bulkWrite(
+            model.userPermission.map((perm) => ({
+                updateOne: {
+                    filter: { UserId: model.userId, MenuId: perm.menuId },
+                    update: { $set: {  UserId: model.userId, MenuId: perm.menuId, ParentId: perm.parentId, IsAdd: perm.isAdd, IsEdit: perm.isEdit, IsDel: perm.isDel, IsView: perm.isView, IsPrint: perm.isPrint, IsExport: perm.isExport, IsRelease: perm.IsRelease, IsPost: perm.isPost } }, // Ensuring userId is updated
+                    upsert: true,
+                },
+            }))
+        );
+        response.status = StatusCodes.CREATED
+        response.isSuccess = true;
+        response.message = "Permissions has successfully updated";
 
-          // Bulk update permissions
-          await UserPermission.bulkWrite(
-              model.UserPermission.map((perm) => ({
-                  updateOne: {
-                      filter: { UserId: perm.UserId, MenuId: perm.MenuId },
-                      update: { $set: perm },
-                      upsert: true,
-                  },
-              })),
-              { session }
-          );
-      }
+        console.log("response",response);
+        return response
+    }
 
       // Update Employee Data
       const empUpdateResult = await EmpMaster.findOneAndUpdate(
-          { _id: model.Empid },
+          { Empid : model.empid },
           {
               $set: {
-                  UserId: model.UserId,
-                  RoleId: model.RoleId,
-                  UserPermission: model.UserPermission,
+                  UserId: model.registerModel.id,
+                  RoleId: model.roleId,
+                  // UserPermission: model.UserPermission,
               },
           },
-          { new: true, session }
+          { new: true }
       );
 
-      if (!empUpdateResult) throw new Error("Employee not found");
+      console.log("finalempUpdateResult", empUpdateResult)
 
-      await session.commitTransaction();
-      session.endSession();
+      // if (!empUpdateResult) throw new Error("Employee not found");
+
+      // await session.commitTransaction();
+      // session.endSession();
 
       response.status = "Success";
       response.message = "Update successful";
-  } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
+      response.data = empUpdateResult;
+      return response;
 
-      response.status = "Failed";
-      response.message = error.message;
+  } catch (error) {
+      console.log(error)
+      throw error;
   }
 
-  return response;
+  
 }
 
 
