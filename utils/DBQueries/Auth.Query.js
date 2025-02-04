@@ -4,9 +4,40 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 
 
-///////////////////////////////////////////////// loginQuery //////////////////////////////////////////////////
+//-----------------loginQuery-------->
+export const loginQuery = async (model) => {
+  try {
+    const { username, password } = model;
+    if( !username || !password || !(username && password) ){
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username & password")
+    }
+    // Find user in MongoDB
+    const user = await AspNetUsers.findOne({ UserName: username });
 
-export const loginQuery = async (modal) => {}
+    if (!user) {
+        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+    }
+
+    // Compare password with hashed password in DB
+    const isMatch = await user.isValidPassword(password);
+    if (!isMatch) {
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+    }
+
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
+
+    return {
+        status: "Success",
+        message: "Login successful",
+        accessToken: accessToken,
+        refreshToken: refreshToken
+    };
+} catch (error) {
+    throw error;
+}
+
+}
 
 
 //---------------RegisterQuery---------->

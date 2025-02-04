@@ -50,15 +50,18 @@ export async function Register(req, res, next){
 export async function login(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data,rowCount} = await loginQuery(modal);
+    const response = await loginQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data,
-      rowCount
+      true,
+      StatusCodes.OK,
+      response.message,
+      { accessToken: response.accessToken}
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    return res.status(successResponse.statusCode).cookie("refreshToken", response.refreshToken, options).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

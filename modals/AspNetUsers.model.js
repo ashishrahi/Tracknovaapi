@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
@@ -101,7 +101,38 @@ AspNetUsersSchema.pre('save', async function (next) {
     }
 });
 
+AspNetUsersSchema.methods.isValidPassword = async function (password){
+  const isValid = await bcrypt.compare(password, this.PasswordHash)
+  return isValid;
+} 
 
+AspNetUsersSchema.methods.generateAccessToken =  function (){
+  const payload = {
+    Id: this.Id,
+    UserName: this.UserName,
+    Email: this.Email
+  }
+  const secret = process.env.ACCESS_TOKEN_SECRET;
+  const option = {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    issuer: process.env.JWTOKEN_ISSUER_NAME
+  }
+  const token = jwt.sign(payload, secret, option);
+  return token;
+}
+
+AspNetUsersSchema.methods.generateRefreshToken =  function (){
+  const payload = {
+    Id: this.Id
+  }
+  const secret = process.env.REFRESH_TOKEN_SECRET;
+  const option = {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    issuer: process.env.JWTOKEN_ISSUER_NAME
+  }
+  const token = jwt.sign(payload, secret, option);
+  return token;
+}
 
 
 const AspNetUsers = mongoose.model("AspNetUsers", AspNetUsersSchema);

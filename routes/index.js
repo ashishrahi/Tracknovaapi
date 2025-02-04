@@ -51,6 +51,7 @@ import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.routes.
 import vVehicletrackHisRoutes from './vVehicletrackHis.routes.js'
 
 import ZoneMasterRoutes from './ZoneMaster.route.js'
+import verifyAccessToken from "../middlewares/auth.middleware.js";
 
 
 
@@ -68,7 +69,7 @@ router.use("/AreaWardMaster", AreaWardMasterRoutes);
 
 //Dashboard
 
-router.use("/NTRead", NTReadRoutes);
+router.use("/NTRead", verifyAccessToken, NTReadRoutes);
 router.use("/Dashboard", DashboardRoutes);
 router.use("/Comm", CommRoutes);
 router.use("/ItemCategory", ItemCategoryRoutes);
