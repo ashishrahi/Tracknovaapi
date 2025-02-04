@@ -53,6 +53,7 @@ import {
 
 // Authentication
 import {
+  Register,
   login,
   GetUserPermissions,
   AddUpdateUserPermissionMaster,
@@ -284,6 +285,7 @@ export const DashboardController = {
 ////////////////////////////////////////////////  AuthController   //////////////////////////////////////////////////////////////////
 
 export const AuthController = {
+  Register: Register,
   login: login,
   GetUserPermissions: GetUserPermissions,
   AddUpdateUserPermissionMaster: AddUpdateUserPermissionMaster,

@@ -115,5 +115,17 @@ set: (value) => {
 }
 
 
+const correctKey = Object.keys({hello: "sdc"}).map(key => key.charAt(0).toUpperCase() + key.slice(2, key.length))
 
+console.log(correctKey);
 
+console.log(crypto.randomUUID())
+
+const arr = [{UserId: 1}, {UserId:2}]
+
+//  arr.map((perm) => (perm.UserId = 5));
+
+let game = arr.map((perm) => (perm.UserId = 5));
+
+console.log(game);
+console.log("old", arr)

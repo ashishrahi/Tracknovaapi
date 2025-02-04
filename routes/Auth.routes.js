@@ -4,18 +4,13 @@ import { AuthController } from "../controllers/index.js";
 const router = express.Router();
 
 // UserPermissions Routes
+router.post("/Register", AuthController.Register);
 router.post("/login", AuthController.login);
 router.get("/GetUserPermission", AuthController.GetUserPermissions);
-router.post(
-  "/AddUpdateUserPermissionMaster",
-  AuthController.AddUpdateUserPermissionMaster
-);
+router.post("/AddUpdateUserPermissionMaster",AuthController.AddUpdateUserPermissionMaster);
 router.post("/GetUserPermissionMaster", AuthController.GetUserPermissionMaster);
 router.post("/GetUserPermissionList", AuthController.GetUserPermissionList);
-router.delete(
-  "/DeleteUserPermissionMaster",
-  AuthController.DeleteUserPermissionMaster
-);
+router.delete("/DeleteUserPermissionMaster",AuthController.DeleteUserPermissionMaster);
 
 // RoleMasters Routes
 

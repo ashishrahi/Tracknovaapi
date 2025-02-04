@@ -6,7 +6,7 @@ const router = express.Router();
 // BinManage Routes
 router.post("/AddUpdateEmployee", EmpMasterController.AddUpdateEmployee);
 router.post("/GetEmployee", EmpMasterController.GetEmployee);
-router.post("/UpsertEmpPermission", EmpMasterController.UpsertEmpPermission);
 router.post("/DeleteEmployee", EmpMasterController.DeleteEmployee);
+router.post("/UpsertEmpPermission", EmpMasterController.UpsertEmpPermission);
 
 export default router;

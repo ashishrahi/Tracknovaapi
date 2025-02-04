@@ -1,39 +1,102 @@
 import mongoose from "mongoose";
 
 const EmpMasterSchema = new mongoose.Schema({
-    
-    CreatedBy: String,
-    DLNO: String,
-    Email: String,
-    EmpAddharNo: String,
-    EmpCityId: mongoose.Schema.Types.Int32,
-    EmpCode: String,
-    EmpCountryID: mongoose.Schema.Types.Int32,
-    EmpDeptId: mongoose.Schema.Types.Int32,
-    EmpDesignationId: mongoose.Schema.Types.Int32,
-    EmpDob: mongoose.Schema.Types.Date,
-    EmpFatherName: String,
-    Empid: mongoose.Schema.Types.Int32,
-    EmpJoiningDate: mongoose.Schema.Types.Date,
-    EmpLocalAddress: String,
-    EmpMobileNo: String,
-    EmpMotherName: String,
-    EmpName: String,
-    EmpPanNumber: String,
-    EmpPerAddress: String,
-    EmpPincode: mongoose.Schema.Types.Int32,
-    EmpretirementDate: mongoose.Schema.Types.Date,
-    EmpspauseName: String,
-    EmpStateId: mongoose.Schema.Types.Int32,
-    EmpStatus: String,
-    EZoneID: mongoose.Schema.Types.Int32,
-    Gender: String,
-    ImageFile: mongoose.Schema.Types.Mixed,
-    RoleId: mongoose.Schema.Types.Mixed,
-    SignatureFile: mongoose.Schema.Types.Mixed,
-    UserId: mongoose.Schema.Types.Mixed
-}, {timestamps: true , collation: "EmpMaster"})
+  Empid: { type: Number, required: true, unique: true }, // Unique Employee ID
+  EmpName: { 
+    type: String, 
+    required: true, 
+    trim: true,
+    set: (value) => {
+        return value
+          .split(" ") // Split string into words
+          .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          ) // Capitalize each word
+          .join(" ");
+    }
+  },
+  EmpCode: { type: String, required: true }, // Indexed for faster lookups
+  EmpPerAddress: { type: String, required: true },
+  EmpLocalAddress: { type: String, required: true },
+  EmpFatherName: { type: String, required: true,  set: (value) => {
+    return value
+      .split(" ") // Split string into words
+      .map(
+        (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ) // Capitalize each word
+      .join(" ");
+} },
+  EmpspauseName: { type: String, default: null,  set: (value) => {
+    return value
+      .split(" ") // Split string into words
+      .map(
+        (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ) // Capitalize each word
+      .join(" ");
+} },
+  EmpMotherName: { type: String, required: true,  set: (value) => {
+    return value
+      .split(" ") // Split string into words
+      .map(
+        (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ) // Capitalize each word
+      .join(" ");
+} },
+  EmpMobileNo: { 
+    type: String, 
+    required: true, 
+    match: [/^\d{10}$/, "Phone number must be 10 digits"], // Ensures only valid numbers
+ }, // Mobile should be unique
+  EmpStatus: { type: String, enum: ["Active", "Inactive"], default: "Active" },
+  EmpPanNumber: { 
+    type: String, 
+    required: [true, "PAN Number is required"], 
+    unique: true, 
+    match: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // Validates PAN format
+    trim: true
+  },
+  EmpAddharNo: { 
+    type: String, 
+    required: [true, "Aadhar Number is required"], 
+    unique: true, 
+    match: /^[2-9]{1}[0-9]{11}$/, // Validates Aadhar format (12 digits)
+    trim: true
+  },
+  EmpDob: { type: Date, required: true },
+  EmpJoiningDate: { type: Date, required: true },
+  EmpRetirementDate: { type: Date, default: null },
 
-const EmpMaster = mongoose.model("EmpMaster", EmpMasterSchema)
+  EmpDesignationId: {
+    type: Number,
+  },
+  EmpDeptId: {
+    type: Number,    
+  },
+  EmpStateId: {
+    type: Number,
+  },
+  EmpCountryId: {
+    type: Number,
+  },
+  EmpCityId: {
+    type: Number,
+  },
+  EmpPincode: { type: mongoose.Schema.Types.Mixed },
+  CreatedBy: { type: String, required: true },
+  UpdatedBy: { type: String, required: true },
+  UserId: { type: mongoose.Schema.Types.Mixed },
+  RoleId: { type: mongoose.Schema.Types.Mixed },
+  ImageFile: { type: mongoose.Schema.Types.Mixed, default: null }, // Can store file paths or cloud URLs
+  SignatureFile: { type: mongoose.Schema.Types.Mixed, default: null },
+  Email: { type: String, default: "NA", lowercase: true, trim: true,  match: [/^\S+@\S+\.\S+$/, "Invalid email format"], },
+  DLNo: { type: String, default: null }, // Driving License No.
+  Gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+  EZoneId: {
+    type: Number,
+    default: null
+  },
+}, {timestamps: true, collection: "EmpMaster"});
+
+const EmpMaster = mongoose.model("EmpMaster", EmpMasterSchema);
 
 export default EmpMaster;

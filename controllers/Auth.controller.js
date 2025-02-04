@@ -6,6 +6,7 @@ import {
 import {
     //  Login
     loginQuery,
+    RegisterQuery,
    // UserPermissions
   DeleteUserPermissionMasterQuery,
   GetUserPermissionQuery,
@@ -22,6 +23,29 @@ import {
   DeleteRoleMasterQuery,
   
 } from "../utils/DBQueries/Auth.Query.js";
+
+// import { RoleMaster } from "../modals/RoleMaster.modal.js";
+
+
+//--------------Register-------->
+export async function Register(req, res, next){
+  try {
+    const model = req.body;
+    const savedNewUser = await RegisterQuery(model);
+    const successResponse = new ApiSuccessResponse(
+      true,
+      StatusCodes.CREATED,
+      "User created successfully!",
+      savedNewUser
+    );
+    res.status(successResponse.statusCode).json(successResponse);
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(error);
+  }
+}
+
 
 /////////////////////////////////// Login /////////////////////////////////////////////////
 
@@ -72,8 +96,8 @@ export async function GetUserPermissions(req, res) {
 
 export async function AddUpdateUserPermissionMaster(req, res) {
   try {
-             const modal = req.body ;   
-    const {isSuccess,statusCode,message,data} = await AddUpdateUserPermissionMasterQuery(modal);
+    const modal = req.body ;   
+    const { isSuccess,statusCode,message,data } = await AddUpdateUserPermissionMasterQuery(modal);
 
     const successResponse = new ApiSuccessResponse(
       isSuccess,
@@ -292,3 +316,4 @@ export async function GetRolePermission(req, res) {
     return res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
+
