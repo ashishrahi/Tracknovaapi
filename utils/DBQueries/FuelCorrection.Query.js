@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes";
 import { FuelCorrection } from "../../modals/index.js"
 /////////////////////////////////////////// AddUpdateFuelCorrectionQuery //////////////////////////////////////////////////////////////////
 export const AddUpdateFuelCorrectionQuery = async (model) => {}
@@ -61,8 +62,10 @@ export const GetVehListQuery = async (model) => {
     response.status = 'Success';
     response.data = processedData;
   } catch (error) {
-    response.status = 'Failed';
-    response.message = error.message;
+    return{
+      status: false,
+     message: error.message,
+    }
   }
 
   return response;

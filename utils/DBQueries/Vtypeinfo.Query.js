@@ -18,11 +18,11 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
           return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: `VehicleType Id ${VehicleTypeId} Already In Use!`,
+            message: `VehicleType Id ${findUse.VehicleTypeId} Already In Use!`,
           }
         }
   
-        const existingRecord = await VehicleTypeChild.find({ VehicleTypeId: modal.VehicleTypeId });
+        const existingRecord = await VehicleTypeChild.findOne({ VehicleTypeId: modal.VehicleTypeId });
   
         if (existingRecord.length > 0) {
           return{
@@ -108,7 +108,7 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
       return{
         isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An unexpected error occurred',
+        message: error.message,
       }}}
 
 //////////////////////////////////////////////// getVtypeinfoQuery /////////////////////////////////////////////////////
@@ -154,47 +154,52 @@ export const getVtypeinfoQuery = async (modal) => {
 
 export const DeleteVtypeinfoQuery = async (modal) => {
    
-   try {
-        if (!modal.id) {
-          throw new Error("Vehicle type ID is required.");
-        }
-    
-        // Query to check if the vehicle type is in use
-        const findUse = await ItemMaster.findOne({
-          devid: modal.devid,
-          ntrecord: "y",
-          VehicleTypeId: modal.VehicleTypeId,
-        }).exec();
-    
-        if (findUse) {
-          if (findUse.NT && findUse.NT.toLowerCase() === "y") {
-            throw new Error("Vehicle type in use cannot be deleted.");
-          }
-        }
-    
-        // Find and remove the Vtypeinfo document
-        const entity = await Vtypeinfo.findById(modal.id).exec();
-        if (!entity) {
-          return{
-            isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message: "Vehicle type info not found.",
-          }
-        }
-    
-        await entity.remove();
-    
-        return{
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: "Vehicle Type Info deleted successfully",
-        }
-      } catch (error) {
-      return{
-        isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
-      }
-      }
-    
+  try {
+    const { vehicleTypeId } = modal;
+
+    // Check if VehicleTypeId exists in ItemMaster
+    const itemExists = await ItemMaster.findOne({ VehicleTypeId: vehicleTypeId });
+    console.log('itemExists:',itemExists)
+    if (itemExists) {
+     return{
+      isSuccess: false,
+      statusCode: StatusCodes.CONFLICT,
+      message: "Vehicle Type cannot be deleted as it exists in ItemMaster.",
+     }
+    }
+
+    // Check if VehicleTypeId exists in VehicleTypeChild
+    const childExists = await VehicleTypeChild.findOne({ VehicleTypeId: vehicleTypeId });
+    if (childExists) {
+   return{
+    isSuccess: false,
+    statusCode: StatusCodes.CONFLICT,
+    message: "Vehicle Type cannot be deleted as it exists in Vehicle Type Child.",
+   }
+    }
+
+    // Delete from VehicleTypeMaster
+    const deletedVehicle = await VehicleTypeMaster.findOneAndDelete({ VehicleTypeId: vehicleTypeId });
+
+    if (!deletedVehicle) {
+     return{
+      isSuccess: false,
+      statusCode: StatusCodes.NOT_FOUND,
+      message: "Vehicle Type not found.",
+     }
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      statusCode:StatusCodes.ACCEPTED,
+      message: "Vehicle Type deleted.",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    });
+  }
 }

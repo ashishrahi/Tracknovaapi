@@ -10,7 +10,6 @@ export const GetvVehicletrackHisQuery = async (modal) => {
       // Find deviceNo based on vehicleNo
       const device = await ItemMaster.findOne({ VehicleNo: VehicleNo });
       const deviceNo = device ? device.devid.toString() : '';
-      console.log('deviceNo',deviceNo)
   
       // Check if deviceNo is valid
       if (!deviceNo) {
@@ -27,7 +26,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
 
       // View of vVehicleHistory
       const vehicleHistory = await NT.aggregate([
-        { $match: { deviceNo: deviceNo, dats: dats } },
+        { $match: { deviceNo: deviceNo, TrackDate: TrackDate } },
         {
           $lookup: {
             from: 'ItemMaster',
@@ -71,6 +70,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
         },
       ]);
   
+
       return {
         isSuccess: true,
         status: StatusCodes.OK,

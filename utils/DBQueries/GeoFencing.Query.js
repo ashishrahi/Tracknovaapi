@@ -31,7 +31,7 @@ export async function AddUpdateGeoFencingQuery(model){
             const savedFence = await newFence.save();
 
         return{
-            isSuccess:'success',
+            isSuccess:true,
             statusCode: StatusCodes.CREATED,
             message: `${newFence.FenceName} Fence added successfully`,
             data: savedFence,
@@ -148,6 +148,6 @@ export async function DeleteGeoFencingQuery(model){
     return{
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'An unexpected error occurred while processing your request.',
+            message: error.message,
         }
     }}

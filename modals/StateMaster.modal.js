@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 
+export const StateMasterSchema = new mongoose.Schema(
+  {
+    StateId: { type: Number, required: true },  // Added required: true for mandatory fields
+    StateName: { type: String, required: true },
+    StateCode: { type: String},
+    CountryId: { type: Number, required: true },  // Changed to Number for consistency
+    CreatedBy: { type: String,  trim: true },
+    UpdatedBy: { type: String,  trim: true },
+  },
+  { timestamps: true, collection: "StateMaster" } // Mongoose will handle createdAt and updatedAt
+);
 
-export const StateMasterSchema = new mongoose.Schema({
-    "StateId":Number,
-    "StateName": String,
-    "StateCode": String,
-    "CountryId": String,
-    "CreatedBy": String,
-    "UpdatedBy": String,
-    
-}, {timestamps:true, collection: "StateMaster" })
-
-export const StateMaster = mongoose.model("StateMaster",StateMasterSchema);
+export const StateMaster = mongoose.model("StateMaster", StateMasterSchema);

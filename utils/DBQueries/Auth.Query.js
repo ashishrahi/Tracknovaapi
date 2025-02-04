@@ -1,25 +1,21 @@
 import { model } from "mongoose";
-import { UserPermission,RolePermission,Menu, RoleMaster } from "../../modals/index.js";
+import { UserPermission,RolePermission,Menu, AspNetRoles } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 
 
 ///////////////////////////////////////////////// loginQuery //////////////////////////////////////////////////
 
-export const loginQuery = async (modal) => {}
+export const loginQuery = async (modal) => {
 
-
-
-
-
-
+}
 
 //////////////////////////////////////////////  GetUserPermissionQuery  ////////////////////////////////////////////////////////////////
 
 export const GetUserPermissionQuery = async (model) => {
   try {
-    const { userId, roleId } = model || {};
+    const { UserId, RoleId } = model || {};
 
-    if (!userId || !roleId) {
+    if (!UserId || !RoleId) {
         throw new Error("Missing required parameters: userId or roleId");
     }
 
@@ -27,7 +23,7 @@ export const GetUserPermissionQuery = async (model) => {
     const rolePermissions = await RolePermission.aggregate([
         {
             $lookup: {
-                from: "menus", // Adjusted collection name to follow MongoDB naming conventions
+                from: "Menu",
                 localField: "MenuId",
                 foreignField: "MenuId",
                 as: "menuDetails",
@@ -36,7 +32,7 @@ export const GetUserPermissionQuery = async (model) => {
         { $unwind: "$menuDetails" },
         {
             $match: {
-                RoleId: roleId,
+                RoleId: RoleId,
                 IsView: 1,
                 "menuDetails.IsMenu": 1,
             },
@@ -59,7 +55,7 @@ export const GetUserPermissionQuery = async (model) => {
     ]);
 
     // Fetch User-Specific Permissions
-    const userPermissions = await UserPermission.find({ UserId: userId });
+    const userPermissions = await UserPermission.find({ UserId: UserId });
 
     // Merge Role and User Permissions
     const result = rolePermissions.map((rolePermission) => {
@@ -68,7 +64,7 @@ export const GetUserPermissionQuery = async (model) => {
         );
 
         return {
-            UserId: userId,
+            UserId: UserId,
             MenuId: rolePermission.MenuId,
             MenuName: rolePermission.MenuName,
             ParentId: rolePermission.ParentId,
@@ -88,16 +84,15 @@ export const GetUserPermissionQuery = async (model) => {
 
     // Return the successful response
     return {
-        isSuccess: "success",
+        isSuccess: true,
         statusCode: StatusCodes.OK,
         message: "User Permission Details fetched successfully",
         data: result,
         rowCount: result.length,
     };
 } catch (error) {
-    console.error("Error fetching user permissions:", error.message);
     return {
-        isSuccess: "Failed",
+        isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: error.message,
     };
@@ -109,8 +104,10 @@ export const GetUserPermissionQuery = async (model) => {
 export const AddUpdateUserPermissionMasterQuery = async (modal) => {
   try {
     const {userId, userPermission} = modal;
-       await UserPermission.deleteMany({ userId });
-       const newPermissions = userPermission.map(permission => ({
+
+    await UserPermission.deleteMany({ userId });
+
+    const newPermissions = userPermission.map(permission => ({
       userId:permission.userId,
       MenuId: permission.MenuId,
       IsAdd: permission.IsAdd || false,
@@ -142,17 +139,13 @@ export const AddUpdateUserPermissionMasterQuery = async (modal) => {
       };
     } catch (err) {
     return{
-      isSuccess: "Failed",
+      isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: err.message,
     }
     }
   } catch (error) {
-    return{
-      isSuccess: "Failed",
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
-    }
+    
   }
 };
 
@@ -165,6 +158,7 @@ export const GetUserPermissionMasterQuery = async(modal)=>{
 
       if (UserId === '-1') {
         const  usersPermission = await UserPermission.find().lean();
+
         return{
           isSuccess:true,
           statusCode: StatusCodes.OK,
@@ -258,7 +252,7 @@ export const GetUserPermissionMasterQuery = async(modal)=>{
       },
       {
         $lookup: {
-          from: "rolemasters", // Collection name for role masters
+          from: "RoleMaster", // Collection name for role masters
           localField: "userDetails.RANK_ID", // Field in the users collection
           foreignField: "RoleId", // Matching field in the role masters collection
           as: "roleDetails",
@@ -306,7 +300,8 @@ export const DeleteUserPermissionMasterQuery = async(modal)=>{
   
 try {
   const {UserId} = modal;
-    const permissions = await UserPermission.find({ UserId: UserId });
+    
+  const permissions = await UserPermission.find({ UserId: UserId });
 
     if (permissions.length > 0) {
         await UserPermission.deleteMany({ UserId: UserId });
@@ -337,71 +332,54 @@ try {
 //////////////////////////////////////////////  AddUpdateRoleMaster  ////////////////////////////////////////////////////////////////
 
 export const AddUpdateRoleMasterQuery = async(modal)=>{
-  try {
-    if (!modal.RoleID) {
-      // Check if the role already exists
-      const roleExists = await RoleMaster.findOne({ RoleName: modal.RoleName });
-      if (roleExists) {
-       return{
-        isSuccess: false,
-        statusCode: StatusCodes.CONFLICT,
-        message: 'Role already exists!',
-       }
+
+  
+  const upsertRole = async (req, res) => {
+    try {
+      const { roleId, roleName, rolePermissions } = req.body;
+  
+      if (!roleId) {
+        // Check if role already exists
+        const roleExists = await Role.findOne({ name: roleName });
+        if (roleExists) {
+          return res.status(400).json({ status: "Failed", message: "Role already exists!" });
+        }
+  
+        // Create new role
+        await Role.create({ name: roleName });
+      } else {
+        // Update existing role
+        const roleExists = await Role.findOne({ _id: roleId });
+        if (!roleExists) {
+          return res.status(404).json({ status: "Failed", message: "Role not found!" });
+        }
+  
+        await Role.updateOne({ _id: roleId }, { name: roleName });
       }
-
-      // Create a new role
-      await RoleMaster.create({ RoleName: modal.RoleName });
-    } else {
-      // If RoleId exists, update the role
-      const roleExists = await RoleMaster.findOne({ name: modal.RoleName });
-      if (roleExists) {
-        roleExists.name = modal.RoleName;
-        await roleExists.save();
-        return {
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: 'Role updated successfully',
-        };
+  
+      // Handle role permissions
+      const rolePermissionId = rolePermissions.length ? rolePermissions[0].roleId : null;
+  
+      if (rolePermissionId) {
+        await RolePermission.deleteMany({ roleId: rolePermissionId });
+        await RolePermission.insertMany(rolePermissions);
       }
+  
+      return res.status(200).json({ status: "Success", message: "Record Saved!!" });
+    } catch (error) {
+      return res.status(500).json({ status: "Failed", message: error.message });
     }
-
-    // Handle RolePermissions
-    const roleId = modal.RolePermissions.map((permission) => permission.RoleId)[0];
-    if (!roleId) {
-     return{
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Role not found!',
-     }
-    }
-
-    // Remove existing permissions for the role
-    await RolePermission.deleteMany({ RoleId: roleId });
-
-    // Add new permissions
-    await RolePermission.insertMany(modal.RolePermissions);
-
-   return{
-     isSuccess: true,
-     statusCode: StatusCodes.OK,
-     message: 'Role updated successfully',
-    
-   }
-  } catch (error) {
-   return{
-     isSuccess: false,
-     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-     message: error.message,
-   }
-  }
-
+  };
+  
+  
 }
 
 //////////////////////////////////////////////  GetRoleMaster  ////////////////////////////////////////////////////////////////
 
 export const GetRoleMasterQuery = async()=>{
   try {
-    const roles = await RoleMaster.find().sort({ name: 1 }); 
+
+    const roles = await AspNetRoles.find().sort({ Name: 1 }); 
 
     return {
       isSuccess:true,
@@ -410,11 +388,14 @@ export const GetRoleMasterQuery = async()=>{
       data: roles,
       rowCount: roles.length,
     };
+
   } catch (error) {
+
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: error.message,
+
     }
   }
 }
@@ -423,9 +404,10 @@ export const GetRoleMasterQuery = async()=>{
 
 export const DeleteRoleMasterQuery = async(modal)=>{
   try {
+           
            const {RoleID} = modal
-    const roleExists = await RoleMaster.findOne({RoleID:RoleID});
-
+           const roleExists = await AspNetRoles.findOne({RoleID:RoleID});
+            
     if (!roleExists) {
         return {
           isSuccess: false,
@@ -435,7 +417,7 @@ export const DeleteRoleMasterQuery = async(modal)=>{
     }
 
     // Delete the role
-    await RoleMaster.findOneAndDelete({RoleID:RoleID});
+    await AspNetRoles.findOneAndDelete({RoleID:RoleID});
 
     await RolePermission.deleteMany({RoleID: RoleID });
 
@@ -456,91 +438,61 @@ export const DeleteRoleMasterQuery = async(modal)=>{
 //////////////////////////////////////////////  AddUpdate / RolePermissionMaster  ////////////////////////////////////////////////////////////////
 
 export const AddUpdateRolePermissionMasterQuery = async(modal)=>{
+
   try {
-    const {
-      RoleId,
-      MenuId,
-      ParentId,
-      IsAdd,
-      IsEdit,
-      IsDel,
-      IsView,
-      IsPrint,
-      IsExport,
-      IsRelease,
-      IsPost,
-    } = modal;
-
-    if (!RoleId || RoleId === "0") {
-   return{
-     isSuccess: false,
-     statusCode: 400,
-     message: "Role ID is required",
-   }
+    if (!modal.RoleId || modal.RoleId === "0") {
+        return {
+            isSuccess: false,
+            statusCode: StatusCodes.BAD_REQUEST,
+            message: "Role ID is required",
+        };
     }
 
-    let existingRole = await RolePermission.findOne({ RoleId }).lean();
+    const updatedRole = await RolePermission.findOneAndUpdate(
+        { RoleId: modal.RoleId },
+        { $set: modal},
+        { new: true, upsert: true, lean: true }
+    );
+       console.log('updatedRole:',updatedRole);
+    if (updatedRole) {
+        return {
+            isSuccess: true,
+            statusCode: StatusCodes.OK,
+            message: "Role Permission updated successfully",
+            data: updatedRole,
+        };
+    }
 
-    if (existingRole) {
-      // Update existing role
-      await RolePermission.updateOne({ RoleId }, {
-        MenuId,
-        ParentId,
-        IsAdd,
-        IsEdit,
-        IsDel,
-        IsView,
-        IsPrint,
-        IsExport,
-        IsRelease,
-        IsPost,
-      });
+    let tempZoneID = 1;
 
-      return{
+    if (modal.RoleId === "-1" || modal.RoleId === "0") {
+        const maxRole = await RolePermission.findOne({}, { RoleId: 1 }).sort({ RoleId: -1 });
+
+        if (maxRole && maxRole.RoleId) {
+            tempZoneID = parseInt(maxRole.RoleId, 10) + 1;
+        }
+    }
+
+    modal.RoleId = tempZoneID.toString();
+
+    const newRolePermission = await RolePermission.create(modal);
+console.log('newRolePermission:',newRolePermission);
+
+
+    return {
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: "Successfully Updated",
-        data: existingRole,
-      }
-    } else {
-      // Generate new RoleId if necessary
-      let tempZoneID = RoleId;
-      if (RoleId === "-1" || RoleId === "0") {
-        const maxRole = await RolePermission.find().sort({ RoleId: -1 }).limit(1);
-        tempZoneID = maxRole.length > 0 ? (parseInt(maxRole[0].RoleId) + 1).toString() : "1";
-      }
+        message: "Role Permission added successfully",
+        data: newRolePermission,
+    };
+} catch (error) {
+    return {
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: error.message,
+    };
+}
 
-      // Create a new role
-      const newRole = new RolePermission({
-        RoleId: tempZoneID,
-        MenuId,
-        ParentId,
-        IsAdd,
-        IsEdit,
-        IsDel,
-        IsView,
-        IsPrint,
-        IsExport,
-        IsRelease,
-        IsPost,
-      });
-
-      await newRole.save();
-
-      return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "Successfully Created",
-        data: newRole,
-      }
-    }
-  } catch (error) {
-    return{
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
-    }
-  }
 }
 
 //////////////////////////////////////////////  Get / RolePermissionMaster  ////////////////////////////////////////////////////////////////
@@ -572,7 +524,7 @@ try {
  
   } catch (error) {
     return{
-      isSuccess: 'failed',
+      isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: error.message,
     }

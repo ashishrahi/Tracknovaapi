@@ -18,7 +18,7 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
          return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Area Name and Ward Number combination already exists',
+            message: `Area Name ${AreaName} and Ward Number ${WardNumber} combination already exists`,
          }
         }
   
@@ -70,7 +70,6 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
 export const GetAreaWardMasterQuery = async (modal) => {
     const { pageNo, pageSize } = modal;  // Assuming filter is passed via query params
-console.log('modal:',modal)
     try {
       const skip = (pageNo - 1) * pageSize; // Pagination logic
       const limit = parseInt(pageSize);
@@ -154,7 +153,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Area ID is used in RouteAreaDetail so can\'t delete.',
+            message: `Area ID ${area.AreaID} is used in RouteAreaDetail so can\'t delete.`,
         }
       }
   
@@ -164,7 +163,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Area ID is used in RouteAreaBinDetail so can\'t delete.',
+            message: `Area ID ${rut.AreaID} is used in RouteAreaBinDetail so can\'t delete.`,
         }
       }
   
@@ -174,7 +173,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
        return{
              isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Area ID is used in BinLocation so can\'t delete.',
+            message: `Area ID ${dward.AreaID}is used in BinLocation so can\'t delete.`,
  
        }
       }
@@ -186,7 +185,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.NOT_FOUND,
-            message: 'AreaWardMaster not found',
+            message: `AreaId ${enity.AreaID} not found`,
         }
         }
   
@@ -197,7 +196,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
      return{
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: 'AreaWardMaster deleted Successfully',
+        message: `AreaId ${entity.AreaID} of AreaWardMaster deleted Successfully`,
       
      }
     } catch (ex) {

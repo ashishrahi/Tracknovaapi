@@ -15,7 +15,6 @@ export async function AddUpdateBinManage(req, res) {
     const model = req.body;
     const { isSuccess, statusCode, message, data } =
       await AddUpdateBinManageQuery(model);
-    console.log(data);
     const successResponse = new ApiSuccessResponse(
       isSuccess,
       statusCode,

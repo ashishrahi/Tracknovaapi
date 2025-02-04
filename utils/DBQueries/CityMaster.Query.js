@@ -77,7 +77,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
       return {
         isSuccess: false,
         statusCode: StatusCodes.CONFLICT, // 409 for duplicate key
-        message: 'City Name already exists',
+        message: `City Name ${CityName} already exists`,
       };
     }
 
@@ -112,6 +112,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
                 return {
                   ...city,
                   // StateName: state ? state.StateName : null,
+                  
                 };
               })
             );

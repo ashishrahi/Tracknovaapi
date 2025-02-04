@@ -1,24 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const BinLocationSchema = new mongoose.Schema(
+const BinLocationSchema = new Schema(
   {
-    AreaID: Number,
-    BinLocCode: String,
-    BinLocID: Number,
-    BinLocName: String,
-    CreatedBy: { type: Object },
-    CreatedOn: { type: Object },
-    Description: String,
-    Latitude: mongoose.Schema.Types.Decimal128,
-    LocationName: String,
-    LocImage: String,
-    Longitude: Number,
-    RFID: String,
-    UpdatedBy: { type: Object },
-    UpdatedOn: { type: Object },
-    ZoneID: Number,
+    AreaID: { type: Number, index: true },  // Added index for better queries
+    BinLocCode: { type: String, trim: true },
+    BinLocID: { type: Number, required: true, unique: true, index: true },
+    BinLocName: { type: String, required: true, trim: true },
+    CreatedBy: { type: String, trim: true },
+    CreatedOn: { type: Date, default: Date.now },  // Changed from Object to Date
+    Description: { type: String, trim: true },
+    Latitude: { type: mongoose.Schema.Types.Decimal128 },
+    LocationName: { type: String, trim: true },
+    LocImage: { type: String, trim: true },
+    Longitude: { type: mongoose.Schema.Types.Decimal128 }, // Ensuring precision
+    RFID: { type: String, trim: true, unique: true },
+    UpdatedBy: { type: String, trim: true },
+    UpdatedOn: { type: Date, default: Date.now },
+    ZoneID: { type: Number, index: true },  // Added index
   },
   { timestamps: true, collection: "BinLocation" }
 );
 
-export const BinLocation = mongoose.model("BinLocation", BinLocationSchema);
+export const BinLocation = model("BinLocation", BinLocationSchema);

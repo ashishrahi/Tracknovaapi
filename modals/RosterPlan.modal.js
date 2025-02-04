@@ -1,15 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-export const RosterPlanSchema = new mongoose.Schema({
-    "RosterID": Number,
-    "RosterNo": String,
-    "RosterDate": Date,
-    "FromDate": Date,
-    "Todate": Date,
-    "CreatedBy": String,
-    "UpdatedBy": String,
-    "CreatedOn": Date,
-    "UpdatedOn": Date,
-}, { collection: "RosterPlan" })
+const RosterPlanSchema = new Schema(
+  {
+    RosterID: { type: Number, required: true, unique: true },
+    RosterNo: { type: String, required: true, trim: true },
+    RosterDate: { type: Date, required: true },
+    FromDate: { type: Date, required: true },
+    ToDate: { type: Date, },
+    CreatedBy: { type: String, required: true, trim: true },
+    UpdatedBy: { type: String, required: true, trim: true },
+  },
+  {
+    timestamps: true, // Mongoose will automatically handle `createdAt` and `updatedAt`
+    collection: "RosterPlan",
+  }
+);
 
-export const RosterPlan = mongoose.model("RosterPlan", RosterPlanSchema);
+
+
+export const RosterPlan = model("RosterPlan", RosterPlanSchema);

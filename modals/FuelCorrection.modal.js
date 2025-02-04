@@ -1,15 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-export const FuelCorrectionSchema = new mongoose.Schema({
-    "CorrId": {Type:Number},
-    "CorrectionDate": Date,
-    "ItemMasterId": Number,
-    "SelectedOB": Number,
-    "CorrectedOB": Number,
-    "CreatedBy": String,
-    "UpdatedBy": String,
-    "CreatedOn": Date,
-    "UpdatedOn": Date,
-}, { collection: "FuelCorrection" })
+const FuelCorrectionSchema = new Schema(
+  {
+    CorrId: { type: Number, required: true, unique: true, index: true },
+    CorrectionDate: { type: Date, required: true },
+    ItemMasterId: { type: Number, required: true, index: true },
+    SelectedOB: { type: Number, required: true },
+    CorrectedOB: { type: Number, required: true },
+    CreatedBy: { type: String, trim: true },
+    UpdatedBy: { type: String, trim: true },
+  },
+  { timestamps: true, collection: "FuelCorrection" } // Automatically handles CreatedOn & UpdatedOn
+);
 
-export const FuelCorrection = mongoose.model("FuelCorrection", FuelCorrectionSchema);
+export const FuelCorrection = model("FuelCorrection", FuelCorrectionSchema);

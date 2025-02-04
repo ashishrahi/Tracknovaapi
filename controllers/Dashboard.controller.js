@@ -1,3 +1,4 @@
+
 import { StatusCodes } from "http-status-codes";
 import {ApiErrorResponse,ApiSuccessResponse} from "../utils/apiResponse/index.js";
 import connectDB from "../db/connectDBSql.js";
@@ -50,7 +51,7 @@ export async function getVehicleCurrentDay (req,res){
 
 export async function getVehicleDistance(req, res) {
   const { vehicleno, datef, datet } = req.body;
-  console.log(vehicleno, datef, datet);
+  // console.log(vehicleno, datef, datet);
   if (
     [vehicleno, datef, datet].some(
       (fields) => fields?.trim() === undefined || ""
@@ -84,7 +85,7 @@ export async function getVehicleDistance(req, res) {
 
   
     const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0]
-    console.log(devid)
+    // console.log(devid)
     
 
     const resultCursor = await db.collection("NT").aggregate([
@@ -166,7 +167,7 @@ export async function getVehicleDistance(req, res) {
     const result1 = await resultCursor.toArray();
     return res.status(200).json({ data: result1 });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));

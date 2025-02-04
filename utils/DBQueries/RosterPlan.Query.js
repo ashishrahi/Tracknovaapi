@@ -12,7 +12,7 @@ export const AddUpdateRosterPlanQuery = async (model) => {
        return{
         isSuccess: false,
         statusCode: StatusCodes.CONFLICT,
-        message: 'Roster No already exists',
+        message: `Roster No ${existingRecord.RosterNo} already exists`,
        }
       }
 
@@ -31,7 +31,7 @@ export const AddUpdateRosterPlanQuery = async (model) => {
         return{
           isSuccess: false,
           statusCode: StatusCodes.NOT_FOUND,
-          message: 'Roster ID not found',
+          message: `Roster ID ${existingEntity.rosterID} not found`,
         };
       }
 
@@ -49,7 +49,7 @@ export const AddUpdateRosterPlanQuery = async (model) => {
       return{
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: 'Roster Plan updated successfully',
+        message: `Roster Plan ${model.RosterID} updated successfully`,
         data: existingEntity,
       }
     }
@@ -57,7 +57,7 @@ export const AddUpdateRosterPlanQuery = async (model) => {
     return{
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: 'Roster Plan Created successfully',
+        message: `Roster Plan ${model.RosterID} Created successfully`,
         data: model,
   
     }
@@ -179,7 +179,7 @@ export const DeleteRosterPlanQuery = async (model) => {
            return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Roster ID is used in RosterPlanDetail, delete related records first.',
+            message: `Roster ID ${cam.rosterID} is used in RosterPlanDetail, delete related records first.`,
  
            }
         }
@@ -190,7 +190,7 @@ export const DeleteRosterPlanQuery = async (model) => {
               return{
                 isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
-                message: 'Roster Plan not found',
+                message: `Roster ${entity.RosterID} not found`,
               }
             }
 
@@ -200,7 +200,7 @@ export const DeleteRosterPlanQuery = async (model) => {
         return{
             isSuccess: true,
             statusCode: StatusCodes.OK,
-            message: 'Roster Plan deleted successfully',
+            message: `Roster ${model.rosterID} deleted successfully`,
         }
     } catch (error) {
         return{

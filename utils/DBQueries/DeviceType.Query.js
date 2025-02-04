@@ -29,8 +29,7 @@ export const GetDeviceTypeQuery = async (model) => {
         return {
           isSuccess: false,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'Error fetching DeviceType data',
-          error: err.message,
+          message: err.message,
         };
       }
 

@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { RoleMaster,NT } from "../../modals/index.js";
+import { AspNetRoles,NT } from "../../modals/index.js";
 //////////////////////////////////////////////// GetMapVehicleData /////////////
 export async function GetMapVehicleDataQuery(){
     try {

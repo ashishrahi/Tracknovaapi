@@ -41,8 +41,8 @@ async function sample(req, res, next) {
     const fourHoursBackTime =
       sixHoursAgo.toISOString().slice(0, -1).toString() + "+00:00";
     // console.log("sixHoursAgo",  sixHoursAgo.toString());
-    console.log("tryeof: ", typeof fourHoursBackTime);
-    console.log("fourHoursBackTime", fourHoursBackTime);
+    // console.log("tryeof: ", typeof fourHoursBackTime);
+    // console.log("fourHoursBackTime", fourHoursBackTime);
     const query = {
       ...(devid && { devid: devid }),
 
@@ -479,7 +479,7 @@ async function GetDashData(req, res) {
            // console.log("devs", devs)
        devs = devs.map(d => d.devid);
        dret = await NTCurrentPipeline(devs);
-       console.log("dret", dret)
+      //  console.log("dret", dret)
    }
  
    // Step 3: Handle NTCurrent response
@@ -625,7 +625,7 @@ async function getVehicleNotMoved(req, res) {
     const results = await NT.aggregate(pipeline);
     return res.json({ data: results });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
   // const ntRecPipeline = [
   //   {
@@ -874,7 +874,7 @@ async function GetTopFuelConsNTOnOff(req, res){
 //-------------ProbWireTamp----------->
 async function probWireTamp(req, res) {
   const { date } = req.query;
-  console.log("date is", date);
+  // console.log("date is", date);
   if (!date) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -1189,7 +1189,7 @@ async function GetVehicleMovement(req, res){
      }
     //  console.log("filteredVehicles", filteredVehicles)
      const deviceIds = filteredVehicles.map((v) => v.devid);
-     console.log("deviceIds", deviceIds)
+    //  console.log("deviceIds", deviceIds)
 
      const ntData = await NT.aggregate([
       {

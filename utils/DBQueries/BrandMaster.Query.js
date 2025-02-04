@@ -22,7 +22,7 @@ export const AddUpdateBrandMasterQuery = async (model) => {
           return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED, 
-            message: 'Brand Added Successfully',
+            message: `BrandName ${brand.brandname} Added Successfully`,
             data: brand, 
           };
         } else {
@@ -40,7 +40,7 @@ export const AddUpdateBrandMasterQuery = async (model) => {
               return {
                 isSuccess: false,
                 statusCode: StatusCodes.CONFLICT, // Use appropriate status code
-                message: 'Brand in Vehicle has movement record NOT updated',
+                message: `BrandId ${hasAssociatedVehicles.brandname} in Vehicle has movement record NOT updated`,
               };
             }
     
@@ -54,14 +54,14 @@ export const AddUpdateBrandMasterQuery = async (model) => {
             return {
               isSuccess: true,
               statusCode: StatusCodes.OK, // Use appropriate status code
-              message: 'Brand Updated Successfully',
+              message: `BrandID of {brand.brandId} Updated Successfully`,
               data: brand, 
             };
           } else {
             return {
               isSuccess: false,
               statusCode: StatusCodes.NOT_FOUND, // Use appropriate status code
-              message: 'Brand not found',
+              message: `BrandID ${brand.brandId} of Brand not found`,
             };
           }
         }

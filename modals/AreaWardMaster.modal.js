@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const AreaWardMasterSchema = new mongoose.Schema(
+const AreaWardMasterSchema = new Schema(
   {
-    AreaID: { type: Number, required: true },
-    AreaName: { type: String },
-    CreatedBy: { type: String },
-    BinLocName: { type: String },
-    UpdatedBy: { type: String },
-    WardNumber: String,
-    ZoneID: Number,
+    AreaID: { type: Number, required: true, index: true },
+    AreaName: { type: String, required: true, trim: true },
+    CreatedBy: { type: String, required: true, trim: true },
+    BinLocName: { type: String, trim: true },
+    UpdatedBy: { type: String, trim: true },
+    WardNumber: { type: String, trim: true },
+    ZoneID: { type: Number, index: true },
   },
   { timestamps: true, collection: "AreaWardMaster" }
 );
 
-export const AreaWardMaster = mongoose.model("AreaWardMaster",AreaWardMasterSchema);
+export const AreaWardMaster = model("AreaWardMaster", AreaWardMasterSchema);

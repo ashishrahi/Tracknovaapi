@@ -22,7 +22,6 @@ import {
   DeleteRoleMasterQuery,
   
 } from "../utils/DBQueries/Auth.Query.js";
-import { RoleMaster } from "../modals/RoleMaster.modal.js";
 
 /////////////////////////////////// Login /////////////////////////////////////////////////
 

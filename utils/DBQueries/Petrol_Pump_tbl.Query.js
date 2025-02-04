@@ -23,7 +23,7 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
          return{
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Petrol Pump Name already exists',
+            message: `Petrol Pump Name ${existingPump.PetroPump} already exists`,
             
  
          }
@@ -55,13 +55,13 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
           return{
             isSuccess: false,
             statusCode: StatusCodes.NOT_FOUND,
-            message: 'Petrol Pump not found',
+            message: `Petrol Pump ${updatedPump.PetroPump} not found`,
           }
         }
   return{
      isSuccess: true,
      statusCode: StatusCodes.OK,
-     message: 'Petrol Pump Updated Successfully',
+     message: `Petrol Pump ${updatedPump.PetroPump} Updated Successfully`,
      data: updatedPump,
  
   }
@@ -209,14 +209,14 @@ export const DeletePetrolPumpQuery = async (model) => {
                 return{
                     isSuccess: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "Petrol Pump not found",
+                    message: `Petrol Pump ${entity.PetroPump} not found`,
                 }
             }
         } else {
             return{
                 isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
-                message: "Invalid ID",
+                message: `Invalid Petrol Pump ${entity.PetroPump}`,
             }
         }
     } catch (error) {

@@ -431,7 +431,6 @@ async function GetCampaign(req, res) {
       pageSize = 10,
     } = req.body;
 
-    console.log(campaignId, campaignName, campaignDate, campaignType, status);
     const query = {};
     if (campaignId) query.CampaignId = campaignId;
     if (campaignName) query.CampaignName = campaignName;
@@ -681,10 +680,8 @@ async function UpsertCampaignTemplate(req, res) {
       const lastTemplate = await CampaignTemplate.findOne().sort({
         TemplateId: -1,
       });
-      console.log("lastTemplate", lastTemplate);
       const newTemplateId = parseInt(lastTemplate?.TemplateId ?? 0) + 1;
       // return res.json({lastTemplate})
-      console.log("New TemplateId:", newTemplateId);
 
       // Create new CampaignTemplate with valid TemplateId
       const newTemplate = new CampaignTemplate({
@@ -819,7 +816,6 @@ async function GetEventSetting(req, res) {
     if (eventType) query.EventType = eventType;
     if (sendingType) query.SendingType = sendingType;
     if (isActive) query.IsActive = isActive;
-    console.log(query);
     const eventSettings = await EventSetting.find(query)
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize);

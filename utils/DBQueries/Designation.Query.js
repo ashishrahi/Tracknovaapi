@@ -22,7 +22,6 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         designation.DesignationCode = DesignationCode || designation.DesignationCode;
         designation.CreatedBy = DesignationCode || designation.CreatedBy;
         designation.UpdatedBy = DesignationCode || designation.UpdatedBy;
-        designation.UpdatedOn = Date.now();
   
         await designation.save();
         return { 
@@ -149,7 +148,7 @@ export const DeleteDesignationMasterQuery = async (model) => {
         return{
           isSuccess:false,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'An unexpected error occurred'
+          message: error.message
         }
     }
 

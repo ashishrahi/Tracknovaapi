@@ -1,13 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-export const CountryMasterSchema = new mongoose.Schema({
-    "CountryId":Number,
-    "CountryName": String,
-    "CountryCode": String,
-    "CreatedBy": String,
-    "UpdatedBy": String,
-    "CreatedOn": Date,
-    "UpdatedOn": Date,
-}, { collection: "CountryMaster" })
+const CountryMasterSchema = new Schema(
+  {
+    CountryId: { type: Number, required: true, unique: true, index: true },
+    CountryName: { type: String, required: true, trim: true },
+    CountryCode: { type: String, required: true, trim: true, unique: true },
+    CreatedBy: { type: String, trim: true },
+    UpdatedBy: { type: String, trim: true },
+  },
+  { timestamps: true, collection: "CountryMaster" } 
+);
 
-export const CountryMaster = mongoose.model("CountryMaster", CountryMasterSchema);
+export const CountryMaster = model("CountryMaster", CountryMasterSchema);

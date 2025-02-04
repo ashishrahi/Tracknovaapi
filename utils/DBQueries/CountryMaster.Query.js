@@ -131,7 +131,7 @@ export const DeleteCountryQuery = async (model) => {
         const stateReference = await StateMaster.findOne({ countryId: model.countryId }).exec();
         if (stateReference) {
           return {
-            isSuccess:'success',
+            isSuccess:true,
             statusCode: StatusCodes.CONFLICT,
             message : `${CountryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`};
         }
@@ -141,12 +141,12 @@ export const DeleteCountryQuery = async (model) => {
         if (countries && countries.length > 0) {
           await CountryMaster.deleteMany({ countryId: model.countryId });
           return{
-            isSuccess:'success',
+            isSuccess:true,
             statusCode:StatusCodes.OK,
             message:`${countryId} deleted successfully` };
         } else {
           return{
-            isSuccess:'failed',
+            isSuccess:false,
             statusCode: StatusCodes.NOT_FOUND,
             message:`"${countryId} not found!` };
         }

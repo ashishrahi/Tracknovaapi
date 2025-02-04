@@ -12,7 +12,7 @@ export const AddUpdateRoutesQuery = async (model) => {
             return {
               isSuccess: false,
               statusCode: StatusCodes.CONFLICT,
-              message: 'Route with the same name already exists!',
+              message: `Route with ${existingRoute.RouteName} name already exists!`,
             };
           }
     
@@ -83,7 +83,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED,
-            message: 'Route successfully created!',
+            message: `Route ${newRoute.RouteName} successfully created!`,
             data: model,
           };
         } else {
@@ -93,7 +93,7 @@ export const AddUpdateRoutesQuery = async (model) => {
             return {
               isSuccess: false,
               statusCode: StatusCodes.NOT_FOUND,
-              message: 'Route not found!',
+              message: `Route ${existingRoute.RouteID} not found!`,
             };
           }
     
@@ -158,7 +158,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED,
-            message: 'Route successfully updated!',
+            message: `Route ${Route.RouteName} successfully updated!`,
             data: model,
           };
         }
@@ -166,8 +166,7 @@ export const AddUpdateRoutesQuery = async (model) => {
         return {
           isSuccess: false,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'Error occurred while processing your request!',
-          error: error.message,
+          message: error.message,
         };
       }
 }
@@ -241,8 +240,7 @@ export const GetRoutesQuery = async (model) => {
         return {
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: "Error fetching routes",
-            error: err,
+            message: err.message,
           };
         }
       }
@@ -256,7 +254,7 @@ export const DeleteRoutesQuery = async (model) => {
           return {
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: "Route ID is used in RouteAreaDetail, so it can't be deleted.",
+            message: `Route ID ${routeInAreaDetail.RouteID} is used in RouteAreaDetail, so it can't be deleted.`,
           };
         }
     

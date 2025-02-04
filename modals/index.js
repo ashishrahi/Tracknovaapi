@@ -1,4 +1,3 @@
-
 import NTCurrentDay from "./NTCurrentDay.modal.js";
 import { NT } from "./NT.model.js";
 import ItemMaster from "./ItemMaster.model.js";
@@ -37,7 +36,7 @@ export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department,
 import {BinLocation} from "./BinLocation.modal.js";
 import {UserPermission} from './UserPermission.modal.js'
 import {Menu} from './MenuMaster.modal.js'
-import {RoleMaster} from './RoleMaster.modal.js'
+import {AspNetRoles} from './AspNetRoles.modal.js'
 import {RolePermission} from "./RolePermission.modal.js";
 import {Route} from './Route.modal.js'
 import {RouteAreaBinDetail} from './RouteAreaBinDetail.modal.js'
@@ -72,7 +71,7 @@ export {
     BinLocation,
     UserPermission,
     Menu,
-    RoleMaster,
+    AspNetRoles,
     RolePermission,
     Route,
     RouteAreaBinDetail,

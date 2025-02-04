@@ -57,7 +57,6 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
 
 export const GetZoneMasterQuery = async (modal) => {
     try {
-        console.log('modal',modal)
         let records = [];
 if (modal.ZoneID === -1) {
     records = await ZoneMaster.find().lean();

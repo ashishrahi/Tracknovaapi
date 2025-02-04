@@ -7,17 +7,16 @@ import { StatusCodes } from "http-status-codes";
 export const AddUpdateBinLocationQuery = async (model) => {
  
 
-
   try {
     if (!model.BinLocID || model.BinLocID === 0) {
-
+      // Check if the record already exists by BinLocName
       const existingRecord = await BinLocation.findOne({ BinLocName: model.BinLocName });
       if (existingRecord) {
-                return {
-                  isSuccess:true,
-                  status: StatusCodes.CONFLICT,
-                  message: 'Record Already Exists!',
-                  data: existingRecord,
+        return {
+          isSuccess: true,
+          status: StatusCodes.CONFLICT,
+          message: 'Record Already Exists!',
+          data: existingRecord,
         };
       }
 
@@ -29,45 +28,43 @@ export const AddUpdateBinLocationQuery = async (model) => {
       const newBinLocation = new BinLocation(model);
       await newBinLocation.save();
 
-      
-      return{
+      return {
         isSuccess: true,
         statusCode: StatusCodes.CREATED,
-        message: 'Add Successfully',
+        message: `New BinLocation ${newBinLocation.BinLocName} Added Successfully`,
         data: newBinLocation,
-      }
+      };
     } else {
-      // Update existing record
-      const existingEntity = await BinLocation.findOne({ BinLocID: model.BinLocID });
-      if (!existingEntity) {
+      // Update existing record using findOneAndUpdate
+      const updatedEntity = await BinLocation.findOneAndUpdate(
+        { BinLocID: model.BinLocID },
+        model, 
+        { new: true, runValidators: true } 
+      );
+
+      if (!updatedEntity) {
         return {
-          isSuccess:false,
+          isSuccess: false,
           status: StatusCodes.NOT_FOUND,
-          message: 'Bin location not found!',
+          message: `${BinLocId} of Bin location not found!`,
           data: model,
         };
       }
 
-      // Update the record with new values
-      Object.assign(existingEntity, model);
-      await existingEntity.save();
-
-      
-      return{
+      return {
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: 'Update Successfully',
-        data: existingEntity,
-      }
+        message: `${BinLocID} of BinLocation Update Successfully`,
+        data: updatedEntity,
+      };
     }
   } catch (error) {
-    return{
+    return {
       isSuccess: false,
       statusCode: StatusCodes.BAD_REQUEST,
       message: error.message,
-    }
+    };
   }
-
   };
   
 ////////////////////////////// GetBinLocationQuery //////////////////////////////////////////
@@ -231,7 +228,7 @@ export const GetBinLocationQuery = async (model) => {
 export const DeleteBinLocationQuery = async (model) => {
   
   try {
-    const {BinLocID, AreaID} = model
+    const { BinLocID, AreaID } = model
         if (AreaID !== 0) {
             const entity = await BinLocation.findOne({BinLocID:BinLocID});
 
@@ -239,8 +236,7 @@ export const DeleteBinLocationQuery = async (model) => {
                 return {
                     isSuccess: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: 'Bin Location not found',
-                    data: model,
+                    message: `BinLocID ${BinLocID} of Bin Location not found`,
                 };
             }
 
@@ -250,16 +246,14 @@ export const DeleteBinLocationQuery = async (model) => {
 
         return {
             isSuccess: true,
-            statusCode: StatusCodes.NO_CONTENT,
-            message: 'Delete Successfully',
-            data: model,
+            statusCode: StatusCodes.OK,
+            message: `BinLocID ${BinLocID} Deleted Successfully`,
         };
     } catch (error) {
         return {
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: 'Server Error',
-            data: model,
         };
     }
 };

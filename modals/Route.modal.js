@@ -1,14 +1,20 @@
 import mongoose from "mongoose";
 
-const RouteSchema = new mongoose.Schema({
-   " CreatedBy" : String,
-    "CreatedOn": Date,
-    "Description": String,
-    "RouteDate": Date,
-    "RouteID": Number,
-    "RouteName":String,
-    "UpdatedBy":String,
-    "UpdatedOn":Date,
-}, {timestamps: true, collection: "Route"})
+const RouteSchema = new mongoose.Schema(
+  {
+    CreatedBy: { type: String, required: true, trim: true },
+    Description: { type: String, trim: true },
+    RouteDate: { type: Date, },
+    RouteID: { type: Number, required: true, unique: true },
+    RouteName: { type: String,  trim: true },
+    UpdatedBy: { type: String,  trim: true },
+    CreatedBy: { type: String,  trim: true },
 
-export const Route = mongoose.model("Route", RouteSchema)
+  },
+  {
+    timestamps: true, // Mongoose will automatically handle `createdAt` and `updatedAt`
+    collection: "Route",
+  }
+);
+
+export const Route = mongoose.model("Route", RouteSchema);

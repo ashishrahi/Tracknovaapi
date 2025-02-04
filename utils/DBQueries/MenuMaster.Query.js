@@ -56,7 +56,7 @@ export const AddUpdateMenuMasterQuery = async (model) => {
         return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED,
-            message: 'Successfully Updated',
+            message: `Menu ${existingMenu.MenuName} Successfully Updated`,
             data: updatedMenu,
         };
     } else {
@@ -66,7 +66,7 @@ export const AddUpdateMenuMasterQuery = async (model) => {
             return {
                 isSuccess: false,
                 statusCode: StatusCodes.CONFLICT,
-                message: 'Menu Name already exists',
+                message: `Menu Name ${isExists.MenuName} already exists`,
             };
         }
 
@@ -99,7 +99,7 @@ export const AddUpdateMenuMasterQuery = async (model) => {
         return {
             isSuccess: true,
             statusCode: StatusCodes.CREATED,
-            message: 'Successfully Added',
+            message: `MenuName ${newMenu.MenuName} Successfully Added`,
             data: newMenu,
         };
     }
@@ -108,13 +108,13 @@ export const AddUpdateMenuMasterQuery = async (model) => {
         return {
             isSuccess: false,
             statusCode: StatusCodes.CONFLICT,
-            message: 'Menu Name Already Exists',
+            message: `Menu Name ${newMenu.MenuName} Already Exists`,
         };
     } else {
         return {
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in AddUpdateMenuMasterQuery: ${error.message}`,
+            message: error.message,
         };
     }
 }
@@ -180,12 +180,12 @@ export const GetMenuMasterQuery = async (model) => {
           }
         } else {
           // Fetch data based on a specific MenuId
-          const menuData = await Menu.find({ MenuId: model.MenuId }).lean();
+          const menuData = await Menu.findOne({ MenuId: model.MenuId }).lean();
     
           return{
             isSuccess: true,
             statusCode: StatusCodes.OK,
-            message: 'Menu Details fetched successfully',
+            message: `Menu ${menuData.MenuName} Details fetched successfully`,
             data: menuData,
           }
         }
@@ -193,7 +193,7 @@ export const GetMenuMasterQuery = async (model) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in GetMenuMasterQuery: ${error.message}`,
+            message: error.message,
   
         }
       }
@@ -218,7 +218,7 @@ export const GetParentMenuMasterQuery = async (model) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in GetParentMenuMasterQuery: ${error.message}`,
+            message: error.message,
         }
     }
 
@@ -244,7 +244,7 @@ export const GetChildMenuMasterQuery = async (model) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in GetChildMenuMasterQuery: ${error.message}`,
+            message: error.message,
         }
       }
     
@@ -267,14 +267,14 @@ export const DeleteMenuMasterQuery = async (model) => {
       return {
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: 'Menu deleted successfully',
+        message: `Menu ${model.MenuId} deleted successfully`,
       };
    
     } else {
       return{
         isSuccess: false,
         statusCode: StatusCodes.NOT_FOUND,
-        message: 'Menu Id Not Found!',
+        message: `Menu ${model.MenuId} not found`,
       }
     }
   } catch (error) {
@@ -282,7 +282,7 @@ export const DeleteMenuMasterQuery = async (model) => {
     return{
         isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An unexpected error occurred',
+        message: error.message,
     }
   }
 

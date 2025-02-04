@@ -24,7 +24,7 @@ export const AddUpdateFuelTypeQuery = async (model) => {
   
         await fuelType.save();
         return{
-          isSuccess:'success',
+          isSuccess:true,
           statusCode: StatusCodes.CREATED,
           message: `FuelTypename ${fuelType.FuelTypename} created successfully`,
           data: fuelType,
@@ -43,7 +43,7 @@ export const AddUpdateFuelTypeQuery = async (model) => {
         );
       }
         return {
-        isSuccess:'success',
+        isSuccess:true,
         statusCode:StatusCodes.CREATED,
         message: `Fueltype ${fuelType.FuelTypename} saved successfully`,
         data: fuelType,
@@ -51,7 +51,7 @@ export const AddUpdateFuelTypeQuery = async (model) => {
     } catch (error) {
    
       return{
-        isSuccess:'error',
+        isSuccess:false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: error.message,
       }
@@ -125,7 +125,7 @@ export const DeleteFuelTypeQuery = async (model) => {
     } catch (error) {
        
         return{
-          isSuccess:'error',
+          isSuccess:false,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
           message: error.message,
         }

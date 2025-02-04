@@ -74,7 +74,7 @@ export async function DeleteBinLocation(req, res) {
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      StatusCodes.NOT_FOUND,
+      StatusCodes.BAD_REQUEST,
       error.message
     );
     res.status(errorResponse.statusCode).json(errorResponse);

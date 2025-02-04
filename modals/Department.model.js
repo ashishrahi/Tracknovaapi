@@ -1,14 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const DepartmentSchema = new mongoose.Schema({
-    CreatedBy: String,
-    DepartmentId: mongoose.Schema.Types.Int32,
-    DepartmentName: String,
-    DepartmentShortname: String,
-    HOD: mongoose.Schema.Types.Int32,
-    UpdatedBy: String,
-}, {timestamps: true, collection: "Department"})
+const DepartmentSchema = new Schema(
+  {
+    DepartmentId: { type: Number, required: true, unique: true, index: true },
+    DepartmentName: { type: String, required: true, trim: true },
+    DepartmentShortname: { type: String, trim: true },
+    HOD: { type: Number, index: true },
+    CreatedBy: { type: String, trim: true },
+    UpdatedBy: { type: String, trim: true },
+  },
+  { timestamps: true, collection: "Department" }
+);
 
-const Department = mongoose.model("Department", DepartmentSchema)
+const Department = model("Department", DepartmentSchema);
 
 export default Department;

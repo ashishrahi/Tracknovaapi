@@ -15,7 +15,7 @@ export async function AddUpdateHandheldMasterQuery(model) {
         return{
                 isSuccess:false,
                 statusCode: StatusCodes.CONFLICT,
-                message: 'Record Already Exist!'
+                message: `HandheldName ${existingRecord.HandheldName} Already Exist!`
                }
             }
 
@@ -38,14 +38,14 @@ export async function AddUpdateHandheldMasterQuery(model) {
                 return{
                     isSuccess:true,
                     statusCode: StatusCodes.OK,
-                    message: `HandheldName ${existingRecord.ID} Successfully Updated `,
+                    message: `HandheldID ${existingRecord.ID} Successfully Updated `,
                     data: existingRecord,
                 }
             } else {
                  return{
                     isSuccess:false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: 'Record Not Found!',
+                    message: `HandheldID ${existingRecord.ID} Not Found!`,
                 }
             }
         }
@@ -53,7 +53,7 @@ export async function AddUpdateHandheldMasterQuery(model) {
         return{
             isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'An unexpected error occurred',
+            message: error.message,
         }
     }}
 
@@ -78,17 +78,17 @@ export async function GetHandheldMasterQuery(model) {
         return {
             isSuccess:true,
             statusCode:StatusCodes.OK,
-            message:' HandheldMaster data fetch successfully',
+            message: 'HandheldMaster data fetch successfully',
             data: data,
             pageNo: model.pageNo,
             pageSize: model.pageSize,
             rowCount: rowCount
         };
-    } catch (ex) {
+    } catch (error) {
         return {
             isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'An unexpected error occurred',
+            message: error.message,
         };
     }
 
@@ -121,14 +121,14 @@ try {
             return{
                 isSuccess:false,
                 statusCode: StatusCodes.BAD_REQUEST,
-                message: 'Invalid ID',
+                message: 'Invalid HandheldMasterID ${model.ID}',
             }
         }
     } catch (err) {
         return{
             isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'An unexpected error occurred',
+            message: err.message,
         }
     }
 
