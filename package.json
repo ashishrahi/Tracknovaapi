@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "esbuild app.js --bundle --platform=node --outfile=dist/app.js"
+    "build": "esbuild app.js --bundle --platform=node --outfile=dist/app.js --external:mock-aws-s3 --external:aws-sdk --external:nock --loader:.html=text"
   },
   "author": "MSSPL_Saurabh_Kushwaha",
   "license": "ISC",
