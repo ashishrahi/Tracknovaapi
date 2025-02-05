@@ -6,10 +6,10 @@ export async function AddUpdateGeoFencingQuery(model){
     try {
         model.DateSave = new Date();
 
-        if (!model.FenceId || model.FenceId === 0) {
+        if (!model.fenceId || model.fenceId === 0) {
             // Check if the Fence Name already exists
             const existingFence = await Geofencing.findOne({
-                FenceName: { $regex: new RegExp(`^${model.FenceName}$`, "i") },
+                FenceName: { $regex: new RegExp(`^${model.fenceName}$`, "i") },
             });
 
             if (existingFence) {
@@ -24,10 +24,22 @@ export async function AddUpdateGeoFencingQuery(model){
 
             // Assign a new FenceId
             const lastFence = await Geofencing.findOne().sort({ FenceId: -1 });
-            model.FenceId = (lastFence?.FenceId || 0) + 1;
+            model.fenceId = (lastFence?.FenceId || 0) + 1;
 
             // Save the new fence
-            const newFence = new Geofencing(model);
+            const newFence = new Geofencing({
+                FenceId: model.fenceId,
+                FenceName: model.fenceName,
+                polycord: model.polycord,
+                UpdatedBy: model.updatedBy,
+                Lattitude:model.lattitude,
+                Longitude:model.longitude,
+                Radius:model.radius,
+                DateSave:model.dateSave,
+                CompanyId: model.companyId,
+                flag: model.flag,
+                AreaId:model.areaId
+            });
             const savedFence = await newFence.save();
 
         return{
@@ -119,8 +131,8 @@ export async function GetGeoFencingQuery(model){
 export async function DeleteGeoFencingQuery(model){
    
     try {
-        if (model.FenceId && model.FenceId !== 0) {
-            const entity = await Geofencing.findOneAndDelete({FenceId:model.FenceId});
+        if (model.fenceId && model.fenceId !== 0) {
+            const entity = await Geofencing.findOneAndDelete({FenceId:model.fenceId});
 
             if (entity) {
                  return {

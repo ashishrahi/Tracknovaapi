@@ -7,8 +7,8 @@ import {HandheldMaster} from '../../modals/index.js';
 export async function AddUpdateHandheldMasterQuery(model) {
   
   try {
-        if (model.ID === 0) {
-            const existingRecord = await HandheldMaster.findOne({ HandheldName: model.HandheldName });
+        if (model.id === 0) {
+            const existingRecord = await HandheldMaster.findOne({ HandheldName: model.handheldName });
 
             if (existingRecord) {
         
@@ -20,9 +20,16 @@ export async function AddUpdateHandheldMasterQuery(model) {
             }
 
             const lastRecord = await HandheldMaster.findOne().sort({ ID: -1 }).limit(1);
-            model.ID = (lastRecord?.ID ?? 0) + 1;
+            model.id = (lastRecord?.ID ?? 0) + 1;
 
-            const newRecord = new HandheldMaster(model);
+            const newRecord = new HandheldMaster({
+                ID: model.id,
+                HandheldName: model.handheldName,
+                HandheldCode: model.handheldCode,
+                CreatedBy: model.createdBy,
+                UpdatedBy: model.updatedBy,
+ 
+            });
             await newRecord.save();
             return{
                     isSuccess:true,
@@ -31,9 +38,9 @@ export async function AddUpdateHandheldMasterQuery(model) {
                      data: newRecord,
                   }
         } else {
-            const existingRecord = await HandheldMaster.findOne({ ID: model.ID });
+            const existingRecord = await HandheldMaster.findOne({ ID: model.id });
             if (existingRecord) {
-                await HandheldMaster.updateOne({ ID: model.ID }, { $set: model });
+                await HandheldMaster.updateOne({ ID: model.id }, { $set: model });
               
                 return{
                     isSuccess:true,
@@ -100,28 +107,28 @@ export async function GetHandheldMasterQuery(model) {
 export async function DeleteHandheldMasterQuery(model) {
     
 try {
-        if (model.ID !== 0) {
-            const entity = await HandheldMaster.findOne({ID:model.ID}); 
+        if (model.id !== 0) {
+            const entity = await HandheldMaster.findOne({ID:model.id}); 
             if (entity) {
-                await HandheldMaster.deleteOne({ID: model.ID }); 
+                await HandheldMaster.deleteOne({ID: model.id }); 
                 
                 return{
                     isSuccess:true,
                     statusCode: StatusCodes.OK,
-                    message: `HandheldMaster with ID ${model.ID} Successfully Deleted`,
+                    message: `HandheldMaster with ID ${model.id} Successfully Deleted`,
                 }
             } else {
                 return{
                     isSuccess:false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: `HandheldMaster with ID ${model.ID} not found`,
+                    message: `HandheldMaster with ID ${model.id} not found`,
                 }
             }
         } else {
             return{
                 isSuccess:false,
                 statusCode: StatusCodes.BAD_REQUEST,
-                message: 'Invalid HandheldMasterID ${model.ID}',
+                message: 'Invalid HandheldMasterID ${model.id}',
             }
         }
     } catch (err) {

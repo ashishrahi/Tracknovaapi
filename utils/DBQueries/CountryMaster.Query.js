@@ -7,7 +7,7 @@ export const AddUpdateCountryMasterQuery = async (model) => {
  
 
     try {
-        if (!model.CountryName) {
+        if (!model.countryName) {
             
       return{
                 isSuccess: true,
@@ -17,14 +17,14 @@ export const AddUpdateCountryMasterQuery = async (model) => {
         }
 
         // Try to find an existing record by CountryId
-        const existingCountry = await CountryMaster.findOne({ CountryId: model.CountryId });
+        const existingCountry = await CountryMaster.findOne({ CountryId: model.countryId });
 
         if (existingCountry) {
             // Country exists, so update it
-            existingCountry.CountryName = model.CountryName || existingCountry.CountryName;
-            existingCountry.CountryCode = model.CountryCode || existingCountry.CountryCode;
-            existingCountry.CreatedBy = model.CreatedBy || existingCountry.CreatedBy;
-            existingCountry.UpdatedBy = model.UpdatedBy || existingCountry.UpdatedBy;
+            existingCountry.CountryName = model.countryName || existingCountry.CountryName;
+            existingCountry.CountryCode = model.countryCode || existingCountry.CountryCode;
+            existingCountry.CreatedBy = model.createdBy || existingCountry.CreatedBy;
+            existingCountry.UpdatedBy = model.updatedBy || existingCountry.UpdatedBy;
 
 
             // Save the updated record
@@ -38,15 +38,15 @@ export const AddUpdateCountryMasterQuery = async (model) => {
             }
         } else {
             // Country does not exist, so create a new record
-            let newCountryId = model.CountryId;
+            let newCountryId = model.countryId;
 
-            if (model.CountryId === -1 || !model.CountryId) {
+            if (model.countryId === -1 || !model.countryId) {
                 const lastCountry = await CountryMaster.findOne().sort({ CountryId: -1 }).limit(1);
                 newCountryId = lastCountry ? lastCountry.CountryId + 1 : 1;
             }
 
             // Check for existing CountryName
-            const countryNameExists = await CountryMaster.findOne({ CountryName: model.CountryName });
+            const countryNameExists = await CountryMaster.findOne({ CountryName: model.countryName });
             if (countryNameExists) {
                 
              return{
@@ -59,12 +59,10 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 
             const newCountry = new CountryMaster({
                 CountryId: newCountryId,
-                CountryName: model.CountryName,
-                CountryCode: model.CountryCode,
-                UpdatedBy: model.UpdatedBy || 'Admin',
-                CreatedBy: model.CreatedBy || 'Admin',
-                CreatedOn: model.CreatedOn || new Date(),
-                UpdatedOn: model.UpdatedOn || new Date(),
+                CountryName: model.countryName,
+                CountryCode: model.countryCode,
+                UpdatedBy: model.updatedBy || 'Admin',
+                CreatedBy: model.createdBy || 'Admin',
             });
 
            const newCountryname = await newCountry.save()
@@ -89,10 +87,10 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 //////////////////////////////  GetCountryMasterQuery //////////////////////////////////////////////////
 
 export const GetCountryMasterQuery = async (model) => {
-    const { CountryId } = model; 
+    const { countryId } = model; 
 
     try {
-        if (CountryId === -1) {
+        if (countryId === -1) {
             // Fetch all countries
             const country = await CountryMaster.find({}).lean();
           
@@ -104,7 +102,7 @@ export const GetCountryMasterQuery = async (model) => {
                  };
         } else {
             // Fetch specific country by CountryId
-            const country = await CountryMaster.findOne({ CountryId })
+            const country = await CountryMaster.findOne({ CountryId:countryId })
             return {
                 isSuccess: true,
                 statusCode: StatusCodes.OK,
@@ -128,7 +126,7 @@ export const DeleteCountryQuery = async (model) => {
    
     
       try {
-        const stateReference = await StateMaster.findOne({ countryId: model.countryId }).exec();
+        const stateReference = await StateMaster.findOne({ CountryId: model.countryId }).exec();
         if (stateReference) {
           return {
             isSuccess:true,
@@ -137,9 +135,9 @@ export const DeleteCountryQuery = async (model) => {
         }
     
         // Find and delete the country
-        const countries = await CountryMaster.findOne({ countryId: model.countryId }).exec();
+        const countries = await CountryMaster.findOne({ CountryId: model.countryId }).exec();
         if (countries && countries.length > 0) {
-          await CountryMaster.deleteMany({ countryId: model.countryId });
+          await CountryMaster.deleteMany({ CountryId: model.countryId });
           return{
             isSuccess:true,
             statusCode:StatusCodes.OK,

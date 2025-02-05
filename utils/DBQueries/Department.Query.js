@@ -6,7 +6,7 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
  
     
       try {
-        if (!model.DepartmentName || model.DepartmentName.trim() === '') {
+        if (!model.departmentName || model.departmentName.trim() === '') {
           
           return{
             isSuccess: false,
@@ -15,17 +15,17 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           }
         }
     
-        const existingDepartment = await Department.findOne({ DepartmentId: model.DepartmentId });
+        const existingDepartment = await Department.findOne({ DepartmentId: model.departmentId });
     
         if (existingDepartment) {
-          if (model.DepartmentName) {
-            existingDepartment.DepartmentName = model.DepartmentName.trim();
+          if (model.departmentName) {
+            existingDepartment.DepartmentName = model.departmentName.trim();
           }
           if (model.DepartmentShortname) {
-            existingDepartment.DepartmentShortname = model.DepartmentShortname.trim();
+            existingDepartment.DepartmentShortname = model.departmentShortname.trim();
           }
           if (model.HOD) {
-            existingDepartment.HOD = model.HOD;
+            existingDepartment.HOD = model.hod;
           }
     
           await existingDepartment.save();
@@ -36,16 +36,16 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
             data: existingDepartment
           }
         } else {
-          let tempID = model.DepartmentId || 0;
+          let tempID = model.departmentId || 0;
           
           if (tempID === -1 || tempID === 0) {
             const allDepartments = await Department.find();
             tempID = allDepartments.length > 0 ? Math.max(...allDepartments.map(dep => dep.DepartmentId)) + 1 : 1;
           }
     
-          model.DepartmentId = tempID;
+          model.departmentId = tempID;
     
-          const departmentExists = await Department.findOne({ DepartmentName: model.DepartmentName });
+          const departmentExists = await Department.findOne({ DepartmentName: model.departmentName });
           if (departmentExists) {
             return{
                 isSuccess: false,
@@ -64,7 +64,15 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           }
     
           // Create and save the new department
-          const newDepartment = new Department(model);
+          const newDepartment = new Department({
+            DepartmentId: model.departmentId,
+            DepartmentName: model.departmentName,
+            DepartmentShortname: model.departmentShortname,
+            HOD: model.hod,
+            CreatedBy: model.createdBy,
+            UpdatedBy: model.updatedBy,
+        
+          });
           await newDepartment.save();
     
           return{
@@ -94,16 +102,16 @@ export const GetDepartmentMasterQuery = async (model) => {
     const queryConditions = {};
 
     // Add conditions to the query object
-    if (model.DepartmentId !== -1) {
-      queryConditions.DepartmentId = model.DepartmentId;
+    if (model.departmentId !== -1) {
+      queryConditions.DepartmentId = model.departmentId;
     }
 
-    if (model.DepartmentName !== "-1" && model.DepartmentName !== "") {
-      queryConditions.DepartmentName = model.DepartmentName;
+    if (model.departmentName !== "-1" && model.departmentName !== "") {
+      queryConditions.DepartmentName = model.departmentName;
     }
 
     // Execute the query with conditions
-    const result = await Department.findOne(queryConditions)
+    const result = await Department.find(queryConditions)
       .select(
         "DepartmentId DepartmentName DepartmentShortname CreatedBy UpdatedBy CreatedOn UpdatedOn HOD"
       )
@@ -130,21 +138,21 @@ export const GetDepartmentMasterQuery = async (model) => {
 
 export const DeleteDepartmentMasterQuery = async (model) => {
     try {
-        const department = await Department.find({ DepartmentId: model.DepartmentId }).exec();
+        const department = await Department.find({ DepartmentId: model.departmentId }).exec();
 
         if (department && department.length > 0) {
-            await Department.deleteMany({ DepartmentId: model.DepartmentId });
+            await Department.deleteMany({ DepartmentId: model.departmentId });
 
             return {
                 isSuccess: true,
                 statusCode:StatusCodes.OK,
-                message: `DepartmentId ${model.DepartmentId} Successfully deleted`
+                message: `DepartmentId ${model.departmentId} Successfully deleted`
             };
         } else {
             return {
                 isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
-                message: `DepartmentId ${model.DepartmentId} not found`
+                message: `DepartmentId ${model.departmentId} not found`
             };
         }
     } catch (err) {

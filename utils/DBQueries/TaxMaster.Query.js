@@ -7,7 +7,7 @@ import { StatusCodes } from "http-status-codes";
 export const AddUpdateTaxMasterQuery = async (model) => {
     try {
         
-        if(!model.TaxName || model.TaxName ==="")
+        if(!model.taxName || model.taxName ==="")
             {
             return{
                isSuccess:false,
@@ -15,11 +15,11 @@ export const AddUpdateTaxMasterQuery = async (model) => {
                message:'Tax Name is required'
             }}
 
-     let existingTaxMaster = await TaxMaster.findOne({TaxId:model.TaxId})
+     let existingTaxMaster = await TaxMaster.findOne({TaxId:model.taxId})
      if(existingTaxMaster){
-        existingTaxMaster.TaxName = model.TaxName || existingTaxMaster.TaxName,
-        existingTaxMaster.TaxPercentage = model.TaxPercentage || existingTaxMaster.TaxPercentage,
-        existingTaxMaster.TaxDescription = model.TaxDescription || existingTaxMaster.TaxDescription,
+        existingTaxMaster.TaxName = model.taxName || existingTaxMaster.TaxName,
+        existingTaxMaster.TaxPercentage = model.taxPercentage || existingTaxMaster.TaxPercentage,
+        existingTaxMaster.EffectiveDate = model.effectiveDate || existingTaxMaster.EffectiveDate,
         await existingTaxMaster.save( )
         return{
             isSuccess: true,
@@ -29,11 +29,11 @@ export const AddUpdateTaxMasterQuery = async (model) => {
         }
      }else
      {
-        if(!model.TaxId || model.TaxId ===-1 || model.TaxId === 0 ){
+        if(!model.taxId || model.taxId ===-1 || model.taxId === 0 ){
            const maxTaxId = await TaxMaster.find().sort({TaxId:-1}).limit(1)
-           model.TaxId = maxTaxId.length >0 ? maxTaxId[0].TaxId+1:0; 
+           model.taxId = maxTaxId.length >0 ? maxTaxId[0].TaxId+1:0; 
         }
-       const existingTaxName = await TaxMaster.findOne({TaxName:model.TaxName})
+       const existingTaxName = await TaxMaster.findOne({TaxName:model.taxName})
 
 if(existingTaxName){
     return{
@@ -42,7 +42,15 @@ if(existingTaxName){
         message:'Tax Name already exists'
     }
 }
-const newTaxMaster = new TaxMaster(model);
+const newTaxMaster = new TaxMaster({
+    TaxId:model.taxId,
+    TaxName:model.taxName,
+    TaxPercentage:model.taxPercentage,
+    EffectiveDate:model.effectiveDate,
+    CreatedBy: model.createdBy,
+    UpdatedBy: model.updatedBy,
+ 
+});
 await newTaxMaster.save();
 return{
     isSuccess: true,

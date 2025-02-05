@@ -5,66 +5,114 @@ import { StatusCodes } from "http-status-codes";
 
 
 export const AddUpdateBinLocationQuery = async (model) => {
- 
-
   try {
-    if (!model.BinLocID || model.BinLocID === 0) {
-      // Check if the record already exists by BinLocName
-      const existingRecord = await BinLocation.findOne({ BinLocName: model.BinLocName });
-      if (existingRecord) {
-        return {
-          isSuccess: true,
-          status: StatusCodes.CONFLICT,
-          message: 'Record Already Exists!',
-          data: existingRecord,
-        };
-      }
+    const {
+        binLocID,
+        binLocName,
+        binLocCode,
+        zoneID,
+        areaID,
+        rfid,
+        latitude,
+        longitude,
+        locationName,
+        locImage,
+        description,
+        createdBy,
+        updatedBy,
+        createdOn,
+        updatedOn
+    } = model;
 
-      // Calculate the next BinLocID
-      const lastRecord = await BinLocation.findOne().sort({ BinLocID: -1 });
-      model.BinLocID = (lastRecord?.BinLocID || 0) + 1;
-
-      // Create a new bin location
-      const newBinLocation = new BinLocation(model);
-      await newBinLocation.save();
-
-      return {
-        isSuccess: true,
-        statusCode: StatusCodes.CREATED,
-        message: `New BinLocation ${newBinLocation.BinLocName} Added Successfully`,
-        data: newBinLocation,
-      };
-    } else {
-      // Update existing record using findOneAndUpdate
-      const updatedEntity = await BinLocation.findOneAndUpdate(
-        { BinLocID: model.BinLocID },
-        model, 
-        { new: true, runValidators: true } 
-      );
-
-      if (!updatedEntity) {
-        return {
-          isSuccess: false,
-          status: StatusCodes.NOT_FOUND,
-          message: `${BinLocId} of Bin location not found!`,
-          data: model,
-        };
-      }
-
-      return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `${BinLocID} of BinLocation Update Successfully`,
-        data: updatedEntity,
-      };
+    if (!binLocName || !binLocCode) {
+return{
+  isSuccess: false,
+  statusCode: StatusCodes.BAD_REQUEST,
+  message: "Bin Location Name and Code are required"
+}
     }
-  } catch (error) {
-    return {
+
+    if (!binLocID || binLocID === 0 || binLocID === "") {
+        // Insert logic
+        const existingBin = await BinLocation.findOne({ BinLocName:binLocName });
+
+        if (existingBin) {
+          return{
+            isSuccess: false,
+            statusCode: StatusCodes.CONFLICT,
+            message: "Bin Location Name already exists"
+          }
+        }
+
+        const lastBin = await BinLocation.findOne().sort({ BinLocID: -1 });
+        const newBinLocID = lastBin ? lastBin.BinLocID + 1 : 1;
+
+        const newBin = new BinLocation({
+            BinLocID: newBinLocID,
+            BinLocName:binLocName,
+            BinLocCode:binLocCode,
+            ZoneID:zoneID,
+            AreaID:areaID,
+            RFID:rfid,
+            Latitude:latitude,
+            Longitude:longitude,
+            LocationName:locationName,
+            LocImage:locImage,
+            Description:description,
+            CreatedBy:createdBy,
+            UpdatedBy:updatedBy,
+        });
+
+        await newBin.save();
+return{
+  isSuccess: true,
+  statusCode: StatusCodes.CREATED,
+  message: "Bin Location Added Successfully",
+  data: newBin
+}
+
+    } else {
+        // Update logic
+        const updatedBin = await BinLocation.findOneAndUpdate(
+            { binLocID },
+            {
+                binLocName,
+                binLocCode,
+                zoneID,
+                areaID,
+                rfid,
+                latitude,
+                longitude,
+                locationName,
+                locImage,
+                description,
+                updatedBy,
+                updatedOn: new Date()
+            },
+            { new: true }
+        );
+
+        if (!updatedBin) {
+           return{
+            isSuccess: false,
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: "Internal error. Try again"
+           }
+        }
+             return{
+              isSuccess: true,
+              statusCode: StatusCodes.OK,
+              message: "Bin Location Updated Successfully",
+              data: updatedBin
+             }
+    }
+} catch (error) {
+    return{
       isSuccess: false,
-      statusCode: StatusCodes.BAD_REQUEST,
-      message: error.message,
-    };
-  }
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message
+    }
+}
   };
   
 ////////////////////////////// GetBinLocationQuery //////////////////////////////////////////
@@ -226,35 +274,42 @@ export const GetBinLocationQuery = async (model) => {
 
 
 export const DeleteBinLocationQuery = async (model) => {
-  
   try {
-    const { BinLocID, AreaID } = model
-        if (AreaID !== 0) {
-            const entity = await BinLocation.findOne({BinLocID:BinLocID});
+    const { binLocID, areaID } = model;
 
-            if (!entity) {
-                return {
-                    isSuccess: false,
-                    statusCode: StatusCodes.NOT_FOUND,
-                    message: `BinLocID ${BinLocID} of Bin Location not found`,
-                };
-            }
+    if (areaID !== 0) {
+        const entity = await BinLocation.findOne({ BinLocID: binLocID });
 
-            // Remove the bin location
-            await BinLocation.findOneAndDelete({BinLocID:BinLocID});
+        if (!entity) {
+            return {
+                isSuccess: false,
+                statusCode: StatusCodes.NOT_FOUND,
+                message: `Bin Location not found`,
+            };
         }
+
+        // Remove the bin location
+        await BinLocation.findOneAndDelete({ BinLocID: binLocID });
 
         return {
             isSuccess: true,
             statusCode: StatusCodes.OK,
-            message: `BinLocID ${BinLocID} Deleted Successfully`,
-        };
-    } catch (error) {
-        return {
-            isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'Server Error',
+            message: `BinLocID ${binLocID} Deleted Successfully`,
         };
     }
+
+    return {
+        isSuccess: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: `Invalid areaID, deletion not allowed`,
+    };
+} catch (error) {
+    return {
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: error.message,
+    };
+}
+
 };
 

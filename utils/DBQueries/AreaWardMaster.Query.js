@@ -5,65 +5,93 @@ import { StatusCodes } from "http-status-codes";
 
 export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
-  
-    try {
-      if (modal.AreaID === 0) {
-        // Check if the record already exists
-        const existingRecord = await AreaWardMaster.findOne({
-          AreaName: modal.AreaName,
-          WardNumber: modal.WardNumber
-        });
-  
-        if (existingRecord) {
-         return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: `Area Name ${AreaName} and Ward Number ${WardNumber} combination already exists`,
-         }
-        }
-  
-        // Find the last record to set the new AreaID
-        const lastRecord = await AreaWardMaster.findOne().sort({ AreaID: -1 });
-        modal.AreaID = lastRecord ? lastRecord.AreaID + 1 : 1; 
-  
-        const newRecord = new AreaWardMaster(modal);
-        await newRecord.save();
-        return{
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
-            message: `Area ${newRecord.AreaName} and Ward ${newRecord.WardNumber} Successfully Added`,
-            data: newRecord,
-        }
-      } else {
-        // Update existing record
-        const entity = await AreaWardMaster.findOne({ AreaID: modal.AreaID });
-  
-        if (entity) {
-          Object.assign(entity, modal);
-          await entity.save();
-          return{
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: `Area ${entity.AreaName} and Ward ${entity.WardNumber} Successfully Updated`,
-            data: entity,
-          }
-        } else {
-         return{
-            isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message: 'Area Ward not found',
- 
-         }
-        }
+  try {
+    if (modal.areaID === 0) {
+      // Check if the record already exists
+      const existingRecord = await AreaWardMaster.findOne({
+        areaName: modal.areaName,
+        wardNumber: modal.wardNumber
+      });
+
+      if (existingRecord) {
+        return {
+          isSuccess: false,
+          statusCode: StatusCodes.CONFLICT,
+          message: `Area Name ${modal.areaName} and Ward Number ${modal.wardNumber} combination already exists`,
+        };
       }
-    } catch (error) {
-      return{
-        isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
+
+      // Find the last record to set the new areaID
+      const lastRecord = await AreaWardMaster.findOne().sort({ AreaID: -1 });
+      modal.areaID = lastRecord ? lastRecord.AreaID + 1 : 1;
+
+      const newRecord = new AreaWardMaster({
+        AreaID: modal.areaID,
+        AreaName: modal.areaName,
+        WardNumber: modal.wardNumber,
+        ZoneID: modal.zoneID,
+        CreatedBy: modal.createdBy,
+        UpdatedBy: modal.updatedBy,
+        zoneMaster: {
+          zoneID: modal.zoneMaster.zoneID,
+          zoneName: modal.zoneMaster.zoneName,
+          zoneAbbrevation: modal.zoneMaster.zoneAbbrevation,
+          createdBy: modal.zoneMaster.createdBy,
+          updatedBy: modal.zoneMaster.updatedBy,
+          srno: modal.zoneMaster.srno,
+          checked: modal.zoneMaster.checked
+        }
+      });
+
+      await newRecord.save();
+      return {
+        isSuccess: true,
+        statusCode: StatusCodes.CREATED,
+        message: `Area ${newRecord.areaName} and Ward ${newRecord.wardNumber} Successfully Added`,
+        data: newRecord,
+      };
+    } else {
+      // Update existing record
+      const entity = await AreaWardMaster.findOne({ areaID: modal.areaID });
+
+      if (entity) {
+        Object.assign(entity, {
+          areaName: modal.areaName,
+          wardNumber: modal.wardNumber,
+          zoneID: modal.zoneID,
+          updatedBy: modal.updatedBy,
+          zoneMaster: {
+            zoneID: modal.zoneMaster.zoneID,
+            zoneName: modal.zoneMaster.zoneName,
+            zoneAbbrevation: modal.zoneMaster.zoneAbbrevation,
+            updatedBy: modal.zoneMaster.updatedBy,
+            srno: modal.zoneMaster.srno,
+            checked: modal.zoneMaster.checked
+          }
+        });
+
+        await entity.save();
+        return {
+          isSuccess: true,
+          statusCode: StatusCodes.OK,
+          message: `Area ${entity.areaName} and Ward ${entity.wardNumber} Successfully Updated`,
+          data: entity,
+        };
+      } else {
+        return {
+          isSuccess: false,
+          statusCode: StatusCodes.NOT_FOUND,
+          message: "Area Ward not found",
+        };
       }
     }
-  
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    };
+  }
 }
 
 //////////////////////////////////////////////// GetAreaWardMasterQuery /////////////////////////////////////////////////////
@@ -148,7 +176,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
 
     try {
      
-      const area = await RouteAreaDetail.findOne({ AreaID: modal.AreaID }).exec();
+      const area = await RouteAreaDetail.findOne({ AreaID: modal.areaID }).exec();
       if (area) {
         return{
             isSuccess: false,
@@ -158,7 +186,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
       }
   
       // Check if AreaID is used in RouteAreaBinDetail
-      const rut = await RouteAreaBinDetail.findOne({ AreaID: modal.AreaID }).exec();
+      const rut = await RouteAreaBinDetail.findOne({ AreaID: modal.areaID }).exec();
       if (rut) {
         return{
             isSuccess: false,
@@ -168,7 +196,7 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
       }
   
       // Check if AreaID is used in BinLocation
-      const dward = await BinLocation.findOne({ AreaID: modal.AreaID }).exec();
+      const dward = await BinLocation.findOne({ AreaID: modal.areaID }).exec();
       if (dward) {
        return{
              isSuccess: false,
@@ -179,18 +207,24 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
       }
   
       // If no references found, proceed to delete the AreaWardMaster entry
-      if (modal.AreaID !== 0) {
-        const enity = await AreaWardMaster.findOne({AreaID:modal.AreaID}).exec();
-        if (!enity) {
+      if (modal.areaID !== 0) {
+        const enity = await AreaWardMaster.findOne({AreaID:modal.areaID}).exec();
+        if(enity){
+        return{
+          isSuccess: true,
+          statusCode: StatusCodes.OK,
+          message: "Deleted successfully",
+        }}
+        else {
         return{
             isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message: `AreaId ${enity.AreaID} not found`,
+            statusCode: StatusCodes.OK,
+            message: `AreaId not found`,
         }
         }
   
         // Remove the AreaWardMaster
-        await AreaWardMaster.findOneAndDelete({AreaID:modal.AreaID}).exec();
+        await AreaWardMaster.findOneAndDelete({AreaID:modal.areaID}).exec();
       }
   
      return{

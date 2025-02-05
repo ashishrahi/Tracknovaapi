@@ -5,9 +5,9 @@ import { StatusCodes } from "http-status-codes";
 
 export const AddUpdateRoutesQuery = async (model) => {
     try {
-        if (model.RouteID === 0) {
+        if (model.routeID === 0) {
           // Check if route already exists
-          const existingRoute = await Route.findOne({ RouteName: model.RouteName });
+          const existingRoute = await Route.findOne({ RouteName: model.routeName });
           if (existingRoute) {
             return {
               isSuccess: false,
@@ -18,17 +18,15 @@ export const AddUpdateRoutesQuery = async (model) => {
     
           // Create new route ID by incrementing the last RouteID
           const lastRoute = await Route.findOne({}).sort({ RouteID: -1 });
-          model.RouteID = (lastRoute?.RouteID || 0) + 1;
+          model.routeID = (lastRoute?.RouteID || 0) + 1;
     
           const newRoute = new Route({
-            RouteID: model.RouteID,
-            RouteName: model.RouteName || '',
-            RouteDate: model.RouteDate,
-            UpdatedBy: model.UpdatedBy,
-            CreatedOn: model.CreatedOn,
-            Description: model.Description,
-            CreatedBy: model.CreatedBy,
-            UpdatedOn: model.UpdatedOn,
+            RouteID: model.routeID,
+            RouteName: model.routeName || '',
+            RouteDate: model.routeDate,
+            UpdatedBy: model.updatedBy,
+            Description: model.description,
+            CreatedBy: model.createdBy,
           });
     
           await newRoute.save();
@@ -44,34 +42,30 @@ export const AddUpdateRoutesQuery = async (model) => {
               routeDetailID += 1;
               const routeAreaDetail = new RouteAreaDetail({
                 RouteDetailId: routeDetailID,
-                RouteID: model.RouteID,
-                CreatedBy: model.CreatedBy,
-                CreatedOn: model.CreatedOn,
-                UpdatedBy: model.UpdatedBy,
-                UpdatedOn: model.UpdatedOn,
-                AreaID: area.AreaID,
+                RouteID: model.routeID,
+                CreatedBy: model.createdBy,
+                UpdatedBy: model.updatedBy,
+                AreaID: area.areaID,
               });
     
               await routeAreaDetail.save();
     
-              if (model.RouteAreaBinDetail && model.RouteAreaBinDetail.length > 0) {
-                const routeBins = model.RouteAreaBinDetail.filter(bin => bin.AreaID === area.AreaID);
+              if (model.routeAreaDetail && model.routeAreaDetail.length > 0) {
+                const routeBins = model.RouteAreaBinDetail.filter(bin => bin.AreaID === area.areaID);
     
                 for (const bin of routeBins) {
                   routeBinDetailID += 1;
                   const routeAreaBinDetail = new RouteAreaBinDetail({
                     RouteDetailBinId: routeBinDetailID,
                     RouteDetailId: routeDetailID,
-                    RouteID: model.RouteID,
-                    Timing: bin.Timing,
-                    SerialNo: bin.SerialNo,
-                    BinSelect: bin.BinSelect,
-                    BinID: bin.BinID,
-                    AreaID: bin.AreaID,
-                    CreatedBy: model.CreatedBy,
-                    CreatedOn: model.CreatedOn,
-                    UpdatedBy: model.UpdatedBy,
-                    UpdatedOn: model.UpdatedOn,
+                    RouteID: model.routeID,
+                    Timing: bin.timing,
+                    SerialNo: bin.serialNo,
+                    BinSelect: bin.binSelect,
+                    BinID: bin.binID,
+                    AreaID: bin.areaID,
+                    CreatedBy: model.createdBy,
+                    UpdatedBy: model.updatedBy,
                   });
     
                   await routeAreaBinDetail.save();
@@ -88,7 +82,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           };
         } else {
           // Update existing route
-          const existingRoute = await Route.findOne({ RouteID: model.RouteID });
+          const existingRoute = await Route.findOne({ RouteID: model.routeID });
           if (!existingRoute) {
             return {
               isSuccess: false,
@@ -97,19 +91,17 @@ export const AddUpdateRoutesQuery = async (model) => {
             };
           }
     
-          existingRoute.RouteDate = model.RouteDate;
-          existingRoute.Description = model.Description;
-          existingRoute.RouteName = model.RouteName;
-          existingRoute.CreatedOn = model.CreatedOn;
-          existingRoute.UpdatedOn = model.UpdatedOn;
-          existingRoute.CreatedBy = model.CreatedBy;
-          existingRoute.UpdatedBy = model.UpdatedBy;
+          existingRoute.RouteDate = model.routeDate;
+          existingRoute.Description = model.description;
+          existingRoute.RouteName = model.routeName;
+          existingRoute.CreatedBy = model.createdBy;
+          existingRoute.UpdatedBy = model.updatedBy;
     
           await existingRoute.save();
     
           // Remove existing details before updating
-          await RouteAreaDetail.deleteMany({ RouteID: model.RouteID });
-          await RouteAreaBinDetail.deleteMany({ RouteID: model.RouteID });
+          await RouteAreaDetail.deleteMany({ RouteID: model.routeID });
+          await RouteAreaBinDetail.deleteMany({ RouteID: model.routeID });
     
           if (model.RouteAreaDetail && model.RouteAreaDetail.length > 0) {
             let routeDetailID = await RouteAreaDetail.findOne({}).sort({ RouteDetailId: -1 });
@@ -122,32 +114,28 @@ export const AddUpdateRoutesQuery = async (model) => {
               routeDetailID += 1;
               const routeAreaDetail = new RouteAreaDetail({
                 RouteDetailId: routeDetailID,
-                RouteID: model.RouteID,
-                CreatedBy: model.CreatedBy,
-                CreatedOn: model.CreatedOn,
+                RouteID: model.routeID,
+                CreatedBy: model.createdBy,
                 UpdatedBy: model.UpdatedBy,
-                UpdatedOn: model.UpdatedOn,
-                AreaID: area.AreaID,
+                AreaID: area.areaID,
               });
     
               await routeAreaDetail.save();
     
-              const routeBins = model.RouteAreaBinDetail.filter(bin => bin.AreaID === area.AreaID);
+              const routeBins = model.RouteAreaBinDetail.filter(bin => bin.AreaID === area.areaID);
               for (const bin of routeBins) {
                 routeBinDetailID += 1;
                 const routeAreaBinDetail = new RouteAreaBinDetail({
                   RouteDetailBinId: routeBinDetailID,
                   RouteDetailId: routeDetailID,
-                  RouteID: model.RouteID,
-                  Timing: bin.Timing,
-                  SerialNo: bin.SerialNo,
-                  BinSelect: bin.BinSelect,
-                  BinID: bin.BinID,
-                  AreaID: bin.AreaID,
-                  CreatedBy: model.CreatedBy,
-                  CreatedOn: model.CreatedOn,
-                  UpdatedBy: model.UpdatedBy,
-                  UpdatedOn: model.UpdatedOn,
+                  RouteID: model.routeID,
+                  Timing: bin.timing,
+                  SerialNo: bin.serialNo,
+                  BinSelect: bin.binSelect,
+                  BinID: bin.binID,
+                  AreaID: bin.areaID,
+                  CreatedBy: model.createdBy,
+                  UpdatedBy: model.updatedBy,
                 });
     
                 await routeAreaBinDetail.save();

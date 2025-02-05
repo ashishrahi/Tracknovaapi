@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const StateMasterSchema = new mongoose.Schema(
   {
-    StateId: { type: Number, required: true },  // Added required: true for mandatory fields
+    StateId: { type: Number},  // Added required: true for mandatory fields
     StateName: { type: String, required: true },
     StateCode: { type: String},
     CountryId: { type: Number, required: true },  // Changed to Number for consistency

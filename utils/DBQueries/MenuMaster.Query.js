@@ -8,7 +8,7 @@ import { Menu } from "../../modals/index.js";
 export const AddUpdateMenuMasterQuery = async (model) => {
     
     try {
-    if (model.MenuId < 0) {
+    if (model.menuId < 0) {
         return {
             isSuccess: false,
             statusCode: StatusCodes.NOT_FOUND,
@@ -16,7 +16,7 @@ export const AddUpdateMenuMasterQuery = async (model) => {
         };
     }
 
-    if (!model.MenuName || model.MenuName.trim() === '') {
+    if (!model.menuName || model.menuName.trim() === '') {
         return {
             isSuccess: false,
             statusCode: StatusCodes.NOT_FOUND,
@@ -25,29 +25,29 @@ export const AddUpdateMenuMasterQuery = async (model) => {
     }
 
     // Check if menu exists
-    const existingMenu = await Menu.findOne({ MenuId: model.MenuId });
+    const existingMenu = await Menu.findOne({ MenuId: model.menuId });
     if (existingMenu) {
         // Update the existing menu using $set operator
         const updatedMenu = await Menu.findOneAndUpdate(
-            { MenuId: model.MenuId },
+            { MenuId: model.menuId },
             {
                 $set: {
-                    MenuName: model.MenuName,
-                    ParentId: model.ParentId,
-                    PageUrl: model.PageUrl,
-                    Icon: model.Icon,
-                    DisplayNo: model.DisplayNo,
+                    MenuName: model.menuName,
+                    ParentId: model.parentId,
+                    PageUrl: model.pageUrl,
+                    Icon: model.icon,
+                    DisplayNo: model.displayNo,
                     childId: model.childId,
                     parentName: model.parentName,
-                    IsMenu: model.IsMenu ?? existingMenu.IsMenu, // If IsMenu is undefined or null, keep the existing value
-                    IsAdd: model.IsAdd,
-                    IsEdit: model.IsEdit,
-                    IsDel: model.IsDel,
-                    IsView: model.IsView,
-                    IsPrint: model.IsPrint,
-                    IsExport: model.IsExport,
-                    IsRelease: model.IsRelease,
-                    IsPost: model.IsPost,
+                    IsMenu: model.isMenu ?? existingMenu.IsMenu, // If IsMenu is undefined or null, keep the existing value
+                    IsAdd: model.isAdd,
+                    IsEdit: model.isEdit,
+                    IsDel: model.isDel,
+                    IsView: model.isView,
+                    IsPrint: model.isPrint,
+                    IsExport: model.isExport,
+                    IsRelease: model.isRelease,
+                    IsPost: model.isPost,
                 }
             },
             { new: true }
@@ -61,7 +61,7 @@ export const AddUpdateMenuMasterQuery = async (model) => {
         };
     } else {
         // Check if Menu Name already exists
-        const isExists = await Menu.findOne({ MenuName: model.MenuName });
+        const isExists = await Menu.findOne({ MenuName: model.menuName });
         if (isExists) {
             return {
                 isSuccess: false,
@@ -76,22 +76,22 @@ export const AddUpdateMenuMasterQuery = async (model) => {
 
         const newMenu = new Menu({
             MenuId: newMenuId,
-            MenuName: model.MenuName,
-            ParentId: model.ParentId,
-            PageUrl: model.PageUrl,
-            Icon: model.Icon,
-            DisplayNo: model.DisplayNo,
+            MenuName: model.menuName,
+            ParentId: model.parentId,
+            PageUrl: model.pageUrl,
+            Icon: model.icon,
+            DisplayNo: model.displayNo,
             childId: model.childId,
             parentName: model.parentName,
-            IsMenu: model.IsMenu,
-            IsAdd: model.IsAdd,
-            IsEdit: model.IsEdit,
-            IsDel: model.IsDel,
-            IsView: model.IsView,
-            IsPrint: model.IsPrint,
-            IsExport: model.IsExport,
-            IsRelease: model.IsRelease,
-            IsPost: model.IsPost,
+            IsMenu: model.isMenu,
+            IsAdd: model.isAdd,
+            IsEdit: model.isEdit,
+            IsDel: model.isDel,
+            IsView: model.isView,
+            IsPrint: model.isPrint,
+            IsExport: model.isExport,
+            IsRelease: model.isRelease,
+            IsPost: model.isPost,
         });
 
         await newMenu.save();
@@ -131,7 +131,7 @@ export const GetMenuMasterQuery = async (model) => {
    
        try {
         
-        if (model.MenuId === -1) {
+        if (model.menuId === -1) {
           const menuData = await Menu.aggregate([
             {
               $lookup: {
@@ -180,7 +180,7 @@ export const GetMenuMasterQuery = async (model) => {
           }
         } else {
           // Fetch data based on a specific MenuId
-          const menuData = await Menu.findOne({ MenuId: model.MenuId }).lean();
+          const menuData = await Menu.findOne({ MenuId: model.menuId }).lean();
     
           return{
             isSuccess: true,
@@ -258,23 +258,23 @@ export const GetChildMenuMasterQuery = async (model) => {
 export const DeleteMenuMasterQuery = async (model) => {
 
   try {
-    const menus = await Menu.find({ MenuId: model.MenuId }).exec();
+    const menus = await Menu.find({ MenuId: model.menuId }).exec();
 
     if (menus && menus.length > 0) {
       // Delete the found menus
-      await Menu.deleteMany({ MenuId: model.MenuId }).exec();
+      await Menu.deleteMany({ MenuId: model.menuId }).exec();
 
       return {
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: `Menu ${model.MenuId} deleted successfully`,
+        message: `Menu ${model.menuId} deleted successfully`,
       };
    
     } else {
       return{
         isSuccess: false,
         statusCode: StatusCodes.NOT_FOUND,
-        message: `Menu ${model.MenuId} not found`,
+        message: `Menu ${model.menuId} not found`,
       }
     }
   } catch (error) {

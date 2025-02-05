@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const ZoneMasterSchema = new mongoose.Schema(
   {
-    CreatedBy: { type: String, required: true, trim: true },
-    UpdatedBy: { type: String, required: true, trim: true },
-    ZoneAbbrevation: { type: String, required: true, trim: true },
-    ZoneID: { type: Number, required: true }, 
-    ZoneName: { type: String, required: true, trim: true },
+    CreatedBy: { type: String,  trim: true },
+    UpdatedBy: { type: String,  trim: true },
+    ZoneAbbrevation: { type: String,  trim: true },
+    ZoneID: { type: Number,  }, 
+    ZoneName: { type: String,  trim: true },
   },
   { timestamps: true, collection: "ZoneMaster" }
 );

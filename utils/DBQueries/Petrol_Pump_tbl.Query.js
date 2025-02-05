@@ -82,61 +82,62 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
 export const GetPetrolPumpVehicleQuery = async (model) => {
 
     try {
-      
-
-        // Mongoose query equivalent of the SQL query
-        const vehicles = await ItemMaster.aggregate([
+        // Define the query to get the required fields
+        const query = [
             {
-                $match: {
-                    ItemFlag: 'V',
-                    devid: { $ne: null }, // Filter for non-null 'devid'
-                },
+                $match: { 
+                    itemFlag: 'V', 
+                    devid: { $ne: null } 
+                }
             },
             {
                 $lookup: {
-                    from: 'FuelCorrection', // Replace with the actual collection name
-                    localField: 'itemmasterid',
-                    foreignField: 'itemmasterid',
-                    as: 'FuelCorrections',
-                },
+                    from: 'FuelCorrection',
+                    localField: 'ItemMasterId',
+                    foreignField: 'ItemMasterId',
+                    as: 'fuelCorrections'
+                }
             },
+            
             {
                 $addFields: {
                     LastFuelCorrDate: {
-                        $ifNull: [
-                            {
-                                $max: '$FuelCorrections.CorrectionDate',
-                            },
-                            new Date('1900-01-01'), // Default value
-                        ],
+                        $cond: {
+                            if: { $gt: [{ $size: '$fuelCorrections' }, 0] },
+                            then: { $arrayElemAt: ['$fuelCorrections.correctionDate', -1] },
+                            else: new Date('1900-01-01')
+                        }
                     },
-                    LatestNTTrackDate: new Date('1900-01-01'), // Default value
-                },
+                    LatestNTTrackDate: new Date('1900-01-01') // Placeholder as in the original query
+                }
             },
             {
                 $project: {
-                    ItemMasterId: 1,
-                    VehicleNo: 1,
-                    ItemName: 1,
-                    Devid: 1,
+                    itemmasterid: 1,
+                    vehicleNo: 1,
+                    itemName: 1,
+                    devid: 1,
                     LastFuelCorrDate: 1,
-                    LatestNTTrackDate: 1,
-                },
+                    LatestNTTrackDate: 1
+                }
             },
-            { $sort: { VehicleNo: 1 } }, // Sort by 'VehicleNo'
-        ]);
+            { $sort: { vehicleNo: 1 } }  // Sorting by vehicleNo
+        ];
 
-        return {
+        const data = await ItemMaster.aggregate(query);  // Use aggregation pipeline
+
+        return{
             isSuccess: true,
             statusCode: StatusCodes.OK,
             message: 'Vehicle data fetched successfully',
-            data: vehicles,
-        };
+            data: data,
+        }
+       
     } catch (error) {
        return{
          isSuccess: false,
          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-         message: error.message + ';' + (error.innerException? error.innerException : error.message),
+         message: error.message
        }
     }
 

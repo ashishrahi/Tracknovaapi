@@ -7,7 +7,7 @@ export const AddUpdateWardMasterQuery = async (modal) => {
 
     try {
         // validation of Wardname
-        if (!modal.WardName || modal.WardName.trim() === "") {
+        if (!modal.wardName || modal.wardName.trim() === "") {
             return{
                 isSuccess: false,
                 statusCode: StatusCodes.BAD_REQUEST,
@@ -15,21 +15,21 @@ export const AddUpdateWardMasterQuery = async (modal) => {
             }}
 
       // validation of ZoneID
-       if (!modal.ZoneID || modal.ZoneID === -1) {
+       if (!modal.zoneID || modal.zoneID === -1) {
         return{
             isSuccess: false,
             statusCode: StatusCodes.BAD_REQUEST,
             message: "Zone ID is required.",
         }}
         //FindWard By Id
-        let existingWard = await WardMaster.findOne({ WardID: modal.WardID });
+        let existingWard = await WardMaster.findOne({ WardID: modal.wardID });
         if (existingWard) {
-            existingWard.ZoneID = modal.ZoneID ?? existingWard.ZoneID;
-      existingWard.WardName = modal.WardName?.trim() ?? existingWard.WardName;
-      existingWard.WardCode = modal.WardCode?.trim() ?? existingWard.WardCode;
-      existingWard.IsActive = modal.IsActive ?? existingWard.IsActive;
-      existingWard.SortOrder = modal.SortOrder ?? existingWard.SortOrder;
-      existingWard.User_ID = modal.User_ID;
+            existingWard.ZoneID = modal.zoneID ?? existingWard.ZoneID;
+      existingWard.WardName = modal.wardName?.trim() ?? existingWard.WardName;
+      existingWard.WardCode = modal.wardCode?.trim() ?? existingWard.WardCode;
+      existingWard.IsActive = modal.isActive ?? existingWard.IsActive;
+      existingWard.SortOrder = modal.sortOrder ?? existingWard.SortOrder;
+      existingWard.User_ID = modal.user_ID;
       existingWard.ModifyDt = new Date();
 
       await existingWard.save();
@@ -40,9 +40,9 @@ export const AddUpdateWardMasterQuery = async (modal) => {
         data: existingWard,
       }}
       else{
-        if (!modal.WardID || modal.WardID === -1 || modal.WardID === 0) {
+        if (!modal.wardID || modal.wardID === -1 || modal.wardID === 0) {
              const maxWard = await WardMaster.findOne().sort({ WardID: -1 }).select("WardID");
-        modal.WardID = maxWard ? maxWard.WardID + 1 : 1;
+        modal.wardID = maxWard ? maxWard.WardID + 1 : 1;
         }
 
       }
@@ -126,13 +126,13 @@ export const GetWardMasterQuery = async (modal) => {
 export const DeletetWardMasterQuery = async (modal) => {
 
     try {
-        const ward = await WardMaster.find({ WardID: modal.WardID }).lean();
+        const ward = await WardMaster.find({ WardID: modal.wardID }).lean();
         if (ward && ward.length > 0) {
-            await WardMaster.deleteMany({ WardID: modal.WardID });
+            await WardMaster.deleteMany({ WardID: modal.wardID });
             return {
                 isSuccess: true,
                 statusCode: StatusCodes.OK,
-                message: `WardID ${modal.WardID} Successfully deleted`,
+                message: `WardID ${modal.wardID} Successfully deleted`,
             };
         } else {
             return{

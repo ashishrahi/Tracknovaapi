@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 export const AddUpdateStateQuery = async (model) => {
     try {
         // Validate StateName
-        if (!model.StateName || model.StateName.trim() === "") {
+        if (!model.stateName || model.stateName.trim() === "") {
           return {
             isSuccess: false,
             statusCode: StatusCodes.BAD_REQUEST,
@@ -15,7 +15,7 @@ export const AddUpdateStateQuery = async (model) => {
         }
     
         // Validate StateId
-        if (model.StateId == 0) {
+        if (model.stateId == 0) {
           return {
             isSuccess: false,
             statusCode: StatusCodes.BAD_REQUEST,
@@ -24,11 +24,11 @@ export const AddUpdateStateQuery = async (model) => {
         }
     
         // Check if state already exists by StateId
-        const existingState = await StateMaster.findOne({ StateId: model.StateId });
+        const existingState = await StateMaster.findOne({ StateId: model.stateId });
     
         if (existingState) {
           // Conflict checks for StateName, StateCode, and CountryId
-          if (model.StateName && existingState.StateName === model.StateName) {
+          if (model.stateName && existingState.StateName === model.stateName) {
             return {
               isSuccess: false,
               statusCode: StatusCodes.CONFLICT,
@@ -36,7 +36,7 @@ export const AddUpdateStateQuery = async (model) => {
             };
           }
     
-          if (model.StateCode && existingState.StateCode === model.StateCode) {
+          if (model.stateCode && existingState.StateCode === model.stateCode) {
             return {
               isSuccess: false,
               statusCode: StatusCodes.CONFLICT,
@@ -44,7 +44,7 @@ export const AddUpdateStateQuery = async (model) => {
             };
           }
     
-          if (model.CountryId && existingState.CountryId === model.CountryId) {
+          if (model.countryId && existingState.CountryId === model.countryId) {
             return {
               isSuccess: false,
               statusCode: StatusCodes.CONFLICT,
@@ -53,7 +53,6 @@ export const AddUpdateStateQuery = async (model) => {
           }
     
           // Update existing state
-          existingState.UpdatedOn = new Date();
           Object.assign(existingState, model);
           await existingState.save();
     
@@ -65,7 +64,7 @@ export const AddUpdateStateQuery = async (model) => {
           };
         } else {
           // Add new state
-          let tempStateId = model.StateId;
+          let tempStateId = model.stateId;
     
           // Auto-generate StateId if invalid or missing
           if (!tempStateId || tempStateId <= 0) {
@@ -75,11 +74,9 @@ export const AddUpdateStateQuery = async (model) => {
     
           const newState = new StateMaster({
             StateId: tempStateId,
-            StateName: model.StateName,
-            StateCode: model.StateCode,
-            CountryId: model.CountryId,
-            CreatedOn: model.CreatedOn || new Date(),
-            UpdatedOn: model.UpdatedOn || new Date(),
+            StateName: model.stateName,
+            StateCode: model.stateCode,
+            CountryId: model.countryId,
           });
     
           await newState.save();

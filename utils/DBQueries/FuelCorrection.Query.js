@@ -1,73 +1,84 @@
 import { StatusCodes } from "http-status-codes";
 import { FuelCorrection } from "../../modals/index.js"
 /////////////////////////////////////////// AddUpdateFuelCorrectionQuery //////////////////////////////////////////////////////////////////
-export const AddUpdateFuelCorrectionQuery = async (model) => {}
+export const AddUpdateFuelCorrectionQuery = async (model) => {
+  
+}
 
 /////////////////////////////////////////// GetVehListQuery //////////////////////////////////////////////////////////////////
 export const GetVehListQuery = async (model) => {
   
+  const filter = req.body;  // Assuming data is sent in the body
 
+  let resp = { ...CommonResponse };
   try {
-    let startDate, endDate;
+      let { condition1, date1, date2, list1, listInt1, flag } = filter;
+      
+      let d1, d2;
 
-    if (model.Condition1) {
-      startDate = new Date('2020-01-01');
-      endDate = new Date();
-    } else {
-      startDate = new Date(model.date1);
-      endDate = new Date(model.date2);
-    }
-
-    // Create vehicle data table equivalent
-    const vehicleArray = model.Flag
-      ? []
-      : model.list1.filter(Boolean).map((veh, index) => ({ RowID: index + 1, RowValue: veh.trim() }));
-
-    // Create vehicle type data table equivalent
-    const vehicleTypeArray = model.Flag
-      ? []
-      : model.listInt1.map((id, index) => ({ RowID: index + 1, RowValue: id }));
-
-    // Build the MongoDB aggregation query
-    const aggregationPipeline = [
-      {
-        $match: {
-          trackDate: { $gte: startDate, $lte: endDate },
-          ...(model.Flag ? {} : { vehicleNo: { $in: vehicleArray.map((v) => v.RowValue) } }),
-          ...(model.Flag ? {} : { vehicleType: { $in: vehicleTypeArray.map((v) => v.RowValue) } }),
-        },
-      },
-      {
-        $sort: { trackDate: -1 },
-      },
-    ];
-
-    // Execute the aggregation query
-    const vehicleData = await VehicleList.aggregate(aggregationPipeline);
-
-    // Post-process the data
-    const deviceIds = [...new Set(vehicleData.map((v) => v.Devid))];
-    const processedData = deviceIds.map((id) => {
-      const latestEntry = vehicleData.filter((v) => v.Devid === id).sort((a, b) => b.trackDate - a.trackDate)[0];
-
-      if (latestEntry) {
-        latestEntry.OpeningBal = latestEntry.OpeningBal || '0.0';
-        latestEntry.OpeningBalD = parseFloat(latestEntry.OpeningBal);
-        latestEntry.OpBalanceExist = latestEntry.OpeningBalD;
+      // Setting default date range
+      if (condition1) {
+          d1 = new Date("2020-01-01");
+          d2 = new Date();  // Current date
+      } else {
+          d1 = new Date(date1);
+          d2 = new Date(date2);
       }
 
-      return latestEntry;
-    }).filter(Boolean);
+      // Processing Vehicle Numbers (list1)
+      let vehicles = [];
+      if (!flag) {
+          vehicles = list1.filter(veh => veh.trim() !== "").map(veh => ({ vehId: veh.trim() }));
+      }
 
-    response.status = 'Success';
-    response.data = processedData;
-  } catch (error) {
+      // Processing Vehicle Types (listInt1)
+      let vehicleTypes = [];
+      if (!flag) {
+          vehicleTypes = listInt1.map(id => ({ typeId: id }));
+      }
+
+      // Fetch data from MongoDB
+      let vehiclesList = await Vehicle.aggregate([
+          {
+              $match: {
+                  trackDate: { $gte: d1, $lte: d2 },
+                  vehicleId: { $in: vehicles.map(v => v.vehId) },
+                  vehicleTypeId: { $in: vehicleTypes.map(vt => vt.typeId) },
+              },
+          },
+          {
+              $sort: { trackDate: -1 },
+          },
+          {
+              $group: {
+                  _id: "$devId",
+                  latestRecord: { $first: "$$ROOT" }
+              }
+          },
+          {
+              $replaceRoot: { newRoot: "$latestRecord" }
+          }
+      ]);
+
+      // Data processing
+      let processedData = vehiclesList.map(v => {
+          v.openingBal = v.openingBal || "0.0";
+          v.openingBalD = parseFloat(v.openingBal);
+          v.opBalanceExist = v.openingBalD;
+          return v;
+      });
+
     return{
-      status: false,
-     message: error.message,
+      isSuccess:structuredClone,
+      status: true,
+      data: processedData,
     }
-  }
 
-  return response;
+  } catch (err) {
+      return{
+        status: false,
+        message: err.message,
+      }
+  }
 }
 

@@ -6,8 +6,8 @@ import { StatusCodes } from "http-status-codes";
 
 export const AddUpdateZoneMasterQuery = async (modal) => {
     try {
-        if (modal.ZoneID === 0) {
-            const existingZone = await ZoneMaster.findOne({ ZoneName: modal.ZoneName });
+        if (modal.zoneID === 0) {
+            const existingZone = await ZoneMaster.findOne({ ZoneName: modal.zoneName });
             if (existingZone) {
                 return{
                     isSuccess: true,
@@ -16,8 +16,14 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
                 } }
 
                 const lastZone = await ZoneMaster.findOne().sort({ ZoneID: -1 }).limit(1);
-                modal.ZoneID = lastZone ? lastZone.ZoneID + 1 : 1; 
-                const newZoneMaster = new ZoneMaster(modal);
+                modal.zoneID = lastZone ? lastZone.ZoneID + 1 : 1; 
+                const newZoneMaster = new ZoneMaster({
+                    ZoneID: modal.zoneID,
+                    ZoneName: modal.zoneName,
+                    ZoneAbbreviation:modal.zoneAbbreviation,
+                    CreatedBy: modal.createdBy,
+                    UpdatedBy: modal.updatedBy,
+                });
                 await newZoneMaster.save();
                 return{
                     isSuccess: true,
@@ -134,7 +140,7 @@ export const DeleteZoneMasterQuery = async (modal) => {
           return {
             isSuccess: true,
             statusCode: StatusCodes.OK,
-            message: "Successfully deleted"
+            message: `ZoneID ${modal.ZoneID } Successfully deleted`
           };
         } else {
           return {

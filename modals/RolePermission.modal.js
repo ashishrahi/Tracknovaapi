@@ -2,8 +2,8 @@ import mongoose, { Schema, model } from "mongoose";
 
 const RolePermissionSchema = new Schema(
   {
-    RoleId: { type: String,required:true },
-    MenuId: { type: Number, required: true,},
+    RoleId: { type: String},
+    MenuId: { type: Number, },
     ParentId: { type: Number },
     IsAdd: { type: Boolean, default: false },
     IsDel: { type: Boolean, default: false },

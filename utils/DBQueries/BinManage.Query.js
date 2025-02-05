@@ -3,63 +3,64 @@ import { BinLocation,Route,RouteAreaBinDetail } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 
 
-////////////////////////////// AddUpdateBinLocationQuery //////////////////////////////////////////
+////////////////////////////// AddUpdateBinManageQuery //////////////////////////////////////////
 
 
 export const AddUpdateBinManageQuery = async (model) => {
   try {
     const results = []; 
 
-    for (const cmd of model.RouteAreaBinDetailCmd) {
-      const existingBinDetail = await RouteAreaBinDetail.findOne({
-        RouteDetailBinId: cmd.RouteDetailBinId,
-      });
+    // Loop over routeAreaBinDetailCmd for processing
+    for (const cmd of model.routeAreaBinDetailCmd) {
+      const { 
+        routeDetailBinId, 
+        routeDetailId, 
+        binID, 
+        routeID, 
+        areaID, 
+        serialNo, 
+        timing, 
+        createdBy, 
+        updatedBy 
+      } = cmd;
+
+      const existingBinDetail = await RouteAreaBinDetail.findOne({ RouteDetailBinId: routeDetailBinId });
 
       if (existingBinDetail) {
+        
         const updatedBinDetail = await RouteAreaBinDetail.findOneAndUpdate(
-          { RouteDetailBinId: cmd.RouteDetailBinId },
+          { RouteDetailBinId: routeDetailBinId },
           {
-            RouteDetailBinId: cmd.RouteDetailBinId,
-            RouteDetailId: cmd.RouteDetailId,
-            BinID: cmd.BinID,
-            RouteID: cmd.RouteID,
-            AreaID: cmd.AreaID,
-            SerialNo: cmd.SerialNo,
-            Timing: cmd.Timing,
-            CreatedBy: cmd.CreatedBy,
-            UpdatedBy: cmd.UpdatedBy,
-            CreatedOn: cmd.CreatedOn,
-            UpdatedOn: cmd.UpdatedOn,
+            RouteDetailBinId: routeDetailBinId,
+            RouteDetailId: routeDetailId,
+            BinID: binID,
+            RouteID: routeID,
+            AreaID: areaID,
+            SerialNo: serialNo,
+            Timing: timing,
+            CreatedBy: createdBy,
+            UpdatedBy: updatedBy,
           },
           { new: true }
         );
 
-
         results.push({
           action: 'updated',
-          message: `Successfully updated ${cmd.RouteDetailBinId}.`,
+          message: `Successfully updated ${routeDetailBinId}.`,
           data: updatedBinDetail,
         });
-        return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Successfully updated ${cmd.RouteDetailBinId}.`,
-          data: updatedBinDetail,
-        }
       } else {
-        // Create a new document
+        // If bin detail doesn't exist, create a new document
         const newBinDetail = new RouteAreaBinDetail({
-          RouteDetailBinId: cmd.RouteDetailBinId,
-          RouteDetailId: cmd.RouteDetailId,
-          BinID: cmd.BinID,
-          RouteID: cmd.RouteID,
-          AreaID: cmd.AreaID,
-          SerialNo: cmd.SerialNo,
-          Timing: cmd.Timing,
-          CreatedBy: cmd.CreatedBy,
-          UpdatedBy: cmd.UpdatedBy,
-          CreatedOn: cmd.CreatedOn,
-          UpdatedOn: cmd.UpdatedOn,
+          RouteDetailBinId: routeDetailBinId,
+          RouteDetailId: routeDetailId,
+          BinID: binID,
+          RouteID: routeID,
+          AreaID: areaID,
+          SerialNo: serialNo,
+          Timing: timing,
+          CreatedBy: createdBy,
+          UpdatedBy: updatedBy,
         });
 
         await newBinDetail.save();
@@ -71,7 +72,7 @@ export const AddUpdateBinManageQuery = async (model) => {
       }
     }
 
-    // Aggregate results
+    // Aggregate results after loop
     const addedCount = results.filter((item) => item.action === 'added').length;
     const updatedCount = results.filter((item) => item.action === 'updated').length;
 

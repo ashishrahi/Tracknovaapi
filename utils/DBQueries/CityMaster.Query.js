@@ -10,16 +10,15 @@ export const AddUpdateCityMasterQuery = async (model) => {
 
 
     // Validate CityName
-    if (!model.CityName || model.CityName.trim() === '') {
+    if (!model.cityName || model.cityName.trim() === '') {
       return {
         isSuccess: false,
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'City Name is required',
       };
     }
-
     // Validate CityId
-    if (!model.CityId || model.CityId == 0) {
+    if (!model.cityId || model.cityId == 0) {
       return {
         isSuccess: false,
         statusCode: StatusCodes.BAD_REQUEST, // 400 for invalid input
@@ -28,13 +27,13 @@ export const AddUpdateCityMasterQuery = async (model) => {
     }
 
     // Check if the city already exists
-    const existingCity = await CityMaster.findOne({ CityId: model.CityId });
+    const existingCity = await CityMaster.findOne({ CityId: model.cityId });
 
     if (existingCity) {
       // Update the existing city
-      existingCity.CityName = model.CityName || existingCity.CityName;
-      existingCity.StateId = model.StateId || existingCity.StateId;
-      existingCity.UpdatedBy = model.UpdatedBy;
+      existingCity.CityName = model.cityName || existingCity.CityName;
+      existingCity.StateId = model.stateId || existingCity.StateId;
+      existingCity.UpdatedBy = model.updatedBy;
 
       await existingCity.save();
 
@@ -45,7 +44,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
         data: existingCity,
       };
     } else {
-      let tempID = model.CityId;
+      let tempID = model.cityId;
       if (tempID === -1 || tempID === null || tempID === 0) {
         const maxIdCity = await CityMaster.findOne().sort({ CityId: -1 });
         tempID = maxIdCity ? maxIdCity.CityId + 1 : 1;
@@ -54,12 +53,10 @@ export const AddUpdateCityMasterQuery = async (model) => {
       // Create a new city document
       const newCity = new CityMaster({
         CityId: tempID,
-        CityName: model.CityName,
-        StateId: model.StateId,
-        CreatedBy: model.CreatedBy,
-        UpdatedBy: model.UpdatedBy,
-        CreatedOn: model.CreatedOn || new Date(),
-        UpdatedOn: model.UpdatedOn || new Date(),
+        CityName: model.cityName,
+        StateId: model.stateId,
+        CreatedBy: model.createdBy,
+        UpdatedBy: model.updatedBy,
       });
 
       await newCity.save();
@@ -96,12 +93,12 @@ export const AddUpdateCityMasterQuery = async (model) => {
           try {
             const filter = {};
         
-            if (model.CityId && model.CityId !== -1) {
-              filter.CityId = model.CityId;
+            if (model.cityId && model.cityId !== -1) {
+              filter.CityId = model.cityId;
             }
         
-            if (model.StateId && model.StateId !== -1) {
-              filter.StateId = model.StateId;
+            if (model.stateId && model.stateId !== -1) {
+              filter.StateId = model.stateId;
             }
         
             const cities = await CityMaster.find(filter).lean();
@@ -121,7 +118,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
             return{
                 isSuccess:true,
                 statusCode: StatusCodes.OK,
-                message: `Details of CityId ${model.CityId} and StateId ${model.StateId} retrieved successfully`,
+                message: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
                 data: enrichedCities,
   
             }
@@ -141,16 +138,16 @@ export const DeleteCityMasterQuery = async (model) => {
 
 try {
     // Find districts by CityId
-    const districts = await CityMaster.find({ CityId: model.CityId }).lean();
+    const districts = await CityMaster.find({ CityId: model.cityId }).lean();
 
     if (districts.length > 0) {
         // Delete districts
-        await CityMaster.deleteMany({ CityId: model.CityId });
+        await CityMaster.deleteMany({ CityId: model.cityId });
 
       return{
           isSuccess: true,
           statusCode: StatusCodes.OK,
-          message: `Cities of CityId ${model.CityId} successfully deleted`,
+          message: `Cities of CityId ${model.cityId} successfully deleted`,
         }
     } else {
         

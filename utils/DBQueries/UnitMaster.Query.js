@@ -4,82 +4,86 @@ import { StatusCodes } from "http-status-codes";
 /////////////////////////////////////////// AddUpdateTaxMasterQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateUnitMasterQuery = async (modal) => {
-    try {
-        // Validate the UnitName
-        if (!modal.UnitName || modal.UnitName.trim() === "") {
-            return {
-                isSuccess: false,
-                statusCode: StatusCodes.BAD_REQUEST,
-                message: "Unit Name is required"
-            };
-        }
-    
-        // Check if the unit exists based on UnitId
-        const existingUnit = await UnitMaster.findOne({ UnitId: modal.UnitId });
-        if (existingUnit) {
-            // Update existing unit with new data
-            if (modal.UnitName) existingUnit.UnitName = modal.UnitName;
-            if (modal.UnitShortname) existingUnit.UnitShortname = modal.UnitShortname;
-            await existingUnit.save();
-    
-            return {
-                isSuccess: true,
-                statusCode: StatusCodes.OK,
-                message: "Unit Master data updated successfully",
-                data: existingUnit
-            };
-        } else {
-            // Handle the case where the unit doesn't exist and a new unit is being added
-            let tempUnitId = 0;
-    
-            // Generate new UnitId if necessary
-            if (!modal.UnitId || modal.UnitId === -1 || modal.UnitId === 0) {
-                const unitIds = await UnitMaster.find().select('UnitId');
-                if (unitIds.length > 0) {
-                    const maxUnitId = Math.max(...unitIds.map(unit => unit.UnitId));
-                    tempUnitId = maxUnitId + 1;
-                } else {
-                    tempUnitId = 1;
-                }
-                modal.UnitId = tempUnitId;
-            }
-    
-            // Check if the UnitName already exists
-            const existingUnitByName = await UnitMaster.findOne({ UnitName: modal.UnitName });
-            if (existingUnitByName) {
-                return {
-                    isSuccess: false,
-                    statusCode: StatusCodes.CONFLICT,
-                    message: "Unit Name already exists"
-                };
-            }
-    
-            // Create and save the new unit
-            const newUnit = new UnitMaster(modal);
-            await newUnit.save();
-    
-            return {
-                isSuccess: true,
-                statusCode: StatusCodes.CREATED,
-                message: `Unit Master data added successfully`,
-                data: newUnit
-            };
-        }
-    } catch (error) {
+  try {
+    // Validate required fields
+    if (!modal.unitName || modal.unitName.trim() === "") {
         return {
             isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in AddUpdateUnitMasterQuery: ${error.message}`
+            statusCode: StatusCodes.BAD_REQUEST,
+            message: "Unit Name is required"
         };
     }
-    
+
+    // Check if the unit exists based on UnitId
+    const existingUnit = await UnitMaster.findOne({ UnitId: modal.unitId });
+
+    if (existingUnit) {
+        // Update existing unit
+        existingUnit.UnitName = modal.unitName || existingUnit.UnitName;
+        existingUnit.UnitShortname = modal.unitShortname || existingUnit.UnitShortname;
+        existingUnit.UpdatedBy = modal.updatedBy || existingUnit.UpdatedBy;
+
+        await existingUnit.save();
+
+        return {
+            isSuccess: true,
+            statusCode: StatusCodes.OK,
+            message: "Unit Master data updated successfully",
+            data: existingUnit
+        };
+    } 
+
+    // Assign a new UnitId if necessary
+    let newUnitId = modal.unitId;
+
+    if (!newUnitId || newUnitId <= 0) {
+        const unitIds = await UnitMaster.find().select("UnitId").lean();
+        newUnitId = unitIds.length > 0 ? Math.max(...unitIds.map(unit => unit.UnitId)) + 1 : 1;
+    }
+
+    // Check if the UnitName already exists
+    const existingUnitByName = await UnitMaster.findOne({ UnitName: modal.unitName });
+    if (existingUnitByName) {
+        return {
+            isSuccess: false,
+            statusCode: StatusCodes.CONFLICT,
+            message: "Unit Name already exists"
+        };
+    }
+
+    // Create and save the new unit
+    const newUnit = new UnitMaster({
+        UnitId: newUnitId,
+        UnitName: modal.unitName,
+        UnitShortname: modal.unitShortname,
+        CreatedBy: modal.createdBy,
+        UpdatedBy: modal.updatedBy
+    });
+
+    await newUnit.save();
+
+    return {
+        isSuccess: true,
+        statusCode: StatusCodes.CREATED,
+        message: "Unit Master data added successfully",
+        data: newUnit
+    };
+
+} catch (error) {
+    console.error(`Error in AddUpdateUnitMasterQuery:`, error);
+    return {
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: `Error in AddUpdateUnitMasterQuery: ${error.message}`
+    };
+}
 };
 
 /////////////////////////////////////////// AddUpdateTaxMasterQuery //////////////////////////////////////////////////////////////////
 
 export const GetUnitMasterQuery = async (modal) => {
   try {
-    if (modal.UnitId == -1) {
+    if (modal.unitId == -1) {
       const data = await UnitMaster.find();
       return {
         isSuccess: true,
@@ -88,11 +92,11 @@ export const GetUnitMasterQuery = async (modal) => {
         data: data,
       };
     } else {
-      const x = await UnitMaster.findOne({ UnitId: modal.UnitId });
+      const x = await UnitMaster.findOne({ UnitId: modal.unitId });
       return {
         isSuccess: true,
         statusCode: StatusCodes.OK,
-        message: `Unit Master data with id ${modal.UnitId} fetched successfully`,
+        message: `Unit Master data with id ${modal.unitId} fetched successfully`,
         data: x,
       };
     }
