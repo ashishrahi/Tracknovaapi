@@ -3,9 +3,16 @@ import jwt from "jsonwebtoken";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import AspNetUsers from "../modals/AspNetUsers.model.js";
 
+const excludedRoutes = ["/api/Auth/login", "/api/Auth/Refresh"];
+
 async function verifyAccessToken(req, res, next){
     try {
-        if (!req.headers["authorization"]) throw (new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
+        // skipping for login route
+        if (excludedRoutes.includes(req.path)) {
+            return next(); 
+          }
+
+        if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
     
         const token = req.headers["authorization"].split(" ")[1];
         const payloadData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -21,28 +28,18 @@ async function verifyAccessToken(req, res, next){
         if (err.name === "JsonWebTokenError") {
             // JsonWebTokenError this errors contains actual error msg, we should avoid to provide actual error
             return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
-        } else {
+        } else if(err.name === "TokenExpiredError"){
+            return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Session expired, please login again"))
+        }else {
             return next(err) 
         }
     }
 }
 
+
+
+
 export default verifyAccessToken
 
 
 
-
-// (err, payload) => {
-//     if (err) {
-//       if (err.name === "JsonWebTokenError") {
-//         // JsonWebTokenError this errors contains actual error msg, we should avoid to provide actual error
-//         return res.status(401).json({ msg: "Unauthorised" });
-//       } else {
-//         return res.status(401).json({ msg: err.message });
-//       }
-//     }
-
-//     req.payload = payload;
-//     // console.log(isReal);
-//     next();
-//   }

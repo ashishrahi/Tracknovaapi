@@ -23,6 +23,8 @@ import {
   DeleteRoleMasterQuery,
   
 } from "../utils/DBQueries/Auth.Query.js";
+import jwt from "jsonwebtoken";
+import AspNetUsers from "../modals/AspNetUsers.model.js";
 // import { RoleMaster } from "../modals/RoleMaster.modal.js";
 
 
@@ -63,11 +65,53 @@ export async function login(req, res) {
     };
     return res.status(successResponse.statusCode).cookie("refreshToken", response.refreshToken, options).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-     error.message
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    const err = new Error(error.message);
+    err.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(err);
+  }
+}
+
+//---------------Refresh-------->
+export async function Refresh(req, res, next){
+  try {
+    const oldRefreshToken = req.cookies.refreshToken;
+    if (!oldRefreshToken) throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh token required");
+  
+    // const storedToken = await RefreshToken.findOne({ token: oldRefreshToken });
+    // if (!storedToken) return res.status(403).json({ message: "Invalid refresh token" });
+  
+    const tokenData = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await AspNetUsers.findOne({Id: tokenData.Id}).select("-PasswordHash");
+
+    if (!user) {
+      throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "User not found");
+    }
+
+    const refreshToken = user.generateRefreshToken();
+    const accessToken = user.generateAccessToken();
+
+
+    const successResponse = new ApiSuccessResponse(
+      true,
+      StatusCodes.OK,
+      "Token refreshed successfully", 
+      { accessToken: accessToken}
+      );
+      const options = {
+        httpOnly: true,
+        secure: true,
+      };
+      return res.status(successResponse.statusCode).cookie("refreshToken", refreshToken, options).json(successResponse);
+  } catch (err) {
+    if (err.name === "JsonWebTokenError") {
+      // JsonWebTokenError this errors contains actual error msg, we should avoid to provide actual error
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
+  } else if(err.name === "TokenExpiredError"){
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh Token Expired, please login again"))
+  } else {
+      return next(err) 
+  }
   }
 }
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////

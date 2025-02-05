@@ -6,6 +6,7 @@ import connectMongoDB from "./db/connectMongoDB.js";
 import compression from "compression";
 import ApiErrorResponse from "./utils/apiResponse/ApiErrorResponse.js";
 import { StatusCodes } from "http-status-codes";
+import verifyAccessToken from "./middlewares/auth.middleware.js";
 
 
 dotenv.config();
@@ -32,9 +33,13 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
+import cookieParser from "cookie-parser";
+app.use(cookieParser()); // access to req.cookies
 
-app.use(compression())
+app.use(compression());
 
+// all routes starts from here
+app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
 
@@ -48,7 +53,6 @@ app.use((req, res, next)=>{
 
 
 // Global error handeling
-// here error get access we passed inside next() fn
 app.use((err, req, res, next) => {
     const statusCode = err.status || err.statusCode || 500;  // Default to 500 if undefined
     return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message || "Internal Server Error"));

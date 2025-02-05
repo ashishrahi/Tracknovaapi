@@ -56,20 +56,13 @@ import verifyAccessToken from "../middlewares/auth.middleware.js";
 
 
 
-
-
-
-
-
-
-
 // AreaWardMaster
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
 
 
 //Dashboard
 
-router.use("/NTRead", verifyAccessToken, NTReadRoutes);
+router.use("/NTRead",  NTReadRoutes);
 router.use("/Dashboard", DashboardRoutes);
 router.use("/Comm", CommRoutes);
 router.use("/ItemCategory", ItemCategoryRoutes);
@@ -185,24 +178,6 @@ router.use("/vVehicletrackHis", vVehicletrackHisRoutes);
 
 // ZoneMaster
 router.use("/ZoneMaster", ZoneMasterRoutes);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export default router;
