@@ -49,7 +49,7 @@ export async function Register(req, res, next){
 
 /////////////////////////////////// Login /////////////////////////////////////////////////
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   try {
     const modal = req.body;
     const response = await loginQuery(modal);
