@@ -1,9 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {ApiErrorResponse,ApiSuccessResponse} from "../utils/apiResponse/index.js";
-import connectDB from "../db/connectDBSql.js";
 import { getDashboardQuery,getVehicleQuery,BinLocationQuery } from "../utils/DBQueries/index.js";
-import { client, connectDBMongo } from "../db/connectDBMongo.js";
-import { BinLocation } from "../modals/BinLocation.modal.js";
 
 
 //-------------- getDashboard ------>

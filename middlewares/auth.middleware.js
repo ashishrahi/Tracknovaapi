@@ -10,7 +10,7 @@ async function verifyAccessToken(req, res, next){
         // skipping for login route
         if (excludedRoutes.includes(req.path)) {
             return next(); 
-          }
+        }
 
         if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
     

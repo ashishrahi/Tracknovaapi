@@ -1,15 +1,5 @@
-// import {
-//   getVehicleNotMovedQuery,
-//   probWireTampQuery,
-// } from "../utils/DBQueries/index.js";
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-} from "../utils/apiResponse/index.js";
-import connectDB from "../db/connectDBSql.js";
-import sql from "mssql";
-// import encryptData from "../utils/crypto/crypto.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 
 
 import {
