@@ -136,9 +136,21 @@ import {
   AddUpdateHandheldMaster,
   GetHandheldMaster,
   DeleteHandheldMaster,
-} from "./HandheldMaster.controller.js";
+} from "./HandheldMaster.controller.js";       
 
-// HandheldMaster
+
+
+// HelpCreation
+import {
+  AddHelpCreation,
+  GetHelpCreation,
+} from "./HelpCreation.controller.js"; 
+
+
+
+
+
+// CityMaster
 import {
   AddUpdateCityMaster,
   GetCityMaster,
@@ -619,5 +631,12 @@ export const vVehicleTrackForOverSpeedController ={
   
 export const vVehicletrackHisController ={
   GetvVehicletrackHis
+}
+
+/////////////////////////////////////////////////  HelpCreationController //////////////////////////////////////////////////////////////////////////////////////////////////
+  
+export const HelpCreationController ={
+  AddHelpCreation:AddHelpCreation,
+  GetHelpCreation:GetHelpCreation,
 }
 
