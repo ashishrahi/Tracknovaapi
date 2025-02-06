@@ -52,7 +52,7 @@ export async function Register(req, res, next){
 export async function login(req, res, next) {
   try {
     const modal = req.body;
-    const response = await loginQuery(modal);
+    const response = await loginQuery(modal, next);
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,

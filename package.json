@@ -7,12 +7,12 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "esbuild app.js --bundle --platform=node --outfile=dist/app.js --external:mock-aws-s3 --external:aws-sdk --external:nock --loader:.html=text"
+    "build": "esbuild app.js --bundle --platform=node --outfile=dist/app.js"
   },
   "author": "MSSPL_Saurabh_Kushwaha",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

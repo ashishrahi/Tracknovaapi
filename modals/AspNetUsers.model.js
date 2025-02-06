@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
 
