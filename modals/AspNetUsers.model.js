@@ -52,6 +52,8 @@ const AspNetUsersSchema = new mongoose.Schema( {
       // required: true,
       default: null
     },
+
+    
     PhoneNumber: {
       type: String,
       default: null,
