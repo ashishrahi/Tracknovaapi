@@ -11,7 +11,6 @@ const RouteAreaBinDetailSchema = new mongoose.Schema(
     RouteID: { type: mongoose.Schema.Types.Int32, required: true },
     SerialNo: { type: mongoose.Schema.Types.Int32, required: true },
     Timing: { type: Date, required: true },
-    CreatedBy: { type: String, trim: true },
     UpdatedBy: { type: String, trim: true },
     
   },

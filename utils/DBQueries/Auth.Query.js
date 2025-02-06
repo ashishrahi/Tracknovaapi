@@ -3,11 +3,12 @@ import {
   RolePermission,
   Menu,
   AspNetRoles,
-  EmpMaster
+  EmpMaster,
+  AspNetUsers
 } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
-
+import jwt from "jsonwebtoken"
 
 
 //-----------------loginQuery-------->
@@ -51,7 +52,7 @@ export const loginQuery = async (model, next) => {
         expiresIn: "5y", // Token expires in 5 years
     });
     let response;
-    return response = {
+     response = {
         status: "Success",
         message: "Login Successful",
         token:  token,
@@ -67,6 +68,8 @@ export const loginQuery = async (model, next) => {
             userPermissions: userPermissions,
         },
     };
+
+    return response;
 } catch (error) {
   console.log("Login Error: ", error);
   return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));

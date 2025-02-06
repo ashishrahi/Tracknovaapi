@@ -61,14 +61,16 @@ export async function login(req, res, next) {
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      response.message,
-      { accessToken: response.accessToken}
+      "default",
+      response
     );
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-    return res.status(successResponse.statusCode).cookie("refreshToken", response.refreshToken, options).json(successResponse);
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    // };
+    return res.status(successResponse.statusCode)
+    // .cookie("refreshToken", response.refreshToken, options)
+    .json(successResponse);
   } catch (error) {
     const err = new Error(error.message);
     err.status = err.statusCode || StatusCodes.BAD_REQUEST;

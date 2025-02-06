@@ -32,6 +32,7 @@ app.use((req, res, next) => {
     }
     next();
 });
+app.use(cors());
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
 app.use(cookieParser()); // access to req.cookies
