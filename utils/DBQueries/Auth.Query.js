@@ -9,9 +9,103 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import mongoose from "mongoose";
 import cryto from 'crypto'
-///////////////////////////////////////////////// loginQuery //////////////////////////////////////////////////
 
-export const loginQuery = async (modal) => {};
+
+
+//-----------------loginQuery-------->
+export const loginQuery = async (model) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find user by username
+    const user = await AspNetUsers.findOne({ UserName: username });
+    if (!user) {
+        return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
+    }
+
+    // Check password
+    const isPasswordValid = await user.isValidPassword(password);
+    if (!isPasswordValid) {
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
+    }
+
+    // Fetch user roles
+    const roles = await Role.find({ _id: { $in: user.roles } });
+    const rolesString = roles.map(role => role.name).join(",");
+
+    // Fetch user permissions
+    const userPermissions = await getUserPermissions(user._id, rolesString);
+    if (!userPermissions.success) {
+        return res.status(500).json({ status: "Failed", message: "Failed to fetch user permissions" });
+    }
+
+    // Generate JWT Token
+    const authClaims = {
+        id: user._id,
+        username: user.username,
+        roles: rolesString,
+    };
+
+    const token = jwt.sign(authClaims, process.env.JWT_SECRET, {
+        expiresIn: "5y", // Token expires in 5 years
+    });
+
+    return res.status(200).json({
+        status: "Success",
+        message: "Login Successful",
+        data: {
+            token,
+            expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
+            userDetails: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                roles: rolesString,
+            },
+            userPermissions: userPermissions.data,
+        },
+    });
+} catch (error) {
+    console.error("Login Error: ", error);
+    return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
+}
+
+
+  //-----------------OLD CODE
+//   try {
+//     const { username, password } = model;
+//     if( !username || !password || !(username && password) ){
+//       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username & password")
+//     }
+//     // Find user in MongoDB
+//     const user = await AspNetUsers.findOne({ UserName: username });
+
+//     if (!user) {
+//         throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+//     }
+
+//     // Compare password with hashed password in DB
+//     const isMatch = await user.isValidPassword(password);
+//     if (!isMatch) {
+//       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+//     }
+
+//     const accessToken = await user.generateAccessToken();
+//     const refreshToken = await user.generateRefreshToken();
+
+//     return {
+//         status: "Success",
+//         message: "Login successful",
+//         accessToken: accessToken,
+//         refreshToken: refreshToken
+//     };
+// } catch (error) {
+//     throw error;
+// }
+
+}
+
 
 //---------------RegisterQuery---------->
 
