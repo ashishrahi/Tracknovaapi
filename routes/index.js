@@ -51,6 +51,7 @@ import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.routes.
 import vVehicletrackHisRoutes from './vVehicletrackHis.routes.js'
 
 import ZoneMasterRoutes from './ZoneMaster.route.js'
+import HelpCreationRoutes from './HelpCreation.routes'
 
 
 
@@ -119,6 +120,9 @@ router.use("/GeoFencing", GeoFencingRoutes);
 
 //HandheldMaster
 router.use("/HandheldMaster", HandheldMasterRoutes);
+
+//
+router.use("/HelpCreation", HelpCreationRoutes);
 
 //CityMaster
 router.use("/DistrictMaster", CityMasterRoutes);

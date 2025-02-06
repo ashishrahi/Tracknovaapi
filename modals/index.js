@@ -52,6 +52,7 @@ import { DeviceType } from "./DeviceType.modal.js";
 // import {FuelType} from "./FuelType.modal.js";
 // import {Geofencing} from './GeoFencing.modal.js'
 import {HandheldMaster} from "./HandheldMaster.modal.js"
+import {HelpCreate} from "./HelpCreation.modal.js"
 import {CityMaster} from "./CityMaster.modal.js"
 import {FuelCorrection} from "./FuelCorrection.modal.js"
 import {Petrol_Pump_tbl} from './Petrol_Pump_tbl.modal.js'
@@ -87,6 +88,7 @@ export {
     // FuelType,
     // Geofencing,
     HandheldMaster,
+    HelpCreate,
     CityMaster,
     FuelCorrection,
     Petrol_Pump_tbl,

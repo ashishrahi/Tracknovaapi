@@ -1,10 +1,8 @@
 import { BinLocation,Route,RouteAreaBinDetail } from "../../modals/index.js";
-
 import { StatusCodes } from "http-status-codes";
 
 
-////////////////////////////// AddUpdateBinManageQuery //////////////////////////////////////////
-
+////////////////////////////// AddUpdateBinManageQuery ////////////////////////////////////
 
 export const AddUpdateBinManageQuery = async (model) => {
   try {
@@ -66,7 +64,7 @@ export const AddUpdateBinManageQuery = async (model) => {
         await newBinDetail.save();
         results.push({
           action: 'added',
-          message: `"${newBinDetail.RouteDetailBinId}" has been successfully added.`,
+          message: `${newBinDetail.RouteDetailBinId} has been successfully added.`,
           data: newBinDetail,
         });
       }
@@ -92,7 +90,6 @@ export const AddUpdateBinManageQuery = async (model) => {
   };
 
 ////////////////////////////// GetBinManageQuery //////////////////////////////////////////
-
 
 export const GetBinManageQuery = async (model) => {
 
@@ -177,5 +174,6 @@ export const GetBinManageQuery = async (model) => {
     message: error.message,
    }
   }
+
 };
 
