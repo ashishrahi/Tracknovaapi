@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const RouteSchema = new mongoose.Schema(
   {
-    CreatedBy: { type: String, required: true, trim: true },
     Description: { type: String, trim: true },
     RouteDate: { type: Date, },
     RouteID: { type: Number, required: true, unique: true },
