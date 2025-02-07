@@ -129,3 +129,14 @@ let game = arr.map((perm) => (perm.UserId = 5));
 
 console.log(game);
 console.log("old", arr)
+
+
+// Convert first letter of each key to lowercase for every object in the array
+const response = data.map((obj) => {
+  let newObj = {};
+  Object.keys(obj).forEach((key) => {
+    let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+    newObj[newKey] = obj[key];
+  });
+  return newObj;
+});
