@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import { GetDeviceTypeQuery } from "../utils/DBQueries/DeviceType.Query.js";
 ///////////////////////////////////////////////// GetDeviceType //////////////////////////////////////////////////
@@ -9,16 +10,15 @@ import { GetDeviceTypeQuery } from "../utils/DBQueries/DeviceType.Query.js";
 export async function GetDeviceType(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await GetDeviceTypeQuery(
+    const { data, rowCount, message } = await GetDeviceTypeQuery(
       model
     );
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      true,
       message,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
