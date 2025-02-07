@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
     //  Login
@@ -58,19 +59,18 @@ export async function login(req, res, next) {
   try {
     const modal = req.body;
     const response = await loginQuery(modal, next);
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "default",
+    const successResponse = new CommonResponse(
+      1,
+     "Login Successful",
       response
     );
     // const options = {
     //   httpOnly: true,
     //   secure: true,
     // };
-    return res.status(successResponse.statusCode)
+    return res.status(StatusCodes.OK)
     // .cookie("refreshToken", response.refreshToken, options)
-    .json(response);
+    .json(successResponse);
   } catch (error) {
     const err = new Error(error.message);
     err.status = err.statusCode || StatusCodes.BAD_REQUEST;

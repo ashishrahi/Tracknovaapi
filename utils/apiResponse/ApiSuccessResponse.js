@@ -14,11 +14,11 @@ class ApiSuccessResponse{
 //------Till Here
 class ReturnData {
     constructor(isSuccess, internalSuccess, mesg = null, insertedId = null, data = null) {
-        this.IsSuccess = isSuccess;
-        this.InternalSuccess = internalSuccess;
-        this.Mesg = mesg;
-        this.InsertedId = insertedId;
-        this.Data = data;
+        this.isSuccess = isSuccess;
+        this.internalSuccess = internalSuccess;
+        this.mesg = mesg;
+        this.insertedId = insertedId;
+        this.data = data;
     }
 }
 
@@ -31,16 +31,16 @@ class ProReturnData {
 }
 
 class CommonResponse {
-    constructor(status, message, data, where, rowCount, orderby, pageNo, pageSize, error = new ExceptionHandler()) {
-        this.Status = status;
-        this.Message = message;
-        this.Data = data;
-        this.Where = where;
-        this.RowCount = rowCount;
-        this.Orderby = orderby;
-        this.PageNo = pageNo;
-        this.PageSize = pageSize;
-        this.Error = error;
+    constructor(status, message, data,  rowCount, orderby, pageNo, pageSize, error = new ExceptionHandler()) {
+        this.status = status;
+        this.message = message;
+        this.data = data || null;
+        this.where = null;
+        this.rowCount = rowCount || null;
+        this.orderby = orderby || null;
+        this.pageNo = pageNo || null;
+        this.pageSize = pageSize || null;
+        this.error = error || null;
     }
 }
 
