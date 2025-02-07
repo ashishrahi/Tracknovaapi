@@ -87,18 +87,19 @@ export const GetBrandQuery = async (model) => {
     const { brandId, brandname } = model;
     
     const brandQuery = {};
-    if (brandId && brandId !== '0') {
+    if ( brandId !== -1) {
         brandQuery.brandId = brandId; 
     }
+
     if (brandname) {
         brandQuery.brandname = { $regex: brandname, $options: 'i' }; 
     }
     
+
     try {
         // Fetch brands from the database based on the query
         const brands = await BrandMaster.find(brandQuery);
         
-
 
     return {
         status:1,
