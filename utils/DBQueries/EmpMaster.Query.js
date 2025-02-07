@@ -1,6 +1,6 @@
 import { AspNetUsers, EmpMaster,  UserPermission } from '../../modals/index.js'
 import { StatusCodes } from 'http-status-codes';
-import ApiErrorResponse from '../apiResponse/ApiErrorResponse.js';
+import { ApiErrorResponse } from '../apiResponse/index.js';
 import { AuthController } from '../../controllers/index.js';
 import { AddUpdateUserPermissionMasterQuery, RegisterQuery } from "../DBQueries/Auth.Query.js"
 

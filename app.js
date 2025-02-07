@@ -4,7 +4,7 @@ import AppRoutes from "./routes/index.js";
 import cors from "cors";
 import connectMongoDB from "./db/connectMongoDB.js";
 import compression from "compression";
-import ApiErrorResponse from "./utils/apiResponse/ApiErrorResponse.js";
+import { ApiErrorResponse } from "./utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
 import verifyAccessToken from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
@@ -32,7 +32,11 @@ app.use((req, res, next) => {
     }
     next();
 });
-app.use(cors());
+app.use(cors({
+    origin: "*",  // Allow frontend origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true  // Allow sending cookies with requests
+}));
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
 app.use(cookieParser()); // access to req.cookies
@@ -40,7 +44,7 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
-app.use(verifyAccessToken)
+// app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
 

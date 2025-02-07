@@ -36,7 +36,7 @@ export const loginQuery = async (model, next) => {
     // return rolesString;
 
     // Fetch user permissions
-    const userPermissions = await UserPermission({UserId: user.Id});
+    const userPermissions = await UserPermission.find({UserId: user.Id});
     if (!userPermissions) {
         return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
     }
@@ -47,26 +47,31 @@ export const loginQuery = async (model, next) => {
         username: user.UserName,
         roles: rolesString,
     };
-
+    console.log(userPermissions);
     const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "5y", // Token expires in 5 years
     });
     let response;
      response = {
-        status: "Success",
-        message: "Login Successful",
+      status: 1,
+      message: "Login Successful",
+      data: {
         token:  token,
-        expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
-        data: {
-            userDetails: {
-                id: user.Id,
-                username: user.UserName,
-                email: user.Email,
-                phoneNumber: user.PhoneNumber,
-                roles: rolesString,
-            },
-            userPermissions: userPermissions,
-        },
+      expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
+      isSuccess: true,
+      message: "Login Successful",
+      data: {
+        userDetail: {
+              id: user.Id,
+              userName: user.UserName,
+              email: user.Email,
+              phoneNumber: user.PhoneNumber,
+              roles: rolesString,
+          },
+          permissions: userPermissions,
+        }
+      }
+      
     };
 
     return response;

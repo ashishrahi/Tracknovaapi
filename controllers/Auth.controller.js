@@ -70,7 +70,7 @@ export async function login(req, res, next) {
     // };
     return res.status(successResponse.statusCode)
     // .cookie("refreshToken", response.refreshToken, options)
-    .json(successResponse);
+    .json(response);
   } catch (error) {
     const err = new Error(error.message);
     err.status = err.statusCode || StatusCodes.BAD_REQUEST;
