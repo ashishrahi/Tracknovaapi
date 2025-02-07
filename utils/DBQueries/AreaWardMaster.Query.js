@@ -15,8 +15,7 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
       if (existingRecord) {
         return {
-          isSuccess: false,
-          statusCode: StatusCodes.CONFLICT,
+          status: 0,
           message: `Area Name ${modal.areaName} and Ward Number ${modal.wardNumber} combination already exists`,
         };
       }
@@ -45,9 +44,8 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
       await newRecord.save();
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.CREATED,
-        message: `Area ${newRecord.areaName} and Ward ${newRecord.wardNumber} Successfully Added`,
+        status: 1,
+        message: `Area ${newRecord.AreaName} and Ward ${newRecord.WardNumber} Successfully Added`,
         data: newRecord,
       };
     } else {
@@ -72,23 +70,20 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
         await entity.save();
         return {
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Area ${entity.areaName} and Ward ${entity.wardNumber} Successfully Updated`,
+          status: 1,
+          message: `Area ${entity.AreaName} and Ward ${entity.WardNumber} Successfully Updated`,
           data: entity,
         };
       } else {
         return {
-          isSuccess: false,
-          statusCode: StatusCodes.NOT_FOUND,
+          status:0,
           message: "Area Ward not found",
         };
       }
     }
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 0,
       message: error.message,
     };
   }
@@ -152,13 +147,12 @@ export const GetAreaWardMasterQuery = async (modal) => {
       const totalCount = await AreaWardMaster.countDocuments();
   
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
+        status: true,
         message: 'AreaWardMaster fetch Successfully !',
         data: data,
+        RowCount: totalCount,
         pageNo:pageNo,
         pageSize:pageSize,
-        RowCount: totalCount,
       };
     } catch (error) {
       return {

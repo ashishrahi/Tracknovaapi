@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateAreaWardMasterQuery,
@@ -15,12 +15,11 @@ import {
 export async function AddUpdateAreaWardMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateAreaWardMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data } = await AddUpdateAreaWardMasterQuery(modal);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -35,15 +34,15 @@ export async function AddUpdateAreaWardMaster(req,res){
 export async function GetAreaWardMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data,pageNo,pageSize,RowCount } = await GetAreaWardMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data, where, rowCount, orderby, pageNo, pageSize } = await GetAreaWardMasterQuery(modal);
+        const successResponse = new CommonResponse(
+            status,
             message,
             data,
+            rowCount,
+            orderby,
             pageNo,
             pageSize,
-            RowCount,
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -62,9 +61,9 @@ export async function DeleteAreaWardMaster(req,res){
     try {
         const modal = req.body;
         const { isSuccess, statusCode, message, data } = await DeleteAreaWardMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const successResponse = new CommonResponse(
             isSuccess,
-            statusCode,
+            // statusCode,
             message,
             data
         );
