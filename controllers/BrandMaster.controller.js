@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
+  ApiErrorResponse,CommonResponse,
+  DBReturn,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBrandMasterQuery,
@@ -12,15 +12,15 @@ import {
 export async function AddUpdateBrandMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
-      await AddUpdateBrandMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const { isSuccess,id,createUpdate,msg,data } = await AddUpdateBrandMasterQuery(model);
+    const apiResponse= new DBReturn(
       isSuccess,
-      statusCode,
-      message,
+      id,
+      createUpdate,
+      msg,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(apiResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -32,14 +32,13 @@ export async function AddUpdateBrandMaster(req, res) {
 export async function GetBrand(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await GetBrandQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const { status, message, data, } = await GetBrandQuery(model);
+    const successResponse = new CommonResponse(
+      status,
       message,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -52,16 +51,9 @@ export async function DeleteBrand(req, res) {
   try {
     const model = req.body;
 
-    const { data, isSuccess, message, statusCode } = await DeleteBrandQuery(
-      model
-    );
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message,
-      data
-    );
-    res.status(successResponse.statusCode).json(successResponse);
+    const { isSuccess,id,createUpdate,msg,data} = await DeleteBrandQuery(model);
+    const apiResponse = new DBReturn(isSuccess,id,createUpdate,msg,data);
+    res.status(StatusCodes.OK).json(apiResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

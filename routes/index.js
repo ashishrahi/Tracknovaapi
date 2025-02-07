@@ -55,12 +55,6 @@ import ZoneMasterRoutes from './ZoneMaster.route.js'
 import HelpCreationRoutes from './HelpCreation.routes.js'
 
 
-
-
-
-
-
-
 // AreaWardMaster
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
 

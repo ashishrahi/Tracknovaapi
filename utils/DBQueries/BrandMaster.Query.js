@@ -7,72 +7,77 @@ import BrandMaster  from "../../modals/BrandMaster.model.js";
 
 
 export const AddUpdateBrandMasterQuery = async (model) => {
-    try {
-    let brandData = model
+  try {
+    // Convert input field names to match schema
+    let brandData = {
+        ...model,
+        CreatedBy: model.createdBy, // Map input `createdBy` to schema `CreatedBy`
+        UpdatedBy: model.updatedBy, // Map input `updatedBy` to schema `UpdatedBy`
+    };
+    delete brandData.createdBy;
+    delete brandData.updatedBy;
 
-        let brand 
-        if (brandData.brandId === 0 || brandData.brandId === -1) {
-          // Create new brand
-          const maxBrandId = await BrandMaster.findOne({}, {}, { sort: { brandId: -1 } });
-          brandData.brandId = (maxBrandId ? maxBrandId.brandId : 0) + 1;
-          brandData.createdOn = new Date();
-          brandData.updatedOn = new Date();
-    
-          brand = await BrandMaster.create(brandData);
-          return {
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED, 
-            message: `BrandName ${brand.brandname} Added Successfully`,
-            data: brand, 
-          };
-        } else {
-          // Update existing brand
-          const existingBrand = await BrandMaster.findOne({ brandId: brandData.brandId });
-    
-          if (existingBrand) {
+    let brand;
+    if (brandData.brandId === 0 || brandData.brandId === -1) {
+        // Create new brand
+        const maxBrandId = await BrandMaster.findOne({}, {}, { sort: { brandId: -1 } });
+        brandData.brandId = (maxBrandId ? maxBrandId.brandId : 0) + 1;
+
+        brand = await BrandMaster.create(brandData);
+        return {
+            isSuccess: 1,
+            id: brand.brandId,
+            createUpdate: "Create",
+            msg: `BrandName ${brand.brandname} Added Successfully`,
+            data: brand
+        };
+    } else {
+        // Update existing brand
+        const existingBrand = await BrandMaster.findOne({ brandId: brandData.brandId });
+
+        if (existingBrand) {
             // Check if the brand is associated with any vehicles
-            const hasAssociatedVehicles = await BrandMaster.findOne({ 
-              brandId: brandData.brandId, 
-              'vehicles': { $exists: true, $not: { $size: 0 } } 
+            const hasAssociatedVehicles = await BrandMaster.findOne({
+                brandId: brandData.brandId,
+                'vehicles': { $exists: true, $not: { $size: 0 } }
             });
-    
+
             if (hasAssociatedVehicles) {
-              return {
-                isSuccess: false,
-                statusCode: StatusCodes.CONFLICT, // Use appropriate status code
-                message: `BrandId ${hasAssociatedVehicles.brandname} in Vehicle has movement record NOT updated`,
-              };
+                return {
+                    isSuccess: 0,
+                    id: hasAssociatedVehicles.brandId,
+                    createUpdate: "Already",
+                    msg: `BrandId ${hasAssociatedVehicles.brandname} in Vehicle has movement record NOT updated`,
+                };
             }
-    
-            brandData.updatedOn = new Date();
+
+            brandData.UpdatedOn = new Date();
             brand = await BrandMaster.findOneAndUpdate(
-              { brandId: brandData.brandId },
-              brandData,
-              { new: true }
+                { brandId: brandData.brandId },
+                brandData,
+                { new: true }
             );
-    
+
             return {
-              isSuccess: true,
-              statusCode: StatusCodes.OK, // Use appropriate status code
-              message: `BrandID of {brand.brandId} Updated Successfully`,
-              data: brand, 
+                isSuccess: 1,
+                id: brand.brandId,
+                createUpdate: "Already",
+                msg: `BrandID ${brand.brandId} Updated Successfully`,
+                data: brand,
             };
-          } else {
+        } else {
             return {
-              isSuccess: false,
-              statusCode: StatusCodes.NOT_FOUND, // Use appropriate status code
-              message: `BrandID ${brand.brandId} of Brand not found`,
+                isSuccess: 0,
+                msg: `BrandID ${brand.brandId} of Brand not found`,
             };
-          }
         }
-      } catch (error) {
-        return{
-            isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR, // Use appropriate status code
-            message: error.message,
-        }
-       
-      }
+    }
+} catch (error) {
+    return {
+        isSuccess: false,
+        msg: error.message,
+    };
+}
 }
 
 //////////////////////////  GetBrandQuery  //////////////////////////////////////////////////////////////
@@ -92,11 +97,11 @@ export const GetBrandQuery = async (model) => {
     try {
         // Fetch brands from the database based on the query
         const brands = await BrandMaster.find(brandQuery);
+        
 
 
     return {
-        isSuccess:true,
-        statusCode:StatusCodes.OK,
+        status:1,
         message:`Details of Brand${brandId} has been fetched successfully`,
         data:brands
          };
@@ -124,21 +129,22 @@ export const DeleteBrandQuery = async (model) => {
 
         if (!brand) {
             return {
-                 isSuccess: false,
-                 statusCode:StatusCodes.NOT_FOUND,
-                 message: `brandId${brandId} not found` };
+                isSuccess: 0,
+                id:brandId.brandId,
+                createUpdate:'BrandId not deleted ',
+                msg: `brandId${brandId} not found` };
         }
 
         return { 
-                isSuccess:true,
-                statusCode:StatusCodes.OK, 
-                message: `brandId ${brandId} deleted successfully` 
+                isSuccess:1,
+                id:brandId.brandId,
+                createUpdate:'BrandId not deleted ',
+                msg: `brandId ${brandId} deleted successfully` 
               };
     } catch (error) {
         return {
-           isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message };
+            isSuccess: 0,
+            msg: error.message };
     }
 }
 

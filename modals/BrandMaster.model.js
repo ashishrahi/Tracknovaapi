@@ -23,7 +23,6 @@ const BrandMasterSchema = new mongoose.Schema({
     },
     CreatedBy: {
         type: String,
-        required: true,
         trim: true
     },
     UpdatedBy: {
