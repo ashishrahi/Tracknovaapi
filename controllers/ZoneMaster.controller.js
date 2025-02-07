@@ -1,7 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  CommonResponse,
+  ReturnData
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateZoneMasterQuery,
@@ -15,14 +16,13 @@ import {
 export async function AddUpdateZoneMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateZoneMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data} = await AddUpdateZoneMasterQuery(modal);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(false, StatusCodes.BAD_REQUEST, error.message);
@@ -37,11 +37,12 @@ export async function AddUpdateZoneMaster(req,res){
 export async function GetZoneMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await GetZoneMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await GetZoneMasterQuery(modal);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);

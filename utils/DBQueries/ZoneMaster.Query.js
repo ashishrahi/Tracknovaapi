@@ -10,13 +10,13 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
             const existingZone = await ZoneMaster.findOne({ ZoneName: modal.zoneName });
             if (existingZone) {
                 return{
-                    isSuccess: true,
-                    statusCode: StatusCodes.CONFLICT,
-                    message: 'Zone already exists!',
+                    status: 1,
+                    message: 'Zone with ZoneName already exists!',
                 } }
 
                 const lastZone = await ZoneMaster.findOne().sort({ ZoneID: -1 }).limit(1);
                 modal.zoneID = lastZone ? lastZone.ZoneID + 1 : 1; 
+
                 const newZoneMaster = new ZoneMaster({
                     ZoneID: modal.zoneID,
                     ZoneName: modal.zoneName,
@@ -24,25 +24,30 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
                     CreatedBy: modal.createdBy,
                     UpdatedBy: modal.updatedBy,
                 });
-                await newZoneMaster.save();
+                const newData = await newZoneMaster.save();
+
+                data = {
+                    zoneID: newData.ZoneID,
+                    zoneName: newData.ZoneName,
+                    zoneAbbrevation: newData.ZoneAbbreviation,
+                    createdBy: newData.CreatedBy,
+                    updatedBy: newData.UpdatedBy,
+                  };
                 return{
-                    isSuccess: true,
-                    statusCode: StatusCodes.CREATED,
+                    status: 1,
                     message: `Zone Name ${modal.ZoneName} Successfully Added`,
-                    data: newZoneMaster,
+                    data,
                 } }
                 else{
                     const existingZone = await ZoneMaster.findOne({ZoneID:modal.ZoneID});
                     if (!existingZone) {
                         return{
-                            isSuccess: false,
-                            statusCode: StatusCodes.NOT_FOUND,
+                            status: 0,
                             message: 'Zone not found!',
                         }}
                         await ZoneMaster.updateOne({ ZoneID: modal.ZoneID }, modal);
                         return{
-                            isSuccess: true,
-                            statusCode: StatusCodes.OK,
+                            status: 1,
                             message: `Zone Name ${modal.ZoneName} Successfully Updated`,
                             data: existingZone,
                         }
@@ -50,8 +55,7 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
         
     } catch (error) {
         return{
-            isSuccess: false,
-            statusCode: StatusCodes.BAD_REQUEST,
+            status: 0,
             message: error.message + ";" + (error.innerException? error.innerException : error.message),
         }
         
@@ -66,40 +70,36 @@ export const GetZoneMasterQuery = async (modal) => {
         let records = [];
 if (modal.ZoneID === -1) {
     records = await ZoneMaster.find().lean();
+    const transformedZoneMaster = records.map((item) => ({
+        zoneID: item.ZoneID,
+        zoneName: item.ZoneName,
+        zoneAbbrevation: item.ZoneAbbrevation,
+        createdBy: item.CreatedBy,
+        updatedBy: item.UpdatedBy,
+      }));
     return{
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `ZoneMaster Records has been fetched successfully`,
-        data: records,
+        internalSuccess: true,
+        mesg: `ZoneMaster Records has been fetched successfully`,
+        insertedId:"",
+        data: transformedZoneMaster,
     }
 }else{
     records = await ZoneMaster.findOne({ ZoneID: modal.ZoneID }).lean();
     return{
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `ZoneMaster Records has been fetched successfully`,
+        internalSuccess: true,
+        mesg: `ZoneMaster Records has been fetched successfully`,
+        insertedId:"",
         data: records,
-    }
-}
-if (records && records.length > 0) {
-    return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `ZoneMaster Records has been fetched successfully`,
-        data: records,
-    }
-} else {
-    return{
-        isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
-        message: `No ZoneMaster Records found`,
     }
 }
 
     } catch (error) {
         return{
             isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            internalSuccess: true,
+
             message: error.message + ";" + (error.innerException? error.innerException : error.message),
         }
     }
