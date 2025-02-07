@@ -21,11 +21,11 @@ const BrandMasterSchema = new mongoose.Schema({
         uppercase: true,
         trim: true
     },
-    createdBy: {
+    CreatedBy: {
         type: String,
         trim: true
     },
-    updatedBy: {
+    UpdatedBy: {
         type: String,
         trim: true
     },

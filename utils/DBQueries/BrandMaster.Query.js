@@ -15,15 +15,14 @@ export const AddUpdateBrandMasterQuery = async (model) => {
           // Create new brand
           const maxBrandId = await BrandMaster.findOne({}, {}, { sort: { brandId: -1 } });
           brandData.brandId = (maxBrandId ? maxBrandId.brandId : 0) + 1;
-          brandData.createdOn = new Date();
-          brandData.updatedOn = new Date();
     
           brand = await BrandMaster.create(brandData);
           return {
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED, 
-            message: `BrandName ${brand.brandname} Added Successfully`,
-            data: brand, 
+            isSuccess:1,
+            id: brand.brandId, 
+            createUpdate: "Create" ,
+            msg: `BrandName ${brand.brandname} Added Successfully`, 
+            data:brand
           };
         } else {
           // Update existing brand
@@ -38,9 +37,10 @@ export const AddUpdateBrandMasterQuery = async (model) => {
     
             if (hasAssociatedVehicles) {
               return {
-                isSuccess: false,
-                statusCode: StatusCodes.CONFLICT, // Use appropriate status code
-                message: `BrandId ${hasAssociatedVehicles.brandname} in Vehicle has movement record NOT updated`,
+                isSuccess: 0,
+                id: hasAssociatedVehicles.brandId, 
+                createUpdate: "Already" ,
+                msg: `BrandId ${hasAssociatedVehicles.brandname} in Vehicle has movement record NOT updated`,
               };
             }
     
@@ -52,24 +52,23 @@ export const AddUpdateBrandMasterQuery = async (model) => {
             );
     
             return {
-              isSuccess: true,
-              statusCode: StatusCodes.OK, // Use appropriate status code
-              message: `BrandID of {brand.brandId} Updated Successfully`,
+              isSuccess:1,
+              id: brand.brandId, 
+              createUpdate: "Already" ,
+              msg: `BrandID of {brand.brandId} Updated Successfully`,
               data: brand, 
             };
           } else {
             return {
-              isSuccess: false,
-              statusCode: StatusCodes.NOT_FOUND, // Use appropriate status code
-              message: `BrandID ${brand.brandId} of Brand not found`,
+              isSuccess: 0,
+              msg: `BrandID ${brand.brandId} of Brand not found`,
             };
           }
         }
       } catch (error) {
         return{
             isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR, // Use appropriate status code
-            message: error.message,
+            msg: error.message,
         }
        
       }
@@ -95,8 +94,7 @@ export const GetBrandQuery = async (model) => {
 
 
     return {
-        isSuccess:true,
-        statusCode:StatusCodes.OK,
+        status:1,
         message:`Details of Brand${brandId} has been fetched successfully`,
         data:brands
          };
@@ -124,21 +122,22 @@ export const DeleteBrandQuery = async (model) => {
 
         if (!brand) {
             return {
-                 isSuccess: false,
-                 statusCode:StatusCodes.NOT_FOUND,
-                 message: `brandId${brandId} not found` };
+                isSuccess: 0,
+                id:brandId.brandId,
+                createUpdate:'BrandId not deleted ',
+                msg: `brandId${brandId} not found` };
         }
 
         return { 
-                isSuccess:true,
-                statusCode:StatusCodes.OK, 
-                message: `brandId ${brandId} deleted successfully` 
+                isSuccess:1,
+                id:brandId.brandId,
+                createUpdate:'BrandId not deleted ',
+                msg: `brandId ${brandId} deleted successfully` 
               };
     } catch (error) {
         return {
-           isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message };
+            isSuccess: 0,
+            msg: error.message };
     }
 }
 

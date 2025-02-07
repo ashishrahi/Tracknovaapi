@@ -65,15 +65,15 @@ const EnumVoucher = Object.freeze({
 
 class DBReturn {
     constructor(isSuccess, id, createUpdate, msg, data = null, dataEx1 = null, dataEx2 = null, dataEx3 = null, dataEx4 = null) {
-        this.IsSuccess = isSuccess;
-        this.Id = id;
-        this.CreateUpdate = createUpdate;
-        this.MSG = msg;
-        this.Data = data;
-        this.DataEx1 = dataEx1;
-        this.DataEx2 = dataEx2;
-        this.DataEx3 = dataEx3;
-        this.DataEx4 = dataEx4;
+        this.isSuccess = isSuccess;
+        this.id = id;
+        this.createUpdate = createUpdate;
+        this.msg = msg;
+        this.data = data;
+        this.dataEx1 = dataEx1;
+        this.dataEx2 = dataEx2;
+        this.dataEx3 = dataEx3;
+        this.dataEx4 = dataEx4;
     }
 }
 
