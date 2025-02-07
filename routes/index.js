@@ -51,7 +51,7 @@ import vVehicleTrackForOverSpeedRoutes from './vVehicleTrackForOverSpeed.routes.
 import vVehicletrackHisRoutes from './vVehicletrackHis.routes.js'
 
 import ZoneMasterRoutes from './ZoneMaster.route.js'
-<<<<<<< HEAD
+
 import HelpCreationRoutes from './HelpCreation.routes.js'
 
 
@@ -60,9 +60,7 @@ import HelpCreationRoutes from './HelpCreation.routes.js'
 
 
 
-=======
 import verifyAccessToken from "../middlewares/auth.middleware.js";
->>>>>>> c51b29ba8ab9ec9a5608f235ae5d5ac81f954441
 
 
 
