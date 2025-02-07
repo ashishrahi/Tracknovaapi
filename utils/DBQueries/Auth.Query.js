@@ -53,24 +53,22 @@ export const loginQuery = async (model, next) => {
     });
     let response;
      response = {
-      status: 1,
-      message: "Login Successful",
-      data: {
+      
         token:  token,
-      expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
-      isSuccess: true,
-      message: "Login Successful",
-      data: {
-        userDetail: {
-              id: user.Id,
-              userName: user.UserName,
-              email: user.Email,
-              phoneNumber: user.PhoneNumber,
-              roles: rolesString,
+        expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
+        isSuccess: true,
+        message: "Login Successful",
+        data: {
+          userDetail: {
+                id: user.Id,
+                userName: user.UserName,
+                email: user.Email,
+                phoneNumber: user.PhoneNumber,
+                roles: rolesString,
           },
           permissions: userPermissions,
         }
-      }
+      
       
     };
 
