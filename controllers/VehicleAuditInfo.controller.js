@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { VehicleAddTempInfo } from "../modals/index.js";
-import ApiSuccessResponse from "../utils/apiResponse/ApiSuccessResponse.js";
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 
 //-------------AddUpdateVehicleAuditInfo------->
 async function AddUpdateVehicleAuditInfo(req, res, next) {

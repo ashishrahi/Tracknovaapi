@@ -3,19 +3,18 @@ import {
   RolePermission,
   Menu,
   AspNetRoles,
-  EmpMaster
+  EmpMaster,
+  AspNetUsers
 } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
-import mongoose from "mongoose";
-import cryto from 'crypto'
-
+import jwt from "jsonwebtoken"
 
 
 //-----------------loginQuery-------->
-export const loginQuery = async (model) => {
+export const loginQuery = async (model, next) => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = model;
 
     // Find user by username
     const user = await AspNetUsers.findOne({ UserName: username });
@@ -28,47 +27,58 @@ export const loginQuery = async (model) => {
     if (!isPasswordValid) {
       return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
     }
-
+    // AspUser => EmpMaster => RoleId
+    const emp = await EmpMaster.findOne({UserId: user.Id});
     // Fetch user roles
-    const roles = await Role.find({ _id: { $in: user.roles } });
-    const rolesString = roles.map(role => role.name).join(",");
+    const roles = await AspNetRoles.find({ Id: { $in: emp.RoleId } });
+    const rolesString = roles.map(role => role.Name)
+    console.log("rolesString", rolesString)
+    // return rolesString;
 
     // Fetch user permissions
-    const userPermissions = await getUserPermissions(user._id, rolesString);
-    if (!userPermissions.success) {
-        return res.status(500).json({ status: "Failed", message: "Failed to fetch user permissions" });
+    const userPermissions = await UserPermission.find({UserId: user.Id});
+    if (!userPermissions) {
+        return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
     }
 
     // Generate JWT Token
     const authClaims = {
-        id: user._id,
-        username: user.username,
+        id: user.Id,
+        username: user.UserName,
         roles: rolesString,
     };
-
-    const token = jwt.sign(authClaims, process.env.JWT_SECRET, {
+    console.log(userPermissions);
+    const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "5y", // Token expires in 5 years
     });
+    let response;
+     response = {
+      status: 1,
+      message: "Login Successful",
+      data: {
+        token:  token,
+      expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
+      isSuccess: true,
+      message: "Login Successful",
+      data: {
+        userDetail: {
+              id: user.Id,
+              userName: user.UserName,
+              email: user.Email,
+              phoneNumber: user.PhoneNumber,
+              roles: rolesString,
+          },
+          permissions: userPermissions,
+        }
+      }
+      
+    };
 
-    return res.status(200).json({
-        status: "Success",
-        message: "Login Successful",
-        data: {
-            token,
-            expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
-            userDetails: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                roles: rolesString,
-            },
-            userPermissions: userPermissions.data,
-        },
-    });
+    return response;
 } catch (error) {
-    console.error("Login Error: ", error);
-    return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
+  console.log("Login Error: ", error);
+  return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+    // return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
 }
 
 
@@ -105,7 +115,6 @@ export const loginQuery = async (model) => {
 // }
 
 }
-
 
 //---------------RegisterQuery---------->
 

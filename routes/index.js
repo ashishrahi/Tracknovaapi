@@ -55,16 +55,6 @@ import ZoneMasterRoutes from './ZoneMaster.route.js'
 import HelpCreationRoutes from './HelpCreation.routes.js'
 
 
-
-
-
-
-
-import verifyAccessToken from "../middlewares/auth.middleware.js";
-
-
-
-
 // AreaWardMaster
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
 

@@ -420,6 +420,7 @@ async function VehCurrStat(req, res) {
       new ApiSuccessResponse(
         true,
         StatusCodes.OK,
+        "default",
         stat
       )
     );
