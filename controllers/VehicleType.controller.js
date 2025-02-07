@@ -149,6 +149,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
       // const itemMasterCollection = db.collection('ItemMaster');
       // const eScarpVehicleTypeCollection = db.collection('v01_VehicleType');
 
+      const model = req.body;
       let escrVehtypename = '';
       if (model.EScarp) {
           escrVehtypename = model.EScarpPrevValue || '';
@@ -166,7 +167,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
               // return res;
           }
 
-          const lastVehicleType = await VehicleTypeMaster.find({}).sort({ VehicleTypeId: -1 }).limit(1).toArray();
+          const lastVehicleType = await VehicleTypeMaster.find().sort({ VehicleTypeId: -1 }).limit(1).lean();
           const updatedVehicleTypeId = (lastVehicleType[0]?.VehicleTypeId || 0) + 1;
 
           const newDoc = new VehicleTypeMaster({
@@ -180,7 +181,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
           const newInsertedDoc = await newDoc.save(); 
 
           // await vehicleTypeCollection.insertOne(model, { session });
-          return res.status(StatusCodes.OK).json(StatusCodes.OK, 'Successfully Added', newInsertedDoc );
+          return res.status(StatusCodes.OK).json(new CommonResponse(true, 'Successfully Added', newInsertedDoc) );
       } else {
           const finduse = await ItemMaster.findOne({ VehicleTypeId: model.vehicleTypeId, NTRecord: 'y' }
             // , { session }
@@ -199,7 +200,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
               } }
                 // , { session }
               );
-              return res.status(StatusCodes.OK).json(StatusCodes.OK, "Successfully Updated" )
+              return res.status(StatusCodes.OK).json(new CommonResponse(true,  "Successfully Updated") )
               // res.Status = 'Success';
               // res.Message = 'Successfully Updated';
           } else {
@@ -281,16 +282,25 @@ async function GetEscrapVehicleType(req, res, next){
       query.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
     }
     if(!model.vehicleTypeId || model.vehicleTypeId === 0) query= {};
-    const vehicleTypes = await VehicleTypeMaster.find(query)
+    const vehicleTypes = await VehicleTypeMaster.find(query).lean()
         // .skip((pageNo - 1) * pageSize) // Pagination
         // .limit(pageSize);
+    
+    const response = vehicleTypes.map((obj) => {
+      let newObj = {};
+      Object.keys(obj).forEach((key) => {
+        let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+        newObj[newKey] = obj[key];
+      });
+      return newObj;
+    });
 
    
     const rowCount = await VehicleTypeMaster.countDocuments(query);
 
     let msg;
     rowCount > 0 ? msg = "Data fetched" : msg = "No Record Found!!"
-    return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, vehicleTypes, rowCount))
+    return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, response, rowCount))
 
    } catch (error) {
      const err = new Error(error.message)
