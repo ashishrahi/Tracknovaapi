@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateVtypeinfoQuery,
@@ -36,20 +37,19 @@ export async function AddUpdateVtypeinfo(req,res){
 export async function getVtypeinfo(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await getVtypeinfoQuery(modal);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const {  message, data } = await getVtypeinfoQuery(modal);
+        const successResponse = new CommonResponse(
+            true,
             message,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        return res.status(StatusCodes.OK).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
             StatusCodes.BAD_REQUEST, 
             error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        return res.status(StatusCodes.BAD_REQUEST).json(apiErrorResponse);
     }
 }
 
