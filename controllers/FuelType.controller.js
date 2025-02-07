@@ -1,7 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  DBReturn,
+  CommonResponse
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateFuelTypeQuery,
@@ -13,15 +14,16 @@ import {
 export async function AddUpdateFuelType(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data } =
+    const { isSuccess, id, createUpdate, msg, data } =
       await AddUpdateFuelTypeQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new DBReturn(
       isSuccess,
-      statusCode,
-      message,
+      id,
+      createUpdate,
+      msg,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -35,16 +37,15 @@ export async function AddUpdateFuelType(req, res) {
 export async function GetFuelType(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await GetFuelTypeQuery(
+    const { status, message, data } = await GetFuelTypeQuery(
       model
     );
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -58,16 +59,17 @@ export async function GetFuelType(req, res) {
 export async function DeleteFuelType(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await DeleteFuelTypeQuery(
+    const {isSuccess, id, createUpdate, msg, data } = await DeleteFuelTypeQuery(
       model
     );
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new DBReturn(
       isSuccess,
-      statusCode,
-      message,
+      id,
+      createUpdate,
+      msg,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
