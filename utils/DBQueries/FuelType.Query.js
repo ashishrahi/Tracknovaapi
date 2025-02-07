@@ -4,57 +4,85 @@ import {FuelType} from '../../modals/index.js'
 /////////////////////////// AddUpdateFuelTypeQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateFuelTypeQuery = async (model) => {
-    try {
-      let fuelType;
-      
-      if (model.fuelTypeId === 0) {
-        const maxIdFuelType = await FuelType.findOne().sort({ FuelTypeId: -1 });
-        const newFuelTypeId = maxIdFuelType ? maxIdFuelType.FuelTypeId + 1 : 1; // Increment the max fuelTypeId
-  
-        fuelType = new FuelType({
-            FuelTypeId: newFuelTypeId, // Use the incremented value
-            FuelTypename: model.fuelTypename || '',
-            ShortName: model.shortName || '',
-            FuelCode: model.fuelCode || '',
-            CreatedBy: model.createdBy || '',
-            UpdatedBy: model.updatedBy || '',
-        });
-  
-        await fuelType.save();
-        return{
-          isSuccess:true,
-          statusCode: StatusCodes.CREATED,
-          message: `FuelTypename ${fuelType.FuelTypename} created successfully`,
-          data: fuelType,
-        }
-      } else {
-        fuelType = await FuelType.findOneAndUpdate(
-          { FuelTypeId: model.fuelTypeId },
-          {
-            FuelTypename: model.fuelTypename || '',
-            ShortName: model.shortName || '',
-            FuelCode: model.fuelCode || '',
-            CreatedBy: model.createdBy || '',
-            UpdatedBy: model.updatedBy || '',
-          },
-          { new: true, upsert: true } // 'upsert' creates a new document if no match is found
-        );
-      }
-        return {
-        isSuccess:true,
-        statusCode:StatusCodes.CREATED,
-        message: `Fueltype ${fuelType.FuelTypename} saved successfully`,
-        data: fuelType,
-      };
-    } catch (error) {
-   
-      return{
-        isSuccess:false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
-      }
-    }
+  try {
+    let fuelType;
+    let data;
 
+    if (!model.fuelTypeId || model.fuelTypeId === 0) {
+      // Get the highest FuelTypeId
+      const maxIdFuelType = await FuelType.findOne().sort({ FuelTypeId: -1 });
+      const newFuelTypeId = maxIdFuelType ? maxIdFuelType.FuelTypeId + 1 : 1;
+
+      fuelType = new FuelType({
+        FuelTypeId: newFuelTypeId,
+        FuelTypename: model.fuelTypename,
+        ShortName: model.shortName,
+        FuelCode: model.fuelCode,
+        CreatedBy: model.createdBy,
+        UpdatedBy: model.updatedBy,
+      });
+
+      const newData = await fuelType.save();
+
+      data = {
+        fuelTypeId: newData.FuelTypeId,
+        fuelTypename: newData.FuelTypename,
+        shortName: newData.ShortName,
+        fuelCode: newData.FuelCode,
+        createdBy: newData.CreatedBy,
+        updatedBy: newData.UpdatedBy,
+      };
+
+      return {
+        isSuccess: 1,
+        id: data.fuelTypeId,
+        createUpdate:"Created",
+        msg: `Fuel type '${newData.FuelTypename}' created successfully.`,
+        data,
+      };
+    } else {
+      // Update existing record
+      fuelType = await FuelType.findOneAndUpdate(
+        { FuelTypeId: model.fuelTypeId },
+        {
+          FuelTypename: model.fuelTypename,
+          ShortName: model.shortName,
+          FuelCode: model.fuelCode,
+          UpdatedBy: model.updatedBy, // `CreatedBy` should not change on update
+        },
+        { new: true }
+      );
+
+      if (!fuelType) {
+        return {
+          isSuccess: 0,
+          message: `Fuel type with ID ${model.fuelTypeId} not found.`,
+        };
+      }
+
+      data = {
+        fuelTypeId: fuelType.FuelTypeId,
+        fuelTypename: fuelType.FuelTypename,
+        shortName: fuelType.ShortName,
+        fuelCode: fuelType.FuelCode,
+        createdBy: fuelType.CreatedBy,
+        updatedBy: fuelType.UpdatedBy,
+      };
+
+      return {
+        isSuccess: 1,
+        statusCode: StatusCodes.OK,
+        msg: `Fuel type '${fuelType.FuelTypename}' updated successfully.`,
+        data,
+      };
+    }
+  } catch (error) {
+    return {
+      isSuccess: 0,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      msg: error.message,
+    };
+  }
 
 }
 
@@ -68,7 +96,7 @@ export const GetFuelTypeQuery = async (model) => {
     }
 
     const filter = {};
-    if (model.fuelTypeId && model.fuelTypeId !== 0) {
+    if (model.fuelTypeId !== -1) {
       filter.FuelTypeId = model.fuelTypeId;
     }
     if (model.fuelTypename) {
@@ -78,11 +106,20 @@ export const GetFuelTypeQuery = async (model) => {
     // Query MongoDB
     const fuelTypes = await FuelType.find(filter);
 
+    // Transform data to expected format
+    const transformedFuelTypes = fuelTypes.map((item) => ({
+      fuelTypeId: item.FuelTypeId,
+      fuelTypename: item.FuelTypename,
+      shortName: item.ShortName,
+      fuelCode: item.FuelCode,
+      createdBy: item.CreatedBy,
+      updatedBy: item.UpdatedBy,
+    }));
+
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: `Fuel type details have been fetched successfully.`,
-      data: fuelTypes,
+      data: transformedFuelTypes,
     };
   } catch (e) {
     return {
@@ -106,23 +143,22 @@ export const DeleteFuelTypeQuery = async (model) => {
 
         if (!result) {
             return {
-              isSuccess:false,
-              statusCode:StatusCodes.NOT_FOUND,
-              message:`fuel type ${fuelTypeId} not found`,
+              isSuccess:0,
+              id,
+              msg:`fuel type ${fuelTypeId} not found`,
             }
         } else {
              return {
-              isSuccess:true,
-              statusCode:StatusCodes.OK,
-              message:`fuelTypeId ${result.FuelTypename} has been deleted successfully`,
+              isSuccess:1,
+              id:fuelTypeId,
+              msg:`fuelTypeId ${result.FuelTypename} has been deleted successfully`,
             }
         }
     } catch (error) {
        
         return{
-          isSuccess:false,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error.message,
+          isSuccess:0,
+          msg: error.message,
         }
     }
    
