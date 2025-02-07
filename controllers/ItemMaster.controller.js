@@ -10,7 +10,7 @@ async function AddUpdateItemMaster( req, res, next){
     try {
         const model = req.body;
         // let vNo = model.EScarp ? model.VehicleNo : "";
-        let vNo =  model.vNoehicleNo;
+        let vNo =  model.vehicleNo;
         // let isNew = !model.ItemMasterId;
 
         if (model.itemMasterId === 0) {
@@ -197,9 +197,9 @@ async function AddUpdateItemMaster( req, res, next){
 async function GetItemMaster(req, res, next){
 
     try {
-        const { itemMasterId, vehicleNo } = req.body;
+        const { itemmasterid, vehicleNo } = req.body;
         let query = [];
-        if (itemMasterId === -1) {
+        if (itemmasterid === -1) {
             query.push(
                 {
                     $lookup: {
@@ -307,7 +307,7 @@ async function GetItemMaster(req, res, next){
             query.push({
                 $match: {
                     $or: [
-                        { ItemMasterId: itemMasterId },
+                        { ItemMasterId: itemmasterid },
                         { VehicleNo: { $regex: vehicleNo, $options: "i" } },
                     ],
                 },
