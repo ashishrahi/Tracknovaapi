@@ -9,9 +9,10 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
         if (!model.departmentName || model.departmentName.trim() === '') {
           
           return{
-            isSuccess: false,
-            statusCode:StatusCodes.NOT_FOUND,
-            message: 'Department Name Is Required'
+            isSuccess: 0,
+            internalSuccess:"",
+            insertedId:"",
+            mesg: 'Department Name Is Required'
           }
         }
     
@@ -29,11 +30,24 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           }
     
           await existingDepartment.save();
+
+const newData ={
+  departmentId: existingDepartment.DepartmentId,
+  departmentName: existingDepartment.DepartmentName,
+  departmentShortname: existingDepartment.DepartmentShortname,
+  hod: existingDepartment.HOD,
+  createdBy: existingDepartment.CreatedBy,
+  updatedBy: existingDepartment.UpdatedBy
+}
+
+
+
           return{
-            isSuccess: true,
-            statusCode:StatusCodes.CREATED,
-            message: `${existingDepartment.DepartmentName} Successfully Updated`,
-            data: existingDepartment
+            isSuccess: 1,
+            internalSuccess:"",
+            insertedId:"",
+            mesg: `${existingDepartment.DepartmentName} Successfully Updated`,
+            data: newData
           }
         } else {
           let tempID = model.departmentId || 0;
@@ -48,9 +62,9 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           const departmentExists = await Department.findOne({ DepartmentName: model.departmentName });
           if (departmentExists) {
             return{
-                isSuccess: false,
-                statusCode: StatusCodes.OK,
-                message: `Department Name ${departmentExists.DepartmentName} Already Exists`,
+                isSuccess: 0,
+                internalSuccess:"",
+                mesg: `Department Name ${departmentExists.DepartmentName} Already Exists`,
                 data: departmentExists
   
             }
@@ -74,27 +88,33 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
         
           });
           await newDepartment.save();
+
+            const newData = {
+            departmentId: newDepartment.DepartmentId,
+            departmentName: newDepartment.DepartmentName,
+            departmentShortname: newDepartment.DepartmentShortname,
+            hod: newDepartment.HOD,
+            createdBy: newDepartment.CreatedBy,
+            updatedBy: newDepartment.UpdatedBy
+          }
     
           return{
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
-            message: `${newDepartment.DepartmentName} Department Successfully Added`,
-            data: newDepartment
+            isSuccess: 1,
+            internalSuccess:"",
+            insertedId: "",
+            mesg: `${newDepartment.DepartmentName} Department Successfully Added`,
+            data: newData
           }
         }
       } catch (err) {
-        response.Mesg = err.message;
-        if (err.code === 11000) { // Duplicate key error
+        
           return{
-            isSuccess: false,
-            statusCode: StatusCodes.OK,
+            isSuccess: 0,
             message: `${model.DepartmentName} Already Exists`
           }
         }
       }
     
-      return response;
-};
 
 /////////////////////////////////// GetDepartmentMasterQuery //////////////////////////////////////////////////////////////////
 export const GetDepartmentMasterQuery = async (model) => {
@@ -116,18 +136,32 @@ export const GetDepartmentMasterQuery = async (model) => {
         "DepartmentId DepartmentName DepartmentShortname CreatedBy UpdatedBy CreatedOn UpdatedOn HOD"
       )
       .exec();
+const newData = result.map((dept)=>{
+  return {
+    departmentId: dept.DepartmentId,
+    departmentName: dept.DepartmentName,
+    departmentShortname: dept.DepartmentShortname,
+    hod: dept.HOD,
+    createdBy: dept.CreatedBy,
+    updatedBy: dept.UpdatedBy
+  }
+})
+
+
+
 
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
-      message: `Department Details of ${result.DepartmentName} department has been fetched successfully`,
-      data: result,
+      isSuccess: 1,
+      internalSuccess: "",
+      mesg: `Department Details of ${result.DepartmentName} department has been fetched successfully`,
+      insertedId:"",
+      data: newData,
     };
   } catch (ex) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: ex.message,
+      isSuccess: 0,
+      internalSuccess: "",
+      mesg: ex.message,
     };
   }
 
@@ -144,22 +178,25 @@ export const DeleteDepartmentMasterQuery = async (model) => {
             await Department.deleteMany({ DepartmentId: model.departmentId });
 
             return {
-                isSuccess: true,
-                statusCode:StatusCodes.OK,
-                message: `DepartmentId ${model.departmentId} Successfully deleted`
+                isSuccess: 1,
+                internalSuccess:"",
+                mesg: `DepartmentId ${model.departmentId} Successfully deleted`,
+                insertedId:""
             };
         } else {
             return {
-                isSuccess: false,
-                statusCode: StatusCodes.NOT_FOUND,
-                message: `DepartmentId ${model.departmentId} not found`
+                isSuccess: 0,
+                internalSuccess: "",
+                mesg: `DepartmentId ${model.departmentId} not found`,
+                insertedId:"",
+                
             };
         }
     } catch (err) {
         return {
-            isSuccess: false,
+            isSuccess: 0,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err.message + ";" + (err.innerException ? err.innerException : err.message)
+            mesg: err.message + ";" + (err.innerException ? err.innerException : err.message)
         };
     }
 };
