@@ -9,10 +9,10 @@ const BinLocationSchema = new Schema(
     CreatedBy: { type: String, trim: true },
     CreatedOn: { type: Date, default: Date.now },  // Changed from Object to Date
     Description: { type: String, trim: true },
-    Latitude: { type: mongoose.Schema.Types.Decimal128 },
+    Latitude: { type:Number },
     LocationName: { type: String, trim: true },
     LocImage: { type: String, trim: true },
-    Longitude: { type: mongoose.Schema.Types.Decimal128 }, // Ensuring precision
+    Longitude: { type: Number }, // Ensuring precision
     RFID: { type: String, trim: true, unique: true },
     UpdatedBy: { type: String, trim: true },
     UpdatedOn: { type: Date, default: Date.now },

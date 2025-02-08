@@ -43,10 +43,20 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
       });
 
       await newRecord.save();
+
+    const newData ={
+      areaID: newRecord.AreaID,
+      areaName: newRecord.AreaName,
+      wardNumber: newRecord.WardNumber,
+      zoneID: newRecord.ZoneID,
+      createdBy: newRecord.CreatedBy,
+      updatedBy: newRecord.UpdatedBy,
+    }
+
       return {
         status: 1,
         message: `Area ${newRecord.AreaName} and Ward ${newRecord.WardNumber} Successfully Added`,
-        data: newRecord,
+        data: newData,
       };
     } else {
       // Update existing record
@@ -92,75 +102,98 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 //////////////////////////////////////////////// GetAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const GetAreaWardMasterQuery = async (modal) => {
-    const { pageNo, pageSize } = modal;  // Assuming filter is passed via query params
-    try {
-      const skip = (pageNo - 1) * pageSize; // Pagination logic
+  const { pageNo, pageSize } = modal; // Assuming filter is passed via query params
+
+  try {
+    let pipeline = [
+      {
+        $lookup: {
+          from: 'ZoneMaster', // The collection name for ZoneMaster
+          localField: 'ZoneID', // Local field that references the ZoneMaster collection
+          foreignField: 'ZoneID', // The foreign field in the ZoneMaster collection
+          as: 'ZoneMaster',
+        },
+      },
+      {
+        $unwind: {
+          path: '$ZoneMaster',
+          preserveNullAndEmptyArrays: true, // Ensures that if ZoneMaster is not found, it doesn't fail the query
+        },
+      },
+      {
+        $project: {
+          AreaID: 1,
+          AreaName: { $ifNull: ['$AreaName', ''] },
+          WardNumber: { $ifNull: ['$WardNumber', ''] },
+          ZoneID: 1,
+          CreatedBy: { $ifNull: ['$CreatedBy', ''] },
+          UpdatedBy: { $ifNull: ['$UpdatedBy', ''] },
+          CreatedOn: { $ifNull: ['$CreatedOn', new Date(0)] }, // Default to Unix Epoch date if null
+          UpdatedOn: { $ifNull: ['$UpdatedOn', new Date(0)] }, // Default to Unix Epoch date if null
+          ZoneMaster: {
+            ZoneID: { $ifNull: ['$ZoneMaster.ZoneID', ''] },
+            ZoneName: { $ifNull: ['$ZoneMaster.ZoneName', ''] },
+            ZoneAbbrevation: { $ifNull: ['$ZoneMaster.ZoneAbbrevation', ''] },
+            CreatedBy: { $ifNull: ['$ZoneMaster.CreatedBy', ''] },
+            UpdatedBy: { $ifNull: ['$ZoneMaster.UpdatedBy', ''] },
+            CreatedOn: { $ifNull: ['$ZoneMaster.CreatedOn', new Date(0)] },
+            UpdatedOn: { $ifNull: ['$ZoneMaster.UpdatedOn', new Date(0)] },
+          },
+        },
+      },
+    ];
+  
+    if (!(pageNo === 0 && pageSize === 0)) {
+      const skip = (pageNo - 1) * pageSize;
       const limit = parseInt(pageSize);
-  
-      // Aggregation pipeline
-      const pipeline = [
-        {
-          $lookup: {
-            from: 'ZoneMaster', // The collection name for ZoneMaster
-            localField: 'ZoneID', // Local field that references the ZoneMaster collection
-            foreignField: 'ZoneID', // The foreign field in the ZoneMaster collection
-            as: 'ZoneMaster',
-          }
-        },
-        {
-          $unwind: {
-            path: '$ZoneMaster',
-            preserveNullAndEmptyArrays: true, // Ensures that if ZoneMaster is not found, it doesn't fail the query
-          }
-        },
-        {
-          $project: {
-            AreaID: 1,
-            AreaName: { $ifNull: ['$AreaName', ''] },
-            WardNumber: { $ifNull: ['$WardNumber', ''] },
-            ZoneID: 1,
-            CreatedBy: { $ifNull: ['$CreatedBy', ''] },
-            UpdatedBy: { $ifNull: ['$UpdatedBy', ''] },
-            CreatedOn: { $ifNull: ['$CreatedOn', new Date(0)] }, // Default to Unix Epoch date if null
-            UpdatedOn: { $ifNull: ['$UpdatedOn', new Date(0)] }, // Default to Unix Epoch date if null
-            ZoneMaster: {
-              ZoneID: { $ifNull: ['$ZoneMaster.ZoneID', ''] },
-              ZoneName: { $ifNull: ['$ZoneMaster.ZoneName', ''] },
-              ZoneAbbrevation: { $ifNull: ['$ZoneMaster.ZoneAbbrevation', ''] },
-              CreatedBy: { $ifNull: ['$ZoneMaster.CreatedBy', ''] },
-              UpdatedBy: { $ifNull: ['$ZoneMaster.UpdatedBy', ''] },
-              CreatedOn: { $ifNull: ['$ZoneMaster.CreatedOn', new Date(0)] },
-              UpdatedOn: { $ifNull: ['$ZoneMaster.UpdatedOn', new Date(0)] },
-            }
-          }
-        },
-        {
-          $skip: skip, // Pagination
-        },
-        {
-          $limit: limit, // Pagination
-        }
-      ];
-  
-      // Query the database using aggregation
-      const data = await AreaWardMaster.aggregate(pipeline);
-      const totalCount = await AreaWardMaster.countDocuments();
-  
-      return {
-        status: true,
-        message: 'AreaWardMaster fetch Successfully !',
-        data: data,
-        RowCount: totalCount,
-        pageNo:pageNo,
-        pageSize:pageSize,
-      };
-    } catch (error) {
-      return {
-        isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
-      };
+      pipeline.push({ $skip: skip }, { $limit: limit });
     }
+  
+    // Query the database using aggregation
+    const data = await AreaWardMaster.aggregate(pipeline);
+
+const newData = data.map(
+  (doc) => ({
+    areaID: doc.AreaID,
+    areaName: doc.AreaName,
+    wardNumber: doc.WardNumber,
+    zoneID: doc.ZoneID,
+    createdBy: doc.CreatedBy,
+    updatedBy: doc.UpdatedBy,
+    createdOn: doc.CreatedOn,
+    updatedOn: doc.UpdatedOn,
+    zoneMaster: {
+      zoneID: doc.ZoneMaster.ZoneID,
+      zoneName: doc.ZoneMaster.ZoneName,
+      zoneAbbreviation: doc.ZoneMaster.ZoneAbbreviation,
+      createdBy: doc.ZoneMaster.CreatedBy,
+      updatedBy: doc.ZoneMaster.UpdatedBy,
+      createdOn: doc.ZoneMaster.CreatedOn,
+      updatedOn: doc.ZoneMaster.UpdatedOn,
+    },
+  })
+)
+
+
+
+
+    const totalCount = await AreaWardMaster.countDocuments();
+  
+    return {
+      status: 1,
+      message: 'AreaWardMaster fetch Successfully!',
+      data: newData,
+      RowCount: totalCount,
+      pageNo: pageNo,
+      pageSize: pageSize,
+    };
+  } catch (error) {
+    return {
+      status: 0,
+      message: error.message,
+    };
+  }
+  
 }
 
 //////////////////////////////////////////////// DeleteAreaWardMasterQuery /////////////////////////////////////////////////////

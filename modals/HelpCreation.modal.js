@@ -1,11 +1,6 @@
 import mongoose from 'mongoose';
 
 const HelpCreateSchema = new mongoose.Schema({
-  Id: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
   formatName: {
     type: String,
     required: true,

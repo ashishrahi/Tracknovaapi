@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
  AddHelpCreationQuery,
@@ -15,14 +15,15 @@ import {
 export async function AddHelpCreation(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddHelpCreationQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await AddHelpCreationQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( 
@@ -36,12 +37,13 @@ export async function AddHelpCreation(req,res){
 export async function GetHelpCreation(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetHelpCreationQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
-            message,
-            data
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await GetHelpCreationQuery(model);
+        const successResponse = new ReturnData(
+              isSuccess,
+              internalSuccess,
+              mesg,
+              insertedId,
+              data,
         );
         res.status(StatusCodes.OK).json(successResponse);
 

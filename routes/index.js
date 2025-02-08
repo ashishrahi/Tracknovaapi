@@ -179,7 +179,7 @@ router.use("/vVehicletrackHis", vVehicletrackHisRoutes);
 
 
 // ZoneMaster
-router.use("/ZoneMaster", ZoneMasterRoutes);
+router.use("/Zone", ZoneMasterRoutes);
 
 
 export default router;

@@ -20,14 +20,11 @@ export const AddUpdateBinLocationQuery = async (model) => {
         description,
         createdBy,
         updatedBy,
-        createdOn,
-        updatedOn
     } = model;
 
     if (!binLocName || !binLocCode) {
 return{
-  isSuccess: false,
-  statusCode: StatusCodes.BAD_REQUEST,
+  status: false,
   message: "Bin Location Name and Code are required"
 }
     }
@@ -38,8 +35,7 @@ return{
 
         if (existingBin) {
           return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
+            status: 0,
             message: "Bin Location Name already exists"
           }
         }
@@ -64,11 +60,29 @@ return{
         });
 
         await newBin.save();
+
+const newData ={
+            binLocID: newBin.BinLocID,
+            binLocName:newBin.BinLocName,
+            binLocCode:newBin.BinLocCode,
+            zoneID:newBin.ZoneID,
+            areaID:newBin.AreaID,
+            rfid: newBin.RFID,
+            latitude:newBin.Latitude,
+            longitude:newBin.Longitude,
+            locationName:newBin.LocationName,
+            locImage:newBin.LocImage,
+            description:newBin.Description,
+            createdBy:newBin.CreatedBy,
+            updatedBy:newBin.UpdatedBy,
+          }
+
+
+
 return{
-  isSuccess: true,
-  statusCode: StatusCodes.CREATED,
+  status: 1,
   message: "Bin Location Added Successfully",
-  data: newBin
+  data: newData
 }
 
     } else {
@@ -120,154 +134,130 @@ return{
 
 export const GetBinLocationQuery = async (model) => {
   try {
-    // Extract pageNo, pageSize, filters, and sort from the model
-    let { pageNo, pageSize, filters = {}, sort = { CreatedOn: 1 } } = model;
+    // Extract pageNo and pageSize from the model
+    let { pageNo, pageSize } = model;
 
-    // If pageNo or pageSize are missing from the model, throw an error or handle it accordingly
-    if (!pageNo || !pageSize) {
-      throw new Error('Page number and page size must be provided');
+    // If pageNo or pageSize are missing, throw an error
+    if (pageNo === undefined || pageSize === undefined) {
+        throw new Error('Page number and page size must be provided');
     }
 
     // Ensure pageNo and pageSize are valid integers
     pageNo = parseInt(pageNo, 10);
     pageSize = parseInt(pageSize, 10);
 
-    // If pageNo or pageSize are not valid numbers, throw an error or handle it accordingly
-    if (isNaN(pageNo) || pageNo < 1) {
-      throw new Error('Invalid page number');
+    if (isNaN(pageNo) || pageNo < 0) {
+        throw new Error('Invalid page number');
     }
-    if (isNaN(pageSize) || pageSize < 1) {
-      throw new Error('Invalid page size');
+    if (isNaN(pageSize) || pageSize < 0) {
+        throw new Error('Invalid page size');
     }
 
     // Building the filter query dynamically based on the filters provided in the model
     const filterQuery = {};
 
-    if (filters.BinLocName) {
-      filterQuery.BinLocName = { $regex: filters.BinLocName, $options: 'i' }; // Case-insensitive search
+    if (model.filters?.BinLocName) {
+        filterQuery.BinLocName = { $regex: model.filters.BinLocName, $options: 'i' };
     }
 
-    if (filters.ZoneID) {
-      filterQuery.ZoneID = filters.ZoneID;
+    if (model.filters?.ZoneID) {
+        filterQuery.ZoneID = model.filters.ZoneID;
     }
 
-    if (filters.AreaID) {
-      filterQuery.AreaID = filters.AreaID;
+    if (model.filters?.AreaID) {
+        filterQuery.AreaID = model.filters.AreaID;
     }
 
-    // Define the aggregation pipeline with dynamic filter, pagination, and sorting
+    // Define the aggregation pipeline
     const aggregationPipeline = [
-      {
-        $match: filterQuery, // Apply dynamic filters here
-      },
-      {
-        $lookup: {
-          from: 'AreaWardMaster',
-          localField: 'AreaID',
-          foreignField: 'AreaID',
-          as: 'AreaWardMaster',
+        { $match: filterQuery },
+        {
+            $lookup: {
+                from: 'AreaWardMaster',
+                localField: 'AreaID',
+                foreignField: 'AreaID',
+                as: 'AreaWardMaster',
+            },
         },
-      },
-      {
-        $unwind: {
-          path: '$AreaWardMaster',
-          preserveNullAndEmptyArrays: true,
+        { $unwind: { path: '$AreaWardMaster', preserveNullAndEmptyArrays: true } },
+        {
+            $lookup: {
+                from: 'ZoneMaster',
+                localField: 'ZoneID',
+                foreignField: 'ZoneID',
+                as: 'ZoneMaster',
+            },
         },
-      },
-      {
-        $lookup: {
-          from: 'ZoneMaster',
-          localField: 'ZoneID',
-          foreignField: 'ZoneID',
-          as: 'ZoneMaster',
+        { $unwind: { path: '$ZoneMaster', preserveNullAndEmptyArrays: true } },
+        {
+            $project: {
+                binLocID:"$BinLocID",
+                binLocName: { $ifNull: ['$BinLocName', ''] },
+                binLocCode: { $ifNull: ['$BinLocCode', ''] },
+                zoneID: 1,
+                rfid: 1,
+                latitude: 1,
+                longitude: 1,
+                locationName: { $ifNull: ['$LocationName', ''] },
+                locImage: 1,
+                description: { $ifNull: ['$Description', ''] },
+                createdBy: 1,
+                updatedBy: 1,
+                areaID: 1,
+                areaWardMaster: {
+                    areaID: '$AreaWardMaster.AreaID',
+                    areaName: { $ifNull: ['$AreaWardMaster.AreaName', ''] },
+                    wardNumber: { $ifNull: ['$AreaWardMaster.WardNumber', ''] },
+                    zoneID: '$AreaWardMaster.ZoneID',
+                    createdBy: { $ifNull: ['$AreaWardMaster.CreatedBy', ''] },
+                    updatedBy: { $ifNull: ['$AreaWardMaster.UpdatedBy', ''] },
+                },
+                zoneMaster: {
+                    zoneID: '$ZoneMaster.ZoneID',
+                    zoneName: { $ifNull: ['$ZoneMaster.ZoneName', ''] },
+                    zoneAbbrevation: { $ifNull: ['$ZoneMaster.ZoneAbbrevation', ''] },
+                    createdBy: { $ifNull: ['$ZoneMaster.CreatedBy', ''] },
+                    updatedBy: { $ifNull: ['$ZoneMaster.UpdatedBy', ''] },
+                },
+            },
         },
-      },
-      {
-        $unwind: {
-          path: '$ZoneMaster',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $project: {
-          BinLocID: 1,
-          BinLocName: { $ifNull: ['$BinLocName', ''] },
-          BinLocCode: { $ifNull: ['$BinLocCode', ''] },
-          ZoneID: 1,
-          RFID: 1,
-          Latitude: 1,
-          Longitude: 1,
-          LocationName: { $ifNull: ['$LocationName', ''] },
-          LocImage: 1,
-          Description: { $ifNull: ['$Description', ''] },
-          CreatedBy: 1,
-          UpdatedBy: 1,
-          CreatedOn: { $ifNull: ['$CreatedOn', new Date(0)] },
-          UpdatedOn: { $ifNull: ['$UpdatedOn', new Date(0)] },
-          AreaID: 1,
-          AreaWardMaster: {
-            AreaID: '$AreaWardMaster.AreaID',
-            AreaName: { $ifNull: ['$AreaWardMaster.AreaName', ''] },
-            WardNumber: { $ifNull: ['$AreaWardMaster.WardNumber', ''] },
-            ZoneID: '$AreaWardMaster.ZoneID',
-            CreatedBy: { $ifNull: ['$AreaWardMaster.CreatedBy', ''] },
-            UpdatedBy: { $ifNull: ['$AreaWardMaster.UpdatedBy', ''] },
-            CreatedOn: { $ifNull: ['$AreaWardMaster.CreatedOn', new Date(0)] },
-            UpdatedOn: { $ifNull: ['$AreaWardMaster.UpdatedOn', new Date(0)] },
-          },
-          ZoneMaster: {
-            ZoneID: '$ZoneMaster.ZoneID',
-            ZoneName: { $ifNull: ['$ZoneMaster.ZoneName', ''] },
-            ZoneAbbrevation: { $ifNull: ['$ZoneMaster.ZoneAbbrevation', ''] },
-            CreatedBy: { $ifNull: ['$ZoneMaster.CreatedBy', ''] },
-            UpdatedBy: { $ifNull: ['$ZoneMaster.UpdatedBy', ''] },
-            CreatedOn: { $ifNull: ['$ZoneMaster.CreatedOn', new Date(0)] },
-            UpdatedOn: { $ifNull: ['$ZoneMaster.UpdatedOn', new Date(0)] },
-          },
-        },
-      },
-      {
-        $skip: (pageNo - 1) * pageSize, // Skip for pagination
-      },
-      {
-        $limit: pageSize, // Limit for pagination
-      },
     ];
 
-    // Get total count of documents for pagination
-    const totalCount = await BinLocation.countDocuments();
+    // Fetch all data if pageNo = 0 and pageSize = 0
+    if (!(pageNo === 0 && pageSize === 0)) {
+        aggregationPipeline.push(
+            { $skip: (pageNo - 1) * pageSize },
+            { $limit: pageSize }
+        );
+    }
+
+    // Get total count of documents
+    const totalCount = await BinLocation.countDocuments(filterQuery);
 
     // Execute aggregation query
     const result = await BinLocation.aggregate(aggregationPipeline);
 
     if (result.length > 0) {
-      return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: 'Bin Locations retrieved successfully',
-        data: result,
-        pageNo: pageNo,
-        pageSize: pageSize,
-        rowCount: totalCount,
-      };
+        return {
+            status: 1,
+            message: 'Bin Locations retrieved successfully',
+            data: result,
+            rowCount: totalCount
+        };
     } else {
-      return{
-        isSuccess: false,
-        statusCode: StatusCodes.NO_CONTENT,
-        message: 'No Bin Locations found',
-        data: [],
-        pageNo: pageNo,
-        pageSize: pageSize,
-        rowCount: totalCount,
-      }
+        return {
+            status: 0,
+            message: 'No Bin Locations found',
+            data: [],
+        };
     }
-  } catch (error) {
-   return{
-     isSuccess: false,
-     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-     message: error.message,
-   }
-  }
+} catch (error) {
+    return {
+        status: 0,
+        message: error.message,
+    };
+}
+
 }
 
 ////////////////////////////// DeleteBinLocationQuery //////////////////////////////////////////
@@ -282,8 +272,7 @@ export const DeleteBinLocationQuery = async (model) => {
 
         if (!entity) {
             return {
-                isSuccess: false,
-                statusCode: StatusCodes.NOT_FOUND,
+                status: 0,
                 message: `Bin Location not found`,
             };
         }
@@ -292,9 +281,8 @@ export const DeleteBinLocationQuery = async (model) => {
         await BinLocation.findOneAndDelete({ BinLocID: binLocID });
 
         return {
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: `BinLocID ${binLocID} Deleted Successfully`,
+             status: 1,
+             message: `BinLocID ${binLocID} Deleted Successfully`,
         };
     }
 
