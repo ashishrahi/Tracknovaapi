@@ -34,15 +34,12 @@ export async function AddUpdateAreaWardMaster(req,res){
 export async function GetAreaWardMaster(req,res){
     try {
         const modal = req.body;
-        const { status, message, data, where, rowCount, orderby, pageNo, pageSize } = await GetAreaWardMasterQuery(modal);
+        const { status, message, data } = await GetAreaWardMasterQuery(modal);
         const successResponse = new CommonResponse(
             status,
             message,
             data,
-            rowCount,
-            orderby,
-            pageNo,
-            pageSize,
+           
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -52,20 +49,16 @@ export async function GetAreaWardMaster(req,res){
     }
 }
 
-
-
-
 /////////////////////////////////////////////// DeleteAreaWardMaster //////////////////////////////////////////////////////////////////
 
 export async function DeleteAreaWardMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteAreaWardMasterQuery(modal);
+        const { status, message, } = await DeleteAreaWardMasterQuery(modal);
         const successResponse = new CommonResponse(
-            isSuccess,
-            // statusCode,
+            status,
             message,
-            data
+            
         );
         res.status(StatusCodes.OK).json(successResponse);
 

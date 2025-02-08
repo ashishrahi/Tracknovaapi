@@ -20,23 +20,22 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
                 const newZoneMaster = new ZoneMaster({
                     ZoneID: modal.zoneID,
                     ZoneName: modal.zoneName,
-                    ZoneAbbreviation:modal.zoneAbbreviation,
+                    ZoneAbbrevation:modal.zoneAbbrevation,
                     CreatedBy: modal.createdBy,
                     UpdatedBy: modal.updatedBy,
                 });
-                const newData = await newZoneMaster.save();
-
-                data = {
-                    zoneID: newData.ZoneID,
-                    zoneName: newData.ZoneName,
-                    zoneAbbrevation: newData.ZoneAbbreviation,
-                    createdBy: newData.CreatedBy,
-                    updatedBy: newData.UpdatedBy,
+                await newZoneMaster.save();
+                const data = {
+                    zoneID: newZoneMaster.ZoneID,
+                    zoneName: newZoneMaster.ZoneName,
+                    zoneAbbrevation: newZoneMaster.ZoneAbbrevation,
+                    createdBy: newZoneMaster.CreatedBy,
+                    updatedBy: newZoneMaster.UpdatedBy,
                   };
                 return{
                     status: 1,
                     message: `Zone Name ${modal.ZoneName} Successfully Added`,
-                    data,
+                    data:data,
                 } }
                 else{
                     const existingZone = await ZoneMaster.findOne({ZoneID:modal.ZoneID});
@@ -73,7 +72,7 @@ if (modal.ZoneID === -1) {
     const transformedZoneMaster = records.map((item) => ({
         zoneID: item.ZoneID,
         zoneName: item.ZoneName,
-        zoneAbbrevation: item.ZoneAbbrevation,
+        ZoneAbbrevation: item.ZoneAbbrevation,
         createdBy: item.CreatedBy,
         updatedBy: item.UpdatedBy,
       }));
@@ -86,12 +85,23 @@ if (modal.ZoneID === -1) {
     }
 }else{
     records = await ZoneMaster.findOne({ ZoneID: modal.ZoneID }).lean();
+
+    const transformedZoneMaster = {
+      zoneID: records.ZoneID,
+      zoneName: records.ZoneName,
+      zoneAbbrevation: records.ZoneAbbrevation,
+      createdBy: records.CreatedBy,
+      updatedBy: records.UpdatedBy,
+    };
+
+
+
     return{
         isSuccess: true,
         internalSuccess: true,
         mesg: `ZoneMaster Records has been fetched successfully`,
         insertedId:"",
-        data: records,
+        data: transformedZoneMaster,
     }
 }
 
@@ -112,49 +122,49 @@ export const DeleteZoneMasterQuery = async (modal) => {
     try {
         // Check if the ZoneID is used in BinLocation
         
-        const binLocation = await BinLocation.findOne({ ZoneID: modal.ZoneID }).exec();
+        const binLocation = await BinLocation.findOne({ ZoneID: modal.zoneID }).exec();
         if (binLocation) {
          return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: "Zone Id is used in BinLocation so can't delete."
+            isSuccess: 0,
+            internalSuccess: false,
+            mesg: "Zone Id is used in BinLocation so can't delete."
           
          }
         }
     
         // Check if the ZoneID is used in AreaWardMaster
-        const areaWard = await AreaWardMaster.findOne({ ZoneID: modal.ZoneID }).exec();
+        const areaWard = await AreaWardMaster.findOne({ ZoneID: modal.zoneID }).exec();
         if (areaWard) {
           return {
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: "Zone Id is used in AreaWardMaster so can't delete."
+            isSuccess: 0,
+            internalSuccess: false,
+            mesg: "Zone Id is used in AreaWardMaster so can't delete."
           };
         }
     
         // Find the ZoneMaster document by ZoneID
-        const zoneMaster = await ZoneMaster.find({ ZoneID: modal.ZoneID }).exec();
+        const zoneMaster = await ZoneMaster.find({ ZoneID: modal.zoneID }).exec();
         if (zoneMaster.length > 0) {
           // Delete the ZoneMaster documents
-          await ZoneMaster.deleteMany({ ZoneID: modal.ZoneID }).exec();
+          await ZoneMaster.deleteMany({ ZoneID: modal.zoneID }).exec();
           return {
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: `ZoneID ${modal.ZoneID } Successfully deleted`
+            isSuccess: 1,
+            internalSuccess:true,
+            mesg: `ZoneID ${modal.zoneID } Successfully deleted`
           };
         } else {
           return {
-            isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message: "Zone Id Not Found!"
+            isSuccess: 0,
+            internalSuccess: false,
+            mesg: "Zone Id Not Found!"
           };
         }
     
       } catch (error) {
         return {
-          isSuccess: false,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error.message + ";" + (error.innerException? error.innerException : error.message)
+          isSuccess: 0,
+          internalSuccess: false,
+          mesg: error.message + ";" + (error.innerException? error.innerException : error.message)
         };
       }
 }
