@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBinLocationQuery,
@@ -14,15 +14,14 @@ import {
 export async function AddUpdateBinLocation(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { status, message, data } =
       await AddUpdateBinLocationQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -37,18 +36,15 @@ export async function AddUpdateBinLocation(req, res) {
 export async function GetBinLocation(req, res) {
   try {
     const model = req.body;
-    const {isSuccess,statusCode, message,data,pageNo,pageSize,rowCount  } =
+    const {status, message, data,rowCount } =
       await GetBinLocationQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
       data,
-      pageNo,
-      pageSize,
       rowCount
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -63,15 +59,14 @@ export async function GetBinLocation(req, res) {
 export async function DeleteBinLocation(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { status, message, data  } =
       await DeleteBinLocationQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

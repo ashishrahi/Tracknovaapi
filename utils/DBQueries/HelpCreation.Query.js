@@ -10,7 +10,6 @@ export const AddHelpCreationQuery = async (model) => {
 
     try {
         const {
-            Id,
           formatName,
           height,
           width,
@@ -19,13 +18,14 @@ export const AddHelpCreationQuery = async (model) => {
           frontDesign,
           backDesign,
           entryDate,
-          page_Name:pageName,
+          page_Name,
           ReportFor,
           pageTitleId,
         } = model;
-    
         // Check if a document with the given PageTitleId exists
         let existingEntry = await HelpCreate.findOne({ PageTitleId:pageTitleId });
+    console.log('existingEntry', existingEntry);
+
     
         if (existingEntry) {
           // Update existing entry
@@ -41,14 +41,13 @@ export const AddHelpCreationQuery = async (model) => {
           await existingEntry.save();
           return{
             isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: "Record updated successfully",
-            data: existingEntry
+            internalSuccess:'true',
+            mesg: "Record updated successfully",
+            insertedId: ""
           }
         } else {
           // Insert new entry
           const newEntry = new HelpCreate({
-            Id:Id,
             formatName,
             height,
             width,
@@ -57,17 +56,37 @@ export const AddHelpCreationQuery = async (model) => {
             frontDesign,
             backDesign,
             entryDate,
-            Page_Name:pageName,
+            page_Name,
             ReportFor,
             pageTitleId,
           });
-    
+
           await newEntry.save();
-         return{
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
-            message: "Record added successfully",
-            data: newEntry
+
+          console.log('newEntry:',newEntry)
+         
+   const newData = {
+    id:newEntry.Id,
+  formatName: newEntry.formatName,
+  height:newEntry.height,
+  width: newEntry.width,
+  roundedCorner:newEntry.roundedCorner,
+  variableBackSide: newEntry.variableBackSide,
+  frontDesign:newEntry.frontDesign,
+  backDesign: newEntry.backDesign,
+  page_Name: newEntry.page_Name,
+  pageTitleId: newEntry.PageTitleId
+   }
+
+
+
+          
+          return{
+            isSuccess:1,
+            internalSuccess: "",
+            mesg: "Record added successfully",
+            insertedId:"",
+            data: newData
  
          }
         }
@@ -75,7 +94,7 @@ export const AddHelpCreationQuery = async (model) => {
         return{
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: `Error in AddHelpCreationQuery: ${error.message}`
+            mesg: `Error in AddHelpCreationQuery: ${error.message}`
         }
       }
 

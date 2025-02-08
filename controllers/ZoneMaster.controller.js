@@ -29,9 +29,6 @@ export async function AddUpdateZoneMaster(req,res){
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }
 }
-
-
-
 //////////////////////////////////////////////// GetZoneMaster //////////////////////////////////////////////////////////////////
 
 export async function GetZoneMaster(req,res){
@@ -60,11 +57,12 @@ export async function GetZoneMaster(req,res){
 export async function DeleteZoneMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteZoneMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg , insertedId, data} = await DeleteZoneMasterQuery(modal);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);
