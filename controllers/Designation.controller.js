@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateDesignationMasterQuery,
@@ -10,18 +10,19 @@ import {
 } from "../utils/DBQueries/index.js";
 /////////////////////////////////////// AddUpdateDesignationMaster //////////////////////////////////////////////////////////////////
 
-export async function AddUpdateDesignationMaster(req, res) {
+export async function AddUpdateDesignationmaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const {isSuccess, internalSuccess, mesg, insertedId, data } =
       await AddUpdateDesignationMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -33,18 +34,19 @@ export async function AddUpdateDesignationMaster(req, res) {
 
 //////////////////////////////////////   GetDesignationMaster      ///////////////////////////////////////////////////////////////
 
-export async function GetDesignationMaster(req, res) {
+export async function GetDesignationmaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetDesignationMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -56,18 +58,19 @@ export async function GetDesignationMaster(req, res) {
 
 //////////////////////////////////////  DeleteDesignationMaster //////////////////////////////////////////////////////////////////////
 
-export async function DeleteDesignationMaster(req, res) {
+export async function DeleteDesignationmaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await DeleteDesignationMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

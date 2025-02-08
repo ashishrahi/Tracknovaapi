@@ -5,12 +5,12 @@ const router = express.Router();
 
 // BinManage Routes
 router.post(
-  "/AddUpdateDepartmentMaster",
+  "/AddUpdateDepartmentmaster",
   DepartmentController.AddUpdateDepartmentMaster
 );
-router.post("/GetDepartmentMaster", DepartmentController.GetDepartmentMaster);
+router.post("/GetDepartmentmaster", DepartmentController.GetDepartmentMaster);
 router.delete(
-  "/DeleteDepartmentMaster",
+  "/DeleteDepartmentmaster",
   DepartmentController.DeleteDepartmentMaster
 );
 

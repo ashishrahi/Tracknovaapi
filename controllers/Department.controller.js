@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateDepartmentMasterQuery,
@@ -14,15 +14,16 @@ import {
 export async function AddUpdateDepartmentMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await AddUpdateDepartmentMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      insertedId,
+      mesg,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -37,15 +38,16 @@ export async function AddUpdateDepartmentMaster(req, res) {
 export async function GetDepartmentMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetDepartmentMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -60,14 +62,16 @@ export async function GetDepartmentMaster(req, res) {
 export async function DeleteDepartmentMaster(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await DeleteDepartmentMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData  (
       isSuccess,
-      statusCode,
-      message
+      internalSuccess,
+      mesg,
+      insertedId,
+      data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
