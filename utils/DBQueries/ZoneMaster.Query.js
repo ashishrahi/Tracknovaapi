@@ -67,7 +67,7 @@ export const AddUpdateZoneMasterQuery = async (modal) => {
 export const GetZoneMasterQuery = async (modal) => {
     try {
         let records = [];
-if (modal.ZoneID === -1) {
+if (modal.zoneID === -1) {
     records = await ZoneMaster.find().lean();
     const transformedZoneMaster = records.map((item) => ({
         zoneID: item.ZoneID,
@@ -84,7 +84,7 @@ if (modal.ZoneID === -1) {
         data: transformedZoneMaster,
     }
 }else{
-    records = await ZoneMaster.findOne({ ZoneID: modal.ZoneID }).lean();
+    records = await ZoneMaster.findOne({ ZoneID: modal.zoneID }).lean();
 
     const transformedZoneMaster = {
       zoneID: records.ZoneID,

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
  AddUpdateMenuMasterQuery,
@@ -16,14 +16,15 @@ import {
 export async function AddUpdateMenuMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateMenuMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await AddUpdateMenuMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -39,14 +40,15 @@ export async function AddUpdateMenuMaster(req,res){
 export async function GetMenuMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetMenuMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const {isSuccess, internalSuccess, mesg, insertedId, data } = await GetMenuMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(successResponse.statusCode).json(successResponse);
+        res.status(StatusCodes.OK).json(successResponse);
 }
     catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -54,19 +56,22 @@ export async function GetMenuMaster(req,res){
              error.message);
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }}
+
+    
 /////////////////////// GetParentMenuMaster //////////////////////////////////////////////////
 
 export async function GetParentMenuMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetParentMenuMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const {isSuccess, internalSuccess, mesg, insertedId, data } = await GetParentMenuMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(successResponse.statusCode).json(successResponse);
+        res.status(StatusCodes.OK).json(successResponse);
 }
     catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -81,14 +86,15 @@ export async function GetParentMenuMaster(req,res){
 export async function GetChildMenuMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetChildMenuMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetChildMenuMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(successResponse.statusCode).json(successResponse);
+        res.status(StatusCodes.OK).json(successResponse);
 }
     catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -102,13 +108,14 @@ export async function DeleteMenuMaster(req,res){
 
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message} = await DeleteMenuMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId} = await DeleteMenuMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId
         );
-        res.status(successResponse.statusCode).json(successResponse);
+        res.status(StatusCodes.OK).json(successResponse);
 }
     catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
