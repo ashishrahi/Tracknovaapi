@@ -126,7 +126,7 @@ router.use("/FuelCorrection", FuelCorrectionRoutes);
 router.use("/MapVehicleData", MapVehicleDataRoutes);
 
 //MenuMaster
-router.use("/MenuMaster", MenuMasterRoutes);
+router.use("/Menu", MenuMasterRoutes);
 
 //PetrolPump
 router.use("/PetrolPump", PetrolPumpRoutes);
