@@ -9,9 +9,11 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
     try {
       if (!designationName || designationName.trim() === '') {
         return { 
-              isSuccess: false, 
-              statusCode:StatusCodes.NOT_FOUND,
-              message: 'Designation Name is required' };
+                isSuccess: 0, 
+                internalSuccess:"",
+                mesg: 'Designation Name is required',
+                insertedId:""
+              };
       }
   
       let designation = await Designation.findOne({ DesignationId:designationId });
@@ -25,9 +27,10 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
   
         await designation.save();
         return { 
-              isSuccess: true,
-              statusCode:StatusCodes.CREATED,
-              message: `${designation.DesignationName} Successfully Updated`,
+              isSuccess: 1,
+              internalSuccess:"",
+              mesg: `${designation.DesignationName} Successfully Updated`,
+              insertedId,
               data: designation
 
              };
@@ -37,9 +40,11 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         const existingDesignation = await Designation.findOne({ DesignationName: designationName.trim() });
         if (existingDesignation) {
           return { 
-                  isSuccess: false,
+                  isSuccess: 0,
+                  internalSuccess:"",
                   statusCode:StatusCodes.CONFLICT,
-                  message: `${existingDesignation.DesignationName} Already Exist`, 
+                  mesg: `${existingDesignation.DesignationName} Already Exist`,
+                  insertedId:"",
                   data: existingDesignation
                    };
         }
@@ -57,11 +62,22 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         });
   
         const data = await newDesignation.save();
+
+    const newData ={
+      designationId: newDesignation.DesignationId,
+      designationName: newDesignation.DesignationName,
+      designationCode: newDesignation.DesignationCode,
+      createdBy: newDesignation.CreatedBy,
+      updatedBy: newDesignation.UpdatedBy,
+    }
+
+
         return {
-                 isSuccess: true,
-                 statusCode:StatusCodes.OK, 
-                 message: `${data.DesignationName} has been Successfully Added`,
-                 data: data
+                 isSuccess: 1,
+                 internalSuccess:"", 
+                 mesg: `${data.DesignationName} has been Successfully Added`,
+                 insertedId:"",
+                 data: newData
                 };
       }
     } catch (error) {
@@ -91,30 +107,50 @@ export const GetDesignationMasterQuery = async (model) => {
         if (model.designationId === -1) {
           // If DesignationId is -1, get all designation records
           const data = await Designation.find().exec();
+
+      const newData = data.map((designation)=>{
+        return{
+          designationId: designation.DesignationId,
+          designationName: designation.DesignationName,
+          designationCode: designation.DesignationCode,
+          createdBy: designation.CreatedBy,
+          updatedBy: designation.UpdatedBy,
+        }
+      })
+
+
           return {
-            isSuccess:true,
-            statusCode:StatusCodes.OK,
-            message:`Designations has been fetched successfully`,
-            data:data
+            isSuccess:1,
+            internalSuccess:"",
+            mesg:`Designations has been fetched successfully`,
+            insertedId:"",
+            data:newData
           }
           
         } else {
           const data = await Designation.findOne({ DesignationId: model.designationId }).exec();
         
-
+       const newData =   {
+            designationId: data.DesignationId,
+            designationName: data.DesignationName,
+            designationCode: data.DesignationCode,
+            createdBy: data.CreatedBy,
+            updatedBy: data.UpdatedBy,
+          }
         // Return the result
        return {
-        isSuccess:true,
-        statusCode:StatusCodes.OK,
-        message:`${data.DesignationName} details has been fetched successfully`,
-        data:data
+        isSuccess:1,
+        internalSuccess:"",
+        mesg:`${data.DesignationName} details has been fetched successfully`,
+        insertedId:"",
+        data:newData
       }}
        
     } catch (err) {
         return{
-          isSuccess:false,
+          isSuccess:0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'An unexpected error occurred'
+          mesg: 'An unexpected error occurred'
         }
     }
 
@@ -130,23 +166,24 @@ export const DeleteDesignationMasterQuery = async (model) => {
         if (designation && designation.length > 0) {
             await Designation.deleteMany({ DesignationId: model.designationId }).exec();
             return{
-              isSuccess:true,
-              statusCode:StatusCodes.OK,
-              message:`DesignationId ${model.designationId} Successfully deleted`
+              isSuccess:1,
+              internalSuccess:"",
+              mesg:`DesignationId ${model.designationName} Successfully deleted`,
+              insertedId:"",
             };
         } else {
             
     return {
-      isSuccess: true, 
-      statusCode:StatusCodes.NOT_FOUND,
-      message: `DesignationId "${designation.DesignationId}" Not Found!`
+      isSuccess: 1, 
+      internalSuccess:"",
+      mesg: `DesignationId "${designation.designationName}" Not Found!`
     }    
           }
     } catch (error) {
         return{
-          isSuccess:false,
+          isSuccess:0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error.message
+          mesg: error.message
         }
     }
 

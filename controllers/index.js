@@ -102,9 +102,9 @@ import {
 
 // DesignationMaster
 import {
-  AddUpdateDesignationMaster,
-  GetDesignationMaster,
-  DeleteDesignationMaster,
+  AddUpdateDesignationmaster,
+  GetDesignationmaster,
+  DeleteDesignationmaster,
 } from "./Designation.controller.js";
 
 // DeviceType
@@ -358,9 +358,9 @@ export const DepartmentController = {
 ////////////////////////////////////////////////  DesignationController   //////////////////////////////////////////////////////////////////
 
 export const DesignationController = {
-  AddUpdateDesignationMaster: AddUpdateDesignationMaster,
-  GetDesignationMaster: GetDesignationMaster,
-  DeleteDesignationMaster: DeleteDesignationMaster,
+  AddUpdateDesignationmaster: AddUpdateDesignationmaster,
+  GetDesignationmaster: GetDesignationmaster,
+  DeleteDesignationmaster: DeleteDesignationmaster,
 };
 
 ////////////////////////////////////////////////  DeviceTypeController   //////////////////////////////////////////////////////////////////

@@ -5,16 +5,16 @@ const router = express.Router();
 
 // BinManage Routes
 router.post(
-  "/AddUpdateDesignationMaster",
-  DesignationController.AddUpdateDesignationMaster
+  "/AddUpdateDesignationmaster",
+  DesignationController.AddUpdateDesignationmaster
 );
 router.post(
-  "/GetDesignationMaster",
-  DesignationController.GetDesignationMaster
+  "/GetDesignationmaster",
+  DesignationController.GetDesignationmaster
 );
 router.delete(
-  "/DeleteDesignationMaster",
-  DesignationController.DeleteDesignationMaster
+  "/DeleteDesignationmaster",
+  DesignationController.DeleteDesignationmaster
 );
 
 export default router;
