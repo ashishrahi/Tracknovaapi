@@ -307,11 +307,11 @@ export const GetUserPermissionMasterQuery = async (modal) => {
       const usersPermission = await UserPermission.find().lean();
 
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "User Permission Details fetched successfully",
+        isSuccess: 1,
+        id: userId,
+        createUpdate:"",
+        msg: "User Permission Details fetched successfully",
         data: usersPermission,
-        rowCount: usersPermission.length,
       };
     } else {
       const data = await UserPermission.aggregate([
@@ -361,18 +361,18 @@ export const GetUserPermissionMasterQuery = async (modal) => {
       ]);
 
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "User Permission Details fetched successfully",
+        isSuccess: 1,
+        id: userId,
+        createUpdate:"",
+        msg: "User Permission Details fetched successfully",
         data: data,
-        rowCount: data.length,
       };
     }
   } catch (error) {
     return {
-      isSuccess: false,
+      isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      msg: error.message,
     };
   }
 };
@@ -630,9 +630,11 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
     // Validation: RoleId required
     if (!roleId || roleId === "0") {
        return{
-        isSuccess: false,
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Role ID is required",
+        isSuccess: 0,
+        internalSuccess:"Created",
+        mesg: "Role ID is required",
+        insertedId:"",
+        data
        }
     }
 
@@ -643,11 +645,29 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
         // Update role
         role.RoleId = roleId;
         await role.save();
+
+const updatedRole ={
+  roleId: role.RoleId,
+  menuId: role.MenuId,
+  parentMenuId: role.ParentId,
+  isAdd: role.IsAdd,
+  isDel: role.IsDel,
+  isEdit: role.IsEdit,
+  isExport: role.IsExport,
+  isPost: role.IsPost,
+  isPrint: role.IsPrint,
+  isRelease: role.IsRelease,
+  isView: role.IsView,
+  menuName: role.MenuName
+}
+
+
         return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: "Role details updated successfully",
-          data: role,
+          isSuccess: 1,
+          internalSuccess: "true",
+          mesg: "Role details updated successfully",
+          insertedId:"",
+          data: updatedRole,
         }
     } else {
         // Generate new RoleId
@@ -658,21 +678,48 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
         }
 
         // Create new role
-        const newRole = new RolePermission({ RoleId: tempZoneID.toString() });
+        const newRole = new RolePermission({ RoleId: tempZoneID.toString(),
+          MenuId:modal.menuId,
+          ParentId:modal.parentId,
+          IsAdd: modal.IsAdd,
+          IsDel: modal.IsDel,
+          IsEdit: modal.IsEdit,
+          IsExport: modal.IsExport,
+          IsPost: modal.IsPost,
+          IsPrint: modal.IsPrint,
+          IsRelease: modal.IsRelease,
+          IsView: modal.IsView,
+          MenuName:modal.menuName
+         });
         await newRole.save();
 
-        return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Successfully Created RoleID ${tempZoneID}`,
-          data: newRole,
+const newRolePermission = {
+  roleId: tempZoneID,
+  menuId:newRole.MenuId,
+  parentId:newRole.ParentId,
+  isAdd: newRole.IsAdd,
+  isDel: newRole.IsDel,
+  isEdit: newRole.IsEdit,
+  isExport: newRole.IsExport,
+  isPost: newRole.IsPost,
+  isPrint: newRole.IsPrint,
+  isRelease: newRole.IsRelease,
+  isView: newRole.IsView,
+  menuName:newRole.MenuName
+}
+    return{
+          isSuccess: 1,
+          internalSuccess: "Created",
+          mesg: `Role ${tempZoneID} Created Successfully  `,
+          insertedId:"",
+          data: newRolePermission,
         }
     }
 } catch (error) {
     return{
-      isSuccess: false,
+      isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      mesg: error.message,
     }
 }
 };
@@ -681,31 +728,46 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
 export const GetRolePermissionMasterQuery = async (modal) => {
   try {
-    const { RoleId } = modal;
+    const { roleId } = modal;
 
-    if (RoleId === "-1") {
+    if (roleId === "-1") {
       const data = await RolePermission.find({}).lean();
+      const roleList = data.map((role)=>{
+        return{
+          roleId: role.RoleId,
+          isAdd: role.IsAdd,
+          isDel:role.IsDel,
+          isEdit:role.IsEdit,
+          isExport:role.IsExport,
+          isPost:role.IsPost,
+          isPrint:role.IsPrint,
+          isRelease:role.IsRelease,
+          isView:role.IsView
+        }
+      })
 
       return {
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "Role Permission fetched successfully",
-        data: data,
+        internalSuccess:"",
+        mesg: "Role Permission fetched successfully",
+        insertedId:"",
+        data: roleList,
       };
     } else {
-      const data = await RolePermission.findOne({ RoleId: RoleId }).lean();
+      const data = await RolePermission.findOne({ RoleId: roleId }).lean();
       return {
-        isSuccess: "success",
-        statusCode: StatusCodes.OK,
-        message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        isSuccess: true,
+        internalSuccess:"",
+        mesg: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        insertedId:"",
         data: data,
       };
     }
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      isSuccess: 0,
+      internalSuccess:"",
+      mesg: error.message,
     };
   }
 };
