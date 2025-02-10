@@ -239,14 +239,13 @@ export async function DeleteUserPermissionMaster(req, res) {
 export async function AddUpdateRoleMaster(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data} = await AddUpdateRoleMasterQuery(modal);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const {status, message, data} = await AddUpdateRoleMasterQuery(modal);
+    const successResponse = new CommonResponse(
+      status,
       message,
       data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -260,17 +259,15 @@ export async function AddUpdateRoleMaster(req, res) {
 
 export async function GetRoleMaster(req, res) {
   try {
-    const {isSuccess,statusCode,message,data,rowCount} = await GetRoleMasterQuery();
+    const {status, message, data} = await GetRoleMasterQuery();
 
 
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
       data,
-      rowCount
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
     const errorResponse = new ApiErrorResponse(
       
@@ -287,13 +284,13 @@ export async function DeleteRoleMaster(req, res) {
   try {
     const modal = req.body;
 
-    const {isSuccess,statusCode,message} = await DeleteRoleMasterQuery(modal);
+    const {status, message, data} = await DeleteRoleMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message
+      status,
+      message,
+      data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

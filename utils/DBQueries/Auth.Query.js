@@ -488,25 +488,35 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
     // Check if the role exists
     if (roleMaster) {
       // Role exists, update it
-      roleMaster.roleName = roleName;
-      roleMaster.NormalizedName = roleName.toUpperCase(); // You can customize this
-      roleMaster.modifyDt = new Date();
+      roleMaster.Id = roleId
+      roleMaster.Name = roleName;
+      roleMaster.NormalizedName =normalizedRoleName; // You can customize this
 
       await roleMaster.save();
 
+
+      const updatedRole = {
+        id: roleMaster.Id,
+        name: roleMaster.Name,
+        normalizedName: roleMaster.NormalizedName,
+      }
+
+
+
       // Remove old permissions and add new ones
       await RolePermission.deleteMany({RoleId: roleId });
+
       const permissions = rolePermissions.map(permission => ({
         ...permission,
         roleId
       }));
+      const data = await RolePermission.insertMany(permissions);
 
-      await RolePermission.insertMany(permissions);
 
       return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
+        status: 1,
         message: `Role ${roleName} updated successfully`,
+        data: updatedRole
       }
     } else {
       // Role doesn't exist, create a new role
@@ -516,29 +526,36 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
         NormalizedName: normalizedRoleName
       });
 
-      const newRole  = await newRoleMaster.save();
+      await newRoleMaster.save();
+
+      const insertedRole = {
+        id: newRoleMaster.Id,
+        name: newRoleMaster.Name,
+        normalizedName: newRoleMaster.NormalizedName,
+      }
+      
+
 
       // Insert permissions
+
       const permissions = rolePermissions.map(permission => ({
         ...permission,
         roleId: newRoleMaster.roleId
       }));
+       await RolePermission.insertMany(permissions);
 
-      await RolePermission.insertMany(permissions);
 
      return{
-       isSuccess: true,
-       statusCode: StatusCodes.OK,
+      status: 1,
        message: `Role ${roleName} created successfully`,
-       data:newRole
+       data:insertedRole
 
       }
      }
     
   } catch (err) {
    return{
-     isSuccess: false,
-     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+     status: 0,
      message: err.message,
    }
   }
@@ -551,17 +568,22 @@ export const GetRoleMasterQuery = async () => {
   try {
     const roles = await AspNetRoles.find().sort({ Name: 1 });
 
+    const roleList = roles.map((role)=>{
+      return{
+        id: role.Id,
+        name: role.Name,
+        normalizedName:role.NormalizedName
+      }
+    })
+
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: "Roles fetched successfully",
-      data: roles,
-      rowCount: roles.length,
+      data: roleList,
     };
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 0,
       message: error.message,
     };
   }
@@ -571,31 +593,29 @@ export const GetRoleMasterQuery = async () => {
 
 export const DeleteRoleMasterQuery = async (modal) => {
   try {
-    const { RoleID } = modal;
-    const roleExists = await AspNetRoles.findOne({ RoleID: RoleID });
+    const { RoleId } = modal;
+    console.log('RoleId: ', RoleId);
+    const roleExists = await AspNetRoles.findOne({Id: RoleId });
 
     if (!roleExists) {
       return {
-        isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
+        status: 0,
         message: `RoleID  Not Found!`,
       };
     }
 
     // Delete the role
-    await AspNetRoles.findOneAndDelete({ RoleID: RoleID });
+    await AspNetRoles.findOneAndDelete({ Id: RoleId });
 
-    await RolePermission.deleteMany({ RoleID: RoleID });
+    await RolePermission.deleteMany({ RoleID: RoleId });
 
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: `RoleID  deleted successfully`,
     };
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 0,
       message: error.message,
     };
   }
