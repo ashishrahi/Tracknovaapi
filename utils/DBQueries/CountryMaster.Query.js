@@ -11,8 +11,9 @@ export const AddUpdateCountryMasterQuery = async (model) => {
             
       return{
                 isSuccess: true,
-                statusCode: StatusCodes.BAD_REQUEST,
-                message: 'Country Name Is Required'
+                internalSuccess: false,
+                mesg: 'Country Name Is Required',
+                
             }
         }
 
@@ -28,13 +29,25 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 
 
             // Save the updated record
-            await existingCountry.save();
+            await existingCountry.save()
+
+   const updatedCountry ={
+     countryId: existingCountry.CountryId,
+     countryName: existingCountry.CountryName,
+     countryCode: existingCountry.CountryCode,
+     updatedBy: existingCountry.UpdatedBy,
+     createdBy: existingCountry.CreatedBy,
+ 
+   }
+
+
             
             return{
                 isSuccess:true,
-                statusCode: StatusCodes.OK,
-                message: `${existingCountry.CountryName} Successfully Updated`,
-                data: existingCountry
+                internalSuccess: false,
+                mesg: `Country ${existingCountry.CountryName} Successfully Updated`,
+                insertedId:"",
+                data: updatedCountry
             }
         } else {
             // Country does not exist, so create a new record
@@ -51,8 +64,9 @@ export const AddUpdateCountryMasterQuery = async (model) => {
                 
              return{
                     isSuccess:false,
-                    statusCode: StatusCodes.CONFLICT,
-                    message: `${countryNameExists.CountryName} Already Exists`,
+                    internalSuccess: "true",
+                    mesg: `Country ${countryNameExists.CountryName} Already Exists`,
+                    insertedId: "",
                     data: countryNameExists
                 }
             }
@@ -65,11 +79,25 @@ export const AddUpdateCountryMasterQuery = async (model) => {
                 CreatedBy: model.createdBy || 'Admin',
             });
 
-           const newCountryname = await newCountry.save()
+            await newCountry.save()
+
+            const newCountryname ={
+                countryId: newCountry.CountryId,
+                countryName: newCountry.CountryName,
+                countryCode: newCountry.CountryCode,
+                updatedBy: newCountry.UpdatedBy,
+                createdBy: newCountry.CreatedBy,
+            }
+
+
+
+
+
             return {
                     isSuccess:true,
-                    statusCode:StatusCodes.CREATED,
-                    message:`${newCountryname.CountryName} has been Added successfully`,
+                    internalSuccess:false,
+                    mesg:`Country ${newCountryname.countryName} has been Added successfully`,
+                    insertedId: "",
                     data:newCountryname
                 }
         }
@@ -77,7 +105,7 @@ export const AddUpdateCountryMasterQuery = async (model) => {
         return{
             isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message,
+            mesg: error.message,
         }
     }
 
@@ -93,21 +121,51 @@ export const GetCountryMasterQuery = async (model) => {
         if (countryId === -1) {
             // Fetch all countries
             const country = await CountryMaster.find({}).lean();
+
+            const countryList = country.map((list)=>{
+                
+                return{
+                    countryCode: list.CountryCode,
+                    countryId: list.CountryId,
+                    countryName: list.CountryName,
+                    createdBy: list.CreatedBy,
+                    updatedBy: list.UpdatedBy,
+                    createdOn:list.createdAt,
+                    updatedOn:list.updatedAt
+                    
+                }
+            })
           
             return {
                    isSuccess:true,
-                   statusCode: StatusCodes.OK,
-                   message:'Country Data has been fetched successfully',
-                   data: country                 
+                   internalSuccess:false,
+                   mesg:'Country Data has been fetched successfully',
+                   insertedId:"",
+                   internalSuccess:false,
+                   data: countryList                 
                  };
         } else {
             // Fetch specific country by CountryId
             const country = await CountryMaster.findOne({ CountryId:countryId })
+
+           const countryDetail = {
+                countryCode: country.CountryCode,
+                countryId: country.CountryId,
+                countryName: country.CountryName,
+                createdBy: country.CreatedBy,
+                updatedBy: country.UpdatedBy,
+                createdOn:country.createdAt,
+                updatedOn:country.updatedAt
+                
+            }
+
+
             return {
                 isSuccess: true,
-                statusCode: StatusCodes.OK,
-                message:`${country.CountryName} details has been fetched successfully`,
-                data:country,
+                internalSuccess: false,
+                mesg:`Country ${country.CountryName} details has been fetched successfully`,
+                insertedId:"",
+                data:countryDetail,
 
             }
         }
@@ -115,48 +173,48 @@ export const GetCountryMasterQuery = async (model) => {
         return{
             isSuccess:false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message,
+            mesg: error.message,
         }
     }}
 
 /////////////////////////////  DeleteCountryQuery  /////////////////////////////////////////////////
 
-export const DeleteCountryQuery = async (model) => {
+export const DeleteCountryQuery = async (model) => { 
+    try {
+        const { countryId } = model;
 
-   
-    
-      try {
-        const stateReference = await StateMaster.findOne({ CountryId: model.countryId }).exec();
+        // Check if the country is referenced in StateMaster
+        const stateReference = await StateMaster.findOne({ CountryId: countryId }).exec();
         if (stateReference) {
-          return {
-            isSuccess:true,
-            statusCode: StatusCodes.CONFLICT,
-            message : `${CountryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`};
+            return {
+                isSuccess: true,
+                internalSuccess: false,
+                mesg: `${countryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`
+            };
         }
-    
-        // Find and delete the country
-        const countries = await CountryMaster.findOne({ CountryId: model.countryId }).exec();
-        if (countries && countries.length > 0) {
-          await CountryMaster.deleteMany({ CountryId: model.countryId });
-          return{
-            isSuccess:true,
-            statusCode:StatusCodes.OK,
-            message:`${countryId} deleted successfully` };
+
+        // Find the country
+        const country = await CountryMaster.findOne({ CountryId: countryId }).exec();
+        if (country) {
+            await CountryMaster.deleteOne({ CountryId: countryId });
+            return {
+                isSuccess: true,
+                internalSuccess: true,
+                mesg: `Country ${country.CountryName} deleted successfully.`
+            };
         } else {
-          return{
-            isSuccess:false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message:`"${countryId} not found!` };
+            return {
+                isSuccess: false,
+                statusCode: StatusCodes.NOT_FOUND,
+                mesg: `Country ${countryId} not found!`
+            };
         }
-        
-      } catch (error) {
-        return{
+    } catch (error) {
+        return {
             isSuccess: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message,
-            data: error.stack,
-        }
-      }
-    
+            mesg: error.message
+        };
+    }
 
 }
