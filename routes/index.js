@@ -117,7 +117,7 @@ router.use("/HandheldMaster", HandheldMasterRoutes);
 router.use("/HelpCreation", HelpCreationRoutes);
 
 //CityMaster
-router.use("/DistrictMaster", CityMasterRoutes);
+router.use("/M10_District", CityMasterRoutes);
 
 //FuelCorrection
 router.use("/FuelCorrection", FuelCorrectionRoutes);

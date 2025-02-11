@@ -13,6 +13,7 @@ const RolePermissionSchema = new Schema(
     IsPrint: { type: Boolean, default: false },
     IsRelease: { type: Boolean, default: false },
     IsView: { type: Boolean, default: false },
+    MenuName:{ type:String }
   },
   { timestamps: true, collection: "RolePermission" }
 );

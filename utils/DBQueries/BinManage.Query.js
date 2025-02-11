@@ -94,86 +94,92 @@ export const AddUpdateBinManageQuery = async (model) => {
 export const GetBinManageQuery = async (model) => {
 
   try {
-  const { pageNo, pageSize} = model;
+    const { pageNo, pageSize } = model;
     const pipeline = [
       {
         $lookup: {
-          from: 'RouteAreaBinDetail',
-          localField: 'RouteID',
-          foreignField: 'RouteID',
-          as: 'RouteAreaBinDetail',
+          from: 'routeareabindetail',
+          localField: 'routeid',
+          foreignField: 'routeid',
+          as: 'routeareabindetail',
         },
       },
-      { $unwind: { path: '$RouteAreaBinDetail', preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: '$routeareabindetail', preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
-          from: 'BinLocation',
-          localField: 'RouteAreaBinDetail.BinID',
-          foreignField: 'BinLocID',
-          as: 'RouteAreaBinDetail.BinLocation',
+          from: 'binlocation',
+          localField: 'routeareabindetail.binid',
+          foreignField: 'binlocid',
+          as: 'routeareabindetail.binlocation',
         },
       },
-      { $unwind: { path: '$RouteAreaBinDetail.BinLocation', preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: '$routeareabindetail.binlocation', preserveNullAndEmptyArrays: true } },
       {
         $project: {
-          RouteID: 1,
-          RouteName: { $ifNull: ['$RouteName', ''] },
-          Description: { $ifNull: ['$Description', ''] },
-          RouteDate: { $ifNull: ['$RouteDate', null] },
-          CreatedBy: { $ifNull: ['$CreatedBy', ''] },
-          UpdatedBy: { $ifNull: ['$UpdatedBy', ''] },
-          CreatedOn: { $ifNull: ['$CreatedOn', null] },
-          UpdatedOn: { $ifNull: ['$UpdatedOn', null] },
-          'RouteAreaBinDetail.RouteDetailBinId': 1,
-          'RouteAreaBinDetail.RouteID': 1,
-          'RouteAreaBinDetail.BinLocation': {
-            BinLocID: { $ifNull: ['$RouteAreaBinDetail.BinLocation.BinLocID', null] },
-            BinLocName: { $ifNull: ['$RouteAreaBinDetail.BinLocation.BinLocName', ''] },
-            BinLocCode: { $ifNull: ['$RouteAreaBinDetail.BinLocation.BinLocCode', ''] },
-            Latitude: { $ifNull: ['$RouteAreaBinDetail.BinLocation.Latitude', null] },
-            Longitude: { $ifNull: ['$RouteAreaBinDetail.BinLocation.Longitude', null] },
-            LocationName: { $ifNull: ['$RouteAreaBinDetail.BinLocation.LocationName', ''] },
-            LocImage: { $ifNull: ['$RouteAreaBinDetail.BinLocation.LocImage', null] },
-            Description: { $ifNull: ['$RouteAreaBinDetail.BinLocation.Description', ''] },
+          routeid: 1,
+          routename: { $ifNull: ['$routename', ''] },
+          description: { $ifNull: ['$description', ''] },
+          routedate: { $ifNull: ['$routedate', null] },
+          createdby: { $ifNull: ['$createdby', ''] },
+          updatedby: { $ifNull: ['$updatedby', ''] },
+          createdon: { $ifNull: ['$createdon', null] },
+          updatedon: { $ifNull: ['$updatedon', null] },
+          'routeareabindetail.routedetailbinid': 1,
+          'routeareabindetail.routeid': 1,
+          'routeareabindetail.binlocation': {
+            binlocid: { $ifNull: ['$routeareabindetail.binlocation.binlocid', null] },
+            binlocname: { $ifNull: ['$routeareabindetail.binlocation.binlocname', ''] },
+            binloccode: { $ifNull: ['$routeareabindetail.binlocation.binloccode', ''] },
+            latitude: { $ifNull: ['$routeareabindetail.binlocation.latitude', null] },
+            longitude: { $ifNull: ['$routeareabindetail.binlocation.longitude', null] },
+            locationname: { $ifNull: ['$routeareabindetail.binlocation.locationname', ''] },
+            locimage: { $ifNull: ['$routeareabindetail.binlocation.locimage', null] },
+            description: { $ifNull: ['$routeareabindetail.binlocation.description', ''] },
           },
         },
       },
       {
         $group: {
           _id: '$_id',
-          RouteID: { $first: '$RouteID' },
-          RouteName: { $first: '$RouteName' },
-          Description: { $first: '$Description' },
-          RouteDate: { $first: '$RouteDate' },
-          CreatedBy: { $first: '$CreatedBy' },
-          UpdatedBy: { $first: '$UpdatedBy' },
-          CreatedOn: { $first: '$CreatedOn' },
-          UpdatedOn: { $first: '$UpdatedOn' },
-          RouteAreaBinDetail: { $push: '$RouteAreaBinDetail' },
+          routeid: { $first: '$routeid' },
+          routename: { $first: '$routename' },
+          description: { $first: '$description' },
+          routedate: { $first: '$routedate' },
+          createdby: { $first: '$createdby' },
+          updatedby: { $first: '$updatedby' },
+          createdon: { $first: '$createdon' },
+          updatedon: { $first: '$updatedon' },
+          routeareabindetail: { $push: '$routeareabindetail' },
         },
       },
-      { $skip: (pageNo - 1) * pageSize },
-      { $limit: parseInt(pageSize, 10) },
     ];
-
+  
+    // Apply pagination only if pageNo and pageSize are greater than 0
+    if (pageNo > 0 && pageSize > 0) {
+      pipeline.push(
+        { $skip: (pageNo - 1) * pageSize },
+        { $limit: parseInt(pageSize, 10) }
+      );
+    }
+  
     const data = await Route.aggregate(pipeline);
     const rowCount = await Route.countDocuments();
+  
     return { 
-      isSuccess:true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: 'Data fetched successfully',
       data: data,
-      pageNo:pageNo, 
-      pageSize:pageSize,
-      rowCount:rowCount };
-      
+      pageNo: pageNo, 
+      pageSize: pageSize,
+      rowCount: rowCount 
+    };
+  
   } catch (error) {
-   return{
-    isSuccess:false,
-    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-    message: error.message,
-   }
+    return {
+      status: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message,
+    };
   }
-
 };
 

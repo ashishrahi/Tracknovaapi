@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateTaxMasterQuery,
@@ -14,14 +14,15 @@ import {
 export async function AddUpdateTaxMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateTaxMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg , insertedId, data } = await AddUpdateTaxMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -36,11 +37,12 @@ export async function AddUpdateTaxMaster(req,res){
 export async function GetTaxMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetTaxMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg , insertedId, data} = await GetTaxMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);
@@ -58,11 +60,12 @@ export async function GetTaxMaster(req,res){
 export async function DeleteTaxMaster(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteTaxMasterQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const {isSuccess, internalSuccess, mesg , insertedId, data} = await DeleteTaxMasterQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);

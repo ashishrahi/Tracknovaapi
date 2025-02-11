@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateCountryMasterQuery,
@@ -14,15 +14,16 @@ import {
 export async function AddUpdateCountryMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data} =
       await AddUpdateCountryMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -37,15 +38,16 @@ export async function GetCountryMaster(req, res) {
   try {
     const model = req.body;
 
-    const { data, isSuccess, message, statusCode } =
+    const {  isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetCountryMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -60,16 +62,17 @@ export async function GetCountryMaster(req, res) {
 export async function DeleteCountryMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } = await DeleteCountryQuery(
+    const { isSuccess, internalSuccess, mesg, insertedId, data  } = await DeleteCountryQuery(
       model
     );
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

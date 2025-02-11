@@ -311,11 +311,11 @@ export const GetUserPermissionMasterQuery = async (modal) => {
       const usersPermission = await UserPermission.find().lean();
 
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "User Permission Details fetched successfully",
+        isSuccess: 1,
+        id: userId,
+        createUpdate:"",
+        msg: "User Permission Details fetched successfully",
         data: usersPermission,
-        rowCount: usersPermission.length,
       };
     } else {
       const data = await UserPermission.aggregate([
@@ -373,18 +373,18 @@ export const GetUserPermissionMasterQuery = async (modal) => {
       return newObj;
     });
       return {
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "User Permission Details fetched successfully",
+        isSuccess: 1,
+        id: userId,
+        createUpdate:"",
+        msg: "User Permission Details fetched successfully",
         data: data,
-        rowCount: data.length,
       };
     }
   } catch (error) {
     return {
-      isSuccess: false,
+      isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      msg: error.message,
     };
   }
 };
@@ -500,25 +500,35 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
     // Check if the role exists
     if (roleMaster) {
       // Role exists, update it
-      roleMaster.roleName = roleName;
-      roleMaster.NormalizedName = roleName.toUpperCase(); // You can customize this
-      roleMaster.modifyDt = new Date();
+      roleMaster.Id = roleId
+      roleMaster.Name = roleName;
+      roleMaster.NormalizedName =normalizedRoleName; // You can customize this
 
       await roleMaster.save();
 
+
+      const updatedRole = {
+        id: roleMaster.Id,
+        name: roleMaster.Name,
+        normalizedName: roleMaster.NormalizedName,
+      }
+
+
+
       // Remove old permissions and add new ones
       await RolePermission.deleteMany({RoleId: roleId });
+
       const permissions = rolePermissions.map(permission => ({
         ...permission,
         roleId
       }));
+      const data = await RolePermission.insertMany(permissions);
 
-      await RolePermission.insertMany(permissions);
 
       return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
+        status: 1,
         message: `Role ${roleName} updated successfully`,
+        data: updatedRole
       }
     } else {
       // Role doesn't exist, create a new role
@@ -528,29 +538,36 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
         NormalizedName: normalizedRoleName
       });
 
-      const newRole  = await newRoleMaster.save();
+      await newRoleMaster.save();
+
+      const insertedRole = {
+        id: newRoleMaster.Id,
+        name: newRoleMaster.Name,
+        normalizedName: newRoleMaster.NormalizedName,
+      }
+      
+
 
       // Insert permissions
+
       const permissions = rolePermissions.map(permission => ({
         ...permission,
         roleId: newRoleMaster.roleId
       }));
+       await RolePermission.insertMany(permissions);
 
-      await RolePermission.insertMany(permissions);
 
      return{
-       isSuccess: true,
-       statusCode: StatusCodes.OK,
+      status: 1,
        message: `Role ${roleName} created successfully`,
-       data:newRole
+       data:insertedRole
 
       }
      }
     
   } catch (err) {
    return{
-     isSuccess: false,
-     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+     status: 0,
      message: err.message,
    }
   }
@@ -563,17 +580,22 @@ export const GetRoleMasterQuery = async () => {
   try {
     const roles = await AspNetRoles.find().sort({ Name: 1 });
 
+    const roleList = roles.map((role)=>{
+      return{
+        id: role.Id,
+        name: role.Name,
+        normalizedName:role.NormalizedName
+      }
+    })
+
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: "Roles fetched successfully",
-      data: roles,
-      rowCount: roles.length,
+      data: roleList,
     };
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 0,
       message: error.message,
     };
   }
@@ -583,31 +605,29 @@ export const GetRoleMasterQuery = async () => {
 
 export const DeleteRoleMasterQuery = async (modal) => {
   try {
-    const { RoleID } = modal;
-    const roleExists = await AspNetRoles.findOne({ RoleID: RoleID });
+    const { RoleId } = modal;
+    console.log('RoleId: ', RoleId);
+    const roleExists = await AspNetRoles.findOne({Id: RoleId });
 
     if (!roleExists) {
       return {
-        isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
+        status: 0,
         message: `RoleID  Not Found!`,
       };
     }
 
     // Delete the role
-    await AspNetRoles.findOneAndDelete({ RoleID: RoleID });
+    await AspNetRoles.findOneAndDelete({ Id: RoleId });
 
-    await RolePermission.deleteMany({ RoleID: RoleID });
+    await RolePermission.deleteMany({ RoleID: RoleId });
 
     return {
-      isSuccess: true,
-      statusCode: StatusCodes.OK,
+      status: 1,
       message: `RoleID  deleted successfully`,
     };
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 0,
       message: error.message,
     };
   }
@@ -622,9 +642,11 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
     // Validation: RoleId required
     if (!roleId || roleId === "0") {
        return{
-        isSuccess: false,
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Role ID is required",
+        isSuccess: 0,
+        internalSuccess:"Created",
+        mesg: "Role ID is required",
+        insertedId:"",
+        data
        }
     }
 
@@ -635,11 +657,29 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
         // Update role
         role.RoleId = roleId;
         await role.save();
+
+const updatedRole ={
+  roleId: role.RoleId,
+  menuId: role.MenuId,
+  parentMenuId: role.ParentId,
+  isAdd: role.IsAdd,
+  isDel: role.IsDel,
+  isEdit: role.IsEdit,
+  isExport: role.IsExport,
+  isPost: role.IsPost,
+  isPrint: role.IsPrint,
+  isRelease: role.IsRelease,
+  isView: role.IsView,
+  menuName: role.MenuName
+}
+
+
         return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: "Role details updated successfully",
-          data: role,
+          isSuccess: 1,
+          internalSuccess: "true",
+          mesg: "Role details updated successfully",
+          insertedId:"",
+          data: updatedRole,
         }
     } else {
         // Generate new RoleId
@@ -650,21 +690,48 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
         }
 
         // Create new role
-        const newRole = new RolePermission({ RoleId: tempZoneID.toString() });
+        const newRole = new RolePermission({ RoleId: tempZoneID.toString(),
+          MenuId:modal.menuId,
+          ParentId:modal.parentId,
+          IsAdd: modal.IsAdd,
+          IsDel: modal.IsDel,
+          IsEdit: modal.IsEdit,
+          IsExport: modal.IsExport,
+          IsPost: modal.IsPost,
+          IsPrint: modal.IsPrint,
+          IsRelease: modal.IsRelease,
+          IsView: modal.IsView,
+          MenuName:modal.menuName
+         });
         await newRole.save();
 
-        return{
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Successfully Created RoleID ${tempZoneID}`,
-          data: newRole,
+const newRolePermission = {
+  roleId: tempZoneID,
+  menuId:newRole.MenuId,
+  parentId:newRole.ParentId,
+  isAdd: newRole.IsAdd,
+  isDel: newRole.IsDel,
+  isEdit: newRole.IsEdit,
+  isExport: newRole.IsExport,
+  isPost: newRole.IsPost,
+  isPrint: newRole.IsPrint,
+  isRelease: newRole.IsRelease,
+  isView: newRole.IsView,
+  menuName:newRole.MenuName
+}
+    return{
+          isSuccess: 1,
+          internalSuccess: "Created",
+          mesg: `Role ${tempZoneID} Created Successfully  `,
+          insertedId:"",
+          data: newRolePermission,
         }
     }
 } catch (error) {
     return{
-      isSuccess: false,
+      isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      mesg: error.message,
     }
 }
 };
@@ -673,31 +740,46 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
 export const GetRolePermissionMasterQuery = async (modal) => {
   try {
-    const { RoleId } = modal;
+    const { roleId } = modal;
 
-    if (RoleId === "-1") {
+    if (roleId === "-1") {
       const data = await RolePermission.find({}).lean();
+      const roleList = data.map((role)=>{
+        return{
+          roleId: role.RoleId,
+          isAdd: role.IsAdd,
+          isDel:role.IsDel,
+          isEdit:role.IsEdit,
+          isExport:role.IsExport,
+          isPost:role.IsPost,
+          isPrint:role.IsPrint,
+          isRelease:role.IsRelease,
+          isView:role.IsView
+        }
+      })
 
       return {
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "Role Permission fetched successfully",
-        data: data,
+        internalSuccess:"",
+        mesg: "Role Permission fetched successfully",
+        insertedId:"",
+        data: roleList,
       };
     } else {
-      const data = await RolePermission.findOne({ RoleId: RoleId }).lean();
+      const data = await RolePermission.findOne({ RoleId: roleId }).lean();
       return {
-        isSuccess: "success",
-        statusCode: StatusCodes.OK,
-        message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        isSuccess: true,
+        internalSuccess:"",
+        mesg: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        insertedId:"",
         data: data,
       };
     }
   } catch (error) {
     return {
-      isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message,
+      isSuccess: 0,
+      internalSuccess:"",
+      mesg: error.message,
     };
   }
 };

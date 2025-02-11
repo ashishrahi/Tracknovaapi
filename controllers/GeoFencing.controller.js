@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {
-  ApiSuccessResponse,
+  CommonResponse,
   ApiErrorResponse,
 } from "../utils/apiResponse/index.js";
 import {
@@ -8,20 +8,20 @@ import {
   GetGeoFencingQuery,
   DeleteGeoFencingQuery,
 } from "../utils/DBQueries/GeoFencing.Query.js";
+
 /////////////////////////////////////////////// AddUpdateGeoFencing //////////////////////////////////////////////////////////////////
 
 export async function AddUpdateGeoFencing(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data } =
+    const { status, message, data} =
       await AddUpdateGeoFencingQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -35,17 +35,16 @@ export async function GetGeoFencing(req, res) {
   try {
     const model = req.body;
     
-    const { isSuccess, message, statusCode, data } = await GetGeoFencingQuery(
+    const { status, message, data } = await GetGeoFencingQuery(
       model
     );
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
 
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -59,15 +58,14 @@ export async function GetGeoFencing(req, res) {
 export async function DeleteGeoFencing(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const { status, message, data } =
       await DeleteGeoFencingQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
