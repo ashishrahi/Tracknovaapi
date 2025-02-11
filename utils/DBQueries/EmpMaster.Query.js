@@ -249,10 +249,8 @@ export const UpsertEmpPermissionQuery = async (model) => {
             }))
         );
         response.status = StatusCodes.CREATED
-        response.isSuccess = true;
         response.message = "Permissions has successfully updated";
 
-        console.log("response",response);
         return response
     }
 
@@ -269,7 +267,6 @@ export const UpsertEmpPermissionQuery = async (model) => {
           { new: true }
       );
 
-      console.log("finalempUpdateResult", empUpdateResult)
 
       // if (!empUpdateResult) throw new Error("Employee not found");
 
