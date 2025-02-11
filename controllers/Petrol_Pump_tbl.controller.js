@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
  AddUpdatePetrolPumpQuery,
@@ -15,14 +15,13 @@ import {
 export async function AddUpdatePetrolPump(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdatePetrolPumpQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data } = await AddUpdatePetrolPumpQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( 
@@ -37,12 +36,11 @@ export async function AddUpdatePetrolPump(req,res){
 export async function GetPetrolPumpVehicle(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetPetrolPumpVehicleQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data } = await GetPetrolPumpVehicleQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -60,12 +58,11 @@ export async function GetPetrolPumpVehicle(req,res){
 export async function GetPetrolPump(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetPetrolPumpQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data } = await GetPetrolPumpQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -83,12 +80,11 @@ export async function GetPetrolPump(req,res){
 export async function DeletePetrolPump(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await DeletePetrolPumpQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data} = await DeletePetrolPumpQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
         res.status(StatusCodes.OK).json(successResponse);
 

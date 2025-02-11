@@ -24,7 +24,6 @@ export const AddHelpCreationQuery = async (model) => {
         } = model;
         // Check if a document with the given PageTitleId exists
         let existingEntry = await HelpCreate.findOne({ PageTitleId:pageTitleId });
-    console.log('existingEntry', existingEntry);
 
     
         if (existingEntry) {
@@ -36,7 +35,7 @@ export const AddHelpCreationQuery = async (model) => {
           existingEntry.variableBackSide = variableBackSide;
           existingEntry.frontDesign = frontDesign;
           existingEntry.backDesign = backDesign;
-          existingEntry.Page_Name = pageName;
+          existingEntry.Page_Name = page_Name;
     
           await existingEntry.save();
           return{
@@ -56,14 +55,13 @@ export const AddHelpCreationQuery = async (model) => {
             frontDesign,
             backDesign,
             entryDate,
-            page_Name,
+            Page_Name: page_Name,
             ReportFor,
-            pageTitleId,
+            PageTitleId: pageTitleId,
           });
 
           await newEntry.save();
 
-          console.log('newEntry:',newEntry)
          
    const newData = {
     id:newEntry.Id,
@@ -74,7 +72,7 @@ export const AddHelpCreationQuery = async (model) => {
   variableBackSide: newEntry.variableBackSide,
   frontDesign:newEntry.frontDesign,
   backDesign: newEntry.backDesign,
-  page_Name: newEntry.page_Name,
+  page_Name: newEntry.Page_Name,
   pageTitleId: newEntry.PageTitleId
    }
 
@@ -110,19 +108,35 @@ export const GetHelpCreationQuery = async (model) => {
 
         if (pageTitleId === -1) {
           const data = await HelpCreate.find().lean();
+          const getData = data.map((help)=>{
+            return {
+              id: help.Id,
+              formatName: help.formatName,
+              height: help.height,
+              width: help.width,
+              roundedCorner: help.roundedCorner,
+              variableBackSide: help.variableBackSide,
+              frontDesign: help.frontDesign,
+              backDesign: help.backDesign,
+              page_Name: help.Page_Name,
+              pageTitleId: help.PageTitleId
+            }
+          })
             return{
                 isSuccess: true,
-                statusCode: StatusCodes.OK,
-                message: 'List of Help Creation Data fetched successfully',
-                data: data,
+                internalSuccess: StatusCodes.OK,
+                mesg: 'List of Help Creation Data fetched successfully',
+                insertedId:"",
+                data: getData,
             }
         } else {
             data = await HelpCreate.findOne({PageTitleId:pageTitleId }).lean();
             if (!data) {
                 return {
                     isSuccess: false,
-                    statusCode: StatusCodes.NOT_FOUND,
-                    message: `No Help Creation Data found for Page Title Id ${pageTitleId}`,
+                    internalSuccess: StatusCodes.NOT_FOUND,
+                    mesg: `No Help Creation Data found for Page Title Id ${pageTitleId}`,
+                    insertedId:"",
                     data: null,
                 };
             }
@@ -130,16 +144,17 @@ export const GetHelpCreationQuery = async (model) => {
 
         return {
             isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: `Help Creation Data ${pageTitleId === -1 ? 'list' : `of Page Title Id ${pageTitleId}`} fetched successfully`,
+            internalSuccess: StatusCodes.OK,
+            mesg: `Help Creation Data ${pageTitleId === -1 ? 'list' : `of Page Title Id ${pageTitleId}`} fetched successfully`,
+            insertedId:"",
             data: data,
         };
     } catch (error) {
         return {
             isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'Error fetching Help Creation Data',
-            error: error.message,
+            internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
+            mesg: error.message,
+            insertedId:"",
         };
     }
 }

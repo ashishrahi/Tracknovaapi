@@ -10,7 +10,6 @@ class ApiSuccessResponse{
 
     }
 }
-
 //------Till Here
 class ReturnData {
     constructor(isSuccess, internalSuccess, mesg = null, insertedId = null, data = null) {
