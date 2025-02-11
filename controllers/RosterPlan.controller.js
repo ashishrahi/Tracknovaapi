@@ -2,6 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse,
+  ReturnData
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateRosterPlanQuery,
@@ -14,14 +16,13 @@ import {
 export async function AddUpdateRosterPlan(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateRosterPlanQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data } = await AddUpdateRosterPlanQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -37,12 +38,14 @@ export async function AddUpdateRosterPlan(req,res){
 export async function GetRosterPlan(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetRosterPlanQuery(model);
-        const successResponse = new ApiSuccessResponse(
-            isSuccess,
-            statusCode,
+        const { status, message, data,  rowCount, pageNo, pageSize} = await GetRosterPlanQuery(model);
+        const successResponse = new CommonResponse(
+            status,
             message,
-            data
+            data,
+            rowCount,
+            pageNo,
+            pageSize
         );
         res.status(StatusCodes.OK).json(successResponse);
 
@@ -59,12 +62,12 @@ export async function GetRosterPlan(req,res){
 export async function DeleteRosterPlan(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteRosterPlanQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId } = await DeleteRosterPlanQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
-            data
+            internalSuccess,
+            mesg,
+            insertedId
         );
         res.status(StatusCodes.OK).json(successResponse);
 

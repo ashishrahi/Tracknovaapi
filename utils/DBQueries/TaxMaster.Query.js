@@ -11,8 +11,8 @@ export const AddUpdateTaxMasterQuery = async (model) => {
             {
             return{
                isSuccess:false,
-               statusCode:StatusCodes.NOT_FOUND,
-               message:'Tax Name is required'
+               internalSuccess:"",
+               mesg:'Tax Name is required'
             }}
 
      let existingTaxMaster = await TaxMaster.findOne({TaxId:model.taxId})
@@ -23,8 +23,8 @@ export const AddUpdateTaxMasterQuery = async (model) => {
         await existingTaxMaster.save( )
         return{
             isSuccess: true,
-            statusCode:StatusCodes.CREATED,
-            message:`TaxId ${existingTaxMaster.TaxId} has been updated successfully`,
+            internalSuccess:"",
+            mesg:`TaxId ${existingTaxMaster.TaxId} has been updated successfully`,
             data:existingTaxMaster
         }
      }else
@@ -38,8 +38,8 @@ export const AddUpdateTaxMasterQuery = async (model) => {
 if(existingTaxName){
     return{
         isSuccess:false,
-        statusCode:StatusCodes.CONFLICT,
-        message:'Tax Name already exists'
+        internalSuccess:"",
+        mesg:'Tax Name already exists'
     }
 }
 const newTaxMaster = new TaxMaster({
@@ -52,18 +52,31 @@ const newTaxMaster = new TaxMaster({
  
 });
 await newTaxMaster.save();
+
+const createdTaxMaster = {
+    taxId: newTaxMaster.TaxId,
+    taxName: newTaxMaster.TaxName,
+    taxPercentage: newTaxMaster.TaxPercentage,
+    effectiveDate: newTaxMaster.EffectiveDate,
+    createdBy: newTaxMaster.CreatedBy,
+    updatedBy: newTaxMaster.UpdatedBy,
+}
+
+
 return{
     isSuccess: true,
-    statusCode:StatusCodes.CREATED,
-    message:`TaxId ${newTaxMaster.TaxId} has been added successfully`,
-    data:newTaxMaster
+    internalSuccess:"",
+    mesg:`TaxId ${newTaxMaster.TaxId} has been added successfully`,
+    insertedId:"",
+    data:createdTaxMaster
 }}
        
     } catch (error) {
        return{
         isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error.message,
+        internalSuccess: "",
+        insertedId:"",
+        mesg:error.message,
        }
         
     }
@@ -73,29 +86,57 @@ return{
 export const GetTaxMasterQuery = async (model) => {
 
     try {
-        if (model.TaxId === -1) {
+        if (model.taxId === -1) {
             const data = await TaxMaster.find({}).lean();
+
+    const taxList = data.map((tax)=>{
+        return{
+        taxId: tax.TaxId,
+        taxName: tax.TaxName,
+        taxPercentage: parseFloat(tax.TaxPercentage.toString()),
+        effectiveDate: tax.EffectiveDate,
+        createdBy: tax.CreatedBy,
+        updatedBy: tax.UpdatedBy,
+        updatedOn:tax.updatedAt,
+        CreatedOn:tax.createdAt
+        
+    }})
+
+
             return{
                 isSuccess: true,
-                statusCode: StatusCodes.OK,
-                message: 'List of Tax Master Data fetched successfully',
-                data: data,
+                internalSuccess: "",
+                mesg: 'List of Tax Master Data fetched successfully',
+                insertedId:"",
+                data: taxList,
             }
         } else {
-            const data = await TaxMaster.findOne({ TaxId: model.TaxId }).lean();
+            const data = await TaxMaster.findOne({ TaxId: model.taxId }).lean();
+
+           const taxDetail =  {
+                taxId: data.TaxId,
+                taxName: data.TaxName,
+                taxPercentage: parseFloat(tax.TaxPercentage.toString()),
+                effectiveDate: data.EffectiveDate,
+                createdBy: data.CreatedBy,
+                updatedBy: data.UpdatedBy,
+                
+            }
+
+
           return{
             isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: `Details of TaxId ${model.TaxId} of Tax Master fetched successfully`,
-            data: data,
+            internalSuccess:"",
+            mesg: `Details of TaxId ${model.TaxId} of Tax Master fetched successfully`,
+            insertedId:"",
+            data: taxDetail,
           }
         }
     } catch (error) {
       return{
         isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'Error while fetching Tax Master data',
-        error: error.message,
+        mesg: error.message,
       }
     }
 
@@ -104,29 +145,28 @@ export const GetTaxMasterQuery = async (model) => {
 
 export const DeleteTaxMasterQuery = async (model) => {
     try {
-        const records = await TaxMaster.find({TaxId:model.TaxId});
+        const records = await TaxMaster.find({TaxId:model.taxId});
        
         if(records && records.length >0){
-            await TaxMaster.deleteMany({TaxId:model.TaxId})
+            await TaxMaster.deleteMany({TaxId:model.taxId})
             return{
                 isSuccess:true,
-                statusCode:StatusCodes.OK,
-                message:`TaxId ${model.TaxId} was successfully deleted`
+                internalSuccess:"",
+                mesg:`TaxId ${model.taxId} was successfully deleted`
             }}
             else{
                 return{
                     isSuccess:false,
                     statusCode:StatusCodes.NOT_FOUND,
-                    message:`TaxId ${model.TaxId} not found`
+                    mesg:`TaxId ${model.taxId} not found`
                 }
             }
         
     } catch (error) {
         return{
             isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: 'Error while deleting Tax Master data',
-            error: error.message,
+            internalSuccess: "",
+            mesg:error.message,
         }
         
     }

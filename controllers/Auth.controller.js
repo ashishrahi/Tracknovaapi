@@ -3,6 +3,8 @@ import {
   ApiErrorResponse,
   ApiSuccessResponse,
   CommonResponse,
+  DBReturn,
+  ReturnData
 } from "../utils/apiResponse/index.js";
 import {
     //  Login
@@ -149,15 +151,16 @@ export async function GetUserPermissions(req, res) {
 export async function AddUpdateUserPermissionMaster(req, res) {
   try {
     const modal = req.body ;   
-    const { isSuccess,statusCode,message,data } = await AddUpdateUserPermissionMasterQuery(modal);
+    const {isSuccess, id, createUpdate, msg, data} = await AddUpdateUserPermissionMasterQuery(modal);
 
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new DBReturn(
       isSuccess,
-      statusCode,
-      message,
+      id,
+      createUpdate,
+      msg,
       data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -172,15 +175,15 @@ export async function AddUpdateUserPermissionMaster(req, res) {
 export async function GetUserPermissionMaster(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data,rowCount} = await GetUserPermissionMasterQuery(modal);
-    const successResponse = new ApiSuccessResponse(
+    const {isSuccess, id, createUpdate, msg, data} = await GetUserPermissionMasterQuery(modal);
+    const successResponse = new DBReturn(
       isSuccess,
-      statusCode,
-      message,
-      data,
-      rowCount
+      id,
+      createUpdate,
+      msg,
+      data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -239,14 +242,13 @@ export async function DeleteUserPermissionMaster(req, res) {
 export async function AddUpdateRoleMaster(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data} = await AddUpdateRoleMasterQuery(modal);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const {status, message, data} = await AddUpdateRoleMasterQuery(modal);
+    const successResponse = new CommonResponse(
+      status,
       message,
       data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -260,17 +262,15 @@ export async function AddUpdateRoleMaster(req, res) {
 
 export async function GetRoleMaster(req, res) {
   try {
-    const {isSuccess,statusCode,message,data,rowCount} = await GetRoleMasterQuery();
+    const {status, message, data} = await GetRoleMasterQuery();
 
 
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
       data,
-      rowCount
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
     const errorResponse = new ApiErrorResponse(
       
@@ -287,13 +287,13 @@ export async function DeleteRoleMaster(req, res) {
   try {
     const modal = req.body;
 
-    const {isSuccess,statusCode,message} = await DeleteRoleMasterQuery(modal);
+    const {status, message, data} = await DeleteRoleMasterQuery(modal);
     const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
-      message
+      status,
+      message,
+      data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -308,14 +308,15 @@ export async function DeleteRoleMaster(req, res) {
 export async function AddUpdateRolePermissionMaster(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data} = await AddUpdateRolePermissionMasterQuery(modal);
-    const successResponse = new ApiSuccessResponse(
+    const {isSuccess, internalSuccess, mesg, insertedId, data} = await AddUpdateRolePermissionMasterQuery(modal);
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -330,14 +331,15 @@ export async function AddUpdateRolePermissionMaster(req, res) {
 export async function GetRolePermissionMaster(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data} = await GetRolePermissionMasterQuery(modal);
-    const successResponse = new ApiSuccessResponse(
+    const {isSuccess, internalSuccess, mesg, insertedId, data} = await GetRolePermissionMasterQuery(modal);
+    const successResponse = new ReturnData(
       isSuccess,
-      statusCode,
-      message,
+      internalSuccess,
+      mesg,
+      insertedId,
       data
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

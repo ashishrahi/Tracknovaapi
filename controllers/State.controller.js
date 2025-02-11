@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  ReturnData,
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateStateQuery,
@@ -13,14 +13,15 @@ import {
 export async function AddUpdateState(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateStateQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data} = await AddUpdateStateQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -37,11 +38,12 @@ export async function AddUpdateState(req,res){
 export async function GetState(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await GetStateQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetStateQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);
@@ -61,11 +63,12 @@ export async function GetState(req,res){
 export async function DeleteState(req,res){
     try {
         const model = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteStateQuery(model);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await DeleteStateQuery(model);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);

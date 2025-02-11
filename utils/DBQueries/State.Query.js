@@ -4,109 +4,118 @@ import { StatusCodes } from "http-status-codes";
 ///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
   
 export const AddUpdateStateQuery = async (model) => {
-    try {
-        // Validate StateName
-        if (!model.stateName || model.stateName.trim() === "") {
-          return {
-            isSuccess: false,
-            statusCode: StatusCodes.BAD_REQUEST,
-            message: "State Name is required",
-          };
-        }
-    
-        // Validate StateId
-        if (model.stateId == 0) {
-          return {
-            isSuccess: false,
-            statusCode: StatusCodes.BAD_REQUEST,
-            message: "State Id is required",
-          };
-        }
-    
-        // Check if state already exists by StateId
-        const existingState = await StateMaster.findOne({ StateId: model.stateId });
-    
-        if (existingState) {
-          // Conflict checks for StateName, StateCode, and CountryId
-          if (model.stateName && existingState.StateName === model.stateName) {
-            return {
-              isSuccess: false,
-              statusCode: StatusCodes.CONFLICT,
-              message: "State Name already exists",
-            };
-          }
-    
-          if (model.stateCode && existingState.StateCode === model.stateCode) {
-            return {
-              isSuccess: false,
-              statusCode: StatusCodes.CONFLICT,
-              message: "State Code already exists",
-            };
-          }
-    
-          if (model.countryId && existingState.CountryId === model.countryId) {
-            return {
-              isSuccess: false,
-              statusCode: StatusCodes.CONFLICT,
-              message: "Country already exists",
-            };
-          }
-    
-          // Update existing state
-          Object.assign(existingState, model);
-          await existingState.save();
-    
-          return {
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: "State updated successfully",
-            data: existingState,
-          };
-        } else {
-          // Add new state
-          let tempStateId = model.stateId;
-    
-          // Auto-generate StateId if invalid or missing
-          if (!tempStateId || tempStateId <= 0) {
-            const lastState = await StateMaster.find().sort({ StateId: -1 }).limit(1);
-            tempStateId = lastState.length > 0 ? lastState[0].StateId + 1 : 1;
-          }
-    
-          const newState = new StateMaster({
-            StateId: tempStateId,
-            StateName: model.stateName,
-            StateCode: model.stateCode,
-            CountryId: model.countryId,
-          });
-    
-          await newState.save();
-    
-          return {
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
-            message: "State added successfully",
-            data: newState,
-          };
-        }
-      } catch (error) {
-        if (error.code === 11000) {
-          return {
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: "State Name or State Code already exists",
-          };
-        }
-    
-        return {
-          isSuccess: false,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: `Error in AddUpdateStateQuery: ${error.message}`,
-        };
+  try {
+    const { stateId, stateName, stateCode, countryId, createdBy, updatedBy } = model;
+
+    if (!stateName) {
+      return {
+        isSuccess: false, 
+        internalSuccess: false, 
+        mesg: "State Name is required", 
+        insertedId: null, 
+        data: null 
       }
-    
-    
-    
+    }
+    if (!stateId || stateId === 0) {
+      return { 
+        isSuccess: false, 
+        internalSuccess: false, 
+        mesg: "State ID is required", 
+        insertedId: null, 
+        data: null 
+      };
+    }
+
+    let state = await StateMaster.findOne({ StateId:stateId });
+
+    if (state) {
+      // Update existing state
+      if (stateName) state.StateName = stateName;
+      if (stateCode) state.StateCode = stateCode;
+      if (countryId) state.CountryId = countryId;
+      if(createdBy) state.CreatedBy = createdBy;
+      if(updatedBy) state.UpdatedBy = updatedBy;
+      
+      await state.save();
+
+      const updateState ={
+        stateId: state.StateId,
+        stateName: state.StateName,
+        stateCode: state.StateCode,
+        countryId: state.CountryId,
+        createdBy: state.CreatedBy,
+        updatedBy: state.UpdatedBy,
+      }
+
+
+      return { 
+        isSuccess: true, 
+        internalSuccess: true, 
+        mesg: `${updateState.stateName} State Successfully Updated`, 
+        insertedId: state.StateId, 
+        data: updateState 
+      };
+    } else {
+      // Generate a new stateId if not provided
+      let newStateId = stateId;
+      if (stateId === -1 || stateId === null || stateId === 0) {
+        const lastState = await StateMaster.findOne().sort({ StateId: -1 });
+        newStateId = lastState ? lastState.StateId + 1 : 1;
+      }
+
+      const newState = new StateMaster({
+        StateId: newStateId,
+        StateName:stateName,
+        StateCode:stateCode,
+        CountryId:countryId,
+        CreatedBy: createdBy,
+        UpdatedBy: updatedBy,
+      });
+
+      await newState.save();
+
+const  newlyState ={
+  stateId: newState.StateId,
+  stateName: newState.StateName,
+  stateCode: newState.StateCode,
+  countryId: newState.CountryId,
+  createdBy: newState.CreatedBy,
+  updatedBy: newState.UpdatedBy,
 }
+
+
+      return { 
+        isSuccess: true, 
+        internalSuccess: true, 
+        mesg: `State ${newState.StateName} Successfully Added`, 
+        insertedId: newState.StateId, 
+        data: newlyState 
+      };
+    }
+  } catch (error) {
+    if (error.code === 11000) {
+      return { 
+        isSuccess: false, 
+        internalSuccess: false, 
+        mesg: "State Name Already Exists", 
+        insertedId: null, 
+        data: null 
+      };
+    }
+    return { 
+      isSuccess: false, 
+      internalSuccess: false, 
+      mesg: error.message, 
+      insertedId: null, 
+      data: null 
+    };
+  }
+}    
+       
+    
+    
+    
+
 /////////////////////////////////////////////////// GetStateQuery //////////////////////////////////////////////////////////////////
     
 export const GetStateQuery = async (model) => {
@@ -150,30 +159,31 @@ export const GetStateQuery = async (model) => {
           // Step 4: Project the desired fields (equivalent to Select in LINQ)
           {
             $project: {
-              StateId: 1,
-              StateName: 1,
-              StateCode: { $ifNull: ['$StateCode', ''] }, // Handle null StateCode
-              CountryId: 1,
-              CountryName: '$countryDetails.CountryName',
-              CreatedBy: 1,
-              UpdatedBy: 1,
-              CreatedOn: 1,
-              UpdatedOn: 1,
+              stateId: "$StateId",
+              stateName: "$StateName",
+              stateCode: { $ifNull: ['$StateCode', ''] }, // Handle null StateCode
+              countryId: "$CountryId",
+              countryName: '$countryDetails.CountryName',
+              createdBy: "$CreatedBy",
+              updatedBy: "$UpdatedBy",
+              createdOn: "$CreatedOn",
+              updatedOn: "$UpdatedOn",
             },
           },
         ]);
     
    return{
      isSuccess: true,
-     statusCode: StatusCodes.OK,
-     message: 'States fetched successfully',
+     internalSuccess:"",
+     mesg: 'States fetched successfully',
+     insertedId:"",
      data: states,
    }
     } catch (err) {
       return{
         isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: `Error in AddUpdateStateQuery: ${err.message}`,
+        mesg: `Error in AddUpdateStateQuery: ${err.message}`,
       }
       }
 }
@@ -193,21 +203,21 @@ export const DeleteStateQuery = async (model) => {
 
             return{
                 isSuccess: true,
-                statusCode: StatusCodes.OK,
-                message: `StateId ${model.StateId} successfully deleted`,
+                internalSuccess:"",
+                mesg: `StateId ${model.StateId} successfully deleted`,
             }
         } else {
             return{
                 isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
-                message: `StateId ${model.StateId} not found`,
+                mesg: `StateId ${model.StateId} not found`,
             }
         }
     } catch (error) {
        return{
         isSuccess: false,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: `Error in DeleteStateQuery: ${error.message}`,
+        mesg: `Error in DeleteStateQuery: ${error.message}`,
        }
     }
 

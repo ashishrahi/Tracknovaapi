@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  ReturnData
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateUnitMasterQuery,
@@ -13,14 +14,15 @@ import {
 export async function AddUpdateUnitMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await AddUpdateUnitMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const {isSuccess, internalSuccess, mesg, insertedId, data } = await AddUpdateUnitMasterQuery(modal);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
-        res.status(StatusCodes.OK).json(successResponse);
+        res.status(StatusCodes.CREATED).json(successResponse);
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse(
@@ -35,11 +37,12 @@ export async function AddUpdateUnitMaster(req,res){
 export async function GetUnitMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await GetUnitMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetUnitMasterQuery(modal);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);
@@ -57,11 +60,12 @@ export async function GetUnitMaster(req,res){
 export async function DeleteUnitMaster(req,res){
     try {
         const modal = req.body;
-        const { isSuccess, statusCode, message, data } = await DeleteUnitMasterQuery(modal);
-        const successResponse = new ApiSuccessResponse(
+        const { isSuccess, internalSuccess, mesg, insertedId, data } = await DeleteUnitMasterQuery(modal);
+        const successResponse = new ReturnData(
             isSuccess,
-            statusCode,
-            message,
+            internalSuccess,
+            mesg,
+            insertedId,
             data
         );
         res.status(StatusCodes.OK).json(successResponse);

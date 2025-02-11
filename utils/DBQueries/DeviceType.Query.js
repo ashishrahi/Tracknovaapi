@@ -13,26 +13,48 @@ export const GetDeviceTypeQuery = async (model) => {
           // .skip(skip)
           // .limit(pageSize);
     
-        const rowCount = deviceTypes.length;
+// <<<<<<< HEAD
+//         const rowCount = deviceTypes.length;
 
-        const response = deviceTypes.map((obj) => {
-          let newObj = {};
-          Object.keys(obj).forEach((key) => {
-            let newKey = key.charAt(0).toLowerCase() + key.slice(1);
-            newObj[newKey] = obj[key];
-          });
-          return newObj;
-        });
+//         const response = deviceTypes.map((obj) => {
+//           let newObj = {};
+//           Object.keys(obj).forEach((key) => {
+//             let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+//             newObj[newKey] = obj[key];
+//           });
+//           return newObj;
+//         });
+    
+//         return  {
+//           message:`Device types fetched successfully`,
+//           data:response,
+// =======
+    const deviceTypesList = deviceTypes.map((deviceType)=>{
+      return{
+        id:deviceType.Id,
+        dtype:deviceType.dtype,
+        CreatedOn:deviceType.createdAt,
+        updatedOn:deviceType.updatedAt,
+      }
+    })
+
+
+
+        const rowCount = await DeviceType.countDocuments();
     
         return  {
-          message:`Device types fetched successfully`,
-          data:response,
+          status:1,
+          message:`${model.pageNo} of ${model.pageSize} Device types fetched successfully`,
+          data:deviceTypesList,
+          pageNo:pageNo,
+          pageSize:pageSize,
+// >>>>>>> ashish
           rowCount:rowCount,
          };
           
       } catch (err) {
         return {
-          isSuccess: false,
+          isSuccess: 0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
           message: err.message,
         };

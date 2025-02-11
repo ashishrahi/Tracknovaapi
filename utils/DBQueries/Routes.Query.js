@@ -10,8 +10,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           const existingRoute = await Route.findOne({ RouteName: model.routeName });
           if (existingRoute) {
             return {
-              isSuccess: false,
-              statusCode: StatusCodes.CONFLICT,
+              status: 0,
               message: `Route with ${existingRoute.RouteName} name already exists!`,
             };
           }
@@ -75,8 +74,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           }
     
           return {
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
+            status: 1,
             message: `Route ${newRoute.RouteName} successfully created!`,
             data: model,
           };
@@ -85,8 +83,7 @@ export const AddUpdateRoutesQuery = async (model) => {
           const existingRoute = await Route.findOne({ RouteID: model.routeID });
           if (!existingRoute) {
             return {
-              isSuccess: false,
-              statusCode: StatusCodes.NOT_FOUND,
+              status: 0,
               message: `Route ${existingRoute.RouteID} not found!`,
             };
           }
@@ -144,15 +141,14 @@ export const AddUpdateRoutesQuery = async (model) => {
           }
     
           return {
-            isSuccess: true,
-            statusCode: StatusCodes.CREATED,
+            status: 1,
             message: `Route ${Route.RouteName} successfully updated!`,
             data: model,
           };
         }
       } catch (error) {
         return {
-          isSuccess: false,
+          status: 0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
           message: error.message,
         };
@@ -163,123 +159,145 @@ export const AddUpdateRoutesQuery = async (model) => {
 /////////////////////////////////////////// GetRoutesQuery //////////////////////////////////////////////////////////////////
 
 export const GetRoutesQuery = async (model) => {
-    try {
-        const { where, parameterValues, pageNo, pageSize } = model;
-        let pipeline = [
-          {
-            $match: where 
-          },
-          {
+  try {
+    const { where, pageNo, pageSize } = model;
+
+    // Ensure RouteID is an ObjectId to prevent buffer issues
+    if (where?.RouteID && typeof where.RouteID === 'string') {
+        where.RouteID = new mongoose.Types.ObjectId(where.RouteID);
+    }
+
+    let pipeline = [
+        { $match: where || {} }, // Default to empty filter if `where` is undefined
+
+        // Lookup RouteAreaBinDetail
+        {
             $lookup: {
-              from: 'RouteAreaBinDetail', // Assuming 'RouteAreaBinDetail' is a separate collection
-              localField: 'RouteID',
-              foreignField: 'RouteID',
-              as: 'RouteAreaBinDetail'
+                from: 'RouteAreaBinDetail',
+                let: { routeId: '$RouteID' },
+                pipeline: [
+                    { $match: { $expr: { $eq: ['$RouteID', '$$routeId'] } } },
+                    {
+                        $lookup: {
+                            from: 'BinLocation',
+                            let: { binId: '$BinID' },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ['$BinLocID', '$$binId'] } } }
+                            ],
+                            as: 'binLocation'
+                        }
+                    }
+                ],
+                as: 'routeAreaBinDetail'
             }
-          },
-          {
-            $unwind: '$RouteAreaBinDetail' // Flatten the array if necessary
-          },
-          {
+        },
+
+        // Lookup RouteAreaDetail
+        {
             $lookup: {
-              from: 'BinLocation', // Assuming 'BinLocation' is another collection
-              localField: 'RouteAreaBinDetail.BinID',
-              foreignField: 'BinLocID',
-              as: 'outeAreaBinDetail.BinLocation'
+                from: 'RouteAreaDetail',
+                let: { routeDetailId: '$routeAreaBinDetail.RouteDetailId' },
+                pipeline: [
+                    { $match: { $expr: { $eq: ['$RouteDetailId', '$$routeDetailId'] } } }
+                ],
+                as: 'routeAreaDetail'
             }
-          },
-          {
-            $lookup: {
-              from: 'RouteAreaDetail', // Assuming 'RouteAreaDetail' is another collection
-              localField: 'RouteAreaBinDetail.RouteDetailId',
-              foreignField: 'RouteDetailId',
-              as: 'RouteAreaDetail'
-            }
-          },
-          {
+        },
+
+        {
             $facet: {
-              data: [
-                { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
-              ],
-              rowCount: [{ $count: 'total' }] // Count total rows for pagination
+                data: pageNo > 0 && pageSize > 0
+                    ? [{ $skip: (pageNo - 1) * pageSize }, { $limit: pageSize }]
+                    : [],
+                rowCount: [{ $count: 'total' }]
             }
-          }
-        ];
-    
-        // Execute aggregation
-        const result = await Route.aggregate(pipeline);
-    
-        // Extract data and total count
-        const data = result[0].data;
-        const totalCount = result[0].rowCount.length > 0 ? result[0].rowCount[0].total : 0;
-    
-        return {
-            isSuccess:true,
-            statusCode: StatusCodes.OK,
-            message: "Routes fetched successfully",
-            data: data,
-            pageNo: pageNo,
-            pageSize: pageSize,
-            rowCount: totalCount,
-         
-        };
-      } catch (err) {
-        return {
-            isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err.message,
-          };
         }
+    ];
+
+    // Execute aggregation
+    const result = await Route.aggregate(pipeline).exec(); // No need for `.lean()`
+
+    // Extract data and total count
+    const rawData = result[0]?.data || [];
+    const rowCount = result[0]?.rowCount?.[0]?.total || 0;
+
+    // Function to convert keys to lowercase first letter
+    function formatKeys(obj) {
+        if (Array.isArray(obj)) {
+            return obj.map(item => formatKeys(item));
+        } else if (obj !== null && typeof obj === 'object') {
+            return Object.fromEntries(
+                Object.entries(obj).map(([key, value]) => [
+                    key.charAt(0).toLowerCase() + key.slice(1), 
+                    formatKeys(value)
+                ])
+            );
+        }
+        return obj;
+    }
+
+    const formattedData = formatKeys(rawData);
+
+    return {
+        status: 1,
+        message: 'routes fetched successfully',
+        data: formattedData,
+        pageNo,
+        pageSize,
+        rowCount
+    };
+} catch (err) {
+    return {
+        status: 0,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: err.message
+    };
+}
+
       }
 
 //////////////////////////////////////////// DeleteRoutesQuery //////////////////////////////////////////////////////////////////
 
 export const DeleteRoutesQuery = async (model) => {
     try {
-        const routeInAreaDetail = await RouteAreaDetail.findOne({ RouteID: model.RouteID });
+        const routeInAreaDetail = await RouteAreaDetail.findOne({ RouteID: model.routeID });
         if (routeInAreaDetail) {
           return {
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
+            status: 0,
             message: `Route ID ${routeInAreaDetail.RouteID} is used in RouteAreaDetail, so it can't be deleted.`,
           };
         }
     
         // Check if RouteID is used in RouteAreaBinDetail
-        const routeInBinDetail = await RouteAreaBinDetail.findOne({ RouteID: model.RouteID });
+        const routeInBinDetail = await RouteAreaBinDetail.findOne({ RouteID: model.routeID });
         if (routeInBinDetail) {
           return {
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
+            status: 0,
             message: "Route ID is used in RouteAreaBinDetail, so it can't be deleted.",
           };
         }
     
         // Find the route to delete
-        const route = await Route.findOne({ RouteID: model.RouteID });
+        const route = await Route.findOne({ RouteID: model.routeID });
         if (!route) {
           return {
-            isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
-            message: "Route not found",
+            status: 0,
+            message: ` Route ${route.RouteID} not found`,
           };
         }
     
         // Delete the route
-        await Route.deleteOne({ RouteID: model.RouteID });
+        await Route.deleteOne({ RouteID: model.routeID });
     
         return {
-          isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Route ${model.RouteID} deleted successfully`,
+          status: 1,
+          message: `Route ${model.routeID} deleted successfully`,
         };
       } catch (error) {
         return {
-          isSuccess: false,
+          status: 0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: "Error deleting route",
-          error: error.message || error, // Include error message if available
+          message: error.message,
         };
       }
       }

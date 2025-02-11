@@ -13,16 +13,16 @@ export const AddUpdateCityMasterQuery = async (model) => {
     if (!model.cityName || model.cityName.trim() === '') {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: 'City Name is required',
+        internalSuccess:"",
+        mesg: 'City Name is required',
       };
     }
     // Validate CityId
     if (!model.cityId || model.cityId == 0) {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.BAD_REQUEST, // 400 for invalid input
-        message: 'City Id is required',
+        internalSuccess:"",
+        mesg: 'City Id is required',
       };
     }
 
@@ -39,8 +39,8 @@ export const AddUpdateCityMasterQuery = async (model) => {
 
       return {
         isSuccess: true,
-        statusCode: StatusCodes.CREATED,
-        message: `${existingCity.CityName} City Successfully Updated`,
+        internalSuccess: "",
+        message: `${existingCity.CityName} City Updated Successfully `,
         data: existingCity,
       };
     } else {
@@ -57,15 +57,28 @@ export const AddUpdateCityMasterQuery = async (model) => {
         StateId: model.stateId,
         CreatedBy: model.createdBy,
         UpdatedBy: model.updatedBy,
+        CreatedOn: model.createdAt,
+        UpdatedOn: model.updatedAt,
       });
 
       await newCity.save();
 
+const newCityList ={
+  cityId: newCity.CityId,
+  cityName: newCity.CityName,
+  stateId: newCity.StateId,
+  createdBy: newCity.CreatedBy,
+  updatedBy: newCity.UpdatedBy,
+  createdOn: newCity.createdAt,
+  updatedOn: newCity.updatedAt,
+}
+
       return {
         isSuccess: true,
-        statusCode: StatusCodes.CREATED, 
-        message: `${newCity.CityName} City Successfully Created`,
-        data: newCity,
+        internalSuccess: "", 
+        message: `${newCityList.cityName} City Created Successfully `,
+        insertedId:"",
+        data: newCityList,
       };
     }
   } catch (error) {
@@ -73,8 +86,8 @@ export const AddUpdateCityMasterQuery = async (model) => {
     if (error.code === 11000) {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.CONFLICT, // 409 for duplicate key
-        message: `City Name ${CityName} already exists`,
+        internalSuccess:"",
+        mesg: `City Name ${CityName} already exists`,
       };
     }
 
@@ -82,7 +95,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR, // 500 for other errors
-      message: error.message,
+      mesg: error.message,
     };
   }
     
@@ -113,20 +126,31 @@ export const AddUpdateCityMasterQuery = async (model) => {
                 };
               })
             );
-        
+       const listCities = enrichedCities.map((city)=>{
+        return{
+          cityId: city.CityId,
+          cityName: city.CityName,
+          stateId: city.StateId,
+          createdBy: city.CreatedBy,
+          updatedBy:city.UpdatedBy,
+          createdOn:city.createdAt,
+          updatedOn:city.updatedAt
+        }
+       })
         
             return{
                 isSuccess:true,
-                statusCode: StatusCodes.OK,
-                message: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
-                data: enrichedCities,
+                internalSuccess: "",
+                mesg: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
+                insertedId:"",
+                data: listCities,
   
             }
           } catch (error) {
          return{
           isSuccess: false,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error.message,
+          internalSuccess:"",
+          mesg: error.message,
          }
           }
         
@@ -146,15 +170,15 @@ try {
 
       return{
           isSuccess: true,
-          statusCode: StatusCodes.OK,
-          message: `Cities of CityId ${model.cityId} successfully deleted`,
+          internalSuccess: "",
+          mesg: `CityId ${model.cityId} Of Cities successfully deleted`,
         }
     } else {
         
         return{
           isSuccess: false,
-          statusCode: StatusCodes.NOT_FOUND,
-          message: `No Citiess found for CityId ${model.cityId}`,
+          internalSuccess: "",
+          mesg: `No Citiess found for CityId ${model.cityId}`,
         }
     }
 } catch (error) {
@@ -162,7 +186,7 @@ try {
     return{
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: error.message + ";" + (error.innerException? error.innerException : error.message)
+      mesg: error.message + ";" + (error.innerException? error.innerException : error.message)
     }
 }
 

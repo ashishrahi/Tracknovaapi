@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateHandheldMasterQuery,
@@ -13,15 +14,14 @@ import {
 export async function AddUpdateHandheldMaster(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data } =
+    const { status, message, data} =
       await AddUpdateHandheldMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
       data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -36,18 +36,14 @@ export async function AddUpdateHandheldMaster(req, res) {
 export async function GetHandheldMaster(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data, pageNo, pageSize, rowCount } =
+    const {status, message, data } =
       await GetHandheldMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
       data,
-      pageNo,
-      pageSize,
-      rowCount
-    );
-    res.status(200).json(successResponse);
+     );
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
@@ -62,15 +58,14 @@ export async function GetHandheldMaster(req, res) {
 export async function DeleteHandheldMaster(req, res) {
   try {
     const model = req.body;
-    const { data, isSuccess, message, statusCode } =
+    const {status, message, data } =
       await DeleteHandheldMasterQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
