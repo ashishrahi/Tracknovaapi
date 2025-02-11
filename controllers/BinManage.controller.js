@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
-  ApiSuccessResponse,
+  CommonResponse,
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBinManageQuery,
@@ -13,15 +13,14 @@ import {
 export async function AddUpdateBinManage(req, res) {
   try {
     const model = req.body;
-    const { isSuccess, statusCode, message, data } =
+    const { status, message, data } =
       await AddUpdateBinManageQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.CREATED).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.INTERNAL_SERVER_ERROR,
@@ -37,18 +36,16 @@ export async function GetBinManage(req, res) {
   try {
     const model = req.body;
 
-    const { isSuccess, statusCode, message, data, pageNo, pageSize, rowCount } =
-      await GetBinManageQuery(model);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const { status, message,data, pageNo, pageSize, rowCount } = await GetBinManageQuery(model);
+    const successResponse = new CommonResponse(
+      status,
       message,
       data,
       pageNo,
       pageSize,
       rowCount
     );
-    res.status(successResponse.statusCode).json({ successResponse });
+    res.status(StatusCodes.OK).json( successResponse );
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,

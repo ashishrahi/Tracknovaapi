@@ -149,14 +149,14 @@ const getData = geofencingData.map((data)=>{
         const rowCount = await Geofencing.countDocuments(filter);
 
         return {
-            status: true,
+            status: 1,
             message: "Geofencing fetched successfully",
             data: getData,
        
         };
     } catch (error) {
         return {
-            isSuccess: false,
+            status: 0,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message,
         };
@@ -173,29 +173,26 @@ export async function DeleteGeoFencingQuery(model){
 
             if (entity) {
                  return {
-                    isSuccess: true,
-                    statusCode:StatusCodes.OK,
+                    status: 1,
                     message: `FenceId ${entity.FenceId} Successfully Deleted `,
                 }
             } else {
                 
                 return{
-                    isSuccess: false,
-                    statusCode: StatusCodes.NOT_FOUND,
+                    status: 0,
                     message: `${entity.FenceId} not found`,
                 }
             }
         } else {
             return{
-                isSuccess: false,
-                statusCode: StatusCodes.BAD_REQUEST,
+                status: 0,
                 message: 'Fence ID is required',
             }
         }
     } catch (error) {
         
     return{
-            isSuccess: false,
+            status: 0,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message,
         }

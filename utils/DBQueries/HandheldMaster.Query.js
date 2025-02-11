@@ -6,20 +6,18 @@ import {HandheldMaster} from '../../modals/index.js';
 
 export async function AddUpdateHandheldMasterQuery(model) {
   
-  try {
+    try {
         if (model.id === 0) {
             const existingRecord = await HandheldMaster.findOne({ HandheldName: model.handheldName });
 
             if (existingRecord) {
-        
-        return{
-                isSuccess:false,
-                statusCode: StatusCodes.CONFLICT,
-                message: `HandheldName ${existingRecord.HandheldName} Already Exist!`
-               }
+                return {
+                    status: 0,
+                    message: `HandheldName ${existingRecord.HandheldName} already exists!`
+                };
             }
 
-            const lastRecord = await HandheldMaster.findOne().sort({ ID: -1 }).limit(1);
+            const lastRecord = await HandheldMaster.findOne().sort({ ID: -1 }).exec();
             model.id = (lastRecord?.ID ?? 0) + 1;
 
             const newRecord = new HandheldMaster({
@@ -28,40 +26,58 @@ export async function AddUpdateHandheldMasterQuery(model) {
                 HandheldCode: model.handheldCode,
                 CreatedBy: model.createdBy,
                 UpdatedBy: model.updatedBy,
- 
             });
+
             await newRecord.save();
-            return{
-                    isSuccess:true,
-                    statusCode: StatusCodes.CREATED,
-                     message: `HandheldName ${newRecord.HandheldName} Successfully Added `,
-                     data: newRecord,
-                  }
+
+            return {
+                status: 1,
+                message: `HandheldName ${newRecord.HandheldName} successfully added.`,
+                data: {
+                    handheldId: newRecord.ID,
+                    handheldName: newRecord.HandheldName,
+                    handheldCode: newRecord.HandheldCode,
+                    createdBy: newRecord.CreatedBy,
+                    updatedBy: newRecord.UpdatedBy,
+                }
+            };
         } else {
             const existingRecord = await HandheldMaster.findOne({ ID: model.id });
-            if (existingRecord) {
-                await HandheldMaster.updateOne({ ID: model.id }, { $set: model });
-              
-                return{
-                    isSuccess:true,
-                    statusCode: StatusCodes.OK,
-                    message: `HandheldID ${existingRecord.ID} Successfully Updated `,
-                    data: existingRecord,
-                }
-            } else {
-                 return{
-                    isSuccess:false,
-                    statusCode: StatusCodes.NOT_FOUND,
-                    message: `HandheldID ${existingRecord.ID} Not Found!`,
-                }
+
+            if (!existingRecord) {
+                return {
+                    status: 0,
+                    message: `HandheldID ${model.id} not found!`
+                };
             }
+
+            const updatedRecord = await HandheldMaster.findOneAndUpdate(
+                { ID: model.id },
+                { $set: {
+                    HandheldName: model.handheldName,
+                    HandheldCode: model.handheldCode,
+                    UpdatedBy: model.updatedBy,
+                } },
+                { new: true } // Returns updated document
+            );
+
+            return {
+                status: 1,
+                message: `HandheldID ${updatedRecord.ID} successfully updated.`,
+                data: {
+                    handheldId: updatedRecord.ID,
+                    handheldName: updatedRecord.HandheldName,
+                    handheldCode: updatedRecord.HandheldCode,
+                    createdBy: updatedRecord.CreatedBy,
+                    updatedBy: updatedRecord.UpdatedBy,
+                }
+            };
         }
     } catch (error) {
-        return{
-            isSuccess:false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error.message,
-        }
+        return {
+            status: 0,
+            message: error.message
+        };
     }}
 
 
@@ -77,30 +93,35 @@ export async function GetHandheldMasterQuery(model) {
 
         // No WHERE condition included
         const data = await HandheldMaster.find({}).skip(queryOptions.skip).limit(queryOptions.limit);
+
+        const newData = data.map((handheld)=>{
+            return {
+                id: handheld.ID,
+                handheldName: handheld.HandheldName,
+                handheldCode: handheld.HandheldCode,
+                createdBy: handheld.CreatedBy,
+                updatedBy: handheld.UpdatedBy,
+            }
+        })
         
 
         // Count documents in the collection
         const rowCount = await HandheldMaster.countDocuments();
 
         return {
-            isSuccess:true,
-            statusCode:StatusCodes.OK,
+            status:1,
             message: 'HandheldMaster data fetch successfully',
-            data: data,
+            data: newData,
             pageNo: model.pageNo,
             pageSize: model.pageSize,
             rowCount: rowCount
         };
     } catch (error) {
         return {
-            isSuccess:false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            status:0,
             message: error.message,
         };
-    }
-
-
-}
+    }}
 
 ////////////////////////////////////////// DeleteHandheldMasterQuery //////////////////////////////////////////////////////////////////
 
@@ -113,28 +134,24 @@ try {
                 await HandheldMaster.deleteOne({ID: model.id }); 
                 
                 return{
-                    isSuccess:true,
-                    statusCode: StatusCodes.OK,
+                    status:1,
                     message: `HandheldMaster with ID ${model.id} Successfully Deleted`,
                 }
             } else {
                 return{
-                    isSuccess:false,
-                    statusCode: StatusCodes.NOT_FOUND,
+                    status:0,
                     message: `HandheldMaster with ID ${model.id} not found`,
                 }
             }
         } else {
             return{
-                isSuccess:false,
-                statusCode: StatusCodes.BAD_REQUEST,
+                status:0,
                 message: 'Invalid HandheldMasterID ${model.id}',
             }
         }
     } catch (err) {
         return{
-            isSuccess:false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            status:0,
             message: err.message,
         }
     }
