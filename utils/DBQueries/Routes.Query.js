@@ -252,9 +252,7 @@ export const GetRoutesQuery = async (model) => {
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: err.message
     };
-}
-
-      }
+} }
 
 //////////////////////////////////////////// DeleteRoutesQuery //////////////////////////////////////////////////////////////////
 

@@ -354,14 +354,13 @@ export async function GetRolePermissionMaster(req, res) {
 export async function GetRolePermission(req, res) {
   try {
     const modal = req.body;
-    const {isSuccess,statusCode,message,data} = await GetRolePermissionQuery(modal);
-    const successResponse = new ApiSuccessResponse(
-      isSuccess,
-      statusCode,
+    const {status, message, data} = await GetRolePermissionQuery(modal);
+    const successResponse = new CommonResponse(
+      status,
       message,
-      data
+      data,
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
