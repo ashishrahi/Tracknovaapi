@@ -11,7 +11,7 @@ const RosterPlanSchema = new Schema(
     UpdatedBy: { type: String, required: true, trim: true },
   },
   {
-    timestamps: true, // Mongoose will automatically handle `createdAt` and `updatedAt`
+    timestamps: true,
     collection: "RosterPlan",
   }
 );

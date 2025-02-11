@@ -9,8 +9,8 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
     if (!modal.unitName || modal.unitName.trim() === "") {
         return {
             isSuccess: false,
-            statusCode: StatusCodes.BAD_REQUEST,
-            message: "Unit Name is required"
+            internalSuccess: "",
+            mesg: "Unit Name is required"
         };
     }
 
@@ -23,14 +23,23 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
         existingUnit.UnitShortname = modal.unitShortname || existingUnit.UnitShortname;
         existingUnit.UpdatedBy = modal.updatedBy || existingUnit.UpdatedBy;
 
-        await existingUnit.save();
+       const unit = await existingUnit.save();
 
-        return {
+        const UpdatedData ={
+          unitId: unit.UnitId,
+          unitName: unit.UnitName,
+          unitShortname: unit.UnitShortname,
+          createdBy: unit.CreatedBy,
+          updatedBy: unit.UpdatedBy
+        }
+
+            return {
             isSuccess: true,
-            statusCode: StatusCodes.OK,
-            message: "Unit Master data updated successfully",
-            data: existingUnit
-        };
+            internalSuccess: "",
+            mesg: `Unit Master ${UpdatedData.unitName} data updated successfully`,
+            insertedId:"",
+            data: UpdatedData
+            };
     } 
 
     // Assign a new UnitId if necessary
@@ -46,8 +55,8 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
     if (existingUnitByName) {
         return {
             isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: "Unit Name already exists"
+            internalSuccess: "",
+            mesg: "Unit Name already exists"
         };
     }
 
@@ -62,19 +71,28 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
 
     await newUnit.save();
 
+
+    const newData ={
+      unitId: newUnit.UnitId,
+      unitName: newUnit.UnitName,
+      unitShortname: newUnit.UnitShortname,
+      createdBy: newUnit.CreatedBy,
+      updatedBy: newUnit.UpdatedBy
+    }
+
     return {
         isSuccess: true,
-        statusCode: StatusCodes.CREATED,
-        message: "Unit Master data added successfully",
-        data: newUnit
+        internalSuccess: "",
+        mesg: `Unit Master ${newData.unitName} data added successfully`,
+        insertedId:"",
+        data: newData
     };
 
 } catch (error) {
-    console.error(`Error in AddUpdateUnitMasterQuery:`, error);
     return {
         isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: `Error in AddUpdateUnitMasterQuery: ${error.message}`
+        internalSuccess: "",
+        mesg: `Error in AddUpdateUnitMasterQuery: ${error.message}`
     };
 }
 };
@@ -85,18 +103,34 @@ export const GetUnitMasterQuery = async (modal) => {
   try {
     if (modal.unitId == -1) {
       const data = await UnitMaster.find();
+
+     const datList = data.map((unit)=>{
+      return{
+        unitId: unit.UnitId,
+        unitName: unit.UnitName,
+        unitShortname: unit.UnitShortname,
+        createdBy: unit.CreatedBy,
+        updatedBy: unit.UpdatedBy,
+        createdOn: unit.createdAt,
+        updatedOn: unit.updatedAt
+      }
+     })
+
+
       return {
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: "List of Unit Master Data fetched successfully",
-        data: data,
+        internalSuccess: StatusCodes.OK,
+        mesg: "List of Unit Master Data fetched successfully",
+        insertedId:"",
+        data: datList,
       };
     } else {
       const x = await UnitMaster.findOne({ UnitId: modal.unitId });
       return {
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `Unit Master data with id ${modal.unitId} fetched successfully`,
+        internalSuccess: StatusCodes.OK,
+        mesg: `Unit Master data with id ${modal.unitId} fetched successfully`,
+        insertedId:"",
         data: x,
       };
     }
@@ -104,7 +138,7 @@ export const GetUnitMasterQuery = async (modal) => {
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: `Error in GetUnitMasterQuery: ${error.message}`,
+      mesg: `Error in GetUnitMasterQuery: ${error.message}`,
     };
   }
 };
@@ -118,21 +152,21 @@ export const DeleteUnitMasterQuery = async (modal) => {
       await UnitMaster.deleteMany({ UnitId: modal.UnitId });
       return {
         isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `UnitMaster with id ${modal.UnitId} deleted successfully`,
+        internalSuccess: StatusCodes.OK,
+        mesg: `UnitMaster with id ${modal.UnitId} deleted successfully`,
       };
     } else {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
-        message: `UnitMaster with id ${modal.UnitId} not found`,
+        internalSuccess:StatusCodes.NOT_FOUND,
+        mesg: `UnitMaster with id ${modal.UnitId} not found`,
       };
     }
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: `Error in DeleteUnitMasterQuery: ${error.message}`,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: `Error in DeleteUnitMasterQuery: ${error.message}`,
     };
   }
 };

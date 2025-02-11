@@ -10,7 +10,8 @@ const GeofencingSchema = new mongoose.Schema({
     Lattitude: mongoose.Schema.Types.Decimal128,
     Longitude: mongoose.Schema.Types.Decimal128,
     polycord: mongoose.Schema.Types.Mixed,
-    Radius: mongoose.Schema.Types.Mixed
+    Radius: mongoose.Schema.Types.Mixed,
+    
 }, {timestamps: true, collection: "Geofencing"})
 
 const Geofencing = mongoose.model("Geofencing", GeofencingSchema);

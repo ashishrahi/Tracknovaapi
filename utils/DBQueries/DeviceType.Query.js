@@ -13,13 +13,23 @@ export const GetDeviceTypeQuery = async (model) => {
           .skip(skip)
           .limit(pageSize);
     
+    const deviceTypesList = deviceTypes.map((deviceType)=>{
+      return{
+        id:deviceType.Id,
+        dtype:deviceType.dtype,
+        CreatedOn:deviceType.createdAt,
+        updatedOn:deviceType.updatedAt,
+      }
+    })
+
+
+
         const rowCount = await DeviceType.countDocuments();
     
         return  {
-          isSuccess:true,
-          statusCode: StatusCodes.OK,
+          status:1,
           message:`${model.pageNo} of ${model.pageSize} Device types fetched successfully`,
-          data:deviceTypes,
+          data:deviceTypesList,
           pageNo:pageNo,
           pageSize:pageSize,
           rowCount:rowCount,
@@ -27,7 +37,7 @@ export const GetDeviceTypeQuery = async (model) => {
           
       } catch (err) {
         return {
-          isSuccess: false,
+          isSuccess: 0,
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
           message: err.message,
         };
