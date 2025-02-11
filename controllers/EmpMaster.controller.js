@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
+  CommonResponse
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateEmployeeQuery,
@@ -37,15 +38,19 @@ export async function GetEmployee(req, res, next) {
     const model = req.body;
     const response = await GetEmployeeQuery(model);
 
-    const successResponse = new ApiSuccessResponse(
+    const successResponse = new CommonResponse(
       response.status,
-      StatusCodes.OK,
-      "default",
-      response.data,
+      response.message, 
+      response.data, 
+    //   response.status,
+    //   StatusCodes.OK,
+    //   "default",
+    //   response.data,
       response.pageNo,
       response.pageSize,
       response.rowCount
-    );
+    // 
+    )
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
     const error = new Error(err.message);
