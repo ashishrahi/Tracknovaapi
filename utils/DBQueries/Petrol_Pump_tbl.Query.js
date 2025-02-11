@@ -7,10 +7,9 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
 
     try {
       // Check for blank Petrol Pump name
-      if (!model.PetroPump || model.PetroPump.trim() === '') {
+      if (!model.petroPump || model.petroPump.trim() === '') {
      return{
-        isSuccess: false,
-        statusCode: StatusCodes.BAD_REQUEST,
+        status: 0,
         message: 'Petrol Pump Name is required',
  
      }
@@ -18,11 +17,10 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
   
       if (model.id === 0) {
         // Check if record already exists
-        const existingPump = await Petrol_Pump_tbl.findOne({ PetroPump: model.PetroPump });
+        const existingPump = await Petrol_Pump_tbl.findOne({ PetroPump: model.petroPump });
         if (existingPump) {
          return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
+            status: 0,
             message: `Petrol Pump Name ${existingPump.PetroPump} already exists`,
             
  
@@ -34,33 +32,47 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
         model.id = (lastPump?.id || 0) + 1;
   
         // Create a new Petrol Pump
-        const newPump = new Petrol_Pump_tbl(model);
+        const newPump = new Petrol_Pump_tbl({
+            id: model.id,
+            PetroPump: model.petroPump,
+            CityId: model.cityId,
+            StateId: model.stateId
+          
+        });
         await newPump.save();
+
+        const NewPump = {
+            id: newPump.id,
+            petroPump: newPump.PetroPump,
+            cityId: newPump.CityId,
+            stateId: newPump.StateId,
+        }
   
         return{
-            isSuccess:true,
-            statusCode: StatusCodes.CREATED,
+            status:1,
             message: `Petrol Pump ${newPump.PetroPump} Added Successfully`,
-            data: newPump,
+            data: NewPump,
         }
       } else {
         // Update existing Petrol Pump
         const updatedPump = await Petrol_Pump_tbl.findOneAndUpdate(
           { id: model.id },
-          model,
+          {
+            PetroPump: model.petroPump,
+            CityId: model.cityId,
+            StateId: model.stateId,
+          },
           { new: true, runValidators: true }
         );
   
         if (!updatedPump) {
           return{
-            isSuccess: false,
-            statusCode: StatusCodes.NOT_FOUND,
+            status: 0,
             message: `Petrol Pump ${updatedPump.PetroPump} not found`,
           }
         }
   return{
-     isSuccess: true,
-     statusCode: StatusCodes.OK,
+     status: 1,
      message: `Petrol Pump ${updatedPump.PetroPump} Updated Successfully`,
      data: updatedPump,
  
@@ -69,8 +81,7 @@ export const AddUpdatePetrolPumpQuery = async (model) => {
       }
     } catch (error) {
    return{
-     isSuccess: false,
-     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+     status: 0,
      message: error.message + ';' + (error.innerException? error.innerException : error.message),
    }
     }
@@ -152,19 +163,25 @@ export const GetPetrolPumpQuery = async (model) => {
 
         if (model.id === -1) {
           const data = await Petrol_Pump_tbl.find({}).lean(); 
+          const petrolPump = data.map((pump)=>{
+            return {
+              id: pump.id,
+              petroPump: pump.PetroPump,
+              cityId: pump.CityId,
+              stateId: pump.StateId,
+            }
+          })
           return{
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
+            status: 1,
             message: 'List of Petrol Pump Data fetched successfully',
-            data: data,
+            data: petrolPump,
           }
         } else {
           // Fetch a specific petrol pump by id
-          const result = await Petrol_Pump_tbl.find({ id: model.id }).lean();
+          const result = await Petrol_Pump_tbl.findOne({ id: model.id }).lean();
           if (result.length > 0) {
            return{
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
+            status: 1,
             message: `Details of Petrol Pump ${model.PetroPump} fetched successfully`,
             data: result,
            }
@@ -172,8 +189,7 @@ export const GetPetrolPumpQuery = async (model) => {
            
           } else {
             return{
-                isSuccess: false,
-                statusCode: StatusCodes.NOT_FOUND,
+                status: 0,
                 message: 'No data found for the given id.',
  
             }
@@ -181,7 +197,7 @@ export const GetPetrolPumpQuery = async (model) => {
         }
       } catch (error) {
         return{
-            isSuccess: false,
+            status: 0,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             message: error.message + ";" + (error.innerException? error.innerException : error.message),
         }
@@ -202,29 +218,25 @@ export const DeletePetrolPumpQuery = async (model) => {
             if (entity) {
                 await Petrol_Pump_tbl.findOneAndDelete({id:model.id});
                 return{
-                    isSuccess: true,
-                    statusCode: StatusCodes.OK,
+                    status: 1,
                     message: `Petrol Pump ${entity.PetroPump} deleted successfully`,
                 }
             } else {
                 return{
-                    isSuccess: false,
-                    statusCode: StatusCodes.NOT_FOUND,
+                    status: 0,
                     message: `Petrol Pump ${entity.PetroPump} not found`,
                 }
             }
         } else {
             return{
-                isSuccess: false,
-                statusCode: StatusCodes.NOT_FOUND,
+                status: 0,
                 message: `Invalid Petrol Pump ${entity.PetroPump}`,
             }
         }
     } catch (error) {
         return{
-            isSuccess: false,
-            statusCode:StatusCodes.ERROR,
-           message: error.message,
+            status: 0,
+            message: error.message,
         }
     }
 

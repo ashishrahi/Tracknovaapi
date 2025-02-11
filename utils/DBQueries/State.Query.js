@@ -112,10 +112,6 @@ const  newlyState ={
   }
 }    
        
-    
-    
-    
-
 /////////////////////////////////////////////////// GetStateQuery //////////////////////////////////////////////////////////////////
     
 export const GetStateQuery = async (model) => {
@@ -123,13 +119,13 @@ export const GetStateQuery = async (model) => {
         // Construct match conditions based on the model
         const matchConditions = {};
     
-        if (model.StateId !== -1) {
-          matchConditions.StateId = model.StateId;
+        if (model.stateId !== -1) {
+          matchConditions.StateId = model.StateNametateId;
         }
     
-        if (model.CountryId !== -1) {
+        if (model.countryId !== -1) {
           if (model.CountryId !== 0) {
-            matchConditions.CountryId = model.CountryId;
+            matchConditions.CountryId = model.countryId;
           }
         }
     
@@ -141,7 +137,7 @@ export const GetStateQuery = async (model) => {
           // Step 2: Lookup (equivalent to `GroupJoin`)
           {
             $lookup: {
-              from: 'countrymasters', // Collection name for CountryMaster
+              from: 'CountryMaster', // Collection name for CountryMaster
               localField: 'CountryId', // Field in StateMaster
               foreignField: 'CountryId', // Field in CountryMaster
               as: 'countryDetails', // Output array field
@@ -195,22 +191,22 @@ export const DeleteStateQuery = async (model) => {
 
     try {
         // Find the state(s) with the given StateId
-        const states = await StateMaster.find({ StateId: model.StateId }).exec();
+        const states = await StateMaster.find({ StateId: model.stateId }).exec();
 
         if (states && states.length > 0) {
             // Remove the found states
-            await StateMaster.deleteMany({ StateId: model.StateId });
+            await StateMaster.deleteMany({ StateId: model.stateId });
 
             return{
                 isSuccess: true,
                 internalSuccess:"",
-                mesg: `StateId ${model.StateId} successfully deleted`,
+                mesg: `StateId ${model.stateId} successfully deleted`,
             }
         } else {
             return{
                 isSuccess: false,
                 statusCode: StatusCodes.NOT_FOUND,
-                mesg: `StateId ${model.StateId} not found`,
+                mesg: `StateId ${model.stateId} not found`,
             }
         }
     } catch (error) {
