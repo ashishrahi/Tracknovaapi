@@ -3,7 +3,11 @@ function formattedData(data) {
     let newObj = {};
     Object.keys(obj).forEach((key) => {
       let newKey = key.charAt(0).toLowerCase() + key.slice(1);
-      newObj[newKey] = obj[key];
+      if(newKey === "sMSTemplateId"){
+        newObj["smsTemplateID"] = obj[key];
+      }else{
+        newObj[newKey] = obj[key];
+      }
     });
     return newObj;
   });

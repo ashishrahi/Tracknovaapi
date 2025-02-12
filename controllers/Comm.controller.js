@@ -25,6 +25,7 @@ import {
   ApiErrorResponse,
 } from "../utils/apiResponse/index.js";
 import mongoose from "mongoose";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //-------------GetCommGroup-------->
 async function GetCommGroup(req, res) {
@@ -662,12 +663,15 @@ async function GetCampaignTemplate(req, res) {
     // Apply filtering dynamically using MongoDB query
     const campaignTemplateResult = await CampaignTemplate.find(query)
       .skip((pageNo - 1) * pageSize) // Pagination: Skip records
-      .limit(pageSize); // Limit the number of results
-
+      .limit(pageSize)
+      .select("-_id")
+      .lean() // Limit the number of results
+    const data = formattedData(campaignTemplateResult)
     // Execute query to get the total count of documents
-    const totalCount = await CampaignTemplate.countDocuments(query);
+    const totalCount = data.length;
 
-    return res.status(StatusCodes.OK).json( new CommonResponse(1,'Fetch Successfully',data,rowCount,pageNo,pageSize)
+
+    return res.status(StatusCodes.OK).json( new CommonResponse(1,'Fetch Successfully',data,totalCount,pageNo,pageSize)
       
     //   {
     //   status: "Success",
