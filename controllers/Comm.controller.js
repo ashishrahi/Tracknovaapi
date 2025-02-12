@@ -667,13 +667,16 @@ async function GetCampaignTemplate(req, res) {
     // Execute query to get the total count of documents
     const totalCount = await CampaignTemplate.countDocuments(query);
 
-    return res.status(StatusCodes.OK).json({
-      status: "Success",
-      data: campaignTemplateResult,
-      pageNo: pageNo,
-      pageSize: pageSize,
-      rowCount: totalCount,
-    });
+    return res.status(StatusCodes.OK).json( new CommonResponse(1,'Fetch Successfully',data,rowCount,pageNo,pageSize)
+      
+    //   {
+    //   status: "Success",
+    //   data: campaignTemplateResult,
+    //   pageNo: pageNo,
+    //   pageSize: pageSize,
+    //   rowCount: totalCount,
+    // }
+  );
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -847,15 +850,20 @@ async function GetEventSetting(req, res) {
     if (isActive) query.IsActive = isActive;
     const eventSettings = await EventSetting.find(query)
       .skip((pageNo - 1) * pageSize)
-      .limit(pageSize);
+      .limit(pageSize).lean();
 
-    return res.status(StatusCodes.OK).json({
-      data: eventSettings,
-      status: "Success",
-      pageNo: pageNo,
-      pageSize: pageSize,
-      rowCount: eventSettings.length,
-    });
+      const newData = dotnetLikeData(eventSettings)
+
+    return res.status(StatusCodes.OK).json(
+  new CommonResponse(1,'Fetch Successfully',newData,eventSettings.length,pageNo,pageSize)    
+    //   {
+    //   data: eventSettings,
+    //   status: "Success",
+    //   pageNo: pageNo,
+    //   pageSize: pageSize,
+    //   rowCount: eventSettings.length,
+    // }
+  );
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       status: "Failed",
