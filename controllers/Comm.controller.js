@@ -31,12 +31,9 @@ async function GetCommGroup(req, res) {
   const { pageNo, pageSize } = req.body;
   
   const PageNo = pageNo; 
-
   const PageSize = pageSize;
- 
-    let skip = (PageNo - 1) * PageSize; 
+   let skip = (PageNo - 1) * PageSize; 
   
-
   let data;
 
   if(pageNo === 0 && pageSize === 0){
@@ -95,11 +92,14 @@ async function UpsertCommGroup(req, res) {
     // zero means we are updating the record
     if (!groupId || groupId === 0) {
       if (existingGroup) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          Status: "Failed",
-          Message: "Record Already Exists!",
-          Data: req.body,
-        });
+        return res.status(StatusCodes.BAD_REQUEST).json(new CommonResponse(0, "Record Already Exists!", existingGroup))
+          
+          
+        //   {
+        //   Status: "Failed",
+        //   Message: "Record Already Exists!",
+        //   Data: req.body,
+        // });
       }
 
       // Get the highest GroupId and increment
@@ -112,17 +112,18 @@ async function UpsertCommGroup(req, res) {
         GroupId: groupId,
         Type: type,
         Description: description,
-        isActive: isActive,
+        IsActive: isActive,
         CreatedBy: createdBy,
         UpdatedBy: updatedBy,
       });
       await newGroup.save();
 
-      return res.status(StatusCodes.CREATED).json({
-        Status: "Success",
-        Message: "Added Successfully",
-        Data: newGroup,
-      });
+      return res.status(StatusCodes.CREATED).json(new CommonResponse(1,"Added Successfully",newGroup))
+      //   {
+      //   Status: "Success",
+      //   Message: "Added Successfully",
+      //   Data: newGroup,
+      // });
     } else {
       // Update existing record
       let updatedGroup = await CommGroup.findOneAndUpdate(
@@ -142,19 +143,24 @@ async function UpsertCommGroup(req, res) {
       if (!updatedGroup) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json({ Status: "Failed", Message: "Internal error. Try again" });
+          .json(new CommonResponse(0,"Internal error. Try again"))
+            // { Status: "Failed", Message: "Internal error. Try again" };
       }
 
-      return res.status(StatusCodes.OK).json({
-        Status: "Success",
-        Message: "Updated Successfully",
-        Data: updatedGroup,
-      });
+      return res.status(StatusCodes.OK).json( new CommonResponse(1,"Updated successfully",updatedGroup)
+      //   {
+      //   Status: "Success",
+      //   Message: "Updated Successfully",
+      //   Data: updatedGroup,
+      // }
+    );
     }
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ Status: "Failed", Error: error.message });
+      .json( new CommonResponse(0,error.message))
+        // { Status: "Failed", Error: error.message }
+      // );
   }
 }
 
@@ -199,18 +205,22 @@ async function DeleteCommGroup(req, res) {
     if (!deletedGroup) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ Status: "Failed", Message: "GroupId not found!" });
+        .json(new CommonResponse(0,'GroupId not found!'))
+          // { Status: "Failed", Message: "GroupId not found!" });
     }
 
     return res
       .status(StatusCodes.OK)
-      .json({ Status: "Success", Message: "Deleted Successfully" });
+      .json(new CommonResponse(1,"Deleted Successfully"))
+      //   { Status: "Success", Message: "Deleted Successfully" }
+      // );
   } catch (error) {
     // await session.abortTransaction();
     // session.endSession();
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ Status: "Failed", Error: error.message });
+      .json(0,error.message)
+        // { Status: "Failed", Error: error.message });
   }
 }
 
@@ -255,11 +265,12 @@ async function GetCommGroupByEmpId(req, res) {
       },
     ]);
 
-    return res.status(StatusCodes.OK).json({
-      Data: result,
-      Status: "Success",
-      RowCount: result.length,
-    });
+    return res.status(StatusCodes.OK).json(1,)
+    //   {
+    //   Data: result,
+    //   Status: "Success",
+    //   RowCount: result.length,
+    // });
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -281,11 +292,12 @@ async function GetAllEmailSetting(req, res) {
     const pagesize = pageSize || 10;
     const skip = (pageno - 1) * pagesize;
 
-    const result = await EmailSetting.find(query).skip(skip).limit(pageSize);
+    const result = await EmailSetting.find(query).skip(skip).limit(pageSize).lean();
+    const newData = dotnetLikeData(result)
 
     return res
       .status(StatusCodes.OK)
-      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default", result));
+      .json(new CommonResponse(1, "Data Fetch Succesffuly !", newData));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
