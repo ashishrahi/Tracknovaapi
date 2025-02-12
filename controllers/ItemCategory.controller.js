@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, CommonResponse } from "../utils/apiResponse/index.js";
 import { ItemCategoryMaster } from "../modals/index.js";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //-------------AddUpdateItemCategory------->
 async function AddUpdateItemCategory(req, res) {
@@ -127,7 +128,7 @@ async function GetItemCategory(req, res) {
     if (createdBy) query.CreatedBy = createdBy;
     if (updatedBy) query.UpdatedBy = updatedBy;
 
-    const itemCategoryResult = await ItemCategoryMaster.find(query)
+    const itemCategoryResult = await ItemCategoryMaster.find(query).select("-_id").lean()
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize);
 
@@ -135,11 +136,12 @@ async function GetItemCategory(req, res) {
       response.data = itemCategoryResult;
       response.message = "No record found";
       response.rowCount = itemCategoryResult.length;
-      return res.status(StatusCodes.OK).json(response);
+      return res.status(StatusCodes.OK).json(new CommonResponse(1, response.message, response.data, response.rowCount  ));
     }
-    response.data = itemCategoryResult;
+    response.data = formattedData(itemCategoryResult);
+    response.message = "Data fetched";
     response.rowCount = itemCategoryResult.length;
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new CommonResponse(1, response.message, response.data, response.rowCount  ));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
