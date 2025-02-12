@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import dotnetLikeData from '../utils/dotnet-like-format/dotnetLikeData.js'
 import {
   CommGroup,
   CommMembers,
@@ -27,28 +28,40 @@ import mongoose from "mongoose";
 
 //-------------GetCommGroup-------->
 async function GetCommGroup(req, res) {
-  const { PageNo, PageSize, Name, Type } = req.body;
-  // query
-  const query = {};
-  if (Name) query.Name = Name;
-  if (Type) query.Type = Type.toUpperCase();
+  const { pageNo, pageSize } = req.body;
+  
+  const PageNo = pageNo; 
 
-  // Step 2: Pagination Setup
-  const pageNo = PageNo || 1; // Default Page Number
-  const pageSize = PageSize || 10; // Default Page Size
-  const skip = (pageNo - 1) * pageSize; // Calculate documents to skip
+  const PageSize = pageSize;
+ 
+    let skip = (PageNo - 1) * PageSize; 
+  
 
-  // Step 3: Fetch Total Count
-  const totalCount = await CommGroup.countDocuments(query);
+  let data;
+
+  if(pageNo === 0 && pageSize === 0){
+    data = await CommGroup.find().select('-_id').lean() 
+  }else{
+    data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
+    .skip(skip) // Skip previous pages
+     .limit(pageSize)
+  }
+
 
   // Step 4: Fetch Paginated Data
-  const lNM = await CommGroup.find(query).select('-_id').lean() // Exclude `_id` if not needed
-   .skip(skip) // Skip previous pages
-    .limit(pageSize); // Limit to page size
+  // if((PageNo && PageSize) > 0){
+    // data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
+    // .skip(skip) // Skip previous pages
+    //  .limit(pageSize); // Limit to page size
+  // }else{
+  //   data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
 
+  // }
 
+     const newData = dotnetLikeData(data)
+     const totalCount = newData.length
   // Step 5: Return Response
-  return res.status(StatusCodes.OK).json(new CommonResponse(1, "Data Fetched", lNM, totalCount, null, pageNo, pageSize )
+  return res.status(StatusCodes.OK).json(new CommonResponse(1, "Data Fetched", newData, totalCount, null, pageNo, pageSize )
     // {
     //   Status: "Success",
     //   PageNo: pageNo,
