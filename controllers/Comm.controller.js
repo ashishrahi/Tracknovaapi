@@ -31,12 +31,9 @@ async function GetCommGroup(req, res) {
   const { pageNo, pageSize } = req.body;
   
   const PageNo = pageNo; 
-
   const PageSize = pageSize;
- 
-    let skip = (PageNo - 1) * PageSize; 
+   let skip = (PageNo - 1) * PageSize; 
   
-
   let data;
 
   if(pageNo === 0 && pageSize === 0){
@@ -295,11 +292,12 @@ async function GetAllEmailSetting(req, res) {
     const pagesize = pageSize || 10;
     const skip = (pageno - 1) * pagesize;
 
-    const result = await EmailSetting.find(query).skip(skip).limit(pageSize);
+    const result = await EmailSetting.find(query).skip(skip).limit(pageSize).lean();
+    const newData = dotnetLikeData(result)
 
     return res
       .status(StatusCodes.OK)
-      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default", result));
+      .json(new CommonResponse(1, "Data Fetch Succesffuly !", newData));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
