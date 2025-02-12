@@ -1,6 +1,6 @@
 
 import { probWireTamp , getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
-import { getDashboard, getVehicleCurrentDay, getVehicleDistance, getAllBins, getMapBinsWardWise } from "./Dashboard.controller.js";
+import { getDashboard, getVehicleCurrentDay, getVehicleDistance, getAllBins, getMapBinsWardWise, getvVehicleNo } from "./Dashboard.controller.js";
 import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
 import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
@@ -293,6 +293,7 @@ export const DashboardController = {
   getVehicleDistance: getVehicleDistance,
   getAllBins: getAllBins,
   getMapBinsWardWise: getMapBinsWardWise,
+  getvVehicleNo: getvVehicleNo
 };
 
 ////////////////////////////////////////////////  AuthController   //////////////////////////////////////////////////////////////////

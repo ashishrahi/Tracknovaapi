@@ -1,8 +1,15 @@
-
 import { StatusCodes } from "http-status-codes";
-import {ApiErrorResponse,ApiSuccessResponse} from "../utils/apiResponse/index.js";
-import { getDashboardQuery,getVehicleQuery,BinLocationQuery } from "../utils/DBQueries/index.js";
-
+import {
+  ApiErrorResponse,
+  ApiSuccessResponse,
+  CommonResponse,
+} from "../utils/apiResponse/index.js";
+import {
+  getDashboardQuery,
+  getVehicleQuery,
+  BinLocationQuery,
+} from "../utils/DBQueries/index.js";
+import ItemMaster from "../modals/ItemMaster.model.js";
 
 //-------------- getDashboard ------>
 
@@ -14,20 +21,23 @@ export async function getDashboard(req, res) {
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      'Dashboard data fetched successfully',
+      "Dashboard data fetched successfully",
       summaryNTDash
     );
     res.status(successResponse.statusCode).json(successResponse);
-  } 
-  catch (error) {
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch Dashboard');
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.NOT_FOUND,
+      "Failed to fetch Dashboard"
+    );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
 
 //-----------------getVehicleCurrentDay --------------->
 
-export async function getVehicleCurrentDay (req,res){
+export async function getVehicleCurrentDay(req, res) {
   const vehicleNo = req.body.vehicleno;
 
   try {
@@ -35,12 +45,16 @@ export async function getVehicleCurrentDay (req,res){
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      'VehicleCurrentDay data fetched successfully',
+      "VehicleCurrentDay data fetched successfully",
       retDat
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch vehicle current day');
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.NOT_FOUND,
+      "Failed to fetch vehicle current day"
+    );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
@@ -64,10 +78,7 @@ export async function getVehicleDistance(req, res) {
       );
   }
 
-
-  
   try {
-    
     await connectDBMongo();
     const db = await client.db("inventory");
 
@@ -77,72 +88,59 @@ export async function getVehicleDistance(req, res) {
         VehicleNo: vehicleno,
       })
       .toArray();
-      
-     
 
-  
-    const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0]
+    const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0];
     // console.log(devid)
-    
 
-    const resultCursor = await db.collection("NT").aggregate([
-      
+    const resultCursor = await db.collection("NT").aggregate(
+      [
         {
           $match: {
             TrackDate: {
               $gte: new Date(datef),
-              $lte: new Date(datet)
+              $lte: new Date(datet),
             },
-            devid: devid // Filter NT by the list of valid devids
-          }
+            devid: devid, // Filter NT by the list of valid devids
+          },
         },
-        
+
         {
           $lookup: {
             from: "ItemMaster",
             localField: "devid",
             foreignField: "devid",
-            as: "itemMaster"
-          }
+            as: "itemMaster",
+          },
         },
-      
+
         {
           $lookup: {
             from: "VehicleTypeMaster",
             localField: "itemMaster.VehicleTypeId",
             foreignField: "VehicleTypeId",
-            as: "vehicleTypeMaster"
-          }
+            as: "vehicleTypeMaster",
+          },
         },
-      
+
         {
           $group: {
             _id: {
               devid: "$devid",
               VehicleNo: {
-                $arrayElemAt: [
-                  "$itemMaster.VehicleNo",
-                  0
-                ]
+                $arrayElemAt: ["$itemMaster.VehicleNo", 0],
               },
               // VehicleNo: VehicleNo ,
               VehicleTypeId: {
-                $arrayElemAt: [
-                  "$vehicleTypeMaster.VehicleTypeId",
-                  0
-                ]
+                $arrayElemAt: ["$vehicleTypeMaster.VehicleTypeId", 0],
               },
               // VehicleTypeId : VehicleTypeId,
               VehicleTypename: {
-                $arrayElemAt: [
-                  "$vehicleTypeMaster.VehicleTypename",
-                  0
-                ]
+                $arrayElemAt: ["$vehicleTypeMaster.VehicleTypename", 0],
               },
-              TrackDate: "$TrackDate"
+              TrackDate: "$TrackDate",
             },
-            Distance: { $max: "$distance" }
-          }
+            Distance: { $max: "$distance" },
+          },
         },
         {
           $project: {
@@ -152,15 +150,16 @@ export async function getVehicleDistance(req, res) {
             VehicleTypeId: "$_id.VehicleTypeId",
             VehicleTypename: "$_id.VehicleTypename",
             TrackDate: "$_id.TrackDate",
-            Distance: { $toDouble: "$Distance" } // Convert Distance to double
-          }
+            Distance: { $toDouble: "$Distance" }, // Convert Distance to double
+          },
         },
         {
-          $sort: { TrackDate: 1 } // Sort by TrackDate if needed
-        }
-      
-    ], {allowDiskUse: true});
-   
+          $sort: { TrackDate: 1 }, // Sort by TrackDate if needed
+        },
+      ],
+      { allowDiskUse: true }
+    );
+
     const result1 = await resultCursor.toArray();
     return res.status(200).json({ data: result1 });
   } catch (error) {
@@ -171,48 +170,70 @@ export async function getVehicleDistance(req, res) {
   }
 }
 //-------------- getAllBins ------>
-export async function getAllBins(req,res) {
+export async function getAllBins(req, res) {
   try {
-    const { flag } = req.query; 
+    const { flag } = req.query;
     const result = await BinLocationQuery(flag);
 
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      'AllBins data fetched successfully',
+      "AllBins data fetched successfully",
       result
     );
     res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.NOT_FOUND,
+      "Failed to fetch All Bins"
+    );
     res.status(errorResponse.statusCode).json(errorResponse);
   }
-};
+}
 
-
-export async function getMapBinsWardWise (req,res) {
-  const filter = req.query; 
+export async function getMapBinsWardWise(req, res) {
+  const filter = req.query;
   try {
     const binLocations = await BinsByWardNumberQuery(filter.Where);
 
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      'MapBinsWardWise data fetched successfully',
+      "MapBinsWardWise data fetched successfully",
       binLocations
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    return res.status(successResponse.statusCode).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
-    res.status(errorResponse.statusCode).json(errorResponse);
+    const errorResponse = new ApiErrorResponse(
+      false,
+      StatusCodes.NOT_FOUND,
+      "Failed to fetch All Bins"
+    );
+    return res.status(errorResponse.statusCode).json(errorResponse);
   }
 }
 
+export async function getvVehicleNo(req, res, next) {
+  try {
+    const vehicleNumbers = await ItemMaster.aggregate([
+      { $match: { ItemFlag: "V" } },
+      { $group: { _id: "$VehicleNo" } },
+      { $project: { _id: 0, vehicleNo: "$_id" } },
+    ]);
 
-
-
-
-
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        new CommonResponse(1, "Data Successfully Fetched", vehicleNumbers, vehicleNumbers.length)
+      );
+  } catch (error) {
+    console.log(error);
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_GATEWAY;
+    return next(err);
+  }
+}
 
 // function getDynamicAggregation(vehicleno, datef, datet) {
 //   return [
@@ -234,7 +255,7 @@ export async function getMapBinsWardWise (req,res) {
 //         as: "itemMaster",
 //       },
 //     },
-    
+
 //     // Step 3: Filter by VehicleNo within itemMaster
 //     {
 //       $match: {
@@ -306,7 +327,7 @@ export async function getMapBinsWardWise (req,res) {
 //           //         }
 //           //       }
 //           //     },
-          
+
 //           //     // Step 2: Join with ItemMaster and VehicleTypeMaster in one lookup
 //           //     {
 //             //       $lookup: {
@@ -338,7 +359,7 @@ export async function getMapBinsWardWise (req,res) {
 //       //         "itemMaster.VehicleNo": "UP78GT8446"
 //       //       }
 //       //     },
-      
+
 //       //     // Step 4: Group by necessary fields
 //       //     {
 //         //       $group: {
@@ -352,7 +373,7 @@ export async function getMapBinsWardWise (req,res) {
 //             //         Distance: { $max: "$distance" }
 //             //       }
 //             //     },
-            
+
 //             //     // Step 5: Project the results
 //             //     {
 //               //       $project: {
@@ -365,18 +386,10 @@ export async function getMapBinsWardWise (req,res) {
 //   //         Distance: { $toDouble: "$Distance" } // Convert Distance to double
 //   //       }
 //   //     },
-  
+
 //   //     // Step 6: Sort by TrackDate
 //   //     {
 //     //       $sort: { TrackDate: 1 }
 //     //     }
 //     //   ]
 // }
-  
-
-
-
-
-
-
-  

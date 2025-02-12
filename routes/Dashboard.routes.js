@@ -9,6 +9,7 @@ router.post("/GetVehicleCurrentDay", DashboardController.getVehicleCurrentDay)
 router.post("/GetVehicleDistance", DashboardController.getVehicleDistance)
 router.post("/GetAllBins", DashboardController.getAllBins)
 router.post("/GetMapBinsWardWise", DashboardController.getMapBinsWardWise)
+router.post("/GetvVehicleNo", DashboardController.getvVehicleNo)
 
 
 
