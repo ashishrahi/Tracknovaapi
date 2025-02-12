@@ -668,8 +668,8 @@ async function GetCampaignTemplate(req, res) {
       .lean() // Limit the number of results
     const data = formattedData(campaignTemplateResult)
     // Execute query to get the total count of documents
-    const totalCount = data.length;
 
+    const totalCount = data.length;
 
     return res.status(StatusCodes.OK).json( new CommonResponse(1,'Fetch Successfully',data,totalCount,pageNo,pageSize)
       
@@ -691,11 +691,10 @@ async function GetCampaignTemplate(req, res) {
 //-------------UpsertCampaignTemplate-------->
 async function UpsertCampaignTemplate(req, res) {
   const model = req.body;
-  // console.log(model);
   const response = {
-    Status: "",
-    Message: "",
-    Data: model,
+    status: "",
+    message: "",
+    data: model,
   };
 
   try {
@@ -706,9 +705,9 @@ async function UpsertCampaignTemplate(req, res) {
       });
 
       if (existingTemplate) {
-        response.Status = "Failed";
-        response.Message = "Record Already Exists!";
-        response.Data = existingTemplate;
+        response.status = 0;
+        response.message = "Record Already Exists!";
+        response.data = existingTemplate;
         return res.status(StatusCodes.CONFLICT).json(response);
       }
 
@@ -733,9 +732,9 @@ async function UpsertCampaignTemplate(req, res) {
       // console.log("newTemplate", savedTemplate);
       // const newSavedTemplate = await newTemplate.save();
 
-      response.Status = "Success";
-      response.Message = "Add Successfully";
-      response.Data = savedTemplate;
+      response.status = 1;
+      response.message = "Add Successfully";
+      response.data = savedTemplate;
 
       return res.status(StatusCodes.OK).json(response);
     } else {
@@ -757,15 +756,15 @@ async function UpsertCampaignTemplate(req, res) {
       // return res.json(template)
 
       if (!template) {
-        response.Status = "Failed";
-        response.Message = "Template not found!";
-        response.Data = null;
+        response.status = 0;
+        response.message = "Template not found!";
+        response.data = null;
         return res.status(StatusCodes.FORBIDDEN).json(response);
       }
 
-      response.Status = "Success";
-      response.Message = "Update Successfully";
-      response.Data = template;
+      response.status = 1;
+      response.message = "Update Successfully";
+      response.data = template;
 
       return res.status(StatusCodes.OK).json(response);
     }

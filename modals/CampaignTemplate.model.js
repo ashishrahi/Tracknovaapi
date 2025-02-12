@@ -23,13 +23,11 @@ const CampaignTemplateSchema = new mongoose.Schema({
         },
         CreatedBy: {
           type: String,
-          required: true,
           trim: true,
           
         },
         UpdatedBy: {
           type: String,
-          required: true,
           trim: true
         }
       
