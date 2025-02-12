@@ -9,6 +9,7 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import jwt from "jsonwebtoken"
+import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 
 
 //-----------------loginQuery-------->
@@ -788,7 +789,7 @@ export const GetRolePermissionQuery = async (modal) => {
     const { RoleId } = modal;
     let data;
 
-    if (RoleId === -1) {
+    if (RoleId === "-1") {
         data = await RolePermission.find().lean();
 
         const newData = data.map((role)=>{
@@ -816,11 +817,11 @@ export const GetRolePermissionQuery = async (modal) => {
           rowCount:rowCount
         }
     } else {
-        data = await RolePermission.find({ RoleId:RoleId }).lean();
+        data = await RolePermission.findOne({ RoleId: RoleId }).lean();
         return{
           status: 1,
           message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-          data: data,
+          data: formattedData(data),
         }
     }
 

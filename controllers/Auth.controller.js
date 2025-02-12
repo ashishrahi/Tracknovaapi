@@ -353,7 +353,8 @@ export async function GetRolePermissionMaster(req, res) {
 
 export async function GetRolePermission(req, res) {
   try {
-    const modal = req.body;
+    const modal = req.query;
+    console.log(req.query)
     const {status, message, data,rowCount} = await GetRolePermissionQuery(modal);
     const successResponse = new CommonResponse(
       status,
