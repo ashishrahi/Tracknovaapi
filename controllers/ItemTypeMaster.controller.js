@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { ItemTypeMaster } from "../modals/index.js";
-import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 async function AddUpdateItemTypeMaster(req, res, next){
 
@@ -65,9 +66,11 @@ async function GetItemTypeMaster(req, res, next){
         if(itemType) query.ItemType = itemType;
         if(itemTypecode) query.ItemTypecode = itemTypecode;
     
-        const data = await ItemTypeMaster.find(query).lean(); // Optimized query
+        const data = await ItemTypeMaster.find(query).select("-_id").lean(); // Optimized query
+
+        const response = formattedData(data)
     
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK,"default" , data))
+        return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched", null , response))
       } catch (error) {
         
         return res.json({

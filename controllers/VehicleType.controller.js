@@ -106,7 +106,7 @@ async function GetVehicleType(req, res, next){
         });
         return newObj;
       });
-       return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, response))
+       return res.status(StatusCodes.OK).json(new CommonResponse(1,  msg, response))
 
       } catch (error) {
         const err = new Error(error.message)
