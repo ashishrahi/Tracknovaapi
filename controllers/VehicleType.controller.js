@@ -87,20 +87,28 @@ async function GetVehicleType(req, res, next){
       try {
         const model = req.body;
         
-        const filter = {};
-        if (model.vehicleTypeId !== 0) filter.VehicleTypeId = model.vehicleTypeId;
-        if (model.vehicleTypename) {
-          filter.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  
-        }
-    
-        // Query the VehicleTypeMaster collection
-        const result = await VehicleTypeMaster.find(filter);
 
-        
+        let filter = {};
+        if (model.vehicleTypeId !== 0 || model.vehicleTypeId !== -1) filter.VehicleTypeId = model.vehicleTypeId;
+        if (model.vehicleTypename?.trim() !== "") {
+          filter.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
+        }
+        if(model.vehicleTypeId === -1) filter = {};
+        // Query the VehicleTypeMaster collection
+        let result = await VehicleTypeMaster.find(filter).select("-_id").lean();
     
-       let message;
-       result.length > 0 ? message = "default" : message = "No Record Found!!"
-       return res.status(StatusCodes.OK).json(new CommonResponse(status, message, data))
+       let msg;
+       result.length > 0 ? msg = "Data Fetched" : msg = "No Record Found!!"
+
+       const response = result.map((obj) => {
+        let newObj = {};
+        Object.keys(obj).forEach((key) => {
+          let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+          newObj[newKey] = obj[key];
+        });
+        return newObj;
+      });
+       return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, response))
 
       } catch (error) {
         const err = new Error(error.message)
