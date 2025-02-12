@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { VehicleTypeMaster, ItemMaster } from "../modals/index.js";
 import { ApiSuccessResponse, CommonResponse, DBReturn } from "../utils/apiResponse/index.js";
 
+
 //-----------AddUpdateVehicleType------>
 async function AddUpdateVehicleType(req, res, next) {
   try {
@@ -86,6 +87,7 @@ async function GetVehicleType(req, res, next){
       try {
         const model = req.body;
         
+
         let filter = {};
         if (model.vehicleTypeId !== 0 || model.vehicleTypeId !== -1) filter.VehicleTypeId = model.vehicleTypeId;
         if (model.vehicleTypename?.trim() !== "") {

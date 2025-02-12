@@ -354,11 +354,12 @@ export async function GetRolePermissionMaster(req, res) {
 export async function GetRolePermission(req, res) {
   try {
     const modal = req.body;
-    const {status, message, data} = await GetRolePermissionQuery(modal);
+    const {status, message, data,rowCount} = await GetRolePermissionQuery(modal);
     const successResponse = new CommonResponse(
       status,
       message,
       data,
+      rowCount
     );
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
