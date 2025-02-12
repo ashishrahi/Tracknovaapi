@@ -11,17 +11,20 @@ export async function GetDeviceType(req, res) {
   try {
     const model = req.body;
 
-    const { status, message, data,pageNo,pageSize,rowCount } = await GetDeviceTypeQuery(
+    const { status, message, data, pageNo, pageSize, rowCount } = await GetDeviceTypeQuery(
       model
     );
+
+    // console.log("got data after query: ", { status, message, data, pageNo, pageSize, rowCount })
+
     const successResponse = new CommonResponse(
       status,
-
       message,
       data,
-      pageNo,
-      pageSize,
       rowCount,
+      null,
+      pageNo,
+      pageSize
     );
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
