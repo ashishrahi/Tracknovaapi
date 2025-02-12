@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
 
 
 import {
@@ -397,30 +397,30 @@ async function VehCurrStat(req, res) {
 
   // Prepare response data
   const stat = {
-    COT1: [engff.length, engonTot.length],
+    coT1: [engff.length, engonTot.length],
     labels1: [`${engff.length} - Off`, `${engonTot.length} - On`],
-    COT3: Object.values(zoneStats),
+    cOT3: Object.values(zoneStats),
     labels3: Object.keys(zoneStats),
-    DEPT3: Object.values(deptStats),
+    depT3: Object.values(deptStats),
     labeldept: Object.keys(deptStats),
-    Runningveh: run.length,
-    Idleveh: engon.length,
-    Stopveh: engff.length,
-    Totalveh: run.length + engon.length + engff.length,
-    Vehtotal: totVehGps.length,
-    Totalvehall: await ItemMaster.countDocuments({
+    runningveh: run.length,
+    idleveh: engon.length,
+    stopveh: engff.length,
+    totalveh: run.length + engon.length + engff.length,
+    vehtotal: totVehGps.length,
+    totalvehall: await ItemMaster.countDocuments({
       ItemFlag: { $exists: true, $regex: /^V$/i },
     }),
-    TotDistance: Math.round(dist),
+    totDistance: Math.round(dist),
   };
 
   return res
     .status(StatusCodes.OK)
     .json(
-      new ApiSuccessResponse(
-        true,
-        StatusCodes.OK,
-        "default",
+      new ReturnData(
+        true, true, 
+        "Data fetched successfully",
+        null,
         stat
       )
     );
