@@ -795,12 +795,13 @@ export const GetRolePermissionQuery = async (modal) => {
             menuName: role.MenuName
           }
         })
-
+             const rowCount = newData.length;
         
         return{
           status: 1,
           message: "Role Permission fetched successfully",
-          data:newData
+          data:newData,
+          rowCount:rowCount
         }
     } else {
         data = await RolePermission.find({ RoleId:RoleId }).lean();
