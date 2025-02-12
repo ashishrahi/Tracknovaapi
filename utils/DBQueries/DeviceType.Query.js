@@ -5,14 +5,30 @@ import { DeviceType } from "../../modals/DeviceType.modal.js";
 
 export const GetDeviceTypeQuery = async (model) => {
     try {
-        const { pageNo, pageSize } = model;
-        const skip = (pageNo - 1) * pageSize;
+        // const { pageNo, pageSize } = model;
+        // const skip = (pageNo - 1) * pageSize;
     
         // Query to get DeviceType data
-        const deviceTypes = await DeviceType.find()
-          .skip(skip)
-          .limit(pageSize);
+        const deviceTypes = await DeviceType.find().select("-_id").lean();
+          // .skip(skip)
+          // .limit(pageSize);
     
+// <<<<<<< HEAD
+//         const rowCount = deviceTypes.length;
+
+//         const response = deviceTypes.map((obj) => {
+//           let newObj = {};
+//           Object.keys(obj).forEach((key) => {
+//             let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+//             newObj[newKey] = obj[key];
+//           });
+//           return newObj;
+//         });
+    
+//         return  {
+//           message:`Device types fetched successfully`,
+//           data:response,
+// =======
     const deviceTypesList = deviceTypes.map((deviceType)=>{
       return{
         id:deviceType.Id,
@@ -32,6 +48,7 @@ export const GetDeviceTypeQuery = async (model) => {
           data:deviceTypesList,
           pageNo:pageNo,
           pageSize:pageSize,
+// >>>>>>> ashish
           rowCount:rowCount,
          };
           

@@ -36,9 +36,14 @@ export const loginQuery = async (model, next) => {
     // return rolesString;
 
     // Fetch user permissions
-    const userPermissions = await UserPermission.find({UserId: user.Id});
+    // const userPermissions = await UserPermission.find({UserId: user.Id});
+    // if (!userPermissions) {
+    //     return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
+    // }
+
+    const userPermissions = await  GetUserPermissionMasterQuery({userId: user.Id})
     if (!userPermissions) {
-        return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
+      return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
     }
 
     // Generate JWT Token
@@ -47,7 +52,7 @@ export const loginQuery = async (model, next) => {
         username: user.UserName,
         roles: rolesString,
     };
-    console.log(userPermissions);
+    // console.log(userPermissions);
     const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "5y", // Token expires in 5 years
     });
@@ -66,10 +71,8 @@ export const loginQuery = async (model, next) => {
                 phoneNumber: user.PhoneNumber,
                 roles: rolesString,
           },
-          permissions: userPermissions,
-        }
-      
-      
+          permissions: userPermissions.data,
+        } 
     };
 
     return response;
@@ -299,6 +302,7 @@ export const AddUpdateUserPermissionMasterQuery = async (
 export const GetUserPermissionMasterQuery = async (modal) => {
   try {
     const { userId } = modal;
+    console.log('userId:',userId)
 
     if (userId === "-1") {
       const usersPermission = await UserPermission.find().lean();
@@ -356,7 +360,15 @@ export const GetUserPermissionMasterQuery = async (modal) => {
           },
         },
       ]);
-
+     // Convert first letter of each key to lowercase for every object in the array
+    const response = data.map((obj) => {
+      let newObj = {};
+      Object.keys(obj).forEach((key) => {
+        let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+        newObj[newKey] = obj[key];
+      });
+      return newObj;
+    });
       return {
         isSuccess: 1,
         id: userId,

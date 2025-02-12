@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { VehicleTypeMaster, ItemMaster } from "../modals/index.js";
-import { ApiSuccessResponse,CommonResponse } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse, CommonResponse, DBReturn } from "../utils/apiResponse/index.js";
+
 
 //-----------AddUpdateVehicleType------>
 async function AddUpdateVehicleType(req, res, next) {
@@ -31,7 +32,7 @@ async function AddUpdateVehicleType(req, res, next) {
         return res
           .status(StatusCodes.OK)
           .json(
-            new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Added", newDoc)
+            new DBReturn(true, null, null, "Successfully Added",   newDoc)
           );
       } else {
         const error = new Error("Failed to save. Please try again");
@@ -141,9 +142,6 @@ async function DeleteVehicleType(req, res, next){
 
 //-----------AddUpdateEscrapVehicleType------>
 async function AddUpdateEscrapVehicleType(req, res, next){
-  // const res = { Status: 'Failed', Message: '', Data: null };
-  // let session;
-
   try {
       // await client.connect();
       // session = client.startSession();
@@ -154,6 +152,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
       // const itemMasterCollection = db.collection('ItemMaster');
       // const eScarpVehicleTypeCollection = db.collection('v01_VehicleType');
 
+      const model = req.body;
       let escrVehtypename = '';
       if (model.EScarp) {
           escrVehtypename = model.EScarpPrevValue || '';
@@ -171,7 +170,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
               // return res;
           }
 
-          const lastVehicleType = await VehicleTypeMaster.find({}).sort({ VehicleTypeId: -1 }).limit(1).toArray();
+          const lastVehicleType = await VehicleTypeMaster.find().sort({ VehicleTypeId: -1 }).limit(1).lean();
           const updatedVehicleTypeId = (lastVehicleType[0]?.VehicleTypeId || 0) + 1;
 
           const newDoc = new VehicleTypeMaster({
@@ -185,7 +184,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
           const newInsertedDoc = await newDoc.save(); 
 
           // await vehicleTypeCollection.insertOne(model, { session });
-          return res.status(StatusCodes.OK).json(StatusCodes.OK, 'Successfully Added', newInsertedDoc );
+          return res.status(StatusCodes.OK).json(new CommonResponse(true, 'Successfully Added', newInsertedDoc) );
       } else {
           const finduse = await ItemMaster.findOne({ VehicleTypeId: model.vehicleTypeId, NTRecord: 'y' }
             // , { session }
@@ -204,7 +203,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
               } }
                 // , { session }
               );
-              return res.status(StatusCodes.OK).json(StatusCodes.OK, "Successfully Updated" )
+              return res.status(StatusCodes.OK).json(new CommonResponse(true,  "Successfully Updated") )
               // res.Status = 'Success';
               // res.Message = 'Successfully Updated';
           } else {
@@ -214,43 +213,6 @@ async function AddUpdateEscrapVehicleType(req, res, next){
           }
       }
 
-      // if (updateVt) {
-      //     await session.commitTransaction();
-      // }
-
-      /*
-      if (model.eScarp) {
-          try {
-              const escrmodel = await eScarpVehicleTypeCollection.findOne({ VehicleTypeName: escrVehtypename.toLowerCase() }, { session });
-              if (!escrmodel) {
-                  const maxId = await eScarpVehicleTypeCollection.find({}).sort({ VehicleTypeId: -1 }).limit(1).toArray();
-                  const newId = (maxId[0]?.VehicleTypeId || 0) + 1;
-
-                  const newVehicleType = {
-                      VehicleTypeId: newId,
-                      VehicleTypeCode: model.VehicleCode,
-                      VehicleTypeName: model.VehicleTypename,
-                      IsActive: true
-                  };
-
-                  await eScarpVehicleTypeCollection.insertOne(newVehicleType, { session });
-              } else {
-                  const updatedVehicleType = {
-                      VehicleTypeCode: model.VehicleCode,
-                      VehicleTypeName: model.VehicleTypename,
-                      IsActive: true
-                  };
-
-                  await eScarpVehicleTypeCollection.updateOne({ VehicleTypeId: escrmodel.VehicleTypeId }, { $set: updatedVehicleType }, { session });
-              }
-
-              await session.commitTransaction();
-              res.Message += ' ;escrap Saved.';
-            } catch (excp) {
-              res.Message = `${excp.message};${excp.innerException?.message || ''}`;
-            }
-          }
-          */
   } catch (ex) {
       // if (session) {
       //     await session.abortTransaction();
@@ -315,22 +277,33 @@ async function GetEscrapVehicleType(req, res, next){
   try {
     // Fetch vehicle types with filters
     const model = req.body;
-    const { pageNo = 1, pageSize = 10 } = req.body;
-    const query = {};
+    // const { pageNo = 1, pageSize = 10 } = req.body;
+    let query = {};
+    
     if (model.vehicleTypeId !== 0) query.VehicleTypeId = model.vehicleTypeId;
-        if (model.vehicleTypename) {
-          query.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
-        }
-    const vehicleTypes = await VehicleTypeMaster.find(query)
-        .skip((pageNo - 1) * pageSize) // Pagination
-        .limit(pageSize);
+    if (model.vehicleTypename) {
+      query.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
+    }
+    if(!model.vehicleTypeId || model.vehicleTypeId === 0) query= {};
+    const vehicleTypes = await VehicleTypeMaster.find(query).lean()
+        // .skip((pageNo - 1) * pageSize) // Pagination
+        // .limit(pageSize);
+    
+    const response = vehicleTypes.map((obj) => {
+      let newObj = {};
+      Object.keys(obj).forEach((key) => {
+        let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+        newObj[newKey] = obj[key];
+      });
+      return newObj;
+    });
 
    
     const rowCount = await VehicleTypeMaster.countDocuments(query);
 
     let msg;
-    rowCount > 0 ? msg = "default" : msg = "No Record Found!!"
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, vehicleTypes,pageNo, pageSize, rowCount))
+    rowCount > 0 ? msg = "Data fetched" : msg = "No Record Found!!"
+    return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, response, rowCount))
 
    } catch (error) {
      const err = new Error(error.message)

@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ContractorMaster, ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
-import {ApiErrorResponse, ApiSuccessResponse} from "../utils/apiResponse/index.js";
+import {ApiErrorResponse, ApiSuccessResponse, CommonResponse, ReturnData} from "../utils/apiResponse/index.js";
 // import {ApiSuccessResponse} from "../utils/apiResponse/ApiSuccessResponse.js";
 
 //--------------AddUpdateItemMaster-------->
@@ -10,7 +10,7 @@ async function AddUpdateItemMaster( req, res, next){
     try {
         const model = req.body;
         // let vNo = model.EScarp ? model.VehicleNo : "";
-        let vNo =  model.vNoehicleNo;
+        let vNo =  model.vehicleNo;
         // let isNew = !model.ItemMasterId;
 
         if (model.itemMasterId === 0) {
@@ -68,7 +68,7 @@ async function AddUpdateItemMaster( req, res, next){
               }                                    
               ).save(); // save({session})
             // await session.commitTransaction();
-            return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Successfully Added", savedData));
+            return res.status(StatusCodes.OK).json(new CommonResponse(true, "Successfully Added",savedData));
         } else{
             // now updating
         const entity = await ItemMaster.findOne({ ItemMasterId: model.itemMasterId })
@@ -197,9 +197,9 @@ async function AddUpdateItemMaster( req, res, next){
 async function GetItemMaster(req, res, next){
 
     try {
-        const { itemMasterId, vehicleNo } = req.body;
+        const { itemmasterid, vehicleNo } = req.body;
         let query = [];
-        if (itemMasterId === -1) {
+        if (itemmasterid === -1) {
             query.push(
                 {
                     $lookup: {
@@ -243,14 +243,14 @@ async function GetItemMaster(req, res, next){
                         preserveNullAndEmptyArrays: true,
                     },
                 },
-                {
-                    $match: {
-                      VehicleNo: {
-                        $regex: vehicleNo,
-                        $options: "i"
-                      }
-                    }
-                },
+                // {
+                //     $match: {
+                //       VehicleNo: {
+                //         $regex: vehicleNo,
+                //         $options: "i"
+                //       }
+                //     }
+                // },
                 {
                     $project: {
                         _id: 0,
@@ -307,7 +307,7 @@ async function GetItemMaster(req, res, next){
             query.push({
                 $match: {
                     $or: [
-                        { ItemMasterId: itemMasterId },
+                        { ItemMasterId: itemmasterid },
                         { VehicleNo: { $regex: vehicleNo, $options: "i" } },
                     ],
                 },
@@ -315,8 +315,19 @@ async function GetItemMaster(req, res, next){
         }
 
         const result = await ItemMaster.aggregate(query);
-        const message = result.length > 0 ? "Data fetched successfully" : "No records found."
-        return res.status(StatusCodes.OK).json( new ApiSuccessResponse(true, StatusCodes.OK, message, result ));
+       
+
+        const response = result.map((obj) => {
+            let newObj = {};
+            Object.keys(obj).forEach((key) => {
+              let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+              newObj[newKey] = obj[key];
+            });
+            return newObj;
+          });
+    
+        const message = response.length > 0 ? "Data fetched successfully" : "No records found."
+        return res.status(StatusCodes.OK).json(new ReturnData(true, false, message, null, response));
     } catch (err) {
         const error = new Error(err.message);
         error.status = StatusCodes.BAD_REQUEST;
@@ -358,7 +369,7 @@ async function DeleteItemMaster(req, res, next){
             const deleteResult = await ItemMaster.deleteOne({ ItemMasterId: itemMasterId });
 
             if (deleteResult.deletedCount === 1) {
-                return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true ,StatusCodes.OK, "Successfully Deleted"))
+                return res.status(StatusCodes.OK).json(new ReturnData(true ,true, "Successfully Deleted", false, null))
                
             } else {
                 const error = new Error("ItemMaster not found.");

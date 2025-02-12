@@ -265,7 +265,7 @@ export const GetParentMenuMasterQuery = async (model) => {
             isMenu: parent.IsMenu,
             icon:parent.Icon,
             displayNo:parent.DisplayNo,
-            isMenu:parent.IsMenu,
+            // isMenu:parent.IsMenu,
             isAdd: parent.IsAdd,
             isEdit: parent.IsEdit,
             isDel: parent.IsDel,

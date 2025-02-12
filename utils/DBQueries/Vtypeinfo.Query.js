@@ -117,29 +117,38 @@ export const getVtypeinfoQuery = async (modal) => {
   
     try {
         // Create a filter for the Vtypeinfos model using the provided filter
-        const vTypeInfo = await VehicleTypeChild.find(modal.where, modal.parameterValues).exec();
+        const vTypeInfo = await VehicleTypeChild.find(modal.where, modal.parameterValues).lean()
 
         // Extract distinct VehicleTypeIds from vTypeInfo
         const vtypes = [...new Set(vTypeInfo.map(s => s.VehicleTypeId.toString()))];
 
         // Query the ItemMasters collection
         const items = await ItemMaster.find({ VehicleTypeId: { $in: vtypes } })
-            .select('ItemMasterId VehicleTypeId NTRecord')
-            .exec();
+            .select('ItemMasterId VehicleTypeId NTRecord').lean();
         // Map the NTRecord to the corresponding vTypeInfo
         vTypeInfo.forEach(v => {
             const item = items.find(i => i.VehicleTypeId.toString() === v.VehicleTypeId.toString());
-
             if (item) {
                 v.NTRecord = item.NTRecord;
             }
         });
 
+        const response = vTypeInfo.map((obj) => {
+          let newObj = {};
+          Object.keys(obj).forEach((key) => {
+            let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+            if(newKey === "nTRecord"){
+              newObj["ntRecord"] = obj[key];
+            }else{
+              newObj[newKey] = obj[key];
+            }
+          });
+          return newObj;
+        });
+
        return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
         message: 'Vehicle Type Info Retrieved Successfully!',
-        data: vTypeInfo,
+        data: response,
        }
     } catch (error) {
        return{
