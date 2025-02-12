@@ -470,19 +470,21 @@ async function GetCampaign(req, res) {
     const limit = parseInt(pageSize);
 
     // Fetch campaign data with filtering and pagination
-    const campaigns = await Campaign.find(query).skip(skip).limit(limit);
+    const campaigns = await Campaign.find(query).skip(skip).limit(limit).lean()
     // .lean(); // Improves performance by returning plain JS objects
-
+    const data = dotnetLikeData(campaigns) 
     // Get total count of records matching the filter
     const totalCount = await Campaign.countDocuments(query);
 
-    return res.status(StatusCodes.OK).json({
-      Data: campaigns,
-      Status: "Success",
-      PageNo: pageNo,
-      PageSize: pageSize,
-      RowCount: totalCount,
-    });
+    return res.status(StatusCodes.OK).json( new CommonResponse(1,"message", data,  totalCount, pageNo, pageSize)
+    //   {
+    //   Data: campaigns,
+    //   Status: "Success",
+    //   PageNo: pageNo,
+    //   PageSize: pageSize,
+    //   RowCount: totalCount,
+    // }
+  );
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       Status: "Failed",
