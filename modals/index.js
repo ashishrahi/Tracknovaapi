@@ -65,6 +65,7 @@ import {RouteAreaDetail} from './RouteAreaDetail.modal.js'
 import { AreaWardMaster } from "./AreaWardMaster.modal.js";
 // import { VehicleTypeMaster } from "./VehicleTypeMaster.modal.js";
 import {VehicleTypeChild} from './VehicleTypeChild.modal.js'
+import { Node } from "./Node.modal.js";
 
 
 export { 
@@ -91,6 +92,7 @@ export {
     HelpCreate,
     CityMaster,
     FuelCorrection,
+    Node,
     Petrol_Pump_tbl,
     RosterPlan,
     RosterPlanDetail,

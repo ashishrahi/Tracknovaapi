@@ -6,7 +6,7 @@ import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./It
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from "./ItemTypeMaster.controller.js";
 // import { GetMapVehicleData } from "./MapVehicleData.controller.js"
-import { AddUpdateNewNodeMaster} from "./NewNodeMaster.controller.js"     
+import { AddUpdateNewNodeMaster,GetAllNodes,DeleteNode} from "./NewNodeMaster.controller.js"     
 import { AddUpdateNodePermission } from "./NodePermission.controller.js";
 import { AddUpdateVehicleAuditInfo, GetVehicleAuditInfo, DeleteVehicleAuditInfo } from "./VehicleAuditInfo.controller.js"
 import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
@@ -516,7 +516,9 @@ export const MapVehicleDataController = {
 }
 
 export const NewNodeMasterController = {
-    AddUpdateNewNodeMaster: AddUpdateNewNodeMaster
+    AddUpdateNewNodeMaster: AddUpdateNewNodeMaster,
+    GetAllNodes:GetAllNodes,
+    DeleteNode:DeleteNode
 }
 
 export const NodePermissionController = {
