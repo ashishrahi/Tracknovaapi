@@ -8,7 +8,7 @@ import formattedData from '../dotnet-like-format/dotnetLikeData.js'
 export const AddUpdateNewNodeMasterQuery = async (modal) => {
    
   try {
-    let { nodeId, nodeName,parentId,displayNo,location } = modal;
+    let { nodeId, nodeName,parentId,displayNo,location,icon } = modal;
 
     if (!nodeId || nodeId === 0) {
       // Get the highest nodeId
@@ -20,6 +20,7 @@ export const AddUpdateNewNodeMasterQuery = async (modal) => {
         NodeName: nodeName,
         ParentId: parentId,
         DisplayNo: displayNo,
+        Icon:icon,
         Location: location,
       });
       await newNode.save();
@@ -35,9 +36,11 @@ export const AddUpdateNewNodeMasterQuery = async (modal) => {
         {NodeId: nodeId }, 
         {
           NodeName: nodeName, 
-          NodeDescription: parentId, 
+          ParentId: parentId, 
+          Icon:icon,
+          DisplayNo: displayNo,
           NodeLocation: displayNo, 
-          NodeStatus:location, 
+          Location:location, 
         }, 
         { new: true, upsert: true } // Create if not found
       );
