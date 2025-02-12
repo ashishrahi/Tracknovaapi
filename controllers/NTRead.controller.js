@@ -491,134 +491,231 @@ async function GetDashData(req, res) {
 //-------------getVehicleNotMoved----------->
 // Done
 async function getVehicleNotMoved(req, res) {
+  let result = { data: [], isSuccess: false, message: "" };
+
   try {
-    const model = req.body;
-    const pipeline = [
-      // Step 1: Filter NT collection for the required date range and create flags for NTMV and NTREC
-      {
-        $match: {
-          TrackTime: {
-            $gte: new Date(model.dateFrom), //"2024-11-12"
-            $lte: new Date(model.dateTo),
-          },
-        },
-      },
-      {
-        $addFields: {
-          isNTMV: { $eq: ["$acc", 1] }, // Flag for NTMV
-        },
-      },
+    const { dateFrom, dateTo } = request;
 
-      // Step 2: Group NT data by devid to get distinct devices for NTMV and NTREC
-      {
-        $group: {
-          _id: "$devid",
-          hasNTMV: { $max: { $cond: ["$isNTMV", 1, 0] } }, // Indicates if the device is in NTMV
-        },
+    // Fetch distinct device IDs for vehicles that moved (NTMV)
+    const ntmvDevices = await NT.findAll({
+      attributes: ["devid"],
+      where: {
+        TrackTime: { [Op.between]: [new Date(model.dateFrom), new Date(model.dateTo)] },
+        acc: true,
       },
+      distinct: true,
+      raw: true,
+    }).then((rows) => rows.map((r) => r.devid));
 
-      // Step 3: Lookup additional details from other collections
-      {
-        $lookup: {
-          from: "ItemMaster",
-          localField: "id",
-          foreignField: "devid",
-          as: "vehicleDetails",
-        },
-      },
-      {
-        $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true },
-      },
+    // Fetch distinct device IDs for all vehicles within the date range
+    const allTrackedDevices = await NT.findAll({
+      attributes: ["devid"],
+      where: { TrackTime: { [Op.between]: [dateFrom, dateTo] } },
+      distinct: true,
+      raw: true,
+    }).then((rows) => rows.map((r) => r.devid));
 
-      // Step 4: Join with Employee, Department, VehicleType, and Zone collections
-      {
-        $lookup: {
-          from: "EmpMaster",
-          localField: "vehicleDetails.EmpId",
-          foreignField: "Empid",
-          as: "employeeDetails",
+    // Fetch vehicle, employee, department, and zone details
+    const vehicles = await ItemMaster.findAll({
+      where: { ItemFlag: "V", Devid: { [Op.ne]: null } },
+      attributes: ["Devid", "VehicleNo", "ItemName", "VehicleTypeId", "VZoneID"],
+      include: [
+        {
+          model: EmpMaster,
+          as: "employee",
+          required: false,
+          attributes: ["EmpName", "EmpMobileNo", "EmpDeptId"],
         },
-      },
-      {
-        $unwind: { path: "$employeeDetails", preserveNullAndEmptyArrays: true },
-      },
-      {
-        $lookup: {
-          from: "Department",
-          localField: "employeeDetails.EmpDeptId",
-          foreignField: "DepartmentId",
-          as: "departmentDetails",
+        {
+          model: Department,
+          as: "department",
+          required: false,
+          attributes: ["DepartmentName"],
         },
-      },
-      {
-        $unwind: {
-          path: "$departmentDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "VehicleTypeMaster",
-          localField: "vehicleDetails.VehicleTypeId",
-          foreignField: "VehicleTypeId",
-          as: "vehicleTypeDetails",
-        },
-      },
-      {
-        $unwind: {
-          path: "$vehicleTypeDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "ZoneMaster",
-          localField: "vehicleDetails.VZoneID",
-          foreignField: "ZoneID",
-          as: "zoneDetails",
-        },
-      },
-      { $unwind: { path: "$zoneDetails", preserveNullAndEmptyArrays: true } },
+      ],
+      raw: true,
+    });
 
-      // Step 5: Project final output
-      {
-        $project: {
-          Devid: "$_id",
-          VehicleNo: "$vehicleDetails.VehicleNo",
-          VehicleTypename: "$vehicleTypeDetails.VehicleTypename",
-          EmpName: "$employeeDetails.EmpName",
-          EmpMobileNo: "$employeeDetails.EmpMobileNo",
-          DepartmentName: "$departmentDetails.DepartmentName",
-          ZoneName: "$zoneDetails.ZoneName",
-          NTRecord: "$hasNTMV", // 1 if NTMV, 0 otherwise
-        },
-      },
+    // Fetch Vehicle Types & Zones
+    const vehicleTypes = await VehicleTypeMaster.findAll({ raw: true });
+    const zones = await ZoneMaster.findAll({ raw: true });
 
-      // Step 6: Filter out devices not in NTMV
-      {
-        $match: {
-          NTRecord: 0, // Exclude records present in NTMV
-        },
-      },
+    let serialNo = 1;
+    let vehicleNotMovedList = [];
 
-      // Step 7: Sort and add row numbers
-      { $sort: { Devid: 1 } },
-      {
-        $setWindowFields: {
-          sortBy: { Devid: 1 },
-          output: {
-            SrNo: { $rank: {} },
-          },
-        },
-      },
-    ];
+    for (let v of vehicles) {
+      let vehicleNotMoved = {
+        SrNo: serialNo++,
+        Devid: v.Devid,
+        VehicleNo: v.VehicleNo,
+        VehicleTypename: vehicleTypes.find((t) => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
+        EmpName: v["employee.EmpName"] || null,
+        EmpMobileNo: v["employee.EmpMobileNo"] || null,
+        DepartmentName: v["department.DepartmentName"] || null,
+        ZoneName: zones.find((z) => z.ZoneID === v.VZoneID)?.ZoneName || null,
+        NTRecord: false,
+      };
 
-    // Execute the pipeline
-    const results = await NT.aggregate(pipeline);
-    return res.json({ data: results });
+      if (allTrackedDevices.includes(v.Devid)) {
+        vehicleNotMoved.NTRecord = !ntmvDevices.includes(v.Devid);
+      }
+
+      vehicleNotMovedList.push(vehicleNotMoved);
+    }
+
+    result.data = vehicleNotMovedList;
+    result.isSuccess = true;
+    return res.json({vehicleNotMovedList})
   } catch (error) {
-    // console.log(error);
+    result.message = error.message;
   }
+
+  return result;
+
+
+
+
+
+  // try {
+  //   const model = req.body;
+  //   const pipeline = [
+  //     // Step 1: Filter NT collection for the required date range and create flags for NTMV and NTREC
+  //     {
+  //       $match: {
+  //         TrackTime: {
+  //           $gte: new Date(model.dateFrom), //"2024-11-12"
+  //           $lte: new Date(model.dateTo),
+  //         },
+  //       },
+  //     },
+  //     {
+  //       $addFields: {
+  //         isNTMV: { $eq: ["$acc", 1] }, // Flag for NTMV
+  //       },
+  //     },
+
+  //     // Step 2: Group NT data by devid to get distinct devices for NTMV and NTREC
+  //     {
+  //       $group: {
+  //         _id: "$devid",
+  //         hasNTMV: { $max: { $cond: ["$isNTMV", 1, 0] } }, // Indicates if the device is in NTMV
+  //       },
+  //     },
+
+  //     // Step 3: Lookup additional details from other collections
+  //     {
+  //       $lookup: {
+  //         from: "ItemMaster",
+  //         localField: "id",
+  //         foreignField: "devid",
+  //         as: "vehicleDetails",
+  //       },
+  //     },
+  //     {
+  //       $unwind: { path: "$vehicleDetails", preserveNullAndEmptyArrays: true },
+  //     },
+
+  //     // Step 4: Join with Employee, Department, VehicleType, and Zone collections
+  //     {
+  //       $lookup: {
+  //         from: "EmpMaster",
+  //         localField: "vehicleDetails.EmpId",
+  //         foreignField: "Empid",
+  //         as: "employeeDetails",
+  //       },
+  //     },
+  //     {
+  //       $unwind: { path: "$employeeDetails", preserveNullAndEmptyArrays: true },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: "Department",
+  //         localField: "employeeDetails.EmpDeptId",
+  //         foreignField: "DepartmentId",
+  //         as: "departmentDetails",
+  //       },
+  //     },
+  //     {
+  //       $unwind: {
+  //         path: "$departmentDetails",
+  //         preserveNullAndEmptyArrays: true,
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: "VehicleTypeMaster",
+  //         localField: "vehicleDetails.VehicleTypeId",
+  //         foreignField: "VehicleTypeId",
+  //         as: "vehicleTypeDetails",
+  //       },
+  //     },
+  //     {
+  //       $unwind: {
+  //         path: "$vehicleTypeDetails",
+  //         preserveNullAndEmptyArrays: true,
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: "ZoneMaster",
+  //         localField: "vehicleDetails.VZoneID",
+  //         foreignField: "ZoneID",
+  //         as: "zoneDetails",
+  //       },
+  //     },
+  //     { $unwind: { path: "$zoneDetails", preserveNullAndEmptyArrays: true } },
+
+  //     // Step 5: Project final output
+  //     {
+  //       $project: {
+  //         Devid: "$_id",
+  //         VehicleNo: "$vehicleDetails.VehicleNo",
+  //         VehicleTypename: "$vehicleTypeDetails.VehicleTypename",
+  //         EmpName: "$employeeDetails.EmpName",
+  //         EmpMobileNo: "$employeeDetails.EmpMobileNo",
+  //         DepartmentName: "$departmentDetails.DepartmentName",
+  //         ZoneName: "$zoneDetails.ZoneName",
+  //         NTRecord: "$hasNTMV", // 1 if NTMV, 0 otherwise
+  //       },
+  //     },
+
+  //     // Step 6: Filter out devices not in NTMV
+  //     {
+  //       $match: {
+  //         NTRecord: 0, // Exclude records present in NTMV
+  //       },
+  //     },
+
+  //     // Step 7: Sort and add row numbers
+  //     { $sort: { Devid: 1 } },
+  //     {
+  //       $setWindowFields: {
+  //         sortBy: { Devid: 1 },
+  //         output: {
+  //           SrNo: { $rank: {} },
+  //         },
+  //       },
+  //     },
+  //   ];
+
+  //   // Execute the pipeline
+  //   const results = await NT.aggregate(pipeline);
+  //   return res.json({ data: results });
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
   // const ntRecPipeline = [
   //   {
   //     $match: {
