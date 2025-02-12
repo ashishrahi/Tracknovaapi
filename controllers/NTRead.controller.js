@@ -449,9 +449,8 @@ async function GetDashData(req, res) {
   // }
 
   // Step 2: Query the Geofencing collection
-  const geofencingData = await Geofencing.find(filter).lean().exec();
-
-
+  const geofencingData = await Geofencing.find(filter).lean();
+  
   
 
 
