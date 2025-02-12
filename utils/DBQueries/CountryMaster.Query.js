@@ -138,7 +138,7 @@ export const GetCountryMasterQuery = async (model) => {
           
             return {
                    isSuccess:true,
-                   internalSuccess:false,
+                //    internalSuccess:false,
                    mesg:'Country Data has been fetched successfully',
                    insertedId:"",
                    internalSuccess:false,
