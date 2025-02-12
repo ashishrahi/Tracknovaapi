@@ -492,13 +492,14 @@ async function GetDashData(req, res) {
 // Done
 async function getVehicleNotMoved(req, res) {
   try {
+    const model = req.body;
     const pipeline = [
       // Step 1: Filter NT collection for the required date range and create flags for NTMV and NTREC
       {
         $match: {
           TrackTime: {
-            $gte: new Date("2024-11-12"),
-            $lte: new Date("2024-11-12"),
+            $gte: new Date(model.dateFrom), //"2024-11-12"
+            $lte: new Date(model.dateTo),
           },
         },
       },
