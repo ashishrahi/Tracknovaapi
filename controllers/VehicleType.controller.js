@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { VehicleTypeMaster, ItemMaster } from "../modals/index.js";
-import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse,CommonResponse } from "../utils/apiResponse/index.js";
 
 //-----------AddUpdateVehicleType------>
 async function AddUpdateVehicleType(req, res, next) {
@@ -89,15 +89,17 @@ async function GetVehicleType(req, res, next){
         const filter = {};
         if (model.vehicleTypeId !== 0) filter.VehicleTypeId = model.vehicleTypeId;
         if (model.vehicleTypename) {
-          filter.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
+          filter.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  
         }
     
         // Query the VehicleTypeMaster collection
         const result = await VehicleTypeMaster.find(filter);
+
+        
     
-       let msg;
-       result.length > 0 ? msg = "default" : msg = "No Record Found!!"
-       return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, msg, result))
+       let message;
+       result.length > 0 ? message = "default" : message = "No Record Found!!"
+       return res.status(StatusCodes.OK).json(new CommonResponse(status, message, data))
 
       } catch (error) {
         const err = new Error(error.message)
