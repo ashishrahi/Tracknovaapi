@@ -20,6 +20,7 @@ import {
 } from "../modals/index.js";
 import {
   ApiSuccessResponse,
+  CommonResponse,
   ApiErrorResponse,
 } from "../utils/apiResponse/index.js";
 import mongoose from "mongoose";
@@ -41,21 +42,22 @@ async function GetCommGroup(req, res) {
   const totalCount = await CommGroup.countDocuments(query);
 
   // Step 4: Fetch Paginated Data
-  const lNM = await CommGroup.find(query, { projection: { _id: 0 } }) // Exclude `_id` if not needed
-    .skip(skip) // Skip previous pages
+  const lNM = await CommGroup.find(query).select('-_id').lean() // Exclude `_id` if not needed
+   .skip(skip) // Skip previous pages
     .limit(pageSize); // Limit to page size
 
+
   // Step 5: Return Response
-  return res.status(StatusCodes.OK).json(
-    {
-      Status: "Success",
-      PageNo: pageNo,
-      PageSize: pageSize,
-      RowCount: totalCount, // Total records count
-      TotalPages: Math.ceil(totalCount / pageSize),
-      Data: lNM,
+  return res.status(StatusCodes.OK).json(new CommonResponse(1, "Data Fetched", lNM, totalCount, null, pageNo, pageSize )
+    // {
+    //   Status: "Success",
+    //   PageNo: pageNo,
+    //   PageSize: pageSize,
+    //   RowCount: totalCount, // Total records count
+    //   TotalPages: Math.ceil(totalCount / pageSize),
+    //   Data: lNM,
      
-    } // Calculate total pages
+    // } // Calculate total pages
   );
 
   // {
