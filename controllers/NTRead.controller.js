@@ -1210,54 +1210,55 @@ async function GetRunningStatus(req, res){
 
 //-------------GetLongIdleVeh----------->
 async function GetLongIdleVeh(req, res){
-  let { nos } = req.query;
-  if(!nos) nos = 1 
-
-  const ntList = await GetNTDashboardPipeline();
-
-  // Flatten the array of arrays into a single array
-  // const flatNtList = ntList.flat();
-
-  // Sort by SecondsIdle in descending order and take the top 'nos' records
-  const fuelNos = ntList
-    .sort((a, b) => b.SecondsIdle - a.SecondsIdle)
-    .slice(0, nos);
-
-  // Map the data to match the expected structure
-  const formattedData = fuelNos.map((fu, index) => ({
-    SrNo: index + 1,
-    ConsDate: fu.TrackTime, // MongoDB stores dates as ISO strings
-    TrackTime: fu.TrackTime,
-    Devid: fu.devid,
-    Departmentname: fu.DepartmentName,
-    VehicleNo: fu.VehicleNo,
-    Ignition: fu.Ignition,
-    EmpName: fu.EmpName,
-    EmpMobileNo: fu.EmpMobileNo,
-    ZoneName: fu.ZoneName,
-    speed: fu.speed,
-    SecondsIdle: fu.SecondsIdle,
-    SecondsRun: fu.SecondsRun,
-    VehicleTypename: fu.VehicleTypename,
-    IdleTime: fu.IdleTime,
-    FuelConsumed: fu.Fuel,
-    KmPerlitre: fu.KmPerLitre,
-    LitrePerhr: fu.LitrePerHr,
-    Flag: fu.flag,
-    PurchaseYear: fu.PurchaseYear,
-    ModelNo: fu.ModelNo,
-    SerialNo: fu.SerialNo,
-    ChesisNo: fu.ChesisNo,
-    HSNCode: fu.HSNCode,
-    VehicleWeight: fu.VehicleWeight,
-    Mileage: fu.Mileage,
-    FuelTankCapacity: "", // Same as in C# code
-  }));
-
-  return res.json( {
-    Data: formattedData,
-    IsSuccess: true,
-  });
+  try {
+    let { pos } = req.query;
+    if(!pos) pos = 1 
+  
+    const ntList = await GetNTDashboardPipeline();
+  
+    // Flatten the array of arrays into a single array
+    // const flatNtList = ntList.flat();
+  
+    // Sort by SecondsIdle in descending order and take the top 'nos' records
+    const fuelNos = ntList
+      .sort((a, b) => b.SecondsIdle - a.SecondsIdle)
+      .slice(0, pos);
+  
+    // Map the data to match the expected structure
+    const formattedData = fuelNos.map((fu, index) => ({
+      srNo: index + 1,
+      consDate: fu.TrackTime, // MongoDB stores dates as ISO strings
+      trackTime: fu.TrackTime,
+      devid: fu.devid,
+      departmentname: fu.DepartmentName,
+      vehicleNo: fu.VehicleNo,
+      ignition: fu.Ignition,
+      empName: fu.EmpName,
+      empMobileNo: fu.EmpMobileNo,
+      zoneName: fu.ZoneName,
+      speed: fu.speed,
+      secondsIdle: fu.SecondsIdle,
+      secondsRun: fu.SecondsRun,
+      vehicleTypename: fu.VehicleTypename,
+      idleTime: fu.IdleTime,
+      fuelConsumed: fu.Fuel,
+      kmPerlitre: fu.KmPerLitre,
+      litrePerhr: fu.LitrePerHr,
+      flag: fu.flag,
+      purchaseYear: fu.PurchaseYear,
+      modelNo: fu.ModelNo,
+      serialNo: fu.SerialNo,
+      chesisNo: fu.ChesisNo,
+      hSNCode: fu.HSNCode,
+      vehicleWeight: fu.VehicleWeight,
+      mileage: fu.Mileage,
+      fuelTankCapacity: "", // Same as in C# code
+    }));
+  
+    return res.status(StatusCodes.OK).json( new ReturnData(true, true, "Data fetched successfully", null, formattedData));
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message, null, StatusCodes.BAD_REQUEST))
+  }
 }
 
 //-------------GetVehicleMovement----------->
