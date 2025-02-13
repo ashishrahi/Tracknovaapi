@@ -11,7 +11,7 @@ router.get("/VehCurrStat", NTReadController.VehCurrStat);
 router.post("/GetDashData", NTReadController.GetDashData); 
 router.post("/GetVehicleNotMoved", NTReadController.getVehicleNotMoved);
 router.get("/GetNTDashboard", NTReadController.GetNTDashboard);
-router.get("/GetTopFuelCons", NTReadController.GetTopFuelCons);
+router.get("/GetTopFuelCons/nos=:nos", NTReadController.GetTopFuelCons);
 router.get("/GetTopFuelConsNT", NTReadController.GetTopFuelConsNT);
 router.get("/GetTopFuelConsNTS/zone=:zone", NTReadController.GetTopFuelConsNTS);
 router.get("/GetTopFuelConsNTOnOff/:onoff", NTReadController.GetTopFuelConsNTOnOff);
