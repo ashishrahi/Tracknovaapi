@@ -10,6 +10,8 @@ import {
   BinLocationQuery,
 } from "../utils/DBQueries/index.js";
 import ItemMaster from "../modals/ItemMaster.model.js";
+import { NT } from "../modals/NT.model.js";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //-------------- getDashboard ------>
 
@@ -61,38 +63,35 @@ export async function getVehicleCurrentDay(req, res) {
 //-------------- getVehicleDistance ------>
 
 export async function getVehicleDistance(req, res) {
-  const { vehicleno, datef, datet } = req.body;
-  // console.log(vehicleno, datef, datet);
-  if (
-    [vehicleno, datef, datet].some(
-      (fields) => fields?.trim() === undefined || ""
-    )
-  ) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(
-        new ApiErrorResponse(
-          StatusCodes.BAD_REQUEST,
-          "Please Provide all valid fields"
-        )
-      );
-  }
+ 
 
   try {
-    await connectDBMongo();
-    const db = await client.db("inventory");
+    
+    const { vehicleno, datef, datet } = req.body;
+    // console.log(vehicleno, datef, datet);
+    if (
+      [vehicleno, datef, datet].some(
+        (fields) => fields?.trim() === undefined || ""
+      )
+    ) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          new ApiErrorResponse(
+            StatusCodes.BAD_REQUEST,
+            "Please Provide all valid fields"
+          )
+        );
+    }
 
-    const itemMasterData = await db
-      .collection("ItemMaster")
-      .find({
+    const itemMasterData = await ItemMaster.find({
         VehicleNo: vehicleno,
-      })
-      .toArray();
+      }).lean();
 
     const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0];
     // console.log(devid)
 
-    const resultCursor = await db.collection("NT").aggregate(
+    const resultCursor = await NT.aggregate(
       [
         {
           $match: {
@@ -159,9 +158,9 @@ export async function getVehicleDistance(req, res) {
       ],
       { allowDiskUse: true }
     );
-
-    const result1 = await resultCursor.toArray();
-    return res.status(200).json({ data: result1 });
+    const data = formattedData(resultCursor)
+    // const result1 = await resultCursor.lean();
+    return res.status(200).json(new CommonResponse(1, "Data Fetched Successfully",data,  data?.length));
   } catch (error) {
     // console.log(error)
     return res
@@ -234,6 +233,16 @@ export async function getvVehicleNo(req, res, next) {
     return next(err);
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 // function getDynamicAggregation(vehicleno, datef, datet) {
 //   return [
