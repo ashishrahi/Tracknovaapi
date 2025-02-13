@@ -765,12 +765,23 @@ export const GetRolePermissionMasterQuery = async (modal) => {
       };
     } else {
       const data = await RolePermission.findOne({ RoleId: roleId }).lean();
+      const oneData ={
+        roleId: data.RoleId,
+        isAdd: data.IsAdd,
+        isDel:data.IsDel,
+        isEdit:data.IsEdit,
+        isExport:data.IsExport,
+        isPost:data.IsPost,
+        isPrint:data.IsPrint,
+        isRelease:data.IsRelease,
+        isView:data.IsView
+      }
       return {
         isSuccess: true,
         internalSuccess:"",
         mesg: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
         insertedId:"",
-        data: data,
+        data: oneData,
       };
     }
   } catch (error) {
@@ -818,10 +829,27 @@ export const GetRolePermissionQuery = async (modal) => {
         }
     } else {
         data = await RolePermission.findOne({ RoleId: RoleId }).lean();
+
+      const oneData =  {
+          roleId: data.RoleId,
+          menuId: data.MenuId,
+          parentMenuId: data.ParentId,
+          isAdd: data.IsAdd,
+          isDel:data.IsDel,
+          isEdit: data.IsEdit,
+          isExport: data.IsExport,
+          isPost: data.IsPost,
+          isPrint: data.IsPrint,
+          isRelease: data.IsRelease,
+          isView: data.IsView,
+          menuName: data.MenuName
+        }
+
+
         return{
           status: 1,
           message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-          data: formattedData(data),
+          data: oneData,
         }
     }
 
