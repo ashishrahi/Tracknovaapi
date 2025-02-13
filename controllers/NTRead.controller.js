@@ -1,5 +1,7 @@
 import { StatusCodes } from "http-status-codes";
+
 import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
+
 
 
 import {
@@ -13,6 +15,7 @@ import {
   EmpMaster
 } from "../modals/index.js";
 import { GetNTDashboardPipeline, NTCurrentPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //----------- Sample ---------------->
 async function sample(req, res, next) {
@@ -430,16 +433,16 @@ async function VehCurrStat(req, res) {
 //-------------GetDashData----------->
 async function GetDashData(req, res) {
  try {
-   const {FenceId, FenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo} = req.body;
+   const {fencId, fenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo} = req.body;
   //  Step 1: Fetch Geofencing data
   
   let filter = {};
  
-  if (FenceId) {
-      filter.FenceId = FenceId; // Exact match
+  if (fencId) {
+      filter.FenceId = fencId; // Exact match
   }
-  if (FenceName) {
-      filter.FenceName = { $regex: new RegExp(FenceName, "i") }; // Case-insensitive match
+  if (fenceName) {
+      filter.FenceName = { $regex: new RegExp(fenceName, "i") }; // Case-insensitive match
   }
   // if (dateSaveFr) {
   //     filter.dateSaveFr = { ...filter.dateSaveFr, $gte: new Date(dateSaveFr) }; // Date >= DateSaveFr
@@ -449,10 +452,16 @@ async function GetDashData(req, res) {
   // }
 
   // Step 2: Query the Geofencing collection
-  const geofencingData = await Geofencing.find(filter);
+  const geofencingData = await Geofencing.find(filter).lean();
+  
+  
+
+
+  const formattedGeoFence = formattedData(geofencingData)
  
    let devs = [];
    let dret = []
+   let NtcurrentData 
    // Step 2: Fetch Device IDs based on conditions
    if (lsVehType?.length === 0 && lsVehNos?.length === 0) {
        // Case 1: No vehicle type or numbers specified → Get all NTCurrent data
@@ -471,16 +480,17 @@ async function GetDashData(req, res) {
            // console.log("devs", devs)
        devs = devs.map(d => d.devid);
        dret = await NTCurrentPipeline(devs);
+       NtcurrentData  = formattedData(dret)
       //  console.log("dret", dret)
    }
- 
+   
    // Step 3: Handle NTCurrent response
    if (!dret) {
-       return res.status(StatusCodes.NO_CONTENT).json(new ApiSuccessResponse(true, StatusCodes.NO_CONTENT, "No data found"));
+       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, StatusCodes.NO_CONTENT, "No data found"));
    }
  
    // Step 4: Construct response
-   return  res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", {lisGeofencing: geofencingData ,ListNTSumm: dret}))
+   return  res.status(StatusCodes.OK).json(new ReturnData(true, StatusCodes.OK, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
   
    
  } catch (error) {
