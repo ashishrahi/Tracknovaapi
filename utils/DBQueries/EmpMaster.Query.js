@@ -216,20 +216,21 @@ export const GetEmployeeQuery = async (model) => {
 
 /////////////////////////////////////////////// UpsertEmpPermissionQuery //////////////////////////////////////////////////////////////////
 
-export const UpsertEmpPermissionQuery = async (model) => {
+export const UpsertEmpPermissionQuery = async (model, res) => {
   let response = { status: "Failed", message: "" };
 
   try {
       // If UserId is empty, register the user first
       model.registerModel.id = crypto.randomUUID();
+      console.log("model.registerModel.id: ", model.registerModel.id)
 
       // if userId is given
       if (!model.userId  && model.registerModel?.username || !model.userId.trim() === "" && model.registerModel?.username) {
           
         // it register user in AspNetUsers Table
-        const newAspUser = await RegisterQuery(model.registerModel);
+        const newAspUser = await RegisterQuery(model.registerModel, res);
 
-        if (!newAspUser) throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!");
+        if (!newAspUser) return response.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!")) ;
         model.userPermission.forEach((perm) => (perm.userId = model.registerModel.id));
         
         // Upsert User Permissions
@@ -273,9 +274,10 @@ export const UpsertEmpPermissionQuery = async (model) => {
       // await session.commitTransaction();
       // session.endSession();
 
-      response.status = "Success";
+      response.status = 1;
       response.message = "Update successful";
       response.data = empUpdateResult;
+      response.rowCount = empUpdateResult.length;
       return response;
 
   } catch (error) {

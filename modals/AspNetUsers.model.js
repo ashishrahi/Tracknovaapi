@@ -108,6 +108,7 @@ AspNetUsersSchema.methods.isValidPassword = async function (password){
   return isValid;
 } 
 
+
 AspNetUsersSchema.methods.generateAccessToken =  function (){
   const payload = {
     Id: this.Id,

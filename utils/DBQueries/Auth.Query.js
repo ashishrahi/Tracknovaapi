@@ -72,7 +72,7 @@ export const loginQuery = async (model, next) => {
                 phoneNumber: user.PhoneNumber,
                 roles: rolesString,
           },
-          permissions: userPermissions.data,
+          permissions: formattedData(userPermissions.data),
         } 
     };
 
@@ -120,13 +120,13 @@ export const loginQuery = async (model, next) => {
 
 //---------------RegisterQuery---------->
 
-export const RegisterQuery = async (model) => {
+export const RegisterQuery = async (model, res) => {
   try {
     // Check if user already exists
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
     if (userExists) {
-      throw new ApiErrorResponse(StatusCodes.CONFLICT, "User already exists!");
+      return res.status(StatusCodes.CONFLICT).json(new ApiErrorResponse( StatusCodes.CONFLICT, "User already exists!")) ;
     }
 
     // Create new user

@@ -59,8 +59,8 @@ app.use((req, res, next)=>{
 
 // Global error handeling
 app.use((err, req, res, next) => {
-    const statusCode = err.status || err.statusCode || 500;  // Default to 500 if undefined
-    return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message || "Internal Server Error"));
+    const statusCode = err.status || err.statusCode || err.StatusCode || 500;  // Default to 500 if undefined
+    return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message|| err.ErrorMessage || "Internal Server Error"));
 });
 
 

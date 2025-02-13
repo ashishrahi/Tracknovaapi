@@ -65,15 +65,16 @@ export async function UpsertEmpPermission(req, res, next) {
   try {
     const model = req.body;
     const response =
-      await UpsertEmpPermissionQuery(model);
+      await UpsertEmpPermissionQuery(model, res);
     // const successResponse = new ApiSuccessResponse(
     //   isSuccess,
     //   statusCode,
     //   message,
     //   data 
     // );
-    return res.status(200).json(response);
+    return res.status(200).json(new CommonResponse(1, response.message,  response.data, response.rowCount));
   } catch (error) {
+      // return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message))
     const err = new Error(error.message);
     err.status = error.statusCode || StatusCodes.BAD_REQUEST
     console.log(error)

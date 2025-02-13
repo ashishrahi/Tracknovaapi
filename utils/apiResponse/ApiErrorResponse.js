@@ -1,5 +1,5 @@
 class ApiErrorResponse {
-  constructor(errorMessage = "", statusCode = 500, stackTrace = "") {
+  constructor( statusCode = 500,  errorMessage = "",  stackTrace = "") {
     this.ErrorMessage = errorMessage;
     this.StackTrace = stackTrace;
     this.StatusCode = statusCode;
