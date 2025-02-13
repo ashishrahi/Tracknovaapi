@@ -1,7 +1,7 @@
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 //----------------------- All Modals ------------------------->
 
-import { NTCurrentDay, ItemMaster,BinLocation } from "../../modals/index.js";
+import { NTCurrentDay, ItemMaster,BinLocation,AreaWardMaster } from "../../modals/index.js";
 
 
 //----------------------- Dashboard_Query ------------------------->
@@ -205,11 +205,15 @@ export const BinLocationQuery = async (flag) => {
 
   export const BinsByWardNumberQuery = async (wardNumber) => {
     try {
+      let newData;
       const binLocations = await BinLocation.find({
         'AreaWardMaster.WardNumber': wardNumber,
       }).populate('AreaWardMaster');
-  
-      return binLocations;
+  console.log("binLocations:",binLocations)
+
+
+        newData = formattedData(binLocations)
+      return newData;
     } catch (error) {
       throw new Error(error.message);
     }

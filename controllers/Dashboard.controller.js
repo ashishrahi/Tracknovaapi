@@ -1,7 +1,7 @@
 
 import { StatusCodes } from "http-status-codes";
 import {ApiErrorResponse,ApiSuccessResponse,CommonResponse} from "../utils/apiResponse/index.js";
-import { getDashboardQuery,getVehicleQuery,BinLocationQuery } from "../utils/DBQueries/index.js";
+import { getDashboardQuery,getVehicleQuery,BinLocationQuery, BinsByWardNumberQuery } from "../utils/DBQueries/index.js";
 
 
 //-------------- getDashboard ------>
@@ -191,20 +191,21 @@ export async function getAllBins(req,res) {
 
 
 export async function getMapBinsWardWise (req,res) {
-  const filter = req.query; 
   try {
-    const binLocations = await BinsByWardNumberQuery(filter.Where);
+  const filter = req.query; 
+  console.log("filter:",filter);
+    const binLocations = await BinsByWardNumberQuery(filter.wardNumber);
 
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      'MapBinsWardWise data fetched successfully',
-      binLocations
+    const successResponse = new CommonResponse(
+      1,
+     'MapBinsWardWise data fetched successfully',
+      binLocations,
+      binLocations?.length
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
-    res.status(errorResponse.statusCode).json(errorResponse);
+    const errorResponse = new ApiErrorResponse('Failed to fetch All Bins', StatusCodes.NOT_FOUND  );
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
