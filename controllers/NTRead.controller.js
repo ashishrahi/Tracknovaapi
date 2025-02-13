@@ -991,7 +991,10 @@ async function GetTopFuelConsNTOnOff(req, res){
     flag: fu.flag, 
   }));
    
-  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default", result));
+const newData = formattedData(result)
+
+
+  return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully",null,newData));
 
  } catch (error) {
   return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
