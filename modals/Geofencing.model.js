@@ -7,12 +7,25 @@ const GeofencingSchema = new mongoose.Schema({
     FenceId: mongoose.Schema.Types.Int32,
     FenceName: String,
     flag: Boolean,
-    Lattitude: mongoose.Schema.Types.Decimal128,
-    Longitude: mongoose.Schema.Types.Decimal128,
+    Lattitude: {
+        type: mongoose.Schema.Types.Decimal128,
+        get: v => (v ? parseFloat(v.toString()) : null) // Convert Decimal128 to Number
+    },
+    Longitude: {
+        type: mongoose.Schema.Types.Decimal128,
+        get: v => (v ? parseFloat(v.toString()) : null) // Convert Decimal128 to Number
+    },
+
     polycord: mongoose.Schema.Types.Mixed,
-    Radius: mongoose.Schema.Types.Mixed,
+    Radius: {
+        type:mongoose.Schema.Types.Mixed,
+        get: v => (v ? parseFloat(v.toString()) : null) // Convert Decimal128 to Number
+    },
     
-}, {timestamps: true, collection: "Geofencing"})
+}, {timestamps: true, collection: "Geofencing", 
+    toJSON: { getters: true }, // Enable getters when converting to JSON
+    toObject: { getters: true } // Enable getters when using .toObject()
+ })
 
 const Geofencing = mongoose.model("Geofencing", GeofencingSchema);
 

@@ -11,7 +11,7 @@ const NTCurrentDaySchema = new mongoose.Schema({
     Flag: String,
     id: Number,
     Longitude: mongoose.Schema.Types.Double,
-    Lattitude: { type: mongoose.Schema.Types.Decimal128, required: true },
+    Lattitude: { type: mongoose.Schema.Types.Decimal128 },
     nearme: String,
     NTId: Number,
     overspeed: Boolean,

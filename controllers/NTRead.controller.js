@@ -435,7 +435,6 @@ async function GetDashData(req, res) {
  try {
    const {fencId, fenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo} = req.body;
   //  Step 1: Fetch Geofencing data
-  
   let filter = {};
  
   if (fencId) {
@@ -452,12 +451,12 @@ async function GetDashData(req, res) {
   // }
 
   // Step 2: Query the Geofencing collection
-  const geofencingData = await Geofencing.find(filter).lean();
+  const geofencingData = await Geofencing.find(filter);
   
-  
+  // converting data to json format
+  const formattedDataa = geofencingData.map(item => item.toJSON());
 
-
-  const formattedGeoFence = formattedData(geofencingData)
+  const formattedGeoFence = formattedData(formattedDataa)
  
    let devs = [];
    let dret = []
@@ -486,14 +485,15 @@ async function GetDashData(req, res) {
    
    // Step 3: Handle NTCurrent response
    if (!dret) {
-       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, StatusCodes.NO_CONTENT, "No data found"));
+       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, true, "No data found", null ));
    }
  
    // Step 4: Construct response
-   return  res.status(StatusCodes.OK).json(new ReturnData(true, StatusCodes.OK, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
+   return  res.status(StatusCodes.OK).json(new ReturnData(true, true, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
   
    
  } catch (error) {
+  console.log(error)
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
  }
 
