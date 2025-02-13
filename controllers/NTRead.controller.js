@@ -875,11 +875,12 @@ async function GetNTDashboard(req, res) {
 
 //--------------GetTopFuelCons------>
 async function GetTopFuelCons(req, res) {
-  let { pos } = req.query;
-  if(!pos) pos = 1;
+  let { nos } = req.params;
+  // console.log("nos: ", nos)
+  if(!nos) nos = 1;
   try {
     const ntList = await GetNTDashboardPipeline()
-    const fuelData = ntList.filter((nt) => nt.VehicleNo).slice(0, pos);
+    const fuelData = ntList.filter((nt) => nt.VehicleNo).slice(0, nos);
     const result = fuelData.map((fu, index) => ({
       srNo: index + 1,
       consDate: fu.TrackTime ? fu.TrackTime.toISOString().split("T")[0] : null,
@@ -1270,8 +1271,9 @@ async function GetRunningStatus(req, res){
 //-------------GetLongIdleVeh----------->
 async function GetLongIdleVeh(req, res){
   try {
-    let { pos } = req.query;
-    if(!pos) pos = 1 
+    let { nos } = req.params;
+    // console.log("nos: ", nos)
+    if(!nos) nos = 1 
   
     const ntList = await GetNTDashboardPipeline();
   
@@ -1281,7 +1283,7 @@ async function GetLongIdleVeh(req, res){
     // Sort by SecondsIdle in descending order and take the top 'nos' records
     const fuelNos = ntList
       .sort((a, b) => b.SecondsIdle - a.SecondsIdle)
-      .slice(0, pos);
+      .slice(0, nos);
   
     // Map the data to match the expected structure
     const formattedData = fuelNos.map((fu, index) => ({
