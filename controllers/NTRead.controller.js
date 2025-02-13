@@ -486,11 +486,11 @@ async function GetDashData(req, res) {
    
    // Step 3: Handle NTCurrent response
    if (!dret) {
-       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, StatusCodes.NO_CONTENT, "No data found"));
+       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true,false, "No data found"));
    }
  
    // Step 4: Construct response
-   return  res.status(StatusCodes.OK).json(new ReturnData(true, StatusCodes.OK, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
+   return  res.status(StatusCodes.OK).json(new ReturnData(true, true, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
   
    
  } catch (error) {
@@ -1209,10 +1209,10 @@ async function GetRunningStatus(req, res){
       default:
         throw new Error("Invalid status provided");
     }
-
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default",  filter));
+ const newData = formattedData(filter)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, false,null, "Data Fetch Successfully",newData));
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message,StatusCodes.NOT_FOUND ))
   }
 }
 
