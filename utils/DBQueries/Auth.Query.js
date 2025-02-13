@@ -847,11 +847,14 @@ export const GetRolePermissionQuery = async (modal) => {
           }
         })
 
+        const rowCount = data.length;
 
         return{
           status: 1,
           message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
           data: newData,
+          rowCount:rowCount
+
         }
     }
 
