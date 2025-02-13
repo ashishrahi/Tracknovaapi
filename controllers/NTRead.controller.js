@@ -403,7 +403,7 @@ async function VehCurrStat(req, res) {
   const stat = {
     coT1: [engff.length, engonTot.length],
     labels1: [`${engff.length} - Off`, `${engonTot.length} - On`],
-    cOT3: Object.values(zoneStats),
+    coT3: Object.values(zoneStats),
     labels3: Object.keys(zoneStats),
     depT3: Object.values(deptStats),
     labeldept: Object.keys(deptStats),
