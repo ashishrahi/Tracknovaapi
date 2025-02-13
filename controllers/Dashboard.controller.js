@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+
 import {
   ApiErrorResponse,
   ApiSuccessResponse,
@@ -174,20 +175,19 @@ export async function getAllBins(req, res) {
     const { flag } = req.query;
     const result = await BinLocationQuery(flag);
 
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "AllBins data fetched successfully",
+
+    const successResponse = new CommonResponse(
+      1,
+      'AllBins data fetched successfully',
+
       result
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to fetch All Bins"
-    );
-    res.status(errorResponse.statusCode).json(errorResponse);
+
+    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
+    res.status(errorResponse.StatusCode).json(errorResponse);
+
   }
 }
 

@@ -1,3 +1,4 @@
+import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 //----------------------- All Modals ------------------------->
 
 import { NTCurrentDay, ItemMaster,BinLocation } from "../../modals/index.js";
@@ -166,6 +167,7 @@ export const getVehicleQuery = async (vehicleNo) => {
 export const BinLocationQuery = async (flag) => {
   try {
     let queryResult;
+    let newData;
 
     if (flag === 'false') {
       queryResult = await BinLocation.find(
@@ -188,10 +190,11 @@ export const BinLocationQuery = async (flag) => {
       queryResult = await BinLocation.find(
         { Latitude: { $ne: null }, Longitude: { $ne: null } },
         {} // Include all fields by leaving projection empty
-      );
+      ).lean();
+      newData  = formattedData(queryResult)
     }
 
-    return queryResult;
+    return newData;
   } catch (error) {
     throw new Error(error.message);
   }};
