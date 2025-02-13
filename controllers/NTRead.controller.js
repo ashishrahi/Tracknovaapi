@@ -1168,7 +1168,7 @@ async function probWireTamp(req, res) {
           true,
           "Data fetched successfully",
           null,
-          data
+          result
           // encryptData(result)
         )
       );
