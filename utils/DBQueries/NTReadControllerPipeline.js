@@ -249,8 +249,8 @@ async function NTCurrentPipeline(devids){
               vehicleno: vehicle.VehicleNo || "",
               Departmentname: vehicle.DepartmentName || "",
               EmpName: vehicle.EmpName || "",
-              KmPerLitre: vehicle.KmPerLitre || "",
-              LitrePerHr: vehicle?.LitrePerHr?.toString() || "",
+              KmPerLitre: Number(vehicle?.KmPerLitre) || "",
+              LitrePerHr: Number(vehicle?.LitrePerHr) || "",
               VehicleTypeId: vehicle.VehicleTypeId || "",
               VehicleTypename: vehicle.VehicleTypename || ""
           };
