@@ -1190,7 +1190,8 @@ async function probWireTamp(req, res) {
 //-------------GetRunningStatus----------->
 async function GetRunningStatus(req, res){
   try {
-    const { stat } = req.query;
+    const { stat } = req.params;
+   
     if(!stat){
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid running status"))
     }
@@ -1200,13 +1201,13 @@ async function GetRunningStatus(req, res){
     let filter = {};
 
     switch (stat.toLowerCase()) {
-      case "running":
+      case "stat=running":
         filter = flatNtList.filter((ac) => ac.acc === true && ac.speed > 0);
         break;
-      case "idle":
+      case "stat=idle":
         filter = flatNtList.filter((ac) => ac.acc === true && ac.speed === 0);
         break;
-      case "stop":
+      case "stat=running":
         filter = flatNtList.filter((ac) => ac.acc === false && ac.speed === 0);
         break;
       default:

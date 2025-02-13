@@ -100,9 +100,9 @@ async function GetNTDashboardPipeline(){
           TrackTime: record.TrackTime,
           SecondsRun: record.SecondsRun,
           SecondsIdle: record.SecondsIdle,
-          distance: record.distance,
-          Lattitude: record.Lattitude,
-          Longitude: record.Longitude,
+          distance: Number(record.distance),
+          Lattitude: Number(record.Lattitude),
+          Longitude: Number(record.Longitude),
           nearme: record.nearme,
           flag:
             record.acc && record.speed > 0
@@ -128,8 +128,8 @@ async function GetNTDashboardPipeline(){
           nt.EmpMobileNo = vehicle.EmpMobileNo;
           nt.EmpName = vehicle.EmpName;
           nt.VehicleTypeId = vehicle.VehicleTypeId;
-          nt.KmPerLitre = vehicle.KmPerLitre;
-          nt.LitrePerHr = vehicle.LitrePerHr;
+          nt.KmPerLitre = Number(vehicle.KmPerLitre);
+          nt.LitrePerHr = Number(vehicle.LitrePerHr);
     
           const vehicleTypeData = vehicleTypes.find(
             (vt) => vt.VehicleTypeId === vehicle.VehicleTypeId
