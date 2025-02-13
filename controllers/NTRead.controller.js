@@ -952,6 +952,53 @@ async function GetTopFuelConsNT(req, res){
   }
 }
 
+//--------------GetTopFuelConsNTS------>
+async function GetTopFuelConsNTS(req, res, next){
+  try {
+    const { zone } = req.params; // Assuming the zone is passed as a URL parameter
+   
+    // Fetch NT Dashboard Data
+    const fuelData = await GetNTDashboardPipeline();
+  
+    // Filter and sort data based on fuel consumption
+    const filteredData = fuelData
+        .filter((item) => item.ZoneName?.toLowerCase().trim() === zone?.toLowerCase().trim())
+        .sort((a, b) => b.Fuel - a.Fuel);
+   
+    // Map data to the required format
+    const responseData = filteredData.map((fu, index) => ({
+        srno: index + 1,
+        trackTime: fu.TrackTime,
+        devid: fu.devid,
+        departmentName: fu.DepartmentName,
+        vehicleNo: fu.VehicleNo,
+        ignition: fu.Ignition,
+        empName: fu.EmpName,
+        empMobileNo: fu.EmpMobileNo,
+        zoneName: fu.ZoneName,
+        speed: fu.speed,
+        secondsIdle: fu.SecondsIdle,
+        secondsRun: fu.SecondsRun,
+        vehicleTypename: fu.VehicleTypename,
+        idleTime: fu.IdleTime,
+        fuel: fu.Fuel,
+        purchaseYear: fu.PurchaseYear,
+        modelNo: fu.ModelNo,
+        serialNo: fu.SerialNo,
+        chesisNo: fu.ChesisNo,
+        hSNCode: fu.HSNCode,
+        vehicleWeight: fu.VehicleWeight,
+        mileage: fu.Mileage,
+        flag: fu.flag
+    }));
+
+    return res.json(new ReturnData(true, true, "fetched", null, responseData));
+} catch (error) {
+    return res.status(500).json(new ApiErrorResponse(error.message, StatusCodes.BAD_REQUEST ));
+}
+
+}
+
 //--------------GetTopFuelConsNTOnOff------>
 async function GetTopFuelConsNTOnOff(req, res){
   try {
@@ -1393,6 +1440,7 @@ export {
   GetNTDashboard,
   GetTopFuelCons,
   GetTopFuelConsNT,
+  GetTopFuelConsNTS,
   GetTopFuelConsNTOnOff,
   GetRunningStatus,
   GetLongIdleVeh,
