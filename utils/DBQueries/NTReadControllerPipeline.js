@@ -218,7 +218,7 @@ async function NTCurrentPipeline(devids){
                 ItemMasterId: 1,
                 ItemName: 1,
                 KmPerLitre: 1,
-                LitrePerHr: { $toDouble: "$LitrePerHr" },
+                LitrePerHr: 1,
                 VehicleNo: 1,
                 DepartmentName: "$department.DepartmentName",
                 EmpDeptId: "$employee.EmpDeptId",

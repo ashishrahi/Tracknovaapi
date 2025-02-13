@@ -863,7 +863,8 @@ async function GetNTDashboard(req, res) {
     // Filter out records without VehicleNo
     const ntList = await GetNTDashboardPipeline()
     const data = ntList.filter((nt) => nt.VehicleNo);
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", data));
+    const newData = formattedData(data)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, newData));
   } catch (error) {
     return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }

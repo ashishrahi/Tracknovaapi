@@ -29,7 +29,7 @@ class ProReturnData {
     }
 }
 
-class CommonResponse {
+class CommonResponse {  
     constructor(status, message, data,  rowCount, orderby, pageNo, pageSize, error = new ExceptionHandler()) {
         this.status = status;
         this.message = message;

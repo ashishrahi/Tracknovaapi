@@ -1,15 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
-import {
-  getDashboardQuery,
-  getVehicleQuery,
-  BinLocationQuery,
-} from "../utils/DBQueries/index.js";
+import {ApiErrorResponse,ApiSuccessResponse,CommonResponse} from "../utils/apiResponse/index.js";
+import { getDashboardQuery,getVehicleQuery,BinLocationQuery, BinsByWardNumberQuery } from "../utils/DBQueries/index.js";
+
+
+
 import ItemMaster from "../modals/ItemMaster.model.js";
 import { NT } from "../modals/NT.model.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
@@ -179,8 +174,8 @@ export async function getAllBins(req, res) {
     const successResponse = new CommonResponse(
       1,
       'AllBins data fetched successfully',
-
-      result
+      result,
+      result?.length
     );
     res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
@@ -191,25 +186,25 @@ export async function getAllBins(req, res) {
   }
 }
 
-export async function getMapBinsWardWise(req, res) {
-  const filter = req.query;
-  try {
-    const binLocations = await BinsByWardNumberQuery(filter.Where);
 
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "MapBinsWardWise data fetched successfully",
-      binLocations
+
+export async function getMapBinsWardWise (req,res) {
+
+  try {
+  const filter = req.query; 
+    const binLocations = await BinsByWardNumberQuery(filter.wardNumber);
+
+    const successResponse = new CommonResponse(
+      1,
+     'MapBinsWardWise data fetched successfully',
+      binLocations,
+      binLocations?.length
     );
-    return res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      false,
-      StatusCodes.NOT_FOUND,
-      "Failed to fetch All Bins"
-    );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    const errorResponse = new ApiErrorResponse('Failed to fetch All Bins', StatusCodes.NOT_FOUND  );
+    res.status(errorResponse.StatusCode).json(errorResponse);
+
   }
 }
 
