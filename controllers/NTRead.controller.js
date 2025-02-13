@@ -1207,7 +1207,7 @@ async function GetRunningStatus(req, res){
       case "stat=idle":
         filter = flatNtList.filter((ac) => ac.acc === true && ac.speed === 0);
         break;
-      case "stat=running":
+      case "stat=stop":
         filter = flatNtList.filter((ac) => ac.acc === false && ac.speed === 0);
         break;
       default:
