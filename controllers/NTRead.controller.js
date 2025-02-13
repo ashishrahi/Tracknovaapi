@@ -1271,6 +1271,7 @@ async function GetRunningStatus(req, res){
 //-------------GetLongIdleVeh----------->
 async function GetLongIdleVeh(req, res){
   try {
+    // 
     let { nos } = req.params;
     // console.log("nos: ", nos)
     if(!nos) nos = 1 
