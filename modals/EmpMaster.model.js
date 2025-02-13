@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const EmpMasterSchema = new mongoose.Schema({
-  Empid: { type: Number, required: true, unique: true }, // Unique Employee ID
+  Empid: { type: Number,  unique: true }, // Unique Employee ID
   EmpName: { 
     type: String, 
-    required: true, 
+    // required: true, 
     trim: true,
     set: (value) => {
         return value
@@ -15,10 +15,17 @@ const EmpMasterSchema = new mongoose.Schema({
           .join(" ");
     }
   },
-  EmpCode: { type: String, required: true }, // Indexed for faster lookups
-  EmpPerAddress: { type: String, required: true },
-  EmpLocalAddress: { type: String, required: true },
-  EmpFatherName: { type: String, required: true,  set: (value) => {
+  EmpCode: { type: String, 
+    // required: true
+   }, // Indexed for faster lookups
+  EmpPerAddress: { type: String,
+    //  required: true
+     },
+  EmpLocalAddress: { type: String,
+    //  required: true
+     },
+  EmpFatherName: { type: String,
+      set: (value) => {
     return value
       .split(" ") // Split string into words
       .map(
@@ -34,7 +41,7 @@ const EmpMasterSchema = new mongoose.Schema({
       ) // Capitalize each word
       .join(" ");
 } },
-  EmpMotherName: { type: String, required: true,  set: (value) => {
+  EmpMotherName: { type: String,  set: (value) => {
     return value
       .split(" ") // Split string into words
       .map(
@@ -44,26 +51,30 @@ const EmpMasterSchema = new mongoose.Schema({
 } },
   EmpMobileNo: { 
     type: String, 
-    required: true, 
+    // required: true, 
     match: [/^\d{10}$/, "Phone number must be 10 digits"], // Ensures only valid numbers
  }, // Mobile should be unique
   EmpStatus: { type: String, enum: ["Active", "Inactive"], default: "Active" },
   EmpPanNumber: { 
     type: String, 
-    required: [true, "PAN Number is required"], 
+    // required: [true, "PAN Number is required"], 
     unique: true, 
     match: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // Validates PAN format
     trim: true
   },
   EmpAddharNo: { 
     type: String, 
-    required: [true, "Aadhar Number is required"], 
+    // required: [true, "Aadhar Number is required"], 
     unique: true, 
     match: /^[2-9]{1}[0-9]{11}$/, // Validates Aadhar format (12 digits)
     trim: true
   },
-  EmpDob: { type: Date, required: true },
-  EmpJoiningDate: { type: Date, required: true },
+  EmpDob: { type: Date, 
+    // required: true
+   },
+  EmpJoiningDate: { type: Date, 
+    // required: true
+   },
   EmpRetirementDate: { type: Date, default: null },
 
   EmpDesignationId: {
@@ -82,15 +93,18 @@ const EmpMasterSchema = new mongoose.Schema({
     type: Number,
   },
   EmpPincode: { type: mongoose.Schema.Types.Mixed },
-  CreatedBy: { type: String, required: true },
-  UpdatedBy: { type: String, required: true },
+  CreatedBy: { type: String },
+  UpdatedBy: { type: String },
   UserId: { type: mongoose.Schema.Types.Mixed },
   RoleId: { type: mongoose.Schema.Types.Mixed },
   ImageFile: { type: mongoose.Schema.Types.Mixed, default: null }, // Can store file paths or cloud URLs
   SignatureFile: { type: mongoose.Schema.Types.Mixed, default: null },
   Email: { type: String, default: "NA", lowercase: true, trim: true,  match: [/^\S+@\S+\.\S+$/, "Invalid email format"], },
   DLNo: { type: String, default: null }, // Driving License No.
-  Gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+  Gender: { type: String, 
+    // enum: ["Male", "Female", "Other"], 
+    // required: true },
+  },
   EZoneId: {
     type: Number,
     default: null
