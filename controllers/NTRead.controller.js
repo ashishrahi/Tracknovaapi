@@ -1000,26 +1000,20 @@ async function GetTopFuelConsNTOnOff(req, res){
 
 //-------------ProbWireTamp----------->
 async function probWireTamp(req, res) {
-  const { date } = req.query;
-  // console.log("date is", date);
-  if (!date) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(
-        new ApiErrorResponse(
-          StatusCodes.BAD_REQUEST,
-          "Please Provide Valid Date"
-        )
-      );
-  }
-  try {
-    // const pool = await connectDB();
-    // const result = await pool
-    //   .request()
-    //   .input("date", sql.Date, date)
-    //   .query(probWireTampQuery);
 
-    // await pool.close();
+  try {
+    const { date } = req.query;
+    // console.log("date is", date);
+    if (!date) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          new ApiErrorResponse(
+            StatusCodes.BAD_REQUEST,
+            "Please Provide Valid Date"
+          )
+        );
+    }
     const result = await NT.aggregate([
       {
         $match: {
@@ -1151,19 +1145,29 @@ async function probWireTamp(req, res) {
       }
     ])
 
+
     if (!result) {
+      console.log("I am executed")
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
+        .json(new ApiErrorResponse(new ReturnData(
+          true,
+          true,
+          "Data not Found",
+          null,
+          result
+          // encryptData(result)
+        )));
     }
     return res
       .status(StatusCodes.OK)
       .json(
-        new ApiSuccessResponse(
+        new ReturnData(
           true,
-          StatusCodes.OK,
-          "default",
-          result
+          true,
+          "Data fetched successfully",
+          null,
+          data
           // encryptData(result)
         )
       );
@@ -1171,7 +1175,7 @@ async function probWireTamp(req, res) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
-        new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+        new ApiErrorResponse( error.message, null, StatusCodes.INTERNAL_SERVER_ERROR,)
       );
   }
 }
