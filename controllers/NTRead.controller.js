@@ -878,37 +878,38 @@ async function GetTopFuelCons(req, res) {
     const ntList = await GetNTDashboardPipeline()
     const fuelData = ntList.filter((nt) => nt.VehicleNo).slice(0, pos);
     const result = fuelData.map((fu, index) => ({
-      SrNo: index + 1,
-      ConsDate: fu.TrackTime ? fu.TrackTime.toISOString().split("T")[0] : null,
-      TrackTime: fu.TrackTime,
-      Devid: fu.devid,
-      Departmentname: fu.DepartmentName,
-      VehicleNo: fu.VehicleNo,
-      Ignition: fu.Ignition,
-      EmpName: fu.EmpName,
-      EmpMobileNo: fu.EmpMobileNo,
-      ZoneName: fu.ZoneName,
+      srNo: index + 1,
+      consDate: fu.TrackTime ? fu.TrackTime.toISOString().split("T")[0] : null,
+      trackTime: fu.TrackTime,
+      devid: fu.devid,
+      departmentname: fu.DepartmentName,
+      vehicleNo: fu.VehicleNo,
+      ignition: fu.Ignition,
+      empName: fu.EmpName,
+      empMobileNo: fu.EmpMobileNo,
+      zoneName: fu.ZoneName,
       speed: fu.speed,
-      SecondsIdle: fu.SecondsIdle || 0,
-      SecondsRun: fu.SecondsRun || 0,
-      VehicleTypename: fu.VehicleTypename,
-      IdleTime: fu.IdleTime,
-      FuelConsumed: fu.Fuel,
-      KmPerlitre: fu.KmPerLitre,
-      LitrePerhr: fu.LitrePerHr,
-      Flag: fu.flag,
-      PurchaseYear: fu.PurchaseYear,
-      ModelNo: fu.ModelNo,
-      SerialNo: fu.SerialNo,
-      ChesisNo: fu.ChesisNo,
-      HSNCode: fu.HSNCode,
-      VehicleWeight: fu.VehicleWeight,
-      Mileage: fu.Mileage,
-      FuelTankCapacity: "", // Add default value
+      secondsIdle: fu.SecondsIdle || 0,
+      secondsRun: fu.SecondsRun || 0,
+      vehicleTypename: fu.VehicleTypename,
+      idleTime: fu.IdleTime,
+      fuelConsumed: fu.Fuel,
+      kmPerlitre: fu.KmPerLitre,
+      litrePerhr: fu.LitrePerHr?.toString(),
+      flag: fu.flag,
+      purchaseYear: fu.PurchaseYear,
+      modelNo: fu.ModelNo,
+      serialNo: fu.SerialNo,
+      chesisNo: fu.ChesisNo,
+      hSNCode: fu.HSNCode,
+      vehicleWeight: fu.VehicleWeight,
+      mileage: fu.Mileage,
+      fuelTankCapacity: "", // Add default value
     }));
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default",  result))
+    const data = result // formattedData(result);
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched Successfully", null, data))
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse( error.message,null,StatusCodes.NOT_FOUND,))
   }
 }
 
