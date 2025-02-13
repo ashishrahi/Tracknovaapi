@@ -179,7 +179,8 @@ export async function getAllBins(req,res) {
     const successResponse = new CommonResponse(
       1,
       'AllBins data fetched successfully',
-      result
+      result,
+      result?.length
     );
     res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
