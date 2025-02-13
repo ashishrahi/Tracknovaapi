@@ -9,7 +9,8 @@ import {
   VehicleTypeMaster,
   ZoneMaster,
   Department,
-  Geofencing
+  Geofencing,
+  EmpMaster
 } from "../modals/index.js";
 import { GetNTDashboardPipeline, NTCurrentPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
 
@@ -491,88 +492,124 @@ async function GetDashData(req, res) {
 //-------------getVehicleNotMoved----------->
 // Done
 async function getVehicleNotMoved(req, res) {
-  let result = { data: [], isSuccess: false, message: "" };
+  
+  // const client = new MongoClient('mongodb://localhost:27017');
+  //   await client.connect();
+  //   const db = client.db('your_database_name');
+    const model = req.body;
+    const dateFrom = new Date(model.dateFrom);
+    const dateTo = new Date(model.dateTo);
 
-  try {
-    const { dateFrom, dateTo } = request;
-
-    // Fetch distinct device IDs for vehicles that moved (NTMV)
-    const ntmvDevices = await NT.findAll({
-      attributes: ["devid"],
-      where: {
-        TrackTime: { [Op.between]: [new Date(model.dateFrom), new Date(model.dateTo)] },
-        acc: true,
-      },
-      distinct: true,
-      raw: true,
-    }).then((rows) => rows.map((r) => r.devid));
-
-    // Fetch distinct device IDs for all vehicles within the date range
-    const allTrackedDevices = await NT.findAll({
-      attributes: ["devid"],
-      where: { TrackTime: { [Op.between]: [dateFrom, dateTo] } },
-      distinct: true,
-      raw: true,
-    }).then((rows) => rows.map((r) => r.devid));
-
-    // Fetch vehicle, employee, department, and zone details
-    const vehicles = await ItemMaster.findAll({
-      where: { ItemFlag: "V", Devid: { [Op.ne]: null } },
-      attributes: ["Devid", "VehicleNo", "ItemName", "VehicleTypeId", "VZoneID"],
-      include: [
+    const ntmv = await NT.aggregate([
         {
-          model: EmpMaster,
-          as: "employee",
-          required: false,
-          attributes: ["EmpName", "EmpMobileNo", "EmpDeptId"],
+            $match: {
+                TrackTime: { $gte: dateFrom, $lte: dateTo },
+                acc: true
+            }
         },
         {
-          model: Department,
-          as: "department",
-          required: false,
-          attributes: ["DepartmentName"],
+            $group: {
+                _id: "$devid"
+            }
+        }
+    ]);
+
+    const ntrec = await NT.aggregate([
+        {
+            $match: {
+                TrackTime: { $gte: dateFrom, $lte: dateTo }
+            }
         },
-      ],
-      raw: true,
+        {
+            $group: {
+                _id: "$devid"
+            }
+        }
+    ])
+
+    const vehs = await ItemMaster.aggregate([
+        {
+            $lookup: {
+                from: "EmpMaster",
+                localField: "EmpId",
+                foreignField: "Empid",
+                as: "emp"
+            }
+        },
+        {
+            $unwind: {
+                path: "$emp",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: "Department",
+                localField: "emp.EmpDeptId",
+                foreignField: "DepartmentId",
+                as: "dept"
+            }
+        },
+        {
+            $unwind: {
+                path: "$dept",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $match: {
+                "Flag": { $regex: /^V$/i },
+                "devid": { $ne: null }
+            }
+        },
+        {
+            $project: {
+                devid: 1,
+                VehicleNo: 1,
+                ItemName: 1,
+                VehicleTypeId: 1,
+                VZoneID: 1,
+                EmpName: "$emp.EmpName",
+                DepartmentName: "$dept.DepartmentName",
+                EmpMobileNo: "$emp.EmpMobileNo"
+            }
+        }
+    ])
+
+    const vt = await VehicleTypeMaster.find({}, { projection: { VehicleTypeId: 1, VehicleTypename: 1 } })
+    const zn = await ZoneMaster.find({}, { projection: { ZoneID: 1, ZoneName: 1 } })
+
+    let lsv = [];
+    let sn = 1;
+
+    vehs.forEach(v => {
+        let vn = {
+            DepartmentName: v.DepartmentName,
+            devid: v.devid,
+            VehicleNo: v.VehicleNo,
+            VehicleTypename: vt.find(t => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
+            EmpName: v.EmpName,
+            EmpMobileNo: v.EmpMobileNo,
+            ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
+        };
+
+        const ntrecFnd = ntrec.find(s => s._id === v.Devid);
+        if (!ntrecFnd) {
+            vn.SrNo = sn++;
+            vn.NTRecord = false;
+            lsv.push(vn);
+        } else {
+            const ntrecmv = ntmv.find(s => s._id === v.Devid);
+            if (!ntrecmv) {
+                vn.SrNo = sn++;
+                vn.NTRecord = true;
+                lsv.push(vn);
+            }
+        }
     });
 
-    // Fetch Vehicle Types & Zones
-    const vehicleTypes = await VehicleTypeMaster.findAll({ raw: true });
-    const zones = await ZoneMaster.findAll({ raw: true });
-
-    let serialNo = 1;
-    let vehicleNotMovedList = [];
-
-    for (let v of vehicles) {
-      let vehicleNotMoved = {
-        SrNo: serialNo++,
-        Devid: v.Devid,
-        VehicleNo: v.VehicleNo,
-        VehicleTypename: vehicleTypes.find((t) => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
-        EmpName: v["employee.EmpName"] || null,
-        EmpMobileNo: v["employee.EmpMobileNo"] || null,
-        DepartmentName: v["department.DepartmentName"] || null,
-        ZoneName: zones.find((z) => z.ZoneID === v.VZoneID)?.ZoneName || null,
-        NTRecord: false,
-      };
-
-      if (allTrackedDevices.includes(v.Devid)) {
-        vehicleNotMoved.NTRecord = !ntmvDevices.includes(v.Devid);
-      }
-
-      vehicleNotMovedList.push(vehicleNotMoved);
-    }
-
-    result.data = vehicleNotMovedList;
-    result.isSuccess = true;
-    return res.json({vehicleNotMovedList})
-  } catch (error) {
-    result.message = error.message;
-  }
-
-  return result;
-
-
+    
+    return res.json({ Data: lsv, IsSuccess: true });
 
 
 
@@ -704,16 +741,6 @@ async function getVehicleNotMoved(req, res) {
   // } catch (error) {
   //   console.log(error);
   // }
-
-
-
-
-
-
-
-
-
-
 
 
   // const ntRecPipeline = [
