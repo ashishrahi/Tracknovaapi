@@ -955,7 +955,7 @@ async function GetTopFuelConsNT(req, res){
 //--------------GetTopFuelConsNTOnOff------>
 async function GetTopFuelConsNTOnOff(req, res){
   try {
-  const { onoff } = req.query;
+  const { onoff } = req.params;
   if(!onoff){
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide ignition type in true or false"))
   }
