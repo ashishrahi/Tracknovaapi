@@ -485,7 +485,9 @@ async function GetDashData(req, res) {
    
    // Step 3: Handle NTCurrent response
    if (!dret) {
+
        return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, true, "No data found", null ));
+
    }
  
    // Step 4: Construct response
@@ -991,7 +993,10 @@ async function GetTopFuelConsNTOnOff(req, res){
     flag: fu.flag, 
   }));
    
-  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default", result));
+const newData = formattedData(result)
+
+
+  return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully",null,newData));
 
  } catch (error) {
   return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
@@ -1206,10 +1211,10 @@ async function GetRunningStatus(req, res){
       default:
         throw new Error("Invalid status provided");
     }
-
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default",  filter));
+ const newData = formattedData(filter)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, false,null, "Data Fetch Successfully",newData));
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message,StatusCodes.NOT_FOUND ))
   }
 }
 
