@@ -828,28 +828,30 @@ export const GetRolePermissionQuery = async (modal) => {
           rowCount:rowCount
         }
     } else {
-        data = await RolePermission.findOne({ RoleId: RoleId }).lean();
+        data = await RolePermission.find({ RoleId: RoleId }).lean();
 
-      const oneData =  {
-          roleId: data.RoleId,
-          menuId: data.MenuId,
-          parentMenuId: data.ParentId,
-          isAdd: data.IsAdd,
-          isDel:data.IsDel,
-          isEdit: data.IsEdit,
-          isExport: data.IsExport,
-          isPost: data.IsPost,
-          isPrint: data.IsPrint,
-          isRelease: data.IsRelease,
-          isView: data.IsView,
-          menuName: data.MenuName
-        }
+        const newData = data.map((role)=>{
+          return{
+            roleId: role.RoleId,
+            menuId: role.MenuId,
+            parentMenuId: role.ParentId,
+            isAdd: role.IsAdd,
+            isDel:role.IsDel,
+            isEdit: role.IsEdit,
+            isExport: role.IsExport,
+            isPost: role.IsPost,
+            isPrint: role.IsPrint,
+            isRelease: role.IsRelease,
+            isView: role.IsView,
+            menuName: role.MenuName
+          }
+        })
 
 
         return{
           status: 1,
           message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-          data: oneData,
+          data: newData,
         }
     }
 
