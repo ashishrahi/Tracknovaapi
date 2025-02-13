@@ -956,12 +956,13 @@ async function GetTopFuelConsNT(req, res){
 async function GetTopFuelConsNTOnOff(req, res){
   try {
   const { onoff } = req.params;
+  // console.log("onoff", onoff)
   if(!onoff){
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide ignition type in true or false"))
   }
    const ntList = await GetNTDashboardPipeline();
    let fuelData;
-   if(onoff === "true"){
+   if(onoff === "onoff=true"){
      fuelData = ntList.filter((nt)=> nt.Ignition === "On");
    } else {
     fuelData = ntList.filter((nt)=> nt.Ignition === "Off")
@@ -995,7 +996,7 @@ async function GetTopFuelConsNTOnOff(req, res){
    
 const newData = formattedData(result)
 
-
+  // return res.json({"count": newData.length})
   return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully",null,newData));
 
  } catch (error) {
