@@ -289,9 +289,8 @@ async function GetEscrapVehicleType(req, res, next){
     let query = {};
     
     if (model.vehicleTypeId !== 0) query.VehicleTypeId = model.vehicleTypeId;
-    if (model.vehicleTypename) {
-      query.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
-    }
+    if (model.vehicleTypename) query.VehicleTypename = { $regex: model.vehicleTypename, $options: 'i' };  // Case-insensitive search
+    
     if(!model.vehicleTypeId || model.vehicleTypeId === 0) query= {};
     const vehicleTypes = await VehicleTypeMaster.find(query).lean()
         // .skip((pageNo - 1) * pageSize) // Pagination
