@@ -186,8 +186,6 @@ export async function getAllBins(req, res) {
   }
 }
 
-
-
 export async function getMapBinsWardWise (req,res) {
 
   try {

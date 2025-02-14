@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-
 import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
-
-
-
 import {
   NTCurrentDay,
   NT,
@@ -858,7 +854,7 @@ async function getVehicleNotMoved(req, res) {
   // }
 }
 
-// This APi is ready
+// This APi is readyGetvVehicleNo
 //--------------GetNTDashboard------>
 async function GetNTDashboard(req, res) {
   try {
