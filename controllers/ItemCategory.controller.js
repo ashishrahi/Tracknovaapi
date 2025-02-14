@@ -131,9 +131,9 @@ async function GetItemCategory(req, res) {
     const itemCategoryResult = await ItemCategoryMaster.find(query).select("-_id").lean()
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize);
-
+     const newData = formattedData(itemCategoryResult)
     if (itemCategoryResult.length === 0) {
-      response.data = itemCategoryResult;
+      response.data = newData;
       response.message = "No record found";
       response.rowCount = itemCategoryResult.length;
       return res.status(StatusCodes.OK).json(new CommonResponse(1, response.message, response.data, response.rowCount  ));
