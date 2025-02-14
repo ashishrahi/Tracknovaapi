@@ -527,7 +527,7 @@ async function getVehicleNotMoved(req, res) {
             }
         }
     ]);
-    console.log("ntmv: ",ntmv)
+    // console.log("ntmv: ",ntmv)
     const ntrec = await NT.aggregate([
         {
             $match: {
@@ -540,7 +540,7 @@ async function getVehicleNotMoved(req, res) {
             }
         }
     ])
-    console.log("ntrec: ", ntrec)
+    // console.log("ntrec: ", ntrec)
     const vehs = await ItemMaster.aggregate([
         {
             $lookup: {
