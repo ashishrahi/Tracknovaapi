@@ -118,7 +118,9 @@ async function VehicleTrack(req, res, next) {
 }
 
 //-----------VehicleMovingTrackStatusdetnew-------->
-async function VehicleMovingTrackStatusdetnew(req, res, next) {}
+async function VehicleMovingTrackStatusdetnew(req, res, next) {
+  
+}
 
 //-----------GetVechicleMileageSummary-------->
 async function GetVechicleMileageSummary(req, res, next) {

@@ -259,4 +259,5 @@ async function NTCurrentPipeline(devids){
       return  ntSummary;
 }
 
+
 export { GetNTDashboardPipeline, NTCurrentPipeline };
