@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
+import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
 
 //-----------VehicleTrack-------->
 async function VehicleTrack(req, res, next) {
@@ -119,7 +120,13 @@ async function VehicleTrack(req, res, next) {
 
 //-----------VehicleMovingTrackStatusdetnew-------->
 async function VehicleMovingTrackStatusdetnew(req, res, next) {
-  
+    try {
+      const filter = req.body;
+      const data = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
+      
+    } catch (error) {
+      
+    }
 }
 
 //-----------GetVechicleMileageSummary-------->
