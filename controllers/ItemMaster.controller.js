@@ -325,7 +325,7 @@ async function GetItemMaster(req, res, next){
             });
             return newObj;
           });
-    
+    // 
         const message = response.length > 0 ? "Data fetched successfully" : "No records found."
         return res.status(StatusCodes.OK).json(new ReturnData(true, false, message, null, response));
     } catch (err) {
