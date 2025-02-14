@@ -53,7 +53,7 @@ import vVehicletrackHisRoutes from './vVehicletrackHis.routes.js'
 import ZoneMasterRoutes from './ZoneMaster.route.js'
 
 import HelpCreationRoutes from './HelpCreation.routes.js'
-
+import PeriodRoutes from "./Period.routes.js"
 
 // AreaWardMaster
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
@@ -75,6 +75,7 @@ router.use("/VehicleFuelDateRange", VehicleFuelDateRangeRoutes); // Skipped
 router.use("/VehicleMoving", VehicleMovingRoutes); // Skipped
 router.use("/VehicleType", VehicleTypeRoutes); 
 router.use("/VendorMaster", VendorMasterRoutes); 
+
 
 
  //Auth
@@ -181,5 +182,7 @@ router.use("/vVehicletrackHis", vVehicletrackHisRoutes);
 // ZoneMaster
 router.use("/Zone", ZoneMasterRoutes);
 
+// Period
+router.use("/Period", PeriodRoutes)
 
 export default router;
