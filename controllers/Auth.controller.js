@@ -64,7 +64,7 @@ export async function login(req, res, next) {
     const successResponse = new CommonResponse(
       1,
      "Login Successful",
-      response.data
+      response
     );
     // const options = {
     //   httpOnly: true,
