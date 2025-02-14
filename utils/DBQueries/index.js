@@ -41,6 +41,8 @@ import {AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,De
 //PetrolPump
 import {AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery} from './Setting.Query.js'
 
+// VehicleMovingControllerPipeline
+import { VehicleMovingStatusdetnew, trackDetailsNT } from "./VehicleMovingControllerPipeline.js"; 
 
 export {
     
@@ -60,3 +62,7 @@ export {
 
 }
 
+export const VehicleMovingControllerPipeline = {
+    VehicleMovingStatusdetnew: VehicleMovingStatusdetnew,
+    trackDetailsNT: trackDetailsNT
+}
