@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { ContractorMaster, ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
 import {ApiErrorResponse, ApiSuccessResponse, CommonResponse, ReturnData} from "../utils/apiResponse/index.js";
 // import {ApiSuccessResponse} from "../utils/apiResponse/ApiSuccessResponse.js";
@@ -316,15 +317,8 @@ async function GetItemMaster(req, res, next){
 
         const result = await ItemMaster.aggregate(query);
        
-
-        const response = result.map((obj) => {
-            let newObj = {};
-            Object.keys(obj).forEach((key) => {
-              let newKey = key.charAt(0).toLowerCase() + key.slice(1);
-              newObj[newKey] = obj[key];
-            });
-            return newObj;
-          });
+        const response = formattedData(result)
+       
     // 
         const message = response.length > 0 ? "Data fetched successfully" : "No records found."
         return res.status(StatusCodes.OK).json(new ReturnData(true, false, message, null, response));

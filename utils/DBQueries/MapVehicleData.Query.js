@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { AspNetRoles,NT } from "../../modals/index.js";
+import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 //////////////////////////////////////////////// GetMapVehicleData /////////////
 export async function GetMapVehicleDataQuery(){
     try {
@@ -11,13 +12,13 @@ export async function GetMapVehicleDataQuery(){
             lng: { $convert: { input: '$Longitude', to: 'decimal' } }, // Convert Longitude to decimal
             lat: { $convert: { input: '$Lattitude', to: 'decimal' } }, // Convert Latitude to decimal
           });
-    
+     const response = formattedData(result)
         // Wrap the result in a response format
         return {
             isSuccess: true,
             statusCode: StatusCodes.OK,
             message: 'Map vehicle data retrieved successfully',
-            data: result,
+            data: response,
             RowCount: result.length,
         };
       } catch (error) {
