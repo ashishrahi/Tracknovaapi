@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
   ApiErrorResponse,
+  CommonResponse,
   ApiSuccessResponse,
 } from "../utils/apiResponse/index.js";
 import {
@@ -9,9 +10,9 @@ import {
 
 export async function GetMapVehicleData(req, res) {
     try {
-        const { data, isSuccess, message, statusCode } = await GetMapVehicleDataQuery();
-        const successResponse = new ApiSuccessResponse(isSuccess, statusCode, message, data);
-        res.status(statusCode).json(successResponse);
+        const { status, message, data,RowCount } = await GetMapVehicleDataQuery();
+        const successResponse = new CommonResponse(status, message, data,);
+        res.status(StatusCodes.OK).json(successResponse);
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( 
           StatusCodes.BAD_REQUEST, 

@@ -43,23 +43,25 @@ async function sample(req, res, next) {
     };
 
     const data = await NTCurrentDay.find(query).limit(300);
+    const response = formattedData(data)
 
     if (data.length <= 0) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ApiSuccessResponse(true, StatusCodes.OK, "No data found")
+          new ReturnData(true, true, "No data found",null, [])
         );
     }
 
     return res
       .status(StatusCodes.OK)
       .json(
-        new ApiSuccessResponse(
+        new ReturnData(
           true,
           StatusCodes.OK,
-          "default",
-          data
+          "Data Fetch Successfully",
+          null,
+          response
         )
       );
   } catch (error) {
@@ -109,14 +111,16 @@ async function SmpCurr(req, res) {
         Longitude: doc.Longitude || null,
         nearme: doc.nearme || null,
       }));
-
+ const response = formattedData(mappedResult)
       return res
         .status(StatusCodes.OK)
         .json(
-          new ApiSuccessResponse(
+          new ReturnData(
             true,
-            StatusCodes.OK,
-            mappedResult
+            true,
+            "Data Fetched Successfully",
+            null,
+            response
           )
         );
     } else {
@@ -176,9 +180,11 @@ async function SmpCurr(req, res) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ApiSuccessResponse(
+          new ReturnData(
             true,
-            StatusCodes.OK,
+            true,
+            "Data Fetched Successfully",
+            null,
             mappedResult
           )
         );
@@ -211,9 +217,9 @@ async function Geofence(req, res) {
  
          // Step 2: Query the Geofencing collection
          const geofencingData = await Geofencing.find(filter);
- 
+       const response = formattedData(geofencingData)
          // Step 3: Return response
-         return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, geofencingData));
+         return res.status(StatusCodes.OK).json(new ReturnData(true, true,"Data Feteched Successfully",null, response));
          
  } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
@@ -322,8 +328,8 @@ async function NTCurrent(req, res) {
             VehicleTypename: vehicle.VehicleTypename || ""
         };
     });
-
-    return res.status(StatusCodes.OK).json(StatusCodes.OK, ntSummary);
+  const response = formattedData(ntSummary)
+    return res.status(StatusCodes.OK).json(true,true,"Data Fetched Successfully",null, response);
 
     
 

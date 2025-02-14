@@ -9,7 +9,7 @@ import { StatusCodes } from "http-status-codes";
 export const AddHelpCreationQuery = async (model) => {
 
     try {
-        const {
+        let {
           formatName,
           height,
           width,
@@ -46,6 +46,8 @@ export const AddHelpCreationQuery = async (model) => {
           }
         } else {
           // Insert new entry
+          const lastRecord = await HelpCreate.findOne().sort({ PageTitleId: -1 }).exec();
+          pageTitleId = (lastRecord?.PageTitleId ?? 0) + 1;
           const newEntry = new HelpCreate({
             formatName,
             height,
@@ -64,7 +66,6 @@ export const AddHelpCreationQuery = async (model) => {
 
          
    const newData = {
-    id:newEntry.Id,
   formatName: newEntry.formatName,
   height:newEntry.height,
   width: newEntry.width,

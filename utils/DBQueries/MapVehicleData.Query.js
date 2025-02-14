@@ -15,11 +15,10 @@ export async function GetMapVehicleDataQuery(){
      const response = formattedData(result)
         // Wrap the result in a response format
         return {
-            isSuccess: true,
-            statusCode: StatusCodes.OK,
+            status: 1,
             message: 'Map vehicle data retrieved successfully',
             data: response,
-            RowCount: result.length,
+            RowCount: response.length,
         };
       } catch (error) {
         return{
