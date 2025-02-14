@@ -1053,7 +1053,7 @@ const newData = formattedData(result)
 async function probWireTamp(req, res) {
 
   try {
-    const { date } = req.query;
+    const { date } = req.params;
     // console.log("date is", date);
     if (!date) {
       return res
@@ -1218,7 +1218,7 @@ async function probWireTamp(req, res) {
           true,
           "Data fetched successfully",
           null,
-          result
+          formattedData(result)
           // encryptData(result)
         )
       );
@@ -1226,7 +1226,7 @@ async function probWireTamp(req, res) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
-        new ApiErrorResponse( error.message, null, StatusCodes.INTERNAL_SERVER_ERROR,)
+        new ApiErrorResponse( StatusCodes.INTERNAL_SERVER_ERROR, error.message, null)
       );
   }
 }
