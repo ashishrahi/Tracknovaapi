@@ -4,9 +4,11 @@ import { ItemMaster, SummaryNT } from "../../modals/index.js";
 async function trackDetailsNT(trackFilter) {
   try {
 
-    // console.log("trackFilter", trackFilter)
+    // console.log("Filter", trackFilter)
     
     let results = await SummaryNT.find(trackFilter);
+    // console.log("results", results)
+
    
     // Process records similar to SQL updates
     results = results.map((doc) => {
@@ -50,6 +52,8 @@ async function VehicleMovingStatusdetnew(body){
     
             // Fetch relevant vehicles
             const vehicles = await ItemMaster.find(vehicleFilter).lean();
+
+            // console.log('vehicles:',vehicles)
             // return res.json({vehicles})
             const devIds = vehicles.map(v => v.devid).filter(devid => devid); // Extract DevIds
             // console.log("devIds", devIds);
@@ -59,6 +63,9 @@ async function VehicleMovingStatusdetnew(body){
                 DevID:  { "$in": devIds }  , // Filter by DevIds
                 TrackDate: { "$gte" : startDate, "$lte": endDate }
             };
+
+            // console.log('trackFilter:',trackFilter)
+
             // Add additional filters if provided
             if (filter.list1 && filter.list1.length > 0) {
                 trackFilter.VehicleNo = { "$in": filter.list1 } ; // Filter by vehicle numbers
@@ -70,6 +77,10 @@ async function VehicleMovingStatusdetnew(body){
             const trackDetails = await trackDetailsNT(trackFilter); 
             // console.log("trackDetails", trackDetails)
             // Step 3: Transform track details into the desired format
+
+            // console.log('trackDetails:',trackDetails)
+          
+
             const transformedData = trackDetails.map(track => {
                 const runningTime = track.Running ? track.Running.split(/[\s:]+/) : [0, 0, 0];
                 const runningInSec = (parseInt(runningTime[0]) * 3600) + (parseInt(runningTime[1]) * 60) + parseInt(runningTime[2]);
@@ -117,6 +128,8 @@ async function VehicleMovingStatusdetnew(body){
                 });
     
                 const filteredData = transformedData.filter(track => vehicleCounts[track.VehicleNo] <= filter.intvalue4);
+               
+               
                 response.Data = filteredData;
             } else {
                 response.Data = transformedData;
