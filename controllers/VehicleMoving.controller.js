@@ -3,6 +3,7 @@ import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
+import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //-----------VehicleTrack-------->
 async function VehicleTrack(req, res, next) {
@@ -126,10 +127,11 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
 
     const lsTrack = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter);
 
+    const data = formattedData(lsTrack?.Data)
     if (filter.Show) {
-      return res.status(StatusCodes.OK).json(lsTrack);
+      return res.status(StatusCodes.OK).json(data);
     }
-
+    /*
     if (lsTrack.length > 0) {
       retStat += "No: 2 ";
 
@@ -176,7 +178,7 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
       retStat = "No record.";
     }
 
-    return res.status(StatusCodes.OK).json({ message: retStat });
+    return res.status(StatusCodes.OK).json({ message: retStat }); */
   } catch (error) {
     error.status = StatusCodes.BAD_REQUEST;
     return next(error);

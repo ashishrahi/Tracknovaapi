@@ -39,7 +39,7 @@ async function VehicleMovingStatusdetnew(body){
             const endDate = new Date(filter.date2)
     
             // Step 1: Filter vehicles based on input criteria
-            let vehicleFilter = { ItemFlag: 'v' }; // Assuming 'v' indicates vehicles
+            let vehicleFilter = { ItemFlag: 'V' }; // Assuming 'v' indicates vehicles
             if (filter.str1) {
                 vehicleFilter.VehicleNo = filter.str1; // Filter by vehicle number
             }
