@@ -243,7 +243,16 @@ async function handleExport (data, exportOption) {
 
 //-----------GetDevTamp-------->
 
-async function GetDevTamp(req, res, next) {}
+async function GetDevTamp(req, res, next) {
+  res.json("GetDevTamp1")
+}
+
+//-----------VehicleFuelConsumenew-------->
+
+async function VehicleFuelConsumenew(req, res, next) {
+  res.json("VehicleFuelConsumenew1")
+}
+
 
 
 
@@ -253,5 +262,6 @@ export {
   VehicleTrack,
   VehicleMovingTrackStatusdetnew,
   GetVechicleMileageSummary,
-  GetDevTamp
+  GetDevTamp,
+  VehicleFuelConsumenew,
 };

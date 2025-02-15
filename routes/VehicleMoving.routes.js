@@ -6,5 +6,7 @@ router.post("/VehicleTrack", VehicleMovingController.VehicleTrack);
 router.post("/VehicleMovingTrackStatusdetnew", VehicleMovingController.VehicleMovingTrackStatusdetnew); // InComplete
 router.post("/GetVechicleMileageSummary", VehicleMovingController.GetVechicleMileageSummary); 
 router.post("/GetDevTamp", VehicleMovingController.GetDevTamp);
+router.post("/VehicleFuelConsumenew", VehicleMovingController.VehicleFuelConsumenew);
+
 
 export default router;

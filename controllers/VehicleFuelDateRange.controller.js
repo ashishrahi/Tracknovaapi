@@ -1,10 +1,10 @@
 async function VehicleFuelDateRange(req, res,next){
-    const query = req.body;
+    const filter = req.body;
     try {
         const d1 = new Date(filter.date1);
         const d2 = new Date(filter.date2);
     
-        const vehicles = filter.Flag ? [] : filter.list1.map(v => v.trim()).filter(v => v);
+        const vehicles = filter.Flag ? [] : filter.list1?.map(v => v.trim()).filter(v => v);
         const vehicleTypes = filter.Flag ? [] : filter.listInt1;
     
         const query = { TrackDate: { $gte: d1, $lte: d2 } };
