@@ -514,33 +514,53 @@ async function getVehicleNotMoved(req, res) {
     const dateFrom = new Date(model.dateFrom);
     const dateTo = new Date(model.dateTo);
 
-    const ntmv = await NT.aggregate([
-        {
-            $match: {
-                TrackTime: { $gte: dateFrom, $lte: dateTo },
-                acc: true
-            }
-        },
-        {
-            $group: {
-                _id: "$devid"
-            }
-        }
-    ]);
-    // console.log("ntmv: ",ntmv)
-    const ntrec = await NT.aggregate([
-        {
-            $match: {
-                TrackTime: { $gte: dateFrom, $lte: dateTo }
-            }
-        },
-        {
-            $group: {
-                _id: "$devid"
-            }
-        }
-    ])
+    // const ntmv = await NT.aggregate([
+    //     {
+    //         $match: {
+    //             TrackTime: { $gte: dateFrom, $lte: dateTo },
+    //             acc: true
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$devid"
+    //         }
+    //     }
+    // ]);
+    // // console.log("ntmv: ",ntmv)
+    // const ntrec = await NT.aggregate([
+    //     {
+    //         $match: {
+    //             TrackTime: { $gte: dateFrom, $lte: dateTo }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$devid"
+    //         }
+    //     }
+    // ])
     // console.log("ntrec: ", ntrec)
+    const result = await NT.aggregate([
+      {
+          $match: {
+              TrackTime: { $gte: dateFrom, $lte: dateTo }
+          }
+      },
+      {
+          $group: {
+              _id: "$devid",
+              accTrueExists: { $max: { $cond: [{ $eq: ["$acc", true] }, 1, 0] } }
+          }
+      }
+  ]);
+  
+  // Separate values
+  const ntmv = result.filter(doc => doc.accTrueExists === 1).map(doc => ({ _id: doc._id }));
+  const ntrec = result.map(doc => ({ _id: doc._id }));
+    
+    
+    
     const vehs = await ItemMaster.aggregate([
         {
             $lookup: {
@@ -572,7 +592,7 @@ async function getVehicleNotMoved(req, res) {
         },
         {
             $match: {
-                "Flag": { $regex: /^V$/i },
+                "ItemFlag": { $regex: /^V$/i },
                 "devid": { $ne: null }
             }
         },
@@ -590,12 +610,14 @@ async function getVehicleNotMoved(req, res) {
         }
     ])
 
-    const vt = await VehicleTypeMaster.find({}, { projection: { VehicleTypeId: 1, VehicleTypename: 1 } })
-    const zn = await ZoneMaster.find({}, { projection: { ZoneID: 1, ZoneName: 1 } })
+    const vt = await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 });
+    const zn = await ZoneMaster.find({},  { ZoneID: 1, ZoneName: 1, _id: 0 } );
 
+    // console.log("vt", vt)
     let lsv = [];
     let sn = 1;
-
+    // console.log("ntrec", ntrec)
+    // console.log("vehs", vehs)
     vehs.forEach(v => {
         let vn = {
             DepartmentName: v.DepartmentName,
@@ -606,14 +628,15 @@ async function getVehicleNotMoved(req, res) {
             EmpMobileNo: v.EmpMobileNo,
             ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
         };
+       
+        const ntrecFnd = ntrec.find(s => s._id === v.devid);
 
-        const ntrecFnd = ntrec.find(s => s._id === v.Devid);
         if (!ntrecFnd) {
             vn.SrNo = sn++;
             vn.NTRecord = false;
             lsv.push(vn);
         } else {
-            const ntrecmv = ntmv.find(s => s._id === v.Devid);
+            const ntrecmv = ntmv.find(s => s._id === v.devid);
             if (!ntrecmv) {
                 vn.SrNo = sn++;
                 vn.NTRecord = true;
@@ -622,8 +645,8 @@ async function getVehicleNotMoved(req, res) {
         }
     });
 
-    
-    return res.json({ Data: lsv, IsSuccess: true });
+    const data = formattedData(lsv)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, data));
 
 
 
