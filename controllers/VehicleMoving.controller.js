@@ -132,54 +132,7 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
       return res.status(StatusCodes.OK).json(data);
     }
     return res.status(StatusCodes.OK).json(data);
-    /*
-    if (lsTrack.length > 0) {
-      retStat += "No: 2 ";
-
-      let d2 = lsTrack;
-      retStat += "No: 3 ";
-
-      if (d2.length === 0) {
-        throw new Error("No Record");
-      }
-
-      retStat += "No: 4.5 ";
-
-      const cmp = await getCompany();
-
-      let repnm = "VehicleTrackNew";
-      let outPath = path.join(__dirname, "Download", repnm);
-
-      if (filter.ExportOption === ".pdf") {
-        retStat += "No: 7: ";
-        outPath += ".pdf";
-
-        let doc = new PDFDocument();
-        doc.pipe(fs.createWriteStream(outPath));
-        doc.text("Vehicle Track Detail");
-        d2.forEach((item) => doc.text(JSON.stringify(item)));
-        doc.end();
-
-        retStat = repnm + ".pdf";
-      } 
-      
-      else if (filter.ExportOption === ".xls" || filter.ExportOption === "TabularExc") {
-        outPath += ".xls";
-
-        let workbook = new ExcelJS.Workbook();
-        let worksheet = workbook.addWorksheet("Vehicle Track");
-
-        worksheet.columns = Object.keys(d2[0]).map((key) => ({ header: key, key }));
-        d2.forEach((item) => worksheet.addRow(item));
-
-        await workbook.xlsx.writeFile(outPath);
-        retStat = repnm + ".xls";
-      }
-    } else {
-      retStat = "No record.";
-    }
-
-    return res.status(StatusCodes.OK).json({ message: retStat }); */
+    
   } catch (error) {
     error.StatusCode = StatusCodes.BAD_REQUEST;
     error.ErrorMessage = error.message;
@@ -220,7 +173,7 @@ async function VehicleDetailSummarynew(req, res, next){
   try {
     const filter = req.body;
     const { Data } = await VehicleMovingStatusdetnew(filter);
-
+    
     return res.status(StatusCodes.OK).json(Data);
 
   } catch (error) {
