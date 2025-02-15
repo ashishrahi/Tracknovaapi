@@ -5,6 +5,7 @@ const router = express.Router();
 router.post("/VehicleTrack", VehicleMovingController.VehicleTrack);
 router.post("/VehicleMovingTrackStatusdetnew", VehicleMovingController.VehicleMovingTrackStatusdetnew); // InComplete
 router.post("/GetVechicleMileageSummary", VehicleMovingController.GetVechicleMileageSummary); 
+router.post("/VehicleDetailSummarynew", VehicleMovingController.VehicleDetailSummarynew); 
 
 
 export default router;

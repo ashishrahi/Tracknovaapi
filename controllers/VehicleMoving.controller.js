@@ -131,6 +131,7 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
     if (filter.Show) {
       return res.status(StatusCodes.OK).json(data);
     }
+    return res.status(StatusCodes.OK).json(data);
     /*
     if (lsTrack.length > 0) {
       retStat += "No: 2 ";
@@ -180,7 +181,8 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
 
     return res.status(StatusCodes.OK).json({ message: retStat }); */
   } catch (error) {
-    error.status = StatusCodes.BAD_REQUEST;
+    error.StatusCode = StatusCodes.BAD_REQUEST;
+    error.ErrorMessage = error.message;
     return next(error);
   }
 
@@ -189,9 +191,9 @@ async function VehicleMovingTrackStatusdetnew(req, res, next) {
 async function GetVechicleMileageSummary(req, res, next) {
   try {
     const filter = req.body;
-    const { Data } = await VehicleMovingStatusdetnew(req.body);
+    const { Data } = await VehicleMovingStatusdetnew(filter);
     const vehicleData = Data;
-    // return res.json({vehicleData})
+   
 
     // Filter drivers with "jit" in their name
     const filteredData = vehicleData.filter((v) =>
@@ -203,46 +205,34 @@ async function GetVechicleMileageSummary(req, res, next) {
     }
 
     // Handle Export (PDF/XLS)
-    const exportFile = await handleExport(filteredData, filter.ExportOption);
-    return res.json({ file: exportFile });
+    
   } catch (error) {
     const err = new Error(error.message);
     err.status = StatusCodes.BAD_REQUEST;
     return next(err);
 }
 
-async function handleExport (data, exportOption) {
-        const basePath = path.join(__dirname, "exports");
-        if (!fs.existsSync(basePath)) fs.mkdirSync(basePath);
-    
-        const fileName = `FuelConsumption.${
-          exportOption === ".pdf" ? "pdf" : "xlsx"
-        }`;
-        const filePath = path.join(basePath, fileName);
-    
-        if (exportOption === ".pdf") {
-          const doc = new pdf();
-          doc.pipe(fs.createWriteStream(filePath));
-          doc.fontSize(14).text("Fuel Consumption Report", { align: "center" });
-          data.forEach((item, i) =>
-            doc.text(`${i + 1}. ${item.DriverName} - ${item.vehicleTypeId}`)
-          );
-          doc.end();
-        } else {
-          const workbook = new exceljs.Workbook();
-          const sheet = workbook.addWorksheet("Fuel Consumption");
-          sheet.addRow(["Driver Name", "Vehicle Type ID"]);
-          data.forEach((item) =>
-            sheet.addRow([item.DriverName, item.vehicleTypeId])
-          );
-          await workbook.xlsx.writeFile(filePath);
-        }
-        return filePath;
-      }
+
+}
+
+//-----------VehicleDetailSummarynew-------->
+async function VehicleDetailSummarynew(req, res, next){
+  try {
+    const filter = req.body;
+    const { Data } = await VehicleMovingStatusdetnew(filter);
+
+    return res.status(StatusCodes.OK).json(Data);
+
+  } catch (error) {
+    error.StatusCode = StatusCodes.BAD_REQUEST;
+    error.ErrorMessage = error.message;
+    return next(error);
+  }
 }
 
 export {
   VehicleTrack,
   VehicleMovingTrackStatusdetnew,
   GetVechicleMileageSummary,
+  VehicleDetailSummarynew
 };
