@@ -239,8 +239,17 @@ async function handleExport (data, exportOption) {
       }
 }
 
+//-----------GetDevTamp-------->
+
+async function GetDevTamp(req, res, next) {}
+
+
+
+
+
 export {
   VehicleTrack,
   VehicleMovingTrackStatusdetnew,
   GetVechicleMileageSummary,
+  GetDevTamp
 };
