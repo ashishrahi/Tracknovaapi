@@ -5,7 +5,8 @@ function formattedData(data) {
       let newKey = key.charAt(0).toLowerCase() + key.slice(1);
       if(newKey === "sMSTemplateId"){
         newObj["smsTemplateID"] = obj[key];
-      }else{
+      }
+      else{
         newObj[newKey] = obj[key];
       }
     });
