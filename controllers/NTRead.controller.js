@@ -561,92 +561,174 @@ async function getVehicleNotMoved(req, res) {
     
     
     
-    const vehs = await ItemMaster.aggregate([
-        {
-            $lookup: {
-                from: "EmpMaster",
-                localField: "EmpId",
-                foreignField: "Empid",
-                as: "emp"
-            }
-        },
-        {
-            $unwind: {
-                path: "$emp",
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $lookup: {
-                from: "Department",
-                localField: "emp.EmpDeptId",
-                foreignField: "DepartmentId",
-                as: "dept"
-            }
-        },
-        {
-            $unwind: {
-                path: "$dept",
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $match: {
-                "ItemFlag": { $regex: /^V$/i },
-                "devid": { $ne: null }
-            }
-        },
-        {
-            $project: {
-                devid: 1,
-                VehicleNo: 1,
-                ItemName: 1,
-                VehicleTypeId: 1,
-                VZoneID: 1,
-                EmpName: "$emp.EmpName",
-                DepartmentName: "$dept.DepartmentName",
-                EmpMobileNo: "$emp.EmpMobileNo"
-            }
-        }
-    ])
+    // const vehs = await ItemMaster.aggregate([
+    //     {
+    //         $lookup: {
+    //             from: "EmpMaster",
+    //             localField: "EmpId",
+    //             foreignField: "Empid",
+    //             as: "emp"
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: "$emp",
+    //             // preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: "Department",
+    //             localField: "emp.EmpDeptId",
+    //             foreignField: "DepartmentId",
+    //             as: "dept"
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: "$dept",
+    //             // preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //         $match: {
+    //             "ItemFlag": { $regex: /^V$/i },
+    //             "devid": { $ne: null }
+    //         }
+    //     },
+    //     {
+    //         $project: {
+    //             devid: 1,
+    //             VehicleNo: 1,
+    //             ItemName: 1,
+    //             VehicleTypeId: 1,
+    //             VZoneID: 1,
+    //             EmpName: "$emp.EmpName",
+    //             DepartmentName: "$dept.DepartmentName",
+    //             EmpMobileNo: "$emp.EmpMobileNo"
+    //         }
+    //     }
+    // ])
 
-    const vt = await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 });
-    const zn = await ZoneMaster.find({},  { ZoneID: 1, ZoneName: 1, _id: 0 } );
+    // const vt = await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 });
+    // const zn = await ZoneMaster.find({},  { ZoneID: 1, ZoneName: 1, _id: 0 } );
 
-    // console.log("vt", vt)
-    let lsv = [];
-    let sn = 1;
-    // console.log("ntrec", ntrec)
-    // console.log("vehs", vehs)
-    vehs.forEach(v => {
-        let vn = {
-            DepartmentName: v.DepartmentName,
-            devid: v.devid,
-            VehicleNo: v.VehicleNo,
-            VehicleTypename: vt.find(t => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
-            EmpName: v.EmpName,
-            EmpMobileNo: v.EmpMobileNo,
-            ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
-        };
+    // // console.log("vt", vt)
+    // let lsv = [];
+    // let sn = 1;
+    // // console.log("ntrec", ntrec)
+    // // console.log("vehs", vehs)
+    // vehs.forEach(v => {
+    //     let vn = {
+    //         DepartmentName: v.DepartmentName,
+    //         devid: v.devid,
+    //         VehicleNo: v.VehicleNo,
+    //         VehicleTypename: vt.find(t => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
+    //         EmpName: v.EmpName,
+    //         EmpMobileNo: v.EmpMobileNo,
+    //         ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
+    //     };
        
-        const ntrecFnd = ntrec.find(s => s._id === v.devid);
+    //     const ntrecFnd = ntrec.find(s => s._id === v.devid);
 
-        if (!ntrecFnd) {
-            vn.SrNo = sn++;
-            vn.NTRecord = false;
-            lsv.push(vn);
-        } else {
-            const ntrecmv = ntmv.find(s => s._id === v.devid);
-            if (!ntrecmv) {
-                vn.SrNo = sn++;
-                vn.NTRecord = true;
-                lsv.push(vn);
-            }
-        }
-    });
+    //     if (!ntrecFnd) {
+    //         vn.SrNo = sn++;
+    //         vn.NTRecord = false;
+    //         lsv.push(vn);
+    //     } else {
+    //         const ntrecmv = ntmv.find(s => s._id === v.devid);
+    //         if (!ntrecmv) {
+    //             vn.SrNo = sn++;
+    //             vn.NTRecord = true;
+    //             lsv.push(vn);
+    //         }
+    //     }
+    // });
 
-    const data = formattedData(lsv)
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, data));
+    const vehs = await ItemMaster.aggregate([
+      {
+          $match: {
+              "ItemFlag": { $regex: /^V$/i },
+              "devid": { $ne: null }
+          }
+      },
+      {
+          $lookup: {
+              from: "EmpMaster",
+              localField: "EmpId",
+              foreignField: "Empid",
+              pipeline: [
+                  { $project: { EmpName: 1, EmpDeptId: 1, EmpMobileNo: 1, _id: 0 } }
+              ],
+              as: "emp"
+          }
+      },
+      { $unwind: { path: "$emp", preserveNullAndEmptyArrays: true } },
+      {
+          $lookup: {
+              from: "Department",
+              localField: "emp.EmpDeptId",
+              foreignField: "DepartmentId",
+              pipeline: [
+                  { $project: { DepartmentName: 1, _id: 0 } }
+              ],
+              as: "dept"
+          }
+      },
+      { $unwind: { path: "$dept", preserveNullAndEmptyArrays: true } },
+      {
+          $project: {
+              devid: 1,
+              VehicleNo: 1,
+              ItemName: 1,
+              VehicleTypeId: 1,
+              VZoneID: 1,
+              EmpName: "$emp.EmpName",
+              DepartmentName: "$dept.DepartmentName",
+              EmpMobileNo: "$emp.EmpMobileNo"
+          }
+      }
+  ]);
+  
+  // Fetch and create a Map for VehicleTypeMaster and ZoneMaster for quick lookup
+  const vtMap = new Map((await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 }))
+      .map(t => [t.VehicleTypeId, t.VehicleTypename]));
+  
+  const znMap = new Map((await ZoneMaster.find({}, { ZoneID: 1, ZoneName: 1, _id: 0 }))
+      .map(z => [z.ZoneID, z.ZoneName]));
+  
+  let lsv = [];
+  let sn = 1;
+  
+  // Process Vehicles
+  vehs.forEach(v => {
+      let vn = {
+          departmentName: v.DepartmentName,
+          devid: v.devid,
+          vehicleNo: v.VehicleNo,
+          vehicleTypename: vtMap.get(v.VehicleTypeId) || null,
+          empName: v.EmpName,
+          empMobileNo: v.EmpMobileNo,
+          zoneName: znMap.get(v.VZoneID) || null
+      };
+  
+      const ntrecFnd = ntrec.some(s => s._id === v.devid);
+  
+      if (!ntrecFnd) {
+          vn.srNo = sn++;
+          vn.ntRecord = false;
+          lsv.push(vn);
+      } else {
+          const ntrecmv = ntmv.some(s => s._id === v.devid);
+          if (!ntrecmv) {
+              vn.srNo = sn++;
+              vn.ntRecord = true;
+              lsv.push(vn);
+          }
+      }
+  });
+    // const data = formattedData(lsv)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", lsv.length, lsv));
 
 
 
