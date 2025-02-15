@@ -122,13 +122,76 @@ async function VehicleTrack(req, res, next) {
 async function VehicleMovingTrackStatusdetnew(req, res, next) {
     try {
       const filter = req.body;
-      const data = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
+      let retStat = "";
+      const lsTrack = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
+
+      if(filter.Show){
+
+        return res.status(StatusCodes.OK).json(lsTrack);
+      }
+
+    if (lsTrack.length >0) {
+            
+           retStat += "No: 2 ";
+             let tesd = lsTrack.filter((em) => em.DriverName && em.DriverName.toLowerCase().includes("jit"));
+
+            let d2 = lsTrack;
+            retStat += "No: 3 ";
+
+            if (filter.Show) {
+              return res.json(d2);
+              }
+              if (d2.length === 0) {
+                throw new Error("No Record");
+            }
+            retStat += "No: 4.5 ";
+            const cmp = await getCompany();
+
+            let newGuid = new mongoose.Types.ObjectId();
+            let repnm = "VehicleTrackNew";
+            let outPath = path.join(__dirname, "Download", repnm);
+
+            if (filter.ExportOption === ".pdf") {
+              retStat += "No: 7: ";
+              let doc = new PDFDocument();
+              outPath += ".pdf";
+              doc.pipe(fs.createWriteStream(outPath));
+              doc.text("Vehicle Track Detail");
+              d2.forEach((item) => doc.text(JSON.stringify(item)));
+              doc.end();
+              retStat = repnm + ".pdf";
+          }
+          if (filter.ExportOption === ".xls" || filter.ExportOption === "TabularExc") {
+            let workbook = new ExcelJS.Workbook();
+            let worksheet = workbook.addWorksheet("Vehicle Track");
+            worksheet.columns = Object.keys(d2[0]).map((key) => ({ header: key, key }));
+
+            d2.forEach((item) => worksheet.addRow(item));
+            outPath += ".xls";
+            await workbook.xlsx.writeFile(outPath);
+            retStat = repnm + ".xls";
+        }
+     
+    } else {
       
-    } catch (error) {
-      
+      if (filter.Show) {
+        return res.json(lsTrack);
     }
+    retStat = "No record.";
 }
 
+return res.json({ message: retStat });
+
+    
+
+      
+    } 
+    catch (error) {
+    error.status = StatusCodes.BAD_REQUEST;
+    return next(error);
+    }
+
+  }
 //-----------GetVechicleMileageSummary-------->
 async function GetVechicleMileageSummary(req, res, next) {
   try {

@@ -8,6 +8,7 @@ import {
 import { StatusCodes } from "http-status-codes";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 import mongoose from "mongoose";
+
 /////////////////////////////////////////// GetvVehicletrackHisQuery //////////////////////////////////////////
 
 export const GetvVehicletrackHisQuery = async (modal) => {
@@ -52,7 +53,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
       const data = await collection
         .find(
           { devid: Devid, TrackTime: { $gte: startDate, $lt: endDate } },
-          { projection: { TrackTime: 1, Longitude:{ $toDouble: "$Longitude" }, Lattitude: { $toDouble: "$Lattitude" }, speed: 1, devid: 1, distance: { $toDouble: "$distance" }, Flag: 1, Id: 1 } }
+          { projection: { TrackTime: 1, Longitude:1, Lattitude: 1, speed: 1, devid: 1, distance:1, Flag: 1, Id: 1 } }
         )
         .toArray();
         // console.log("data:",data)
