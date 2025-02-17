@@ -809,34 +809,80 @@ export const GetRolePermissionQuery = async (modal) => {
     const { RoleId } = modal;
     let data;
 
-    if (RoleId === "-1") {
-        data = await RolePermission.find().lean();
-
-        const newData = data.map((role)=>{
-          return{
-            roleId: role.RoleId,
-            menuId: role.MenuId,
-            parentMenuId: role.ParentId,
-            isAdd: role.IsAdd,
-            isDel:role.IsDel,
-            isEdit: role.IsEdit,
-            isExport: role.IsExport,
-            isPost: role.IsPost,
-            isPrint: role.IsPrint,
-            isRelease: role.IsRelease,
-            isView: role.IsView,
-            menuName: role.MenuName
-          }
-        })
-             const rowCount = newData.length;
-        
-        return{
-          status: 1,
-          message: "Role Permission fetched successfully",
-          data:newData,
-          rowCount:rowCount
+    // if (RoleId === "-1") {
+      data = await Menu.aggregate([
+        {
+            $match: { IsMenu: true } // Filtering menus that are actual menus
+        },
+        {
+            $lookup: {
+                from: "RolePermission",
+                let: { menuId: "$MenuId" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$MenuId", "$$menuId"] },
+                                    { $eq: ["$RoleId", RoleId] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                          IsAdd: { $ifNull: ["$IsAdd", 0] },
+                          IsEdit: { $ifNull: ["$IsEdit", 0] },
+                          IsDel: { $ifNull: ["$IsDel", 0] },
+                          IsView: { $ifNull: ["$IsView", 0] },
+                          IsPrint: { $ifNull: ["$IsPrint", 0] },
+                          IsExport: { $ifNull: ["$IsExport", 0] },
+                          IsRelease: { $ifNull: ["$IsRelease", 0] },
+                          IsPost: { $ifNull: ["$IsPost", 0] }
+                        }
+                    }
+                ],
+                as: "rolePermission"
+            }
+        },
+        {
+            $unwind: {
+                path: "$rolePermission",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $project: {
+              _id: 0,
+              roleId: RoleId,
+              menuId: "$MenuId",
+              menuName: "$MenuName",
+              parentId: "$ParentId",
+              isAdd: { $ifNull: ["$rolePermission.IsAdd", 0] },
+              isEdit: { $ifNull: ["$rolePermission.IsEdit", 0] },
+              isDel: { $ifNull: ["$rolePermission.IsDel", 0] },
+              isView: { $ifNull: ["$rolePermission.IsView", 0] },
+              isPrint: { $ifNull: ["$rolePermission.IsPrint", 0] },
+              isExport: { $ifNull: ["$rolePermission.IsExport", 0] },
+              isRelease: { $ifNull: ["$rolePermission.IsRelease", 0] },
+              isPost: { $ifNull: ["$rolePermission.IsPost", 0] }
+            }
+        },
+        {
+            $sort: { MenuName: 1 } // Ordering by MenuName
         }
-    } else {
+    ]);
+
+    return{
+      status: 1,
+      message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+      data: data,
+      rowCount:data?.length
+
+    }
+
+    return;
+    // } else {
         data = await RolePermission.find({ RoleId: RoleId }).lean();
 
         const newData = data.map((role)=>{
@@ -865,7 +911,7 @@ export const GetRolePermissionQuery = async (modal) => {
           rowCount:rowCount
 
         }
-    }
+    
 
   
 } catch (error) {
