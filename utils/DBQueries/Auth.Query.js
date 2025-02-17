@@ -320,7 +320,6 @@ export const AddUpdateUserPermissionMasterQuery = async (
 export const GetUserPermissionMasterQuery = async (modal) => {
   try {
     const { userId } = modal;
-    console.log('userId:',userId)
 
     if (userId === "-1") {
       const usersPermission = await UserPermission.find().lean();
@@ -379,20 +378,13 @@ export const GetUserPermissionMasterQuery = async (modal) => {
         },
       ]);
      // Convert first letter of each key to lowercase for every object in the array
-    const response = data.map((obj) => {
-      let newObj = {};
-      Object.keys(obj).forEach((key) => {
-        let newKey = key.charAt(0).toLowerCase() + key.slice(1);
-        newObj[newKey] = obj[key];
-      });
-      return newObj;
-    });
+const formatedData = formattedData(data)
       return {
         isSuccess: 1,
         id: userId,
         createUpdate:"",
         msg: "User Permission Details fetched successfully",
-        data: data,
+        data: formatedData,
       };
     }
   } catch (error) {

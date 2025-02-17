@@ -123,7 +123,7 @@ async function VehicleTrack(req, res, next) {
 async function VehicleMovingTrackStatusdetnew(req, res, next) {
   try {
     const filter = req.body;
-    let retStat = "";
+    // let retStat = "";
 
     const lsTrack = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter);
 
@@ -192,7 +192,24 @@ async function GetDevTamp(req, res, next) {
 //-----------VehicleFuelConsumenew-------->
 
 async function VehicleFuelConsumenew(req, res, next) {
-  res.json("VehicleFuelConsumenew1")
+
+  try {
+    
+const filter = req.body;
+const fuelComsumed = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
+const data = formattedData(fuelComsumed?.Data)
+
+if (filter.Show) {
+  return res.status(StatusCodes.OK).json(data)
+}
+return res.status(StatusCodes.OK).json(data)
+  } catch (error) {
+    error.StatusCode = StatusCodes.BAD_REQUEST
+    error.ErrorMessage = error.message
+    return next(error)
+  }
+
+
 }
 
 
