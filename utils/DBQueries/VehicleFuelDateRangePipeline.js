@@ -1,10 +1,11 @@
+import { trackDetailsNT } from "./VehicleMovingControllerPipeline";
+
 async function VehicleFuelDateRange(filter){
     try {
-      const { date1, date2, list1, listInt1, Flag } = filter;
-  debugger;
+      
       // Convert dates
-      const d1 = new Date(date1);
-      const d2 = new Date(date2);
+      const d1 = new Date(filter.date1);
+      const d2 = new Date(filter.date2);
   
       let vehicleNumbers = [];
       let vehicleTypes = [];
@@ -19,14 +20,9 @@ async function VehicleFuelDateRange(filter){
           vehicleTypes = listInt1;
       }
   
+
       // Fetch vehicle tracking details from MongoDB
-
-
-      const vehicleTracks = await VehicleTrack.find({
-          trackDate: { $gte: d1, $lte: d2 },
-          vehicleNo: { $in: vehicleNumbers },
-          vehicleType: { $in: vehicleTypes },
-      });
+      const vehicleTracks = await trackDetailsNT()
   
       
       
