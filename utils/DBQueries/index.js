@@ -44,6 +44,11 @@ import {AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery} from './Settin
 // VehicleMovingControllerPipeline
 import { VehicleMovingStatusdetnew, trackDetailsNT } from "./VehicleMovingControllerPipeline.js"; 
 
+// VehicleFuelDateRange
+import {VehicleFuelDateRange} from "./VehicleFuelDateRangePipeline.js"
+
+
+
 export {
     
     getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery,
@@ -65,4 +70,8 @@ export {
 export const VehicleMovingControllerPipeline = {
     VehicleMovingStatusdetnew: VehicleMovingStatusdetnew,
     trackDetailsNT: trackDetailsNT
+}
+
+export const VehicleFuelDateRangePipeline = {
+    VehicleFuelDateRange: VehicleFuelDateRange,
 }

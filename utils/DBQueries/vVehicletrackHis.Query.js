@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 /////////////////////////////////////////// GetvVehicletrackHisQuery //////////////////////////////////////////
 
 export const GetvVehicletrackHisQuery = async (modal) => {
-  try {
+   try {
     const { vehicleNo, trackDate } = modal;
 
     // Find device ID based on vehicle number
