@@ -193,8 +193,14 @@ async function GetDevTamp(req, res, next) {
     if (!model.date1 || !model.date2) {
       throw new ApiErrorResponse("date1 and date2 are required.", StatusCodes.BAD_REQUEST);
     }
-    const fromDate = new Date(model.date1 )
-    const toDate = new Date(model.date2)
+    let startDate;
+    let endDate;
+    if(model.date1) startDate = model.date1;
+    if(model.date2) endDate = model.date2;
+   
+
+     const fromDate = new Date(model.date1 )
+     const toDate = new Date(model.date2)
     // Construct filter conditions
     const matchQuery = {
       "TrackTime": {
