@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+
 import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
@@ -173,9 +174,8 @@ async function VehicleDetailSummarynew(req, res, next){
   try {
     const filter = req.body;
     const { Data } = await VehicleMovingStatusdetnew(filter);
-    const data = formattedData(Data);
     
-    return res.status(StatusCodes.OK).json(data);
+    return res.status(StatusCodes.OK).json(Data);
 
   } catch (error) {
     error.StatusCode = StatusCodes.BAD_REQUEST;
@@ -187,6 +187,7 @@ async function VehicleDetailSummarynew(req, res, next){
 //-----------GetDevTamp-------->
 
 async function GetDevTamp(req, res, next) {
+
   try {
     const model = req.body;
     // Ensure date range is provided

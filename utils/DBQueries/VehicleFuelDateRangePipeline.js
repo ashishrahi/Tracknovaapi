@@ -1,91 +1,127 @@
-import { trackDetailsNT } from "./VehicleMovingControllerPipeline";
+
+import {trackDetailsNT} from '../../utils/DBQueries/VehicleMovingControllerPipeline.js'
+import { ItemMaster } from '../../modals/index.js';
+
 
 async function VehicleFuelDateRange(filter){
-    try {
-      
-      // Convert dates
-      const d1 = new Date(filter.date1);
-      const d2 = new Date(filter.date2);
-  
-      let vehicleNumbers = [];
-      let vehicleTypes = [];
-  
-      // Process vehicle numbers
-      if (!Flag) {
-          vehicleNumbers = list1.filter(veh => veh.trim() !== "").map(veh => veh.trim());
-      }
-  
-      // Process vehicle types
-      if (!Flag) {
-          vehicleTypes = listInt1;
-      }
-  
+   
+        try {
+          const retd = [];
 
-      // Fetch vehicle tracking details from MongoDB
-      const vehicleTracks = await trackDetailsNT()
-  
       
+          // Date handling
+          const d1 = new Date(filter.date1);
+          const d2 = new Date(filter.date2);
+          d1.setHours(0, 0, 0, 0);
+          d2.setHours(23, 59, 59, 999);
       
-      
-      
-      
-      
-      // Fetch vehicle names from ItemMaster collection
-      const itemMasterData = await ItemMaster.find({ itemFlag: "V" });
-  
-      // Map vehicle names to tracking details
-      const processedTracks = vehicleTracks.map(track => {
-          const matchingItem = itemMasterData.find(item => item.vehicleNo === track.vehicleNo);
-          return {
-              ...track._doc,
-              VehicleName: matchingItem ? matchingItem.itemName || "" : "",
-              RunTimeinSec: convertToSeconds(track.RunningIdleTime),
+          // Build query conditions
+          const queryConditions = {
+            trackDate: { $gte: d1, $lte: d2 }
           };
-      });
-  
-      // Aggregate vehicle tracking details
-      let aggregatedTracks = [];
-      processedTracks.forEach(track => {
-          let existingVehicle = aggregatedTracks.find(v => v.VehicleNo === track.VehicleNo);
-          if (!existingVehicle) {
-              aggregatedTracks.push({
-                  VehicleNo: track.VehicleNo,
-                  VehicleName: track.VehicleName,
-                  TrackDate: track.TrackDate,
-                  FuelAlloted: track.FuelAlloted,
-                  LitrePerHr: track.LitrePerHr,
-                  KmPerLitre: track.KmPerLitre,
-                  RunTimeinSec: track.RunTimeinSec,
-              });
+      
+          if (!filter.Flag) {
+            if (filter.list1 && filter.list1.length) {
+              queryConditions.vehicleNo = { 
+                $in: filter.list1?.map(v => v.trim()).filter(v => v) 
+              };
+            }
+            if (filter.listInt1 && filter.listInt1.length) {
+              queryConditions.vehicleType = { $in: filter.listInt1 };
+            }
           }
-      });
-  
-      // Calculate additional metrics
-      aggregatedTracks = aggregatedTracks.map(veh => {
-          const vehicleData = processedTracks.filter(v => v.VehicleNo === veh.VehicleNo);
-  
-          veh.TotDays = vehicleData.length;
-          veh.TotFuelAllot = vehicleData.reduce((sum, v) => sum + (parseFloat(v.FuelAlloted) || 0), 0);
-          veh.FuelConsumption = vehicleData.reduce((sum, v) => sum + (parseFloat(v.FuelConsumption) || 0), 0).toFixed(2);
-          veh.BalanceFuel = veh.TotFuelAllot - parseFloat(veh.FuelConsumption || 0);
-          veh.ActualDistance = vehicleData.reduce((sum, v) => sum + (parseFloat(v.DistanceKM) || 0), 0);
-          veh.RunTimeinSec = vehicleData.reduce((sum, v) => sum + (parseFloat(v.RunTimeinSec) || 0), 0);
-  
-          return veh;
-      });
-  
-      res.json({ success: true, data: aggregatedTracks });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
-  }
-  
-  // Convert H:M:S format to seconds
-  const convertToSeconds = (timeStr) => {
-  if (!timeStr) return 0;
-  const parts = timeStr.split(/[: ]+/);
-  return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
-  }
+        //   console.log("queryConditions:",queryConditions)
+      
+          // Fetch track details
+        //   const lisret1 = await TrackDetail.find(queryConditions).lean();
+          const lisret1 = await trackDetailsNT(filter).lean();
+          console.log("lisret1:",lisret1)
+        //   console.log()
+      return;
+          // Get vehicle information
+          const vehitm = await ItemMaster.find({ itemflag: 'V' }).lean();
+      
+          // Enrich with vehicle names
+          lisret1.forEach(item => {
+            const vehicle = vehitm.find(v => v.vehicleno === item.vehicleNo);
+            item.vehicleName = vehicle ? vehicle.itemname : '';
+          });
+      
+          // Process vehicle aggregates
+          const vehicleMap = new Map();
+      
+          lisret1.forEach(item => {
+            if (!vehicleMap.has(item.vehicleNo)) {
+              vehicleMap.set(item.vehicleNo, {
+                VehicleNo: item.vehicleNo,
+                VehicleName: item.vehicleName,
+                TrackDate: item.trackDate,
+                FuelAlloted: parseFloat(item.fuelAlloted) || 0,
+                LitrePerHr: item.litrePerHr,
+                KmPerLitre: item.kmPerLitre,
+                Details: []
+              });
+            }
+            vehicleMap.get(item.vehicleNo).Details.push(item);
+          });
+      
+          // Calculate aggregates
+          const listVehtrk = [];
+          for (const [vehicleNo, vehicleData] of vehicleMap) {
+            const details = vehicleData.Details;
+            const aggregate = {
+              VehicleNo: vehicleNo,
+              VehicleName: vehicleData.VehicleName,
+              TrackDate: vehicleData.TrackDate,
+              TotDays: details.length,
+              TotFuelAllot: details.reduce((sum, d) => sum + (parseFloat(d.fuelAlloted) || 0), 0),
+              FuelConsumption: details.reduce((sum, d) => sum + (parseFloat(d.fuelConsumption) || 0), 0),
+              ActualDistance: details.reduce((sum, d) => sum + (d.distanceKM || 0), 0),
+              RunTimeSeconds: details.reduce((sum, d) => {
+                const parts = d.runningIdleTime.split(/[^\d]+/);
+                return sum + (parseInt(parts[0]) * 3600 )+ (parseInt(parts[1]) * 60) + (parseInt(parts[2]))
+              }, 0),
+              LitrePerHr: vehicleData.LitrePerHr,
+              KmPerLitre: vehicleData.KmPerLitre
+            };
+      
+            // Calculate balance fuel
+            let balanceFuel = aggregate.TotFuelAllot - aggregate.FuelConsumption;
+            let currentAllot = parseFloat(vehicleData.FuelAlloted) || 0;
+            while (balanceFuel < 0 && currentAllot > 0) {
+              balanceFuel += currentAllot / 2;
+              aggregate.TotFuelAllot += currentAllot / 2;
+            }
+            aggregate.BalanceFuel = balanceFuel;
+      
+            // Calculate runtime
+            const duration = moment.duration(aggregate.RunTimeSeconds, 'seconds');
+            aggregate.RunTimeFormatted = 
+              `${Math.floor(duration.asHours())}Hrs :: ${duration.minutes()}Min :: ${duration.seconds()}Sec`;
+      
+            // Calculate distance metrics
+            if (aggregate.KmPerLitre > 0) {
+              aggregate.DistanceAsAllot = aggregate.TotFuelAllot * aggregate.KmPerLitre;
+              aggregate.BalanceDist = aggregate.DistanceAsAllot - aggregate.ActualDistance;
+            }
+      
+            listVehtrk.push(aggregate);
+          }
+      
+          // Format dates
+          listVehtrk.forEach(item => {
+            item.TrackDate = moment(item.TrackDate).startOf('day').toDate();
+          });
+      
+         return{ 
+            data: listVehtrk
+          }
+      
+        } catch (ex) {
+        return  {
+            message: ex.message + (ex.innerException ? `;${ex.innerException.message}` : '')
+          }
+        }
+      }
   
   export { VehicleFuelDateRange }
