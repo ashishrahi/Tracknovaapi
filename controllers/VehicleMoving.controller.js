@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
@@ -173,8 +173,9 @@ async function VehicleDetailSummarynew(req, res, next){
   try {
     const filter = req.body;
     const { Data } = await VehicleMovingStatusdetnew(filter);
+    const data = formattedData(Data);
     
-    return res.status(StatusCodes.OK).json(Data);
+    return res.status(StatusCodes.OK).json(data);
 
   } catch (error) {
     error.StatusCode = StatusCodes.BAD_REQUEST;
@@ -186,7 +187,172 @@ async function VehicleDetailSummarynew(req, res, next){
 //-----------GetDevTamp-------->
 
 async function GetDevTamp(req, res, next) {
-  res.json("GetDevTamp1")
+  try {
+    const model = req.body;
+    // Ensure date range is provided
+    if (!model.date1 || !model.date2) {
+      throw new ApiErrorResponse("date1 and date2 are required.", StatusCodes.BAD_REQUEST);
+    }
+    const fromDate = new Date(model.date1 )
+    const toDate = new Date(model.date2)
+    // Construct filter conditions
+    const matchQuery = {
+      "TrackTime": {
+          $gte: fromDate,
+          $lte: toDate,
+      }
+    };
+
+    // Handle Department filtering
+    if (model.listInt1?.length) {
+        matchQuery.DeptId = { $in: model.listInt1 };
+    }
+
+    // Handle Vehicle Number filtering
+    if (model.list1?.length > 0) {
+        matchQuery.VehicleNo = { $in: model.list1 };
+    }
+
+
+
+
+    const matchConditions = {
+        "ntData.TrackTime": { $gte: fromDate, $lte: toDate },
+        "ItemFlag": "V"
+    };
+
+    // if (vehicleNos?.length > 0) {
+    //     matchConditions["ItemMaster.VehicleNo"] = { $in: vehicleNos };
+    // }
+
+    // if (deptIds.length > 0) {
+    //     matchConditions["EmpMaster.EmpDeptId"] = { $in: deptIds };
+    // }
+
+    const results = await NT.aggregate([
+      {
+        $match: {
+          TrackTime: {
+            $gte: fromDate,
+            // Replace with @FuelDateFrom
+            $lte: toDate // Replace with @FuelDateTo
+          },
+          speed: {
+            $gt: 12
+          },
+          acc: false
+        }
+      },
+      {
+        $lookup: {
+          from: "ItemMaster",
+          localField: "devid",
+          foreignField: "devid",
+          as: "item"
+        }
+      },
+      {
+        $unwind: "$item"
+      },
+      {
+        $match: {
+          "item.ItemFlag": "V"
+        }
+      },
+      {
+        $lookup: {
+          from: "EmpMaster",
+          localField: "item.EmpId",
+          foreignField: "Empid",
+          as: "emp"
+        }
+      },
+      {
+        $unwind: {
+          path: "$emp",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: "Department",
+          localField: "emp.EmpDeptId",
+          foreignField: "DepartmentId",
+          as: "dept"
+        }
+      },
+      {
+        $unwind: {
+          path: "$dept",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+     
+      // {
+      //   $match: {
+      //     $or: [
+      //       {
+      //         "item.VehicleNo": {
+      //           $in: ["Vehicle1", "Vehicle2"]
+      //         }
+      //       },
+      // Replace with @VehicleNos
+      //       {
+      //         "emp.EmpDeptId": {
+      //           $in: [101, 102]
+      //         }
+      //       } // Replace with @DeptIds
+      //     ]
+      //   }
+      // }
+
+      {
+        $sort: {
+          trackTime: -1,
+          vehicleNo: 1
+        }
+      },
+      {
+        $group: {
+          _id: {
+            trackTime: "$TrackTime",
+            devid: "$devid"
+          },
+          trackTime: {
+            $first: "$TrackTime"
+          },
+          devid: {
+            $first: "$devid"
+          },
+          vehicleNo: {
+            $first: "$item.VehicleNo"
+          },
+          deptId: {
+            $first: "$emp.EmpDeptId"
+          },
+          departmentName: {
+            $first: "$dept.DepartmentName"
+          }
+        }
+      },
+      
+      {
+        $project: {
+        _id: 0,
+        // trackTime: 1,
+        // devid: 1,
+        // vehicleNo: 1,
+        // deptId: 1,
+        // departmentName: 1,
+
+      }
+    }
+    ])
+    return res.json(results);
+} catch (error) {
+  console.error("Error in getFuelWireTamp:", error);
+  return next(new ApiErrorResponse(error.message, error.StatusCode || StatusCodes.BAD_REQUEST));
+}
 }
 
 //-----------VehicleFuelConsumenew-------->
