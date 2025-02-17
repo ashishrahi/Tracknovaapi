@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
 import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
@@ -354,7 +354,7 @@ async function GetDevTamp(req, res, next) {
       }
     }
     ])
-    return res.json(results);
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, results));
 } catch (error) {
   console.error("Error in getFuelWireTamp:", error);
   return next(new ApiErrorResponse(error.message, error.StatusCode || StatusCodes.BAD_REQUEST));
