@@ -1,5 +1,6 @@
 import {VehicleFuelDateRangePipeline} from '../utils/DBQueries/index.js'
 import { StatusCodes } from 'http-status-codes';
+import formattedData from '../utils/dotnet-like-format/dotnetLikeData.js';
 
 async function VehicleFuelDateRange(req, res, next) {
 
@@ -7,7 +8,7 @@ async function VehicleFuelDateRange(req, res, next) {
 
   const filter = req.body;
   const fuelComsumed = await VehicleFuelDateRangePipeline.VehicleFuelDateRange(filter)
-  const data = formattedData(fuelComsumed?.Data)
+  const data = formattedData(fuelComsumed?.data)
   
   if (filter.Show) {
     return res.status(StatusCodes.OK).json(data)
