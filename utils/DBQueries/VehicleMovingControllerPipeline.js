@@ -6,12 +6,11 @@ async function trackDetailsNT(trackFilter) {
 
     // console.log("Filter", trackFilter)
     
-    let results = await SummaryNT.find(trackFilter);
-    // console.log("results", results)
-
+    let results = await SummaryNT.find(trackFilter).lean();
+    // console.log(results, "results")
    
     // Process records similar to SQL updates
-    results = results.map((doc) => {
+    results = results?.map((doc) => {
       if (doc.StartLoc === "demo") doc.StartLoc = "";
       if (doc.EndLoc === "demo") doc.EndLoc = "";
       if (doc.DistanceKM === 0 && doc.RunningTime === 0 && doc.IdleTime === 0) {
@@ -19,6 +18,7 @@ async function trackDetailsNT(trackFilter) {
         doc.EndTime = "";
       }
       doc.FuelBalance = (doc.FuelAlloted || 0) - (doc.FuelConsumption || 0);
+
      return doc;
     });
 
