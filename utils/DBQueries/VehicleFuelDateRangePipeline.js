@@ -1,78 +1,4 @@
-<<<<<<< HEAD
-import { trackDetailsNT } from "../../utils/DBQueries/VehicleMovingControllerPipeline.js";
-import { ItemMaster } from "../../modals/index.js";
 
-async function VehicleFuelDateRange(filter) {
-    try {
-        const { date1, date2, list1, listInt1, Flag } = filter;
-
-        // Convert dates properly
-        const d1 = new Date(date1);
-        const d2 = new Date(date2);
-
-        if (isNaN(d1.getTime()) || isNaN(d2.getTime())) {
-            throw new Error("Invalid date format");
-        }
-
-        const matchStage = {
-            $match: {
-                trackDate: { $gte: d1, $lte: d2 },
-                ...(Flag ? {} : { vehicleNo: { $in: list1 } }),
-                ...(Flag ? {} : { vehicleType: { $in: listInt1 } })
-            }
-        };
-
-        const aggregationPipeline = [
-            matchStage,
-            {
-                $lookup: {
-                    from: "itemmasters",
-                    localField: "vehicleNo",
-                    foreignField: "vehicleno",
-                    as: "vehicleDetails"
-                }
-            },
-            {
-                $unwind: {
-                    path: "$vehicleDetails",
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $group: {
-                    _id: "$vehicleNo",
-                    vehicleName: { $first: "$vehicleDetails.itemname" },
-                    trackDates: { $push: "$trackDate" },
-                    totalFuelAlloted: { $sum: { $toDouble: "$fuelAlloted" } },
-                    totalFuelConsumption: { $sum: { $toDouble: "$fuelConsumption" } },
-                    totalDays: { $sum: 1 },
-                    avgKmPerLitre: { $avg: "$KmPerLitre" },
-                    avgLitrePerHr: { $avg: "$LitrePerHr" },
-                    maxSpeed: { $max: "$MaxSpeed" }
-                }
-            },
-            {
-                $project: {
-                    vehicleNo: "$_id",
-                    vehicleName: 1,
-                    totalFuelAlloted: 1,
-                    totalFuelConsumption: 1,
-                    totalDays: 1,
-                    avgKmPerLitre: 1,
-                    avgLitrePerHr: 1,
-                    maxSpeed: 1
-                }
-            }
-        ];
-
-        const results = await TrackDetailModel.aggregate(aggregationPipeline);
-
-        return results;
-    } catch (error) {
-        console.error("Error fetching vehicle fuel data:", error.message);
-        return { error: error.message };
-    }
-=======
 import { trackDetailsNT } from '../../utils/DBQueries/VehicleMovingControllerPipeline.js';
 import { ItemMaster } from '../../modals/index.js';
 import moment from 'moment';
@@ -105,11 +31,9 @@ async function VehicleFuelDateRange(filter) {
 
     // Fetch track details (same as before)
     const lisret1 = await trackDetailsNT(queryConditions);
-    console.log('lisret1:', lisret1); // Debug: Check if track details are fetched correctly.
 
     // Get vehicle information (same as before)
     const vehitm = await ItemMaster.find({ ItemFlag: 'V' }).lean();
-    console.log('ItemMaster:', vehitm); // Debug: Check if vehicle info is fetched correctly.
 
     // Enrich with vehicle names (same as before)
     lisret1.forEach(item => {
@@ -157,14 +81,11 @@ async function VehicleFuelDateRange(filter) {
       });
     });
 
-    console.log('vehicleGroups:', vehicleGroups); // Debug: Check the aggregated vehicle data.
-
     // Map the vehicle data to listVehtrk
     const listVehtrk = Object.values(vehicleGroups).map(vehicleData => {
       const details = vehicleData.Details;
 
       if (!details || details.length === 0) {
-        console.log(`No details for vehicle ${vehicleData.VehicleNo}`);
         return null; // Return null if no details exist
       }
 
@@ -212,8 +133,6 @@ async function VehicleFuelDateRange(filter) {
       return aggregate;
     }).filter(item => item !== null); // Filter out null values
 
-    console.log('listVehtrk:', listVehtrk); // Debug: Check if the final list is populated correctly.
-
     // Format dates (same as before)
     listVehtrk.forEach(item => {
       item.TrackDate = moment(item.TrackDate).startOf('day').toDate();
@@ -226,13 +145,12 @@ async function VehicleFuelDateRange(filter) {
     };
 
   } catch (ex) {
-    console.error('Error in VehicleFuelDateRange:', ex.message);
     return {
       status: 'failed',
       message: ex.message
     };
   }
->>>>>>> ashish
+
 }
 
 export { VehicleFuelDateRange };
