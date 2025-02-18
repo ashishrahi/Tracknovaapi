@@ -1,3 +1,12 @@
+/**
+ * The function `fn` takes a string as input, capitalizes the first letter of each word, and returns
+ * the modified string.
+ * @param value - The function `fn` takes a string as input and capitalizes the first letter of each
+ * word while converting the rest of the letters to lowercase.
+ * @returns The function `fn` takes a string as input, splits it into words, capitalizes the first
+ * letter of each word, converts the rest of the word to lowercase, and then joins the words back into
+ * a single string.
+ */
 // db.nt.aggregate([
 //     {
 //       $lookup: {
@@ -105,45 +114,67 @@ const fn = (value) => {
 
 console.log(fn("weferg erfergr errgvreg"));
 
-set: (value) => {
-  return value
-    .split(" ") // Split string into words
-    .map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ) // Capitalize each word
-    .join(" ");
-}
+// set: (value) => {
+//   return value
+//     .split(" ") // Split string into words
+//     .map(
+//       (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+//     ) // Capitalize each word
+//     .join(" ");
+// }
 
 
-const correctKey = Object.keys({hello: "sdc"}).map(key => key.charAt(0).toUpperCase() + key.slice(2, key.length))
+// const correctKey = Object.keys({hello: "sdc"}).map(key => key.charAt(0).toUpperCase() + key.slice(2, key.length))
 
-console.log(correctKey);
+// console.log(correctKey);
 
-console.log(crypto.randomUUID())
+// console.log(crypto.randomUUID())
 
-const arr = [{UserId: 1}, {UserId:2}]
+// const arr = [{UserId: 1}, {UserId:2}]
 
-//  arr.map((perm) => (perm.UserId = 5));
+// //  arr.map((perm) => (perm.UserId = 5));
 
-let game = arr.map((perm) => (perm.UserId = 5));
+// let game = arr.map((perm) => (perm.UserId = 5));
 
-console.log(game);
-console.log("old", arr)
+// console.log(game);
+// console.log("old", arr)
 
 
 // Convert first letter of each key to lowercase for every object in the array
-const response = data.map((obj) => {
-  let newObj = {};
-  Object.keys(obj).forEach((key) => {
-    let newKey = key.charAt(0).toLowerCase() + key.slice(1);
-    newObj[newKey] = obj[key];
-  });
-  return newObj;
+// const response = data.map((obj) => {
+//   let newObj = {};
+//   Object.keys(obj).forEach((key) => {
+//     let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+//     newObj[newKey] = obj[key];
+//   });
+//   return newObj;
+// });
+
+
+
+// console.log(new Date(1734201000000))
+
+
+
+const vehitm = [
+  { VehicleNo: 'ABC123', ItemName: 'Truck' },
+  { VehicleNo: 'XYZ789', ItemName: 'Bus' }
+];
+
+const lisret1 = [
+  { VehicleNo: 'ABC123', VehicleName: '' },
+  { VehicleNo: 'XYZ789', VehicleName: '' },
+  { VehicleNo: 'LMN456', VehicleName: '' } // Doesn't match any VehicleNo
+];
+
+// Update VehicleName in lisret1
+lisret1.forEach(item => {
+  const vehicle = vehitm.find(v => v.VehicleNo === item.VehicleNo);
+  item["testing"] = vehicle ? vehicle.ItemName : ''; // If no match, set empty string
 });
 
+console.log("lisret1", lisret1);
 
-
-console.log(new Date(1734201000000))
 
 
 

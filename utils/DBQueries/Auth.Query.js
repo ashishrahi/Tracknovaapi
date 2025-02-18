@@ -749,7 +749,7 @@ export const GetRolePermissionMasterQuery = async (modal) => {
   try {
     const { roleId } = modal;
 
-    if (roleId === -1) {
+    if (roleId === "-1") {
       const data = await RolePermission.find({}).lean();
       const roleList = data.map((role)=>{
         return{
@@ -761,7 +761,8 @@ export const GetRolePermissionMasterQuery = async (modal) => {
           isPost:role.IsPost,
           isPrint:role.IsPrint,
           isRelease:role.IsRelease,
-          isView:role.IsView
+          isView:role.IsView,
+          menuName:role.MenuName
         }
       })
 
@@ -783,7 +784,9 @@ export const GetRolePermissionMasterQuery = async (modal) => {
         isPost:data.IsPost,
         isPrint:data.IsPrint,
         isRelease:data.IsRelease,
-        isView:data.IsView
+        isView:data.IsView,
+        menuName:role.MenuName
+
       }
       return {
         isSuccess: true,
