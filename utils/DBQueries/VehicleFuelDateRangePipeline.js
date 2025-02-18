@@ -30,11 +30,11 @@ async function VehicleFuelDateRange(filter) {
 
     // Fetch track details (same as before)
     const lisret1 = await trackDetailsNT(queryConditions);
-    console.log('lisret1:', lisret1); // Debug: Check if track details are fetched correctly.
+    // console.log('lisret1:', lisret1); // Debug: Check if track details are fetched correctly.
 
     // Get vehicle information (same as before)
     const vehitm = await ItemMaster.find({ ItemFlag: 'V' }).lean();
-    console.log('ItemMaster:', vehitm); // Debug: Check if vehicle info is fetched correctly.
+    // console.log('ItemMaster:', vehitm); // Debug: Check if vehicle info is fetched correctly.
 
     // Enrich with vehicle names (same as before)
     lisret1.forEach(item => {
@@ -82,14 +82,14 @@ async function VehicleFuelDateRange(filter) {
       });
     });
 
-    console.log('vehicleGroups:', vehicleGroups); // Debug: Check the aggregated vehicle data.
+    // console.log('vehicleGroups:', vehicleGroups); // Debug: Check the aggregated vehicle data.
 
     // Map the vehicle data to listVehtrk
     const listVehtrk = Object.values(vehicleGroups).map(vehicleData => {
       const details = vehicleData.Details;
 
       if (!details || details.length === 0) {
-        console.log(`No details for vehicle ${vehicleData.VehicleNo}`);
+        // console.log(`No details for vehicle ${vehicleData.VehicleNo}`);
         return null; // Return null if no details exist
       }
 
@@ -137,7 +137,7 @@ async function VehicleFuelDateRange(filter) {
       return aggregate;
     }).filter(item => item !== null); // Filter out null values
 
-    console.log('listVehtrk:', listVehtrk); // Debug: Check if the final list is populated correctly.
+    // console.log('listVehtrk:', listVehtrk); // Debug: Check if the final list is populated correctly.
 
     // Format dates (same as before)
     listVehtrk.forEach(item => {
@@ -151,7 +151,7 @@ async function VehicleFuelDateRange(filter) {
     };
 
   } catch (ex) {
-    console.error('Error in VehicleFuelDateRange:', ex.message);
+    // console.error('Error in VehicleFuelDateRange:', ex.message);
     return {
       status: 'failed',
       message: ex.message
