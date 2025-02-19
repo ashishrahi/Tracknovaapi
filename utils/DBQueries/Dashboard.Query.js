@@ -102,39 +102,41 @@ export const getVehicleQuery = async (vehicleNo) => {
       },
       {
         $project: {
-          'itemMasterDetails.VehicleNo': 1,
-          'itemMasterDetails.Departmentname': 1,
-          'itemMasterDetails.empName': 1,
-          'itemMasterDetails.ignition': 1,
-          'itemMasterDetails.ZoneName': 1,
-          'itemMasterDetails.VehicleTypename': 1,
-          'itemMasterDetails.Zoneid': 1,
+          "_id": 0,
+          id: 1,
+          "vehicleNo": '$itemMasterDetails.VehicleNo',
+          "departmentname": '$itemMasterDetails.Departmentname',
+          "empName": '$itemMasterDetails.empName',
+          "ignition": '$itemMasterDetails.ignition',
+          "zoneName": '$itemMasterDetails.ZoneName',
+          "vehicleTypename": '$itemMasterDetails.VehicleTypename',
+          "zoneid": '$itemMasterDetails.Zoneid',
           distance: { $toDouble: '$Longitude' },
-          TrackTime: 1,
-          Longitude: { $toDouble: '$Longitude' }, 
-          Lattitude: { $toDouble: '$Lattitude' },
+          "trackTime": "$TrackTime",
+          longitude: { $toDouble: '$Longitude' }, 
+          localStorageattitude: { $toDouble: '$Lattitude' },
           speed: 1,
           devid: 1,
-          BinVisited: 1,
+          "binVisited": "$BinVisited",
           acc: 1,
           pos: 1,
           overspeed: 1,
-          StateInfo: 1,
+          "stateInfo": "$StateInfo",
           nearme: 1,
-          SecondsRun: 1,
+          "secondsRun": "$SecondsRun",
           speedDecimal: { $toDouble: '$speedDecimal' },
           currtime1: 1,
           description: 1,
-          AreaId: 1,
-          SecondsIdle: 1,
-          SecondsStop: 1,
-          Secondsrunv: 1,
-          Flag: 1,
-          NTId: 1,
-          TrackDate: 1
+          "areaId": "$AreaId",
+          "secondsIdle": "$SecondsIdle",
+          "secondsStop": "$SecondsStop",
+          "secondsrunv": "$Secondsrunv",
+          "flag": "$Flag",
+          "nTId": "$NTId",
+          "trackDate": "$TrackDate"
         }
       },
-      { $sort: { TrackTime: 1 } }
+      { $sort: { trackTime: 1 } }
     ]);
 
     let retDat = [];
@@ -147,7 +149,7 @@ export const getVehicleQuery = async (vehicleNo) => {
         start = false;
         continue;
       }
-      if (item.distance - distance >= 0.5) {
+      if ((item.distance - distance) >= 0.5) {
         distance = item.distance;
         retDat.push(item);
       }
