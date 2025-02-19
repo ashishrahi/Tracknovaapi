@@ -3,7 +3,6 @@ import { StatusCodes } from "http-status-codes";
 export function GetPeriods(req, res, next){
     let periods = [];
     const model = req.query;
-    console.log(model)
     if (model.daysOnly === "false" && model.type === "Period") {
         periods = [
             { index: 1, startDate: new Date(Date.now() - 3600000), endDate: new Date(), daysOnly: false, displayLabel: "Last 1 Hour" },

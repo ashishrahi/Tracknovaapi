@@ -36,24 +36,24 @@ export async function getDashboard(req, res) {
 //-----------------getVehicleCurrentDay --------------->
 
 export async function getVehicleCurrentDay(req, res) {
-  const vehicleNo = req.body.vehicleno;
+  const vehicleNo = req.body.parameterValues[0];
 
   try {
     const retDat = await getVehicleQuery(vehicleNo);
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
+    const successResponse = new CommonResponse(
+      1,
       "VehicleCurrentDay data fetched successfully",
-      retDat
+      retDat,
+      retDat.length
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       false,
       StatusCodes.NOT_FOUND,
-      "Failed to fetch vehicle current day"
+      error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(StatusCodes.NOT_FOUND,).json(errorResponse);
   }
 }
 //-------------- getVehicleDistance ------>
