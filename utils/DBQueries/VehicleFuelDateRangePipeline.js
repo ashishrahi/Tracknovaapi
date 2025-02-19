@@ -32,7 +32,6 @@ async function VehicleFuelDateRange(filter) {
     // Fetch track details (same as before)
     const lisret1 = await trackDetailsNT(queryConditions);
 
-    // Get vehicle information (same as before)
     const vehitm = await ItemMaster.find({ ItemFlag: 'V' }).lean();
 
     // Enrich with vehicle names (same as before)
