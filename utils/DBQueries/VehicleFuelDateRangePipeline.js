@@ -32,7 +32,6 @@ async function VehicleFuelDateRange(filter) {
     // Fetch track details (same as before)
     const lisret1 = await trackDetailsNT(queryConditions);
 
-    // Get vehicle information (same as before)
     const vehitm = await ItemMaster.find({ ItemFlag: 'V' }).lean();
 
     // Enrich with vehicle names (same as before)
@@ -81,13 +80,14 @@ async function VehicleFuelDateRange(filter) {
       });
     });
 
+
     // Map the vehicle data to listVehtrk
     const listVehtrk = Object.values(vehicleGroups).map(vehicleData => {
       const details = vehicleData.Details;
 
       if (!details || details.length === 0) {
         return null; // Return null if no details exist
-      }
+       }
 
       const aggregate = {
         VehicleNo: vehicleData.VehicleNo,
@@ -137,9 +137,6 @@ async function VehicleFuelDateRange(filter) {
     listVehtrk.forEach(item => {
       item.TrackDate = moment(item.TrackDate).startOf('day').toDate();
     });
-
-    // console.log('Formatted listVehtrk:', listVehtrk); // Debug: Final formatted data.
-
     return {
       data: listVehtrk
     };
