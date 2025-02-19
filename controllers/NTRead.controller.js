@@ -21,7 +21,7 @@ async function sample(req, res, next) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json(
-          new ApiErrorResponse(true,StatusCodes.NOT_FOUND, "Devid is must needed.")
+          new ApiErrorResponse(true, StatusCodes.NOT_FOUND, "Devid is must needed.")
         );
     }
 
@@ -49,7 +49,7 @@ async function sample(req, res, next) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ReturnData(true, true, "No data found",null, [])
+          new ReturnData(true, true, "No data found", null, [])
         );
     }
 
@@ -65,7 +65,7 @@ async function sample(req, res, next) {
         )
       );
   } catch (error) {
-   
+
     const err = new Error(error.message);
     err.status = StatusCodes.BAD_REQUEST;
     return next(err);
@@ -85,7 +85,7 @@ async function SmpCurr(req, res) {
     today.setHours(0, 0, 0, 0); // doing it so that only time portion set to 0000, only date is needed
 
     if (currentDay.getTime() === today.getTime()) {
-     
+
       const result = await NTCurrentDay.aggregate([
         {
           $sort: { TrackTime: -1 },
@@ -111,7 +111,7 @@ async function SmpCurr(req, res) {
         Longitude: doc.Longitude || null,
         nearme: doc.nearme || null,
       }));
- const response = formattedData(mappedResult)
+      const response = formattedData(mappedResult)
       return res
         .status(StatusCodes.OK)
         .json(
@@ -125,7 +125,7 @@ async function SmpCurr(req, res) {
         );
     } else {
       // If `currDay` is not today, query NT collection
-     
+
       const result = await NT.aggregate([
         {
           $match: {
@@ -197,141 +197,141 @@ async function SmpCurr(req, res) {
 //-------------Geofence----------->
 async function Geofence(req, res) {
 
- try {
-   const {FenceId, FenceName, dateSaveFr, dateSaveTo} = req.body;
- 
-   let filter = {};
- 
-         if (FenceId) {
-             filter.FenceId = FenceId; // Exact match
-         }
-         if (FenceName) {
-             filter.FenceName = { $regex: new RegExp(FenceName, "i") }; // Case-insensitive match
-         }
-         if (dateSaveFr) {
-             filter.dateSaveFr = { ...filter.dateSaveFr, $gte: new Date(dateSaveFr) }; // Date >= DateSaveFr
-         }
-         if (dateSaveTo) {
-             filter.dateSaveTo = { ...filter.dateSaveTo, $lte: new Date(dateSaveTo) }; // Date <= DateSaveTo
-         }
- 
-         // Step 2: Query the Geofencing collection
-         const geofencingData = await Geofencing.find(filter);
-       const response = formattedData(geofencingData)
-         // Step 3: Return response
-         return res.status(StatusCodes.OK).json(new ReturnData(true, true,"Data Feteched Successfully",null, response));
-         
- } catch (error) {
+  try {
+    const { FenceId, FenceName, dateSaveFr, dateSaveTo } = req.body;
+
+    let filter = {};
+
+    if (FenceId) {
+      filter.FenceId = FenceId; // Exact match
+    }
+    if (FenceName) {
+      filter.FenceName = { $regex: new RegExp(FenceName, "i") }; // Case-insensitive match
+    }
+    if (dateSaveFr) {
+      filter.dateSaveFr = { ...filter.dateSaveFr, $gte: new Date(dateSaveFr) }; // Date >= DateSaveFr
+    }
+    if (dateSaveTo) {
+      filter.dateSaveTo = { ...filter.dateSaveTo, $lte: new Date(dateSaveTo) }; // Date <= DateSaveTo
+    }
+
+    // Step 2: Query the Geofencing collection
+    const geofencingData = await Geofencing.find(filter);
+    const response = formattedData(geofencingData)
+    // Step 3: Return response
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Feteched Successfully", null, response));
+
+  } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
- }
+  }
 
 }
 
 //-------------NTCurrent----------->
 async function NTCurrent(req, res) {
   // const { devids } = req.query;
-  const devids = null; 
+  const devids = null;
   const latestRecords = await NTCurrentDay.aggregate([
     {
-        $match: devids ? { devid: { $in: devids } } : {} // Filter if devids provided
+      $match: devids ? { devid: { $in: devids } } : {} // Filter if devids provided
     },
     {
-        $sort: { TrackTime: -1 } // Sort by TrackTime descending
+      $sort: { TrackTime: -1 } // Sort by TrackTime descending
     },
     {
-        $group: {
-            _id: "$devid",
-            latest: { $first: "$$ROOT" } // Get the latest record per device
-        }
+      $group: {
+        _id: "$devid",
+        latest: { $first: "$$ROOT" } // Get the latest record per device
+      }
     },
     {
-        $replaceRoot: { newRoot: "$latest" } // Flatten the result
+      $replaceRoot: { newRoot: "$latest" } // Flatten the result
     }
   ])
 
-    // Step 2: Extract Unique Device IDs
-    const devidsNt = latestRecords.map(d => d.devid);
-    
-// return res.json({devidsNt : devidsNt});
-     // Step 3: Perform Joins (Lookups)
-     const result = await ItemMaster.aggregate([
-      {
-          $match: { devid: { $in: devidsNt } } // Match only relevant devices
-      },
-      {
-          $lookup: {
-              from: "VehicleTypeMaster",
-              localField: "VehicleTypeId",
-              foreignField: "VehicleTypeId",
-              as: "vehicleType"
-          }
-      },
-      { $unwind: { path: "$vehicleType", preserveNullAndEmptyArrays: true } },
-      {
-          $lookup: {
-              from: "EmpMaster",
-              // localField: "EmpDeptId",
-              localField: "EmpId",
-              foreignField: "Empid",
-              as: "employee"
-          }
-      },
-      { $unwind: { path: "$employee", preserveNullAndEmptyArrays: true } },
-      {
-          $lookup: {
-              from: "Department",
-              localField: "employee.EmpDeptId",
-              foreignField: "DepartmentId",
-              as: "department"
-          }
-      },
-      { $unwind: { path: "$department", preserveNullAndEmptyArrays: true } },
-      {
-          $project: {
-              ItemMasterId: 1,
-              ItemName: 1,
-              KmPerLitre: 1,
-              LitrePerHr: 1,
-              VehicleNo: 1,
-              DepartmentName: "$department.DepartmentName",
-              EmpDeptId: "$employee.EmpDeptId",
-              EmpName: "$employee.EmpName",
-              devid: 1,
-              VehicleTypeId: 1,
-              VehicleTypename: "$vehicleType.VehicleTypename"
-          }
+  // Step 2: Extract Unique Device IDs
+  const devidsNt = latestRecords.map(d => d.devid);
+
+  // return res.json({devidsNt : devidsNt});
+  // Step 3: Perform Joins (Lookups)
+  const result = await ItemMaster.aggregate([
+    {
+      $match: { devid: { $in: devidsNt } } // Match only relevant devices
+    },
+    {
+      $lookup: {
+        from: "VehicleTypeMaster",
+        localField: "VehicleTypeId",
+        foreignField: "VehicleTypeId",
+        as: "vehicleType"
       }
-    ]);
+    },
+    { $unwind: { path: "$vehicleType", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "EmpMaster",
+        // localField: "EmpDeptId",
+        localField: "EmpId",
+        foreignField: "Empid",
+        as: "employee"
+      }
+    },
+    { $unwind: { path: "$employee", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "Department",
+        localField: "employee.EmpDeptId",
+        foreignField: "DepartmentId",
+        as: "department"
+      }
+    },
+    { $unwind: { path: "$department", preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        ItemMasterId: 1,
+        ItemName: 1,
+        KmPerLitre: 1,
+        LitrePerHr: 1,
+        VehicleNo: 1,
+        DepartmentName: "$department.DepartmentName",
+        EmpDeptId: "$employee.EmpDeptId",
+        EmpName: "$employee.EmpName",
+        devid: 1,
+        VehicleTypeId: 1,
+        VehicleTypename: "$vehicleType.VehicleTypename"
+      }
+    }
+  ]);
 
-    // Step 4: Map Latest Records to Vehicle Data
-    const vehicleMap = new Map(result.map(v => [v.devid, v]));
-    const ntSummary = latestRecords.map(d => {
-        const vehicle = vehicleMap.get(d.devid) || {};
-        return {
-            id: d._id,
-            tracktime: d.TrackTime,
-            trackdate: d.TrackDate,
-            speed: d.speed,
-            Lattitude: d.Lattitude,
-            Longitude: d.Longitude,
-            nearme: d.nearme,
-            devid: d.devid,
-            distance: d.distance,
-            Ignition: d.acc ? "On" : "Off",
-            Flag: !d.acc && d.speed === 0 ? "Stopped" : d.acc && d.speed > 0 ? "Running" : "Idle",
-            vehicleno: vehicle.VehicleNo || "",
-            Departmentname: vehicle.DepartmentName || "",
-            EmpName: vehicle.EmpName || "",
-            KmPerLitre: vehicle.KmPerLitre || "",
-            LitrePerHr: vehicle.LitrePerHr || "",
-            VehicleTypeId: vehicle.VehicleTypeId || "",
-            VehicleTypename: vehicle.VehicleTypename || ""
-        };
-    });
+  // Step 4: Map Latest Records to Vehicle Data
+  const vehicleMap = new Map(result.map(v => [v.devid, v]));
+  const ntSummary = latestRecords.map(d => {
+    const vehicle = vehicleMap.get(d.devid) || {};
+    return {
+      id: d._id,
+      tracktime: d.TrackTime,
+      trackdate: d.TrackDate,
+      speed: d.speed,
+      Lattitude: d.Lattitude,
+      Longitude: d.Longitude,
+      nearme: d.nearme,
+      devid: d.devid,
+      distance: d.distance,
+      Ignition: d.acc ? "On" : "Off",
+      Flag: !d.acc && d.speed === 0 ? "Stopped" : d.acc && d.speed > 0 ? "Running" : "Idle",
+      vehicleno: vehicle.VehicleNo || "",
+      Departmentname: vehicle.DepartmentName || "",
+      EmpName: vehicle.EmpName || "",
+      KmPerLitre: vehicle.KmPerLitre || "",
+      LitrePerHr: vehicle.LitrePerHr || "",
+      VehicleTypeId: vehicle.VehicleTypeId || "",
+      VehicleTypename: vehicle.VehicleTypename || ""
+    };
+  });
   const response = formattedData(ntSummary)
-    return res.status(StatusCodes.OK).json(true,true,"Data Fetched Successfully",null, response);
+  return res.status(StatusCodes.OK).json(true, true, "Data Fetched Successfully", null, response);
 
-    
+
 
 }
 
@@ -424,7 +424,7 @@ async function VehCurrStat(req, res) {
     .status(StatusCodes.OK)
     .json(
       new ReturnData(
-        true, true, 
+        true, true,
         "Data fetched successfully",
         null,
         stat
@@ -434,303 +434,285 @@ async function VehCurrStat(req, res) {
 
 //-------------GetDashData----------->
 async function GetDashData(req, res) {
- try {
-   const {fencId, fenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo} = req.body;
-  //  Step 1: Fetch Geofencing data
-  let filter = {};
- 
-  if (fencId) {
+  try {
+    const { fencId, fenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo } = req.body;
+    //  Step 1: Fetch Geofencing data
+    let filter = {};
+
+    if (fencId) {
       filter.FenceId = fencId; // Exact match
-  }
-  if (fenceName) {
+    }
+    if (fenceName) {
       filter.FenceName = { $regex: new RegExp(fenceName, "i") }; // Case-insensitive match
-  }
-  // if (dateSaveFr) {
-  //     filter.dateSaveFr = { ...filter.dateSaveFr, $gte: new Date(dateSaveFr) }; // Date >= DateSaveFr
-  // }
-  // if (dateSaveTo) {
-  //     filter.dateSaveTo = { ...filter.dateSaveTo, $lte: new Date(dateSaveTo) }; // Date <= DateSaveTo
-  // }
+    }
+    // if (dateSaveFr) {
+    //     filter.dateSaveFr = { ...filter.dateSaveFr, $gte: new Date(dateSaveFr) }; // Date >= DateSaveFr
+    // }
+    // if (dateSaveTo) {
+    //     filter.dateSaveTo = { ...filter.dateSaveTo, $lte: new Date(dateSaveTo) }; // Date <= DateSaveTo
+    // }
 
-  // Step 2: Query the Geofencing collection
-  const geofencingData = await Geofencing.find(filter);
-  
-  // converting data to json format
-  const formattedDataa = geofencingData.map(item => item.toJSON());
+    // Step 2: Query the Geofencing collection
+    const geofencingData = await Geofencing.find(filter);
 
-  const formattedGeoFence = formattedData(formattedDataa)
- 
-   let devs = [];
-   let dret = []
-   let NtcurrentData 
-   // Step 2: Fetch Device IDs based on conditions
-   if (lsVehType?.length === 0 && lsVehNos?.length === 0) {
-       // Case 1: No vehicle type or numbers specified → Get all NTCurrent data
-       dret = await NTCurrentPipeline();
-   } else if (lsVehType?.length > 0 && lsVehNos?.length === 0) {
-       // Case 2: Filter by vehicle type
-       devs = await ItemMaster
-           .find({ VehicleTypeId: { $in: lsVehType } }, { projection: { devid: 1 } })
-       devs = devs.map(d => d.devid);
-       dret = await NTCurrentPipeline(devs);
-   } else {
-       // Case 3: Filter by vehicle numbers
-       devs = await ItemMaster
-           .find({ VehicleNo: { $in: lsVehNos }  })
-           
-           // console.log("devs", devs)
-       devs = devs.map(d => d.devid);
-       dret = await NTCurrentPipeline(devs);
-       NtcurrentData  = formattedData(dret)
+    // converting data to json format
+    const formattedDataa = geofencingData.map(item => item.toJSON());
+
+    const formattedGeoFence = formattedData(formattedDataa)
+
+    let devs = [];
+    let dret = []
+    let NtcurrentData
+    // Step 2: Fetch Device IDs based on conditions
+    if (lsVehType?.length === 0 && lsVehNos?.length === 0) {
+      // Case 1: No vehicle type or numbers specified → Get all NTCurrent data
+      dret = await NTCurrentPipeline();
+    } else if (lsVehType?.length > 0 && lsVehNos?.length === 0) {
+      // Case 2: Filter by vehicle type
+      devs = await ItemMaster
+        .find({ VehicleTypeId: { $in: lsVehType } }, { projection: { devid: 1 } })
+      devs = devs.map(d => d.devid);
+      dret = await NTCurrentPipeline(devs);
+    } else {
+      // Case 3: Filter by vehicle numbers
+      devs = await ItemMaster
+        .find({ VehicleNo: { $in: lsVehNos } })
+
+      // console.log("devs", devs)
+      devs = devs.map(d => d.devid);
+      dret = await NTCurrentPipeline(devs);
+      NtcurrentData = formattedData(dret)
       //  console.log("dret", dret)
-   }
-   
-   // Step 3: Handle NTCurrent response
-   if (!dret) {
+    }
 
-       return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, true, "No data found", null ));
+    // Step 3: Handle NTCurrent response
+    if (!dret) {
 
-   }
- 
-   // Step 4: Construct response
-   return  res.status(StatusCodes.OK).json(new ReturnData(true, true, "fetched successfully",null ,{lisGeofencing: formattedGeoFence ,listNTSumm: NtcurrentData}))
-  
-   
- } catch (error) {
-  console.log(error)
+      return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, true, "No data found", null));
+
+    }
+
+    // Step 4: Construct response
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "fetched successfully", null, { lisGeofencing: formattedGeoFence, listNTSumm: NtcurrentData }))
+
+
+  } catch (error) {
+    console.log(error)
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
- }
+  }
 
 }
 
 //-------------getVehicleNotMoved----------->
 // Done
-async function getVehicleNotMoved(req, res) {
-  
-  // const client = new MongoClient('mongodb://localhost:27017');
-  //   await client.connect();
-  //   const db = client.db('your_database_name');
-    const model = req.body;
-    const dateFrom = new Date(model.dateFrom);
-    const dateTo = new Date(model.dateTo);
+async function getVehicleNotMoved(req, res, next) {
 
-    // const ntmv = await NT.aggregate([
-    //     {
-    //         $match: {
-    //             TrackTime: { $gte: dateFrom, $lte: dateTo },
-    //             acc: true
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: "$devid"
-    //         }
-    //     }
-    // ]);
-    // // console.log("ntmv: ",ntmv)
-    // const ntrec = await NT.aggregate([
-    //     {
-    //         $match: {
-    //             TrackTime: { $gte: dateFrom, $lte: dateTo }
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: "$devid"
-    //         }
-    //     }
-    // ])
-    // console.log("ntrec: ", ntrec)
-    const result = await NT.aggregate([
-      {
-          $match: {
-              TrackTime: { $gte: dateFrom, $lte: dateTo }
-          }
-      },
-      {
-          $group: {
-              _id: "$devid",
-              accTrueExists: { $max: { $cond: [{ $eq: ["$acc", true] }, 1, 0] } }
-          }
-      }
-  ]);
-  
-  // Separate values
-  const ntmv = result.filter(doc => doc.accTrueExists === 1).map(doc => ({ _id: doc._id }));
-  const ntrec = result.map(doc => ({ _id: doc._id }));
-    
-    
-    
-    // const vehs = await ItemMaster.aggregate([
-    //     {
-    //         $lookup: {
-    //             from: "EmpMaster",
-    //             localField: "EmpId",
-    //             foreignField: "Empid",
-    //             as: "emp"
-    //         }
-    //     },
-    //     {
-    //         $unwind: {
-    //             path: "$emp",
-    //             // preserveNullAndEmptyArrays: true
-    //         }
-    //     },
-    //     {
-    //         $lookup: {
-    //             from: "Department",
-    //             localField: "emp.EmpDeptId",
-    //             foreignField: "DepartmentId",
-    //             as: "dept"
-    //         }
-    //     },
-    //     {
-    //         $unwind: {
-    //             path: "$dept",
-    //             // preserveNullAndEmptyArrays: true
-    //         }
-    //     },
-    //     {
-    //         $match: {
-    //             "ItemFlag": { $regex: /^V$/i },
-    //             "devid": { $ne: null }
-    //         }
-    //     },
-    //     {
-    //         $project: {
-    //             devid: 1,
-    //             VehicleNo: 1,
-    //             ItemName: 1,
-    //             VehicleTypeId: 1,
-    //             VZoneID: 1,
-    //             EmpName: "$emp.EmpName",
-    //             DepartmentName: "$dept.DepartmentName",
-    //             EmpMobileNo: "$emp.EmpMobileNo"
-    //         }
-    //     }
-    // ])
-
-    // const vt = await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 });
-    // const zn = await ZoneMaster.find({},  { ZoneID: 1, ZoneName: 1, _id: 0 } );
-
-    // // console.log("vt", vt)
-    // let lsv = [];
-    // let sn = 1;
-    // // console.log("ntrec", ntrec)
-    // // console.log("vehs", vehs)
-    // vehs.forEach(v => {
-    //     let vn = {
-    //         DepartmentName: v.DepartmentName,
-    //         devid: v.devid,
-    //         VehicleNo: v.VehicleNo,
-    //         VehicleTypename: vt.find(t => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
-    //         EmpName: v.EmpName,
-    //         EmpMobileNo: v.EmpMobileNo,
-    //         ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
-    //     };
-       
-    //     const ntrecFnd = ntrec.find(s => s._id === v.devid);
-
-    //     if (!ntrecFnd) {
-    //         vn.SrNo = sn++;
-    //         vn.NTRecord = false;
-    //         lsv.push(vn);
-    //     } else {
-    //         const ntrecmv = ntmv.find(s => s._id === v.devid);
-    //         if (!ntrecmv) {
-    //             vn.SrNo = sn++;
-    //             vn.NTRecord = true;
-    //             lsv.push(vn);
-    //         }
-    //     }
-    // });
-
-    const vehs = await ItemMaster.aggregate([
-      {
-          $match: {
-              "ItemFlag": { $regex: /^V$/i },
-              "devid": { $ne: null }
-          }
-      },
-      {
-          $lookup: {
-              from: "EmpMaster",
-              localField: "EmpId",
-              foreignField: "Empid",
-              pipeline: [
-                  { $project: { EmpName: 1, EmpDeptId: 1, EmpMobileNo: 1, _id: 0 } }
-              ],
-              as: "emp"
-          }
-      },
-      { $unwind: { path: "$emp", preserveNullAndEmptyArrays: true } },
-      {
-          $lookup: {
-              from: "Department",
-              localField: "emp.EmpDeptId",
-              foreignField: "DepartmentId",
-              pipeline: [
-                  { $project: { DepartmentName: 1, _id: 0 } }
-              ],
-              as: "dept"
-          }
-      },
-      { $unwind: { path: "$dept", preserveNullAndEmptyArrays: true } },
-      {
-          $project: {
-              devid: 1,
-              VehicleNo: 1,
-              ItemName: 1,
-              VehicleTypeId: 1,
-              VZoneID: 1,
-              EmpName: "$emp.EmpName",
-              DepartmentName: "$dept.DepartmentName",
-              EmpMobileNo: "$emp.EmpMobileNo"
-          }
-      }
-  ]);
-  
-  // Fetch and create a Map for VehicleTypeMaster and ZoneMaster for quick lookup
-  const vtMap = new Map((await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 }))
-      .map(t => [t.VehicleTypeId, t.VehicleTypename]));
-  
-  const znMap = new Map((await ZoneMaster.find({}, { ZoneID: 1, ZoneName: 1, _id: 0 }))
-      .map(z => [z.ZoneID, z.ZoneName]));
-  
-  let lsv = [];
-  let sn = 1;
-  
-  // Process Vehicles
-  vehs.forEach(v => {
-      let vn = {
-          departmentName: v.DepartmentName,
-          devid: v.devid,
-          vehicleNo: v.VehicleNo,
-          vehicleTypename: vtMap.get(v.VehicleTypeId) || null,
-          empName: v.EmpName,
-          empMobileNo: v.EmpMobileNo,
-          zoneName: znMap.get(v.VZoneID) || null
-      };
-  
-      const ntrecFnd = ntrec.some(s => s._id === v.devid);
-  
-      if (!ntrecFnd) {
-          vn.srNo = sn++;
-          vn.ntRecord = false;
-          lsv.push(vn);
-      } else {
-          const ntrecmv = ntmv.some(s => s._id === v.devid);
-          if (!ntrecmv) {
-              vn.srNo = sn++;
-              vn.ntRecord = true;
-              lsv.push(vn);
-          }
-      }
-  });
-    // const data = formattedData(lsv)
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", lsv.length, lsv));
-
-
+ try {
+   // const client = new MongoClient('mongodb://localhost:27017');
+   //   await client.connect();
+   //   const db = client.db('your_database_name');
+   const model = req.body;
+   const dateFrom = new Date(model.dateFrom);
+   const dateTo = new Date(model.dateTo);
+   console.log("Start", new Date())
+ 
+   const [ntmv, ntrec] = await Promise.all([
+     NT.aggregate([
+       {
+         $match: {
+           TrackTime: { $gte: dateFrom, $lte: dateTo },
+           acc: true // Filter directly in DB
+         }
+       },
+       { $group: { _id: "$devid" } }
+     ]).hint({ TrackTime: 1, acc: 1, devid: 1 }),
+     NT.aggregate([
+       {
+         $match: {
+           TrackTime: { $gte: dateFrom, $lte: dateTo }
+         }
+       },
+       { $group: { _id: "$devid" } }
+     ]).hint({ TrackTime: 1, devid: 1 })
+   ]);
+ 
+   console.log("end", new Date())
+   if(!ntmv || !ntrec){
+     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Try Again. Internal Server Error")
+   }
+ 
+   // const vehs = await ItemMaster.aggregate([
+   //     {
+   //         $lookup: {
+   //             from: "EmpMaster",
+   //             localField: "EmpId",
+   //             foreignField: "Empid",
+   //             as: "emp"
+   //         }
+   //     },
+   //     {
+   //         $unwind: {
+   //             path: "$emp",
+   //             // preserveNullAndEmptyArrays: true
+   //         }
+   //     },
+   //     {
+   //         $lookup: {
+   //             from: "Department",
+   //             localField: "emp.EmpDeptId",
+   //             foreignField: "DepartmentId",
+   //             as: "dept"
+   //         }
+   //     },
+   //     {
+   //         $unwind: {
+   //             path: "$dept",
+   //             // preserveNullAndEmptyArrays: true
+   //         }
+   //     },
+   //     {
+   //         $match: {
+   //             "ItemFlag": { $regex: /^V$/i },
+   //             "devid": { $ne: null }
+   //         }
+   //     },
+   //     {
+   //         $project: {
+   //             devid: 1,
+   //             VehicleNo: 1,
+   //             ItemName: 1,
+   //             VehicleTypeId: 1,
+   //             VZoneID: 1,
+   //             EmpName: "$emp.EmpName",
+   //             DepartmentName: "$dept.DepartmentName",
+   //             EmpMobileNo: "$emp.EmpMobileNo"
+   //         }
+   //     }
+   // ])
+ 
+   // const vt = await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 });
+   // const zn = await ZoneMaster.find({},  { ZoneID: 1, ZoneName: 1, _id: 0 } );
+ 
+   // // console.log("vt", vt)
+   // let lsv = [];
+   // let sn = 1;
+   // // console.log("ntrec", ntrec)
+   // // console.log("vehs", vehs)
+   // vehs.forEach(v => {
+   //     let vn = {
+   //         DepartmentName: v.DepartmentName,
+   //         devid: v.devid,
+   //         VehicleNo: v.VehicleNo,
+   //         VehicleTypename: vt.find(t => t.VehicleTypeId === v.VehicleTypeId)?.VehicleTypename || null,
+   //         EmpName: v.EmpName,
+   //         EmpMobileNo: v.EmpMobileNo,
+   //         ZoneName: zn.find(z => z.ZoneID === v.VZoneID)?.ZoneName || null
+   //     };
+ 
+   //     const ntrecFnd = ntrec.find(s => s._id === v.devid);
+ 
+   //     if (!ntrecFnd) {
+   //         vn.SrNo = sn++;
+   //         vn.NTRecord = false;
+   //         lsv.push(vn);
+   //     } else {
+   //         const ntrecmv = ntmv.find(s => s._id === v.devid);
+   //         if (!ntrecmv) {
+   //             vn.SrNo = sn++;
+   //             vn.NTRecord = true;
+   //             lsv.push(vn);
+   //         }
+   //     }
+   // });
+ 
+   const vehs = await ItemMaster.aggregate([
+     {
+       $match: {
+         "ItemFlag": { $regex: /^V$/i },
+         "devid": { $ne: null }
+       }
+     },
+     {
+       $lookup: {
+         from: "EmpMaster",
+         localField: "EmpId",
+         foreignField: "Empid",
+         pipeline: [
+           { $project: { EmpName: 1, EmpDeptId: 1, EmpMobileNo: 1, _id: 0 } }
+         ],
+         as: "emp"
+       }
+     },
+     { $unwind: { path: "$emp", preserveNullAndEmptyArrays: true } },
+     {
+       $lookup: {
+         from: "Department",
+         localField: "emp.EmpDeptId",
+         foreignField: "DepartmentId",
+         pipeline: [
+           { $project: { DepartmentName: 1, _id: 0 } }
+         ],
+         as: "dept"
+       }
+     },
+     { $unwind: { path: "$dept", preserveNullAndEmptyArrays: true } },
+     {
+       $project: {
+         devid: 1,
+         VehicleNo: 1,
+         ItemName: 1,
+         VehicleTypeId: 1,
+         VZoneID: 1,
+         EmpName: "$emp.EmpName",
+         DepartmentName: "$dept.DepartmentName",
+         EmpMobileNo: "$emp.EmpMobileNo"
+       }
+     }
+   ]);
+ 
+   // Fetch and create a Map for VehicleTypeMaster and ZoneMaster for quick lookup
+   const vtMap = new Map((await VehicleTypeMaster.find({}, { VehicleTypeId: 1, VehicleTypename: 1, _id: 0 }))
+     .map(t => [t.VehicleTypeId, t.VehicleTypename]));
+ 
+   const znMap = new Map((await ZoneMaster.find({}, { ZoneID: 1, ZoneName: 1, _id: 0 }))
+     .map(z => [z.ZoneID, z.ZoneName]));
+   let lsv = [];
+   let sn = 1;
+ 
+   // Process Vehicles
+   vehs.forEach(v => {
+     let vn = {
+       departmentName: v.DepartmentName,
+       devid: v.devid,
+       vehicleNo: v.VehicleNo,
+       vehicleTypename: vtMap.get(v.VehicleTypeId) || null,
+       empName: v.EmpName,
+       empMobileNo: v.EmpMobileNo,
+       zoneName: znMap.get(v.VZoneID) || null
+     };
+ 
+     const ntrecFnd = ntrec?.some(s => s._id === v.devid);
+ 
+     if (!ntrecFnd) {
+       vn.srNo = sn++;
+       vn.ntRecord = false;
+       lsv.push(vn);
+     } else {
+       const ntrecmv = ntmv?.some(s => s._id === v.devid);
+       if (!ntrecmv) {
+         vn.srNo = sn++;
+         vn.ntRecord = true;
+         lsv.push(vn);
+       }
+     }
+   });
+   // const data = formattedData(lsv)
+   return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", lsv.length, lsv));
+ 
+ 
+ } catch (error) {
+   return next(new ApiErrorResponse(error.StatusCode || StatusCodes.BAD_REQUEST, error.ErrorMessage || error.message))
+ }
 
   // try {
   //   const model = req.body;
@@ -977,14 +959,14 @@ async function GetNTDashboard(req, res) {
   } catch (error) {
     return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }
-  
+
 }
 
 //--------------GetTopFuelCons------>
 async function GetTopFuelCons(req, res) {
   let { nos } = req.params;
   // console.log("nos: ", nos)
-  if(!nos) nos = 1;
+  if (!nos) nos = 1;
   try {
     const ntList = await GetNTDashboardPipeline()
     const fuelData = ntList.filter((nt) => nt.VehicleNo).slice(0, nos);
@@ -1020,23 +1002,23 @@ async function GetTopFuelCons(req, res) {
     const data = result // formattedData(result);
     return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched Successfully", null, data))
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse( error.message,null,StatusCodes.NOT_FOUND,))
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message, null, StatusCodes.NOT_FOUND,))
   }
 }
 
 //--------------GetTopFuelConsNT------>
-async function GetTopFuelConsNT(req, res){
+async function GetTopFuelConsNT(req, res) {
   try {
     const { zoneid } = req.query;
-    if(!zoneid){
+    if (!zoneid) {
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide zone id"))
     }
-  
+
     const ntList = await GetNTDashboardPipeline();
-    const fuelData = ntList.filter((nt)=> nt.ZoneName === `Zone ${zoneid}`);
-  
-     // Map the data to the required structure
-     const result = fuelData.map((fu, index) => ({
+    const fuelData = ntList.filter((nt) => nt.ZoneName === `Zone ${zoneid}`);
+
+    // Map the data to the required structure
+    const result = fuelData.map((fu, index) => ({
       Srno: index + 1,
       TrackTime: fu.TrackTime,
       devid: fu.devid,
@@ -1054,109 +1036,109 @@ async function GetTopFuelConsNT(req, res){
       Fuel: fu.Fuel,
       flag: fu.flag,
     }));
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default",  result));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default", result));
   } catch (error) {
-      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
   }
 }
 
 //--------------GetTopFuelConsNTS------>
-async function GetTopFuelConsNTS(req, res, next){
+async function GetTopFuelConsNTS(req, res, next) {
   try {
     const { zone } = req.params; // Assuming the zone is passed as a URL parameter
-   
+
     // Fetch NT Dashboard Data
     const fuelData = await GetNTDashboardPipeline();
-  
+
     // Filter and sort data based on fuel consumption
     const filteredData = fuelData
-        .filter((item) => item.ZoneName?.toLowerCase().trim() === zone?.toLowerCase().trim())
-        .sort((a, b) => b.Fuel - a.Fuel);
-   
+      .filter((item) => item.ZoneName?.toLowerCase().trim() === zone?.toLowerCase().trim())
+      .sort((a, b) => b.Fuel - a.Fuel);
+
     // Map data to the required format
     const responseData = filteredData.map((fu, index) => ({
-        srno: index + 1,
-        trackTime: fu.TrackTime,
-        devid: fu.devid,
-        departmentName: fu.DepartmentName,
-        vehicleNo: fu.VehicleNo,
-        ignition: fu.Ignition,
-        empName: fu.EmpName,
-        empMobileNo: fu.EmpMobileNo,
-        zoneName: fu.ZoneName,
-        speed: fu.speed,
-        secondsIdle: fu.SecondsIdle,
-        secondsRun: fu.SecondsRun,
-        vehicleTypename: fu.VehicleTypename,
-        idleTime: fu.IdleTime,
-        fuel: fu.Fuel,
-        purchaseYear: fu.PurchaseYear,
-        modelNo: fu.ModelNo,
-        serialNo: fu.SerialNo,
-        chesisNo: fu.ChesisNo,
-        hSNCode: fu.HSNCode,
-        vehicleWeight: fu.VehicleWeight,
-        mileage: fu.Mileage,
-        flag: fu.flag
+      srno: index + 1,
+      trackTime: fu.TrackTime,
+      devid: fu.devid,
+      departmentName: fu.DepartmentName,
+      vehicleNo: fu.VehicleNo,
+      ignition: fu.Ignition,
+      empName: fu.EmpName,
+      empMobileNo: fu.EmpMobileNo,
+      zoneName: fu.ZoneName,
+      speed: fu.speed,
+      secondsIdle: fu.SecondsIdle,
+      secondsRun: fu.SecondsRun,
+      vehicleTypename: fu.VehicleTypename,
+      idleTime: fu.IdleTime,
+      fuel: fu.Fuel,
+      purchaseYear: fu.PurchaseYear,
+      modelNo: fu.ModelNo,
+      serialNo: fu.SerialNo,
+      chesisNo: fu.ChesisNo,
+      hSNCode: fu.HSNCode,
+      vehicleWeight: fu.VehicleWeight,
+      mileage: fu.Mileage,
+      flag: fu.flag
     }));
 
     return res.json(new ReturnData(true, true, "fetched", null, responseData));
-} catch (error) {
-    return res.status(500).json(new ApiErrorResponse(error.message, StatusCodes.BAD_REQUEST ));
-}
+  } catch (error) {
+    return res.status(500).json(new ApiErrorResponse(error.message, StatusCodes.BAD_REQUEST));
+  }
 
 }
 
 //--------------GetTopFuelConsNTOnOff------>
-async function GetTopFuelConsNTOnOff(req, res){
+async function GetTopFuelConsNTOnOff(req, res) {
   try {
-  const { onoff } = req.params;
-  // console.log("onoff", onoff)
-  if(!onoff){
-    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide ignition type in true or false"))
+    const { onoff } = req.params;
+    // console.log("onoff", onoff)
+    if (!onoff) {
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide ignition type in true or false"))
+    }
+    const ntList = await GetNTDashboardPipeline();
+    let fuelData;
+    if (onoff === "onoff=true") {
+      fuelData = ntList.filter((nt) => nt.Ignition === "On");
+    } else {
+      fuelData = ntList.filter((nt) => nt.Ignition === "Off")
+    }
+
+    const result = fuelData.map((fu, index) => ({
+      Srno: index + 1,
+      TrackTime: fu.TrackTime,
+      devid: fu.devid,
+      DepartmentName: fu.DepartmentName,
+      VehicleNo: fu.VehicleNo,
+      Ignition: fu.Ignition,
+      EmpName: fu.EmpName,
+      EmpMobileNo: fu.EmpMobileNo,
+      ZoneName: fu.ZoneName,
+      speed: fu.speed,
+      SecondsIdle: fu.SecondsIdle,
+      SecondsRun: fu.SecondsRun,
+      VehicleTypename: fu.VehicleTypename,
+      IdleTime: fu.IdleTime,
+      Fuel: fu.Fuel,
+      PurchaseYear: fu.PurchaseYear,
+      ModelNo: fu.ModelNo,
+      SerialNo: fu.SerialNo,
+      ChesisNo: fu.ChesisNo,
+      HSNCode: fu.HSNCode,
+      VehicleWeight: fu.VehicleWeight,
+      Mileage: fu.Mileage,
+      flag: fu.flag,
+    }));
+
+    const newData = formattedData(result)
+
+    // return res.json({"count": newData.length})
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, newData));
+
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
   }
-   const ntList = await GetNTDashboardPipeline();
-   let fuelData;
-   if(onoff === "onoff=true"){
-     fuelData = ntList.filter((nt)=> nt.Ignition === "On");
-   } else {
-    fuelData = ntList.filter((nt)=> nt.Ignition === "Off")
-   }
-
-   const result = fuelData.map((fu, index) => ({
-    Srno: index + 1,
-    TrackTime: fu.TrackTime,
-    devid: fu.devid,
-    DepartmentName: fu.DepartmentName,
-    VehicleNo: fu.VehicleNo,
-    Ignition: fu.Ignition,
-    EmpName: fu.EmpName,
-    EmpMobileNo: fu.EmpMobileNo,
-    ZoneName: fu.ZoneName,
-    speed: fu.speed,
-    SecondsIdle: fu.SecondsIdle,
-    SecondsRun: fu.SecondsRun,
-    VehicleTypename: fu.VehicleTypename,
-    IdleTime: fu.IdleTime,
-    Fuel: fu.Fuel,
-    PurchaseYear: fu.PurchaseYear,
-    ModelNo: fu.ModelNo,
-    SerialNo: fu.SerialNo,
-    ChesisNo: fu.ChesisNo,
-    HSNCode: fu.HSNCode,
-    VehicleWeight: fu.VehicleWeight,
-    Mileage: fu.Mileage,
-    flag: fu.flag, 
-  }));
-   
-const newData = formattedData(result)
-
-  // return res.json({"count": newData.length})
-  return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully",null,newData));
-
- } catch (error) {
-  return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
- }
 
 }
 
@@ -1337,17 +1319,17 @@ async function probWireTamp(req, res) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json(
-        new ApiErrorResponse( StatusCodes.INTERNAL_SERVER_ERROR, error.message, null)
+        new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message, null)
       );
   }
 }
 
 //-------------GetRunningStatus----------->
-async function GetRunningStatus(req, res){
+async function GetRunningStatus(req, res) {
   try {
     const { stat } = req.params;
-   
-    if(!stat){
+
+    if (!stat) {
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid running status"))
     }
     const ntList = await GetNTDashboardPipeline();
@@ -1368,31 +1350,31 @@ async function GetRunningStatus(req, res){
       default:
         throw new Error("Invalid status provided");
     }
- const newData = formattedData(filter)
-    return res.status(StatusCodes.OK).json(new ReturnData(true, false,null, "Data Fetch Successfully",newData));
+    const newData = formattedData(filter)
+    return res.status(StatusCodes.OK).json(new ReturnData(true, false, null, "Data Fetch Successfully", newData));
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message,StatusCodes.NOT_FOUND ))
+    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message, StatusCodes.NOT_FOUND))
   }
 }
 
 //-------------GetLongIdleVeh----------->
-async function GetLongIdleVeh(req, res){
+async function GetLongIdleVeh(req, res) {
   try {
     // 
     let { nos } = req.params;
     // console.log("nos: ", nos)
-    if(!nos) nos = 1 
-  
+    if (!nos) nos = 1
+
     const ntList = await GetNTDashboardPipeline();
-  
+
     // Flatten the array of arrays into a single array
     // const flatNtList = ntList.flat();
-  
+
     // Sort by SecondsIdle in descending order and take the top 'nos' records
     const fuelNos = ntList
       .sort((a, b) => b.SecondsIdle - a.SecondsIdle)
       .slice(0, nos);
-  
+
     // Map the data to match the expected structure
     const formattedData = fuelNos.map((fu, index) => ({
       srNo: index + 1,
@@ -1423,20 +1405,20 @@ async function GetLongIdleVeh(req, res){
       mileage: fu.Mileage,
       fuelTankCapacity: "", // Same as in C# code
     }));
-  
-    return res.status(StatusCodes.OK).json( new ReturnData(true, true, "Data fetched successfully", null, formattedData));
+
+    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched successfully", null, formattedData));
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message, null, StatusCodes.BAD_REQUEST))
   }
 }
 
 //-------------GetVehicleMovement----------->
-async function GetVehicleMovement(req, res){
+async function GetVehicleMovement(req, res) {
   try {
-    const {dateFrom, dateTo, deptId, zoneId, lisVehicleNos} = req.body;
-  
+    const { dateFrom, dateTo, deptId, zoneId, lisVehicleNos } = req.body;
+
     if (!deptId && !zoneId && (!lisVehicleNos || lisVehicleNos.length === 0)) {
-     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Provide at least one of DeptId, ZoneId, or lisVehicleNos. Data is too large."));
+      return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Provide at least one of DeptId, ZoneId, or lisVehicleNos. Data is too large."));
     }
 
     const dateDiff = Math.floor((new Date(dateTo) - new Date(dateFrom)) / (1000 * 60 * 60 * 24));
@@ -1478,17 +1460,17 @@ async function GetVehicleMovement(req, res){
     }
     // console.log("vehicles", vehicles)
 
-     // **Step 2: Filter by Vehicle Numbers (if provided)**
-     let filteredVehicles = vehicles;
-     if (lisVehicleNos && lisVehicleNos.length > 0) {
-       const vehicleSet = new Set(lisVehicleNos.map((v) => v.toUpperCase()));
-       filteredVehicles = vehicles.filter((v) => vehicleSet.has(v.Vehno.toUpperCase()));
-     }
+    // **Step 2: Filter by Vehicle Numbers (if provided)**
+    let filteredVehicles = vehicles;
+    if (lisVehicleNos && lisVehicleNos.length > 0) {
+      const vehicleSet = new Set(lisVehicleNos.map((v) => v.toUpperCase()));
+      filteredVehicles = vehicles.filter((v) => vehicleSet.has(v.Vehno.toUpperCase()));
+    }
     //  console.log("filteredVehicles", filteredVehicles)
-     const deviceIds = filteredVehicles.map((v) => v.devid);
+    const deviceIds = filteredVehicles.map((v) => v.devid);
     //  console.log("deviceIds", deviceIds)
 
-     const ntData = await NT.aggregate([
+    const ntData = await NT.aggregate([
       {
         $match: {
           devid: { $in: deviceIds },
@@ -1505,25 +1487,25 @@ async function GetVehicleMovement(req, res){
       return res.status(StatusCodes.NO_CONTENT).json(new ApiSuccessResponse(true, StatusCodes.NO_CONTENT, "default", []));
     }
 
-     // **Step 4: Fetch Departments & Zones in One Query**
-     const deptIds = [...new Set(filteredVehicles.map((v) => v.DeptId))].filter(Boolean);
-     const zoneIds = [...new Set(filteredVehicles.map((v) => v.ZoneId))].filter(Boolean);
-    
-     const departments = await Department.find(
+    // **Step 4: Fetch Departments & Zones in One Query**
+    const deptIds = [...new Set(filteredVehicles.map((v) => v.DeptId))].filter(Boolean);
+    const zoneIds = [...new Set(filteredVehicles.map((v) => v.ZoneId))].filter(Boolean);
+
+    const departments = await Department.find(
       { DepartmentId: { $in: deptIds } },
-    //  { collationto: { locale: "en", strength: 2 } }
-      ).collation({ locale: "en", strength: 2 })
+      //  { collationto: { locale: "en", strength: 2 } }
+    ).collation({ locale: "en", strength: 2 })
 
-      const zones = await ZoneMaster.find(
-        { ZoneID: { $in: zoneIds } }
+    const zones = await ZoneMaster.find(
+      { ZoneID: { $in: zoneIds } }
       //  , { collationto: { locale: "en", strength: 2 } }
-      ).collation({ locale: "en", strength: 2 })
+    ).collation({ locale: "en", strength: 2 })
 
-     const deptMap = new Map(departments.map((d) => [d.DepartmentId, d.DepartmentName]));
-     const zoneMap = new Map(zones.map((z) => [z.ZoneID, z.ZoneName]));
-     const vehicleMap = new Map(filteredVehicles.map((v) => [v.devid, v]));
+    const deptMap = new Map(departments.map((d) => [d.DepartmentId, d.DepartmentName]));
+    const zoneMap = new Map(zones.map((z) => [z.ZoneID, z.ZoneName]));
+    const vehicleMap = new Map(filteredVehicles.map((v) => [v.devid, v]));
 
-     for (const nt of ntData) {
+    for (const nt of ntData) {
       const vehicle = vehicleMap.get(nt.devid) || "";
       nt.DepartmentName = deptMap.get(vehicle?.DeptId) || "";
       nt.ZoneName = zoneMap.get(vehicle?.ZoneId) || "";
@@ -1555,6 +1537,6 @@ export {
   GetRunningStatus,
   GetLongIdleVeh,
   GetVehicleMovement
-  
+
 };
 
