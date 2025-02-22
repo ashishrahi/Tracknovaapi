@@ -66,17 +66,20 @@ export async function login(req, res, next) {
      "Login Successful",
       response
     );
-    // const options = {
-    //   httpOnly: true,
-    //   secure: true,
-    // };
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+   
     return res.status(StatusCodes.OK)
-    // .cookie("refreshToken", response.refreshToken, options)
+    .cookie("refreshToken", response?.token, options)
     .json(successResponse);
   } catch (error) {
-    const err = new Error(error.message);
-    err.status = err.statusCode || StatusCodes.BAD_REQUEST;
-    return next(err);
+    // console.log("error is", error)
+    // const err = new Error(error.message || error.E);
+    // err.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(error.StatusCodes || error.StatusCode, error.ErrorMessage || error.message));
   }
 }
 
