@@ -1,5 +1,9 @@
 ### Sample Route
-GET http://localhost:5000/api/NTRead/Sample?devid=862208128002056
+GET 
+
+http://localhost:5000/api/NTRead/Sample?devid=862208128002056
 
 ### SmpCurr
-GET http://localhost:5000/api/NTRead/SampCurr?trackdate=2024-11-12
+GET 
+
+http://localhost:5000/api/Auth/Refresh

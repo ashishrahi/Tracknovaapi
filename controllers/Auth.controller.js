@@ -60,23 +60,27 @@ export async function Register(req, res, next){
 export async function login(req, res, next) {
   try {
     const modal = req.body;
-    const response = await loginQuery(modal, next);
+    // console.log(modal)
+    const { response, refreshToken} = await loginQuery(modal);
     const successResponse = new CommonResponse(
       1,
      "Login Successful",
       response
     );
-    // const options = {
-    //   httpOnly: true,
-    //   secure: true,
-    // };
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    console.log("successResponse: ", successResponse)
+   
     return res.status(StatusCodes.OK)
-    // .cookie("refreshToken", response.refreshToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(successResponse);
   } catch (error) {
-    const err = new Error(error.message);
-    err.status = err.statusCode || StatusCodes.BAD_REQUEST;
-    return next(err);
+    // console.log("error is", error)
+    // const err = new Error(error.message || error.E);
+    // err.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(error.StatusCode || StatusCodes.BAD_REQUEST, error.ErrorMessage || error.message));
   }
 }
 
@@ -86,6 +90,7 @@ export async function Refresh(req, res, next){
     const oldRefreshToken = req.cookies.refreshToken;
     if (!oldRefreshToken) throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh token required");
   
+    // we are not storing refreshToken inside db we used httpOnly Cookie
     // const storedToken = await RefreshToken.findOne({ token: oldRefreshToken });
     // if (!storedToken) return res.status(403).json({ message: "Invalid refresh token" });
   
@@ -104,13 +109,15 @@ export async function Refresh(req, res, next){
     const successResponse = new ApiSuccessResponse(
       true,
       StatusCodes.OK,
-      "Token refreshed successfully", 
+      "Both token refreshed successfully", 
       { accessToken: accessToken}
       );
+
       const options = {
         httpOnly: true,
         secure: true,
       };
+
       return res.status(successResponse.statusCode).cookie("refreshToken", refreshToken, options).json(successResponse);
   } catch (err) {
     if (err.name === "JsonWebTokenError") {

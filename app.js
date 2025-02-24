@@ -26,15 +26,15 @@ connectMongoDB().catch((error) => {
 
 app.use((req, res, next) => {
     if (app.get("dbConnectionFailed")) {
-        const err = new Error("Database connection failed. Please try again later.");
-        err.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        const err = new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Database connection failed. Please try again later.");
+        // err.StatusCode = StatusCodes.INTERNAL_SERVER_ERROR;
         return next(err);
     }
     next();
 });
 app.use(cors({
-    origin: "*",  // Allow frontend origin
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: "http://localhost:3000",  // Allow frontend origin
+    methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"],
     credentials: true  // Allow sending cookies with requests
 }));
 app.use(express.json({limit: "50mb"}));
@@ -50,8 +50,7 @@ app.use("/api", AppRoutes);
 
 //Handling the incorrect route
 app.use((req, res, next)=>{
-    const error = new Error("InCorrect Route");
-    error.status = 404;
+    const error = new ApiErrorResponse(404,"InCorrect Route");
     // we need to pass the error as a argument
     next(error);
 })
@@ -59,7 +58,7 @@ app.use((req, res, next)=>{
 
 // Global error handeling
 app.use((err, req, res, next) => {
-    const statusCode = err.status || err.statusCode || err.StatusCode || 500;  // Default to 500 if undefined
+    const statusCode = err.status || err.statusCode || err.StatusCode  || 500;  // Default to 500 if undefined
     return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message|| err.ErrorMessage || "Internal Server Error"));
 });
 

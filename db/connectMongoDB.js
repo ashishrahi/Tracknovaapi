@@ -1,18 +1,22 @@
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
+import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 
 async function connectMongoDB() {
 
     try {
     const uri = String(process.env.MONGODB_SERVER_URI)
-    const dbName = String(process.env.DB_NAME)
+    const dbName =  "Inventory"   //String(process.env.DB_NAME)
     
-        await mongoose.connect(uri + "/" + dbName);
+        await mongoose.connect(uri + "/" + dbName, {
+            
+        });
         console.log("MongoDB Connected");
     } catch (error) {
         console.error("Database Connection Error:", error.message);
-        error.status = StatusCodes.INTERNAL_SERVER_ERROR;
-        throw error;
+        // error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+       
     }
 }
 

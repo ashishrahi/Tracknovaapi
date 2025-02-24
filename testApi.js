@@ -173,7 +173,9 @@ lisret1.forEach(item => {
   item["testing"] = vehicle ? vehicle.ItemName : ''; // If no match, set empty string
 });
 
-console.log("lisret1", lisret1);
+// console.log("lisret1", lisret1);
+
+console.log(new Date("2023-12-01"))
 
 
 

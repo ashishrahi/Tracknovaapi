@@ -114,7 +114,7 @@ export const getVehicleQuery = async (vehicleNo) => {
           distance: { $toDouble: '$Longitude' },
           "trackTime": "$TrackTime",
           longitude: { $toDouble: '$Longitude' }, 
-          localStorageattitude: { $toDouble: '$Lattitude' },
+          lattitude: { $toDouble: '$Lattitude' },
           speed: 1,
           devid: 1,
           "binVisited": "$BinVisited",
