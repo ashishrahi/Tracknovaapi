@@ -13,16 +13,17 @@ import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 
 
 //-----------------loginQuery-------->
-export const loginQuery = async (model, next) => {
+export const loginQuery = async (model) => {
   try {
     const { username, password } = model;
+    // console.log(model)
 
     let response;
     // Find user by username
     const user = await AspNetUsers.findOne({ UserName: username });
-    // console.log("real user", user)
+    console.log("real user", user)
     if (!user) {
-        return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
+        throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
     }
 
     // Check password
@@ -33,7 +34,7 @@ export const loginQuery = async (model, next) => {
     // }
     
     // AspUser => EmpMaster => RoleId
-    const empRoleId = await EmpMaster.findOne({UserId: user.Id}).select("RoleId");
+    const empRoleId = await EmpMaster.findOne({UserId: user.Id}).select("RoleId")
     // console.log("empROleid", empRoleId)
     // // Fetch user roles
     const roles = await AspNetRoles.find(
@@ -51,18 +52,19 @@ export const loginQuery = async (model, next) => {
     // return rolesString;
 
     // Fetch user permissions
-    const userPermissions = await UserPermission.find({UserId: user.Id}).lean();
+    // const userPermissions = await UserPermission.find({UserId: user.Id}).lean();
     // console.log("userPermissions: ", userPermissions)
-    if (!userPermissions) {
-        return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
-    }
-
-    // const userPermissions = await  GetUserPermissionMasterQuery({userId: '82763a68-4d8d-4358-96a5-c2d2981e3d0a'
-    //   // user.Id
-    // })
     // if (!userPermissions) {
-    //   return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions"));
+    //     return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
     // }
+
+    const userPermissions = await  GetUserPermissionMasterQuery({userId: user.Id
+      // user.Id
+    })
+    // console.log("user permission:", userPermissions)
+    if (!userPermissions) {
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
+    }
 
     // Generate JWT Token
     const authClaims = {
@@ -71,9 +73,9 @@ export const loginQuery = async (model, next) => {
         roles: rolesString,
     };
     // console.log(userPermissions);
-    const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "5y", // Token expires in 5 years
-    });
+    // const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
+    //     expiresIn: "5y", // Token expires in 5 years
+    // });
    
     response = {
         // status: 1,
@@ -81,7 +83,7 @@ export const loginQuery = async (model, next) => {
       
       // message: "Login Successful",
       
-      token:  token,
+      token:  user.generateAccessToken(),
       expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
       isSuccess: true,
       message: "Login Successful",
@@ -93,14 +95,14 @@ export const loginQuery = async (model, next) => {
           phoneNumber: user.PhoneNumber,
           roles:  rolesString, // ["User"]//
         },
-        permissions: formattedData(userPermissions),
+        permissions:  userPermissions?.data //formattedData(userPermissions),
       }
     };
     // console.log("response from query", response)
-  return response;
+  return {response: response, refreshToken: user.generateRefreshToken()};
 } catch (error) {
   console.log("Login Error: ", error);
-  throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message);
+  throw new ApiErrorResponse(error.StatusCode  , error.ErrorMessage || error.message);
   // return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
     // return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
 }

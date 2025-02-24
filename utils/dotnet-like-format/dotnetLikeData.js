@@ -1,5 +1,5 @@
 function formattedData(data) {
-  const response = data?.map((obj) => {
+  const response = data.map((obj) => {
     let newObj = {};
     Object.keys(obj).forEach((key) => {
       let newKey = key.charAt(0).toLowerCase() + key.slice(1);
