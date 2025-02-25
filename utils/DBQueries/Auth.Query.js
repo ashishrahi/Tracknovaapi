@@ -620,7 +620,7 @@ export const GetRoleMasterQuery = async () => {
 export const DeleteRoleMasterQuery = async (modal) => {
   try {
     const { RoleId } = modal;
-    console.log('RoleId: ', RoleId);
+    // console.log('RoleId: ', RoleId);
     const roleExists = await AspNetRoles.findOne({Id: RoleId });
 
     if (!roleExists) {
