@@ -11,7 +11,7 @@ async function verifyAccessToken(req, res, next){
         if (excludedRoutes.includes(req.path)) {
             return next(); 
         }
-        console.log("request body is",req.headers)
+        // console.log("request headers body is",req.headers)
         if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
     
         const token = req.headers["authorization"].split(" ")[1];
@@ -23,6 +23,7 @@ async function verifyAccessToken(req, res, next){
             { UserName: payloadData.UserName }
         ]}).select("-PasswordHash")
         req.user = user;
+        // console.log(user)
         next()
     } catch (err) {
         if (err.name === "JsonWebTokenError") {

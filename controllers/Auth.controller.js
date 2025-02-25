@@ -87,7 +87,7 @@ export async function login(req, res, next) {
 //---------------Refresh-------->
 export async function Refresh(req, res, next){
   try {
-    const oldRefreshToken = req.cookies.refreshToken;
+    const oldRefreshToken = req?.cookies?.refreshToken;
     if (!oldRefreshToken) throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh token required");
   
     // we are not storing refreshToken inside db we used httpOnly Cookie
@@ -129,6 +129,12 @@ export async function Refresh(req, res, next){
       return next(err) 
   }
   }
+}
+
+//------------Logout---------->
+export async function Logout(req, res, next){
+  res.clearCookie("refreshToken");
+  return res.status(StatusCodes.OK).json(new CommonResponse(1, "User loggedOut Successfully"))
 }
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////
 
