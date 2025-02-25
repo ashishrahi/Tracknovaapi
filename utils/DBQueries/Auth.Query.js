@@ -21,7 +21,7 @@ export const loginQuery = async (model) => {
     let response;
     // Find user by username
     const user = await AspNetUsers.findOne({ UserName: username });
-    console.log("real user", user)
+    // console.log("real user", user)
     if (!user) {
         throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
     }
