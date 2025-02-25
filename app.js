@@ -21,9 +21,6 @@ connectMongoDB().catch((error) => {
     app.set("dbConnectionFailed", true);
 });
 
-
-
-
 app.use((req, res, next) => {
     if (app.get("dbConnectionFailed")) {
         const err = new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Database connection failed. Please try again later.");
@@ -33,7 +30,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use(cors({
-    origin: "http://localhost:3000",  // Allow frontend origin
+    origin: ["http://localhost:3000", "http://103.12.1.132:8205"],  // Allow frontend origin
     methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"],
     credentials: true  // Allow sending cookies with requests
 }));
@@ -44,7 +41,7 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
-// app.use(verifyAccessToken)
+app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
 
