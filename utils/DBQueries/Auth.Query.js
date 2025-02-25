@@ -84,7 +84,7 @@ export const loginQuery = async (model) => {
       // message: "Login Successful",
       
       token:  user.generateAccessToken(),
-      expiration: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000), // 5 years
+      expiration: Number(process.env.ACCESS_TOKEN_EXPIRY)/1000, // 5 years
       isSuccess: true,
       message: "Login Successful",
       data: {
