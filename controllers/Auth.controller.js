@@ -31,6 +31,8 @@ import {
 
 import jwt from "jsonwebtoken";
 import AspNetUsers from "../modals/AspNetUsers.model.js";
+import EmpMaster from "../modals/EmpMaster.model.js";
+import { AspNetRoles } from "../modals/AspNetRoles.modal.js";
 
 // import { RoleMaster } from "../modals/RoleMaster.modal.js";
 
@@ -65,7 +67,7 @@ export async function login(req, res, next) {
     const successResponse = new CommonResponse(
       1,
      "Login Successful",
-      response
+      response 
     );
     const options = {
       httpOnly: true,
@@ -87,13 +89,13 @@ export async function login(req, res, next) {
 //---------------Refresh-------->
 export async function Refresh(req, res, next){
   try {
+    let response;
     const oldRefreshToken = req?.cookies?.refreshToken;
     if (!oldRefreshToken) throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh token required");
   
     // we are not storing refreshToken inside db we used httpOnly Cookie
     // const storedToken = await RefreshToken.findOne({ token: oldRefreshToken });
     // if (!storedToken) return res.status(403).json({ message: "Invalid refresh token" });
-  
     const tokenData = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET)
 
     const user = await AspNetUsers.findOne({Id: tokenData.Id}).select("-PasswordHash");
@@ -104,13 +106,96 @@ export async function Refresh(req, res, next){
 
     const refreshToken = user.generateRefreshToken();
     const accessToken = user.generateAccessToken();
+      // const { username, password } = model;
+      // console.log(model)
+  
+      
+      // Find user by username
+      // const user = await AspNetUsers.findOne({ UserName: username });
+      // console.log("real user", user)
+      // if (!user) {
+      //     throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
+      // }
+  
+      // Check password
+      // const isPasswordValid = await user.isValidPassword(password);
+      // console.log("isPasswordValid: ",isPasswordValid)
+      // if (!isPasswordValid) {
+      //   return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
+      // }
+      
+      // AspUser => EmpMaster => RoleId
+      const empRoleId = await EmpMaster.findOne({UserId: user.Id}).select("RoleId").lean();
+      // console.log("empROleid", empRoleId)
+      // // Fetch user roles
+      const roles = await AspNetRoles.find(
+        { Id: 
+          { $in: 
+          [empRoleId.RoleId]
+          // ["82763a68-4d8d-4358-96a5-c2d2981e3d0a"]
+         // emp.RoleId
+  
+         } }
+      ).lean();
+      // console.log("roles: ", roles)
+      const rolesString = roles.map(role => role.Name)
+      // console.log("rolesString", rolesString)
+      // return rolesString;
+  
+      // Fetch user permissions
+      // const userPermissions = await UserPermission.find({UserId: user.Id}).lean();
+      // console.log("userPermissions: ", userPermissions)
+      // if (!userPermissions) {
+      //     return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
+      // }
+  
+      const userPermissions = await  GetUserPermissionMasterQuery({userId: user.Id
+        // user.Id
+      })
+      // console.log("user permission:", userPermissions)
+      if (!userPermissions) {
+        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
+      }
+  
+      // Generate JWT Token
+      const authClaims = {
+        id: user.Id,
+        username: user.UserName,
+        roles: rolesString,
+      };
+      // console.log(userPermissions);
+      // const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
+      //     expiresIn: "5y", // Token expires in 5 years
+      // });
+     
+      response = {
+          // status: 1,
+        // message: "Login Successful",
+        
+        // message: "Login Successful",
+        
+        token: accessToken, // user.generateAccessToken(),
+        expiration: Number(process.env.ACCESS_TOKEN_EXPIRY)/1000, // 5 years
+        isSuccess: true,
+        message: "Login Successful",
+        data: {
+          userDetail: {
+            id: user.Id,
+            userName: user.UserName,
+            email: user.Email,
+            phoneNumber: user.PhoneNumber,
+            roles:  rolesString, // ["User"]//
+          },
+          permissions:  userPermissions?.data //formattedData(userPermissions),
+        }
+      };
 
-
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
-      "Both token refreshed successfully", 
-      { accessToken: accessToken}
+    
+      
+    const successResponse = new CommonResponse(
+      1,
+      "login successful",
+      response
       );
 
       const options = {
@@ -118,7 +203,7 @@ export async function Refresh(req, res, next){
         secure: true,
       };
 
-      return res.status(successResponse.statusCode).cookie("refreshToken", refreshToken, options).json(successResponse);
+      return res.status(StatusCodes.OK).cookie("refreshToken", refreshToken, options).json(successResponse);
   } catch (err) {
     if (err.name === "JsonWebTokenError") {
       // JsonWebTokenError this errors contains actual error msg, we should avoid to provide actual error
