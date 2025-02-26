@@ -198,7 +198,7 @@ export const GetMenuMasterQuery = async (model) => {
               $project: {
                 menuId: '$MenuId',
                 menuName: '$MenuName',
-                prentId: '$ParentId',
+                parentId: '$ParentId',
                 pageUrl: '$PageUrl',
                 icon: '$Icon',            
                 displayNo: '$DisplayNo',
