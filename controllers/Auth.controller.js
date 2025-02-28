@@ -222,6 +222,20 @@ export async function Logout(req, res, next){
   res.clearCookie("refreshToken");
   return res.status(StatusCodes.OK).json(new CommonResponse(1, "User loggedOut Successfully"))
 }
+
+//-------------GetUSER---------->
+export async function GetUSER(req, res, next){
+  const user = req.user;
+  console.log("user is",user)
+  if(!user){
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
+  }
+  const userFullDetails = await EmpMaster.findOne({UserId: user.Id})
+  .select("-ImageFile -SignatureFile")
+  .lean();
+
+  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+}
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////
 
 export async function GetUserPermissions(req, res) {
