@@ -67,7 +67,8 @@ export async function login(req, res, next) {
     const successResponse = new CommonResponse(
       1,
      "Login Successful",
-      response 
+      response,
+      response.data.permissions.length
     );
     const options = {
       httpOnly: true,

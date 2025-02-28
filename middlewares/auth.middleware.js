@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import AspNetUsers from "../modals/AspNetUsers.model.js";
 
-const excludedRoutes = ["/api/Auth/login", "/api/Auth/Refresh"];
+const excludedRoutes = ["/api/Auth/login", "/api/Auth/Refresh", "/api/Auth/Logout"];
 
 async function verifyAccessToken(req, res, next){
     try {

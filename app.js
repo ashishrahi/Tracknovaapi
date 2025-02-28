@@ -41,7 +41,7 @@ app.use(cookieParser()); // access to req.cookies
 app.use(compression());
 
 // all routes starts from here
-app.use(limiter);
+// app.use(limiter);
 app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
