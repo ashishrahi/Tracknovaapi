@@ -336,7 +336,7 @@ export const GetUserPermissionMasterQuery = async (modal) => {
         id: userId,
         createUpdate:"",
         msg: "User Permission Details fetched successfully",
-        data: usersPermission,
+        data: usersPermission.length,
       };
     } else {
       const data = await UserPermission.aggregate([
