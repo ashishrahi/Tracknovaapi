@@ -9,7 +9,7 @@ import { AddUpdateUserPermissionMasterQuery, RegisterQuery } from "../DBQueries/
 
 
 //---------AddUpdateEmployeeQuery------> 
-export const AddUpdateEmployeeQuery = async (model, next) => {
+export const AddUpdateEmployeeQuery = async (model) => {
   try {
     let response = {};
   
@@ -47,9 +47,11 @@ export const AddUpdateEmployeeQuery = async (model, next) => {
       // Insert New Employee
       const newUser = await new EmpMaster(validFormedData).save();
       if(!newUser){
-        const error = new Error("Failed to create new employee");
-        error.status = StatusCodes.INTERNAL_SERVER_ERROR;
-        return next(error);
+        
+        // const error = new Error("Failed to create new employee");
+        // error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        // return next(error);
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create employee")
       }
 
       response.data = newUser;

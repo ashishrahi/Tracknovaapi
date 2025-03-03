@@ -74,7 +74,6 @@ export async function login(req, res, next) {
       httpOnly: true,
       secure: true,
     };
-    console.log("successResponse: ", successResponse)
    
     return res.status(StatusCodes.OK)
     .cookie("refreshToken", refreshToken, options)
@@ -226,7 +225,6 @@ export async function Logout(req, res, next){
 //-------------GetUSER---------->
 export async function GetUSER(req, res, next){
   const user = req.user;
-  console.log("user is",user)
   if(!user){
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
   }
@@ -355,19 +353,16 @@ export async function DeleteUserPermissionMaster(req, res) {
 export async function AddUpdateRoleMaster(req, res) {
   try {
     const modal = req.body;
-    const {status, message, data} = await AddUpdateRoleMasterQuery(modal);
-    const successResponse = new CommonResponse(
-      status,
-      message,
-      data
+    const rtd = await AddUpdateRoleMasterQuery(modal);
+    const successResponse = new ReturnData(
+      rtd.isSuccess,
+      rtd.isSuccess,
+      rtd.mesg,
     );
-    return res.status(StatusCodes.CREATED).json(successResponse);
+    const code = rtd.mesg === "Successfully Updated" ? StatusCodes.OK : StatusCodes.CREATED
+    return res.status(code).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
-    );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage || error.message)
   }
 }
 

@@ -8,12 +8,14 @@ import { ApiErrorResponse } from "./utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
 import verifyAccessToken from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 import limiter from "./utils/rate-limiter/rateLimiter.js";
 
 
 dotenv.config();
 
 const app = express();
+
 
 // connectDBMongo();
 connectMongoDB().catch((error) => {
@@ -38,10 +40,12 @@ app.use(cors({
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
 app.use(cookieParser()); // access to req.cookies
+app.use(helmet());
 app.use(compression());
 
+
 // all routes starts from here
-// app.use(limiter);
+app.use(limiter);
 app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
