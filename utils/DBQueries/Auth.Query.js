@@ -629,7 +629,6 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
 
         // Update role permissions efficiently
         const bulkOpsForUpdatingPermission = modal.rolePermissions.map((perm) => {
-          // const filter = { RoleId: modal.roleId, MenuId: perm.menuId };
           const updateFields = {
             RoleId: modal.roleId,
             MenuId: perm.menuId,
@@ -695,7 +694,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
     console.log(error);
     throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage)
   }
-  };
+};
 
 
 //////////////////////////////////////////////  GetRoleMaster  ////////////////////////////////////////////////////////////////
@@ -930,22 +929,28 @@ export const GetRolePermissionQuery = async (modal) => {
     let data;
 
     // if (RoleId === "-1") {
-      data = await Menu.aggregate([
+      data = await RolePermission.aggregate([
+        {
+          $match:
+            {
+              RoleId: RoleId
+            }
+        },
         {
           $lookup: {
             // ✅ Join with RolePermission table
-            from: "RolePermission",
+            from: "Menu",
             localField: "MenuId",
             foreignField: "MenuId",
-            as: "permissions",
-            pipeline: [
-              {
-                $match: {
-                  RoleId: RoleId
-                }
-              }
-            ]
+            as: "permissions"
           }
+        },
+        {
+          $unwind:
+            {
+              path: "$permissions",
+              preserveNullAndEmptyArrays: true
+            }
         },
         {
           $project: {
@@ -953,7 +958,7 @@ export const GetRolePermissionQuery = async (modal) => {
             _id: 0,
             RoleId: 1,
             MenuId: 1,
-            MenuName: 1,
+            MenuName: "$permissions.MenuName",
             ParentId: 1,
             IsAdd: 1,
             IsEdit: 1,
@@ -965,7 +970,6 @@ export const GetRolePermissionQuery = async (modal) => {
             IsPost: 1
           }
         },
-      
         {
           $sort: {
             MenuName: 1

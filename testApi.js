@@ -112,7 +112,6 @@ const fn = (value) => {
     .join(" ");
 }; // Join words back into a single string;
 
-console.log(fn("weferg erfergr errgvreg"));
 
 // set: (value) => {
 //   return value
