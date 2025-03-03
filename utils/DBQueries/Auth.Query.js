@@ -866,10 +866,11 @@ const newRolePermission = {
 //////////////////////////////////////////////  Get / RolePermissionMaster  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionMasterQuery = async (modal) => {
+  
   try {
-    const { roleId } = modal;
+    const { RoleId } = modal;
 
-    if (roleId === "-1") {
+    if (RoleId === "-1") {
       const data = await RolePermission.find({}).lean();
       const roleList = data.map((role)=>{
         return{
@@ -932,11 +933,10 @@ export const GetRolePermissionQuery = async (modal) => {
     const { RoleId } = modal;
     let data;
 
-    // if (RoleId === "-1") {
+    if (RoleId === "-1") {
       data = await Menu.aggregate([
         {
           $lookup: {
-            // ✅ Join with RolePermission table
             from: "RolePermission",
             localField: "MenuId",
             foreignField: "MenuId",
@@ -944,15 +944,60 @@ export const GetRolePermissionQuery = async (modal) => {
             pipeline: [
               {
                 $match: {
-                  RoleId: RoleId
-                }
-              }
-            ]
-          }
+                  RoleId: RoleId,
+                },
+              },
+            ],
+          },
         },
         {
           $project: {
-            // ✅ Return required fields and set default permissions to 0
+            RoleId: 1,
+            MenuId: 1,
+            MenuName: 1,
+            ParentId: 1,
+            IsAdd: 1,
+            IsEdit: 1,
+            IsDel: 1,
+            IsView: 1,
+            IsPrint: 1,
+            IsExport: 1,
+            IsRelease: 1,
+            IsPost: 1,
+          },
+        },
+        {
+          $sort: {
+            MenuName: 1,
+          },
+        },
+      ]);
+
+      return {
+        status: 1,
+        message: `RoleID ${RoleId} Details of Role Permission fetched successfully`,
+        data: formattedData(data),
+        rowCount: data?.length,
+      };
+    } else {
+      data = await Menu.aggregate([
+        {
+          $lookup: {
+            from: "RolePermission",
+            localField: "MenuId",
+            foreignField: "MenuId",
+            as: "permissions",
+            pipeline: [
+              {
+                $match: {
+                  RoleId: RoleId,
+                },
+              },
+            ],
+          },
+        },
+        {
+          $project: {
             _id: 0,
             RoleId: 1,
             MenuId: 1,
@@ -965,61 +1010,29 @@ export const GetRolePermissionQuery = async (modal) => {
             IsPrint: 1,
             IsExport: 1,
             IsRelease: 1,
-            IsPost: 1
-          }
+            IsPost: 1,
+          },
         },
-      
         {
           $sort: {
-            MenuName: 1
-          }
-        }
+            MenuName: 1,
+          },
+        },
       ]);
 
-    return{
-      status: 1,
-      message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-      data: formattedData(data),
-      rowCount: data?.length
+     
+
+      return {
+        status: 1,
+        message: `RoleID ${RoleId} Details of Role Permission fetched successfully`,
+        data: formattedData(data),
+        rowCount: data.length,
+      };
     }
-
-    return;
-    // } else {
-        data = await RolePermission.find({ RoleId: RoleId }).lean();
-
-        const newData = data.map((role)=>{
-          return{
-            roleId: role.RoleId,
-            menuId: role.MenuId,
-            parentMenuId: role.ParentId,
-            isAdd: role.IsAdd,
-            isDel:role.IsDel,
-            isEdit: role.IsEdit,
-            isExport: role.IsExport,
-            isPost: role.IsPost,
-            isPrint: role.IsPrint,
-            isRelease: role.IsRelease,
-            isView: role.IsView,
-            menuName: role.MenuName
-          }
-        })
-
-        const rowCount = data.length;
-
-        return{
-          status: 1,
-          message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-          data: newData,
-          rowCount:rowCount
-
-        }
-    
-
-  
-} catch (error) {
-  return{
-    status: 0,
-    message: error.message,
+  } catch (error) {
+    return {
+      status: 0,
+      message: error.message,
+    };
   }
-}
 };
