@@ -12,8 +12,8 @@ const UserPermissionSchema = new mongoose.Schema(
       required: true,
     },
     ParentId: {
-      type: Number,
-      default: null, // If ParentId is optional
+      type: mongoose.Schema.Types.Mixed,
+      // default: null, // If ParentId is optional
     },
     IsAdd: { type: Boolean, default: false },
     IsEdit: { type: Boolean, default: false },

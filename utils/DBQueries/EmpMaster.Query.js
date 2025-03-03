@@ -218,11 +218,11 @@ export const GetEmployeeQuery = async (model) => {
 
 export const UpsertEmpPermissionQuery = async (model, res) => {
   let response = { status: "Failed", message: "" };
-
+    // console.log("model",model)
   try {
       // If UserId is empty, register the user first
       model.registerModel.id = crypto.randomUUID();
-      console.log("model.registerModel.id: ", model.registerModel.id)
+      // console.log("model.registerModel.id: ", typeof(model.registerModel.id))
 
       // if userId is given
       if (!model.userId  && model.registerModel?.username || !model.userId.trim() === "" && model.registerModel?.username) {
