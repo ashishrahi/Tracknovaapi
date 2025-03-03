@@ -9,6 +9,7 @@ router.post("/Register", AuthController.Register);
 router.post("/login",  AuthController.login);
 router.get("/Refresh",  AuthController.Refresh);
 router.get("/logout",  AuthController.Logout);
+router.post("/GetUSER",  AuthController.GetUSER);
 router.get("/GetUserPermission", AuthController.GetUserPermissions);
 router.post("/AddUpdateUserPermissionMaster",AuthController.AddUpdateUserPermissionMaster);
 router.post("/GetUserPermissionMaster", AuthController.GetUserPermissionMaster);

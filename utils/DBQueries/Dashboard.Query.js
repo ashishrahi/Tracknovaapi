@@ -189,10 +189,19 @@ export const BinLocationQuery = async (flag) => {
         }
       );
     } else {
-      queryResult = await BinLocation.find(
-        { Latitude: { $ne: null }, Longitude: { $ne: null } },
-        {} // Include all fields by leaving projection empty
-      ).lean();
+      // queryResult = await BinLocation.find(
+      //   { Latitude: { $ne: null }, Longitude: { $ne: null } },
+      //   {} // Include all fields by leaving projection empty
+      // ).lean();
+      queryResult = await BinLocation.aggregate([
+        {$match: { Latitude: { $ne: null }, Longitude: { $ne: null } }} ,
+        {
+         $addFields: {
+           Longitude: { $toDouble: "$Longitude" },
+           Latitude: { $toDouble: "$Latitude" }
+         }
+       }
+       ]);
       newData  = formattedData(queryResult)
     }
 

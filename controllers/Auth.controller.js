@@ -67,13 +67,13 @@ export async function login(req, res, next) {
     const successResponse = new CommonResponse(
       1,
      "Login Successful",
-      response 
+      response,
+      response.data.permissions.length
     );
     const options = {
       httpOnly: true,
       secure: true,
     };
-    console.log("successResponse: ", successResponse)
    
     return res.status(StatusCodes.OK)
     .cookie("refreshToken", refreshToken, options)
@@ -221,6 +221,19 @@ export async function Logout(req, res, next){
   res.clearCookie("refreshToken");
   return res.status(StatusCodes.OK).json(new CommonResponse(1, "User loggedOut Successfully"))
 }
+
+//-------------GetUSER---------->
+export async function GetUSER(req, res, next){
+  const user = req.user;
+  if(!user){
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
+  }
+  const userFullDetails = await EmpMaster.findOne({UserId: user.Id})
+  .select("-ImageFile -SignatureFile")
+  .lean();
+
+  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+}
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////
 
 export async function GetUserPermissions(req, res) {
@@ -340,19 +353,16 @@ export async function DeleteUserPermissionMaster(req, res) {
 export async function AddUpdateRoleMaster(req, res) {
   try {
     const modal = req.body;
-    const {status, message, data} = await AddUpdateRoleMasterQuery(modal);
-    const successResponse = new CommonResponse(
-      status,
-      message,
-      data
+    const rtd = await AddUpdateRoleMasterQuery(modal);
+    const successResponse = new ReturnData(
+      rtd.isSuccess,
+      rtd.isSuccess,
+      rtd.mesg,
     );
-    return res.status(StatusCodes.CREATED).json(successResponse);
+    const code = rtd.mesg === "Successfully Updated" ? StatusCodes.OK : StatusCodes.CREATED
+    return res.status(code).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
-    );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage || error.message)
   }
 }
 

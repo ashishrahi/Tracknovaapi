@@ -507,83 +507,196 @@ export const DeleteUserPermissionMasterQuery = async (modal) => {
 //////////////////////////////////////////////  AddUpdateRoleMaster  ////////////////////////////////////////////////////////////////
 
 export const AddUpdateRoleMasterQuery = async (modal) => {
-  const { roleId, roleName,normalizedRoleName,rolePermissions } = modal;
-  try {
-    let roleMaster = await AspNetRoles.findOne({Id: roleId });
+  // const { roleId, roleName, normalizedRoleName, rolePermissions } = modal;
+  // try {
+  //   let roleMaster = await AspNetRoles.findOne({Id: roleId });
 
-    // Check if the role exists
-    if (roleMaster) {
-      // Role exists, update it
-      roleMaster.Id = roleId
-      roleMaster.Name = roleName;
-      roleMaster.NormalizedName =normalizedRoleName; // You can customize this
+  //   // Check if the role exists
+  //   if (roleMaster) {
+  //     // Role exists, update it
+  //     roleMaster.Id = roleId
+  //     roleMaster.Name = roleName;
+  //     roleMaster.NormalizedName = normalizedRoleName; // You can customize this
 
-      await roleMaster.save();
-
-
-      const updatedRole = {
-        id: roleMaster.Id,
-        name: roleMaster.Name,
-        normalizedName: roleMaster.NormalizedName,
-      }
+  //     await roleMaster.save();
 
 
-
-      // Remove old permissions and add new ones
-      await RolePermission.deleteMany({RoleId: roleId });
-
-      const permissions = rolePermissions.map(permission => ({
-        ...permission,
-        roleId
-      }));
-      const data = await RolePermission.insertMany(permissions);
+  //     const updatedRole = {
+  //       id: roleMaster.Id,
+  //       name: roleMaster.Name,
+  //       normalizedName: roleMaster.NormalizedName,
+  //     }
 
 
-      return{
-        status: 1,
-        message: `Role ${roleName} updated successfully`,
-        data: updatedRole
-      }
-    } else {
-      // Role doesn't exist, create a new role
-      const newRoleMaster = new AspNetRoles({
-        Id: crypto.randomUUID(),
-        Name:roleName,
-        NormalizedName: normalizedRoleName
-      });
 
-      await newRoleMaster.save();
+  //     // Remove old permissions and add new ones
+  //     await RolePermission.deleteMany({RoleId: roleId });
 
-      const insertedRole = {
-        id: newRoleMaster.Id,
-        name: newRoleMaster.Name,
-        normalizedName: newRoleMaster.NormalizedName,
-      }
+  //     const permissions = rolePermissions.map(permission => ({
+  //       ...permission,
+  //       roleId
+  //     }));
+  //     const data = await RolePermission.insertMany(permissions);
+
+
+  //     return{
+  //       status: 1,
+  //       message: `Role ${roleName} updated successfully`,
+  //       data: updatedRole
+  //     }
+  //   } else {
+  //     // Role doesn't exist, create a new role
+  //     const newRoleMaster = new AspNetRoles({
+  //       Id: crypto.randomUUID(),
+  //       Name:roleName,
+  //       NormalizedName: normalizedRoleName
+  //     });
+
+  //     await newRoleMaster.save();
+
+  //     const insertedRole = {
+  //       id: newRoleMaster.Id,
+  //       name: newRoleMaster.Name,
+  //       normalizedName: newRoleMaster.NormalizedName,
+  //     }
       
 
 
-      // Insert permissions
+  //     // Insert permissions
 
-      const permissions = rolePermissions.map(permission => ({
-        ...permission,
-        roleId: newRoleMaster.roleId
-      }));
-       await RolePermission.insertMany(permissions);
+  //     const permissions = rolePermissions.map(permission => ({
+  //       ...permission,
+  //       roleId: newRoleMaster.roleId
+  //     }));
+  //      await RolePermission.insertMany(permissions);
 
 
-     return{
-      status: 1,
-       message: `Role ${roleName} created successfully`,
-       data:insertedRole
+  //    return{
+  //     status: 1,
+  //      message: `Role ${roleName} created successfully`,
+  //      data:insertedRole
 
-      }
-     }
+  //     }
+  //    }
     
-  } catch (err) {
-   return{
-     status: 0,
-     message: err.message,
-   }
+  // } catch (err) {
+  //  return{
+  //    status: 0,
+  //    message: err.message,
+  //  }
+  // }
+
+  try {
+    let rtd = { isSuccess: false, mesg: "" };
+
+    // Check if role already exists (when adding a new role)
+
+    if (!modal.roleId) {
+      const roleExists = await AspNetRoles.findOne({ Name: modal.roleName });
+      if (roleExists) {
+        throw new ApiErrorResponse(StatusCodes.CONFLICT, "Role already exists!")
+        // rtd.mesg = "Role already exists!";
+        // return rtd;
+      }
+    }
+    // If updating an existing role
+    let updatedRole;
+
+    if (modal.roleId) {
+      updatedRole = await AspNetRoles.findOneAndUpdate(
+        { Id: modal.roleId },
+        {
+          $set: {
+            Name: modal?.roleName || undefined,
+            NormalizedName: modal?.roleName?.toUpperCase() || undefined,
+          },
+        },
+        { new: true, upsert: false }
+      );
+
+      if (!updatedRole) {
+        throw new ApiErrorResponse(StatusCodes.NOT_FOUND, "Role not found!")
+        // rtd.mesg = "Role not found!";
+        // return rtd;
+      }
+        // First delete all the permissions
+        const deletee = await RolePermission.deleteMany({
+          RoleId: modal.roleId
+        })
+        console.log("ergersh",deletee)
+        console.log("Modal id is", typeof modal.roleId)
+
+        // const alert = modal.rolePermissions.filter((menu) => menu.menuName = "Alert")
+        // console.log("Alert is:",alert);
+
+        // Update role permissions efficiently
+        const bulkOpsForUpdatingPermission = modal.rolePermissions.map((perm) => {
+          // const filter = { RoleId: modal.roleId, MenuId: perm.menuId };
+          const updateFields = {
+            RoleId: modal.roleId,
+            MenuId: perm.menuId,
+            ParentId: perm.parentId,
+            IsAdd: perm.isAdd,
+            IsEdit: perm.isEdit,
+            IsDel: perm.isDel,
+            IsView: perm.isView,
+            IsPrint: perm.isPrint,
+            IsExport: perm.isExport,
+            IsPost: perm.isPost,
+            IsRelease: perm.isRelease,
+          };
+        
+          return updateFields;
+        });
+
+        console.log("bulkOpsForUpdatingPermission", bulkOpsForUpdatingPermission)
+        
+  
+        if (bulkOpsForUpdatingPermission.length > 0) {
+          await RolePermission.insertMany(bulkOpsForUpdatingPermission);
+        }
+
+    } else {
+      // Insert new role
+      modal.Id = crypto.randomUUID();
+      updatedRole = new AspNetRoles({
+        Id: modal.Id,
+        Name: modal.roleName,
+        NormalizedName: modal.roleName.toUpperCase(),
+      })
+
+      if (modal.rolePermissions?.length > 0) {
+        const bulkOps = modal.rolePermission.map((perm) => ({
+          insertOne: {
+            document: {
+              RoleId: modal.Id,
+              MenuId: perm.menuId,
+              ParentId: perm.parentId,
+              IsAdd: perm.isAdd,
+              IsEdit: perm.isEdit,
+              IsDel: perm.isDel,
+              IsView: perm.isView,
+              IsPrint: perm.isPrint,
+              IsExport: perm.isExport,
+              isPost: perm.isPost,
+              IsRelease: perm.isRelease,
+            },
+          },
+        }));
+  
+        await RolePermission.bulkWrite(bulkOps);
+      }
+    }
+
+    // Insert new role permissions using bulkWrite
+   
+
+    rtd.isSuccess = true;
+    rtd.mesg = modal.roleId ? "Successfully Updated" : "Successfully Added";
+    return rtd;
+  } catch (error) {
+    console.log(error);
+    throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage)
   }
   };
 
@@ -822,73 +935,52 @@ export const GetRolePermissionQuery = async (modal) => {
     // if (RoleId === "-1") {
       data = await Menu.aggregate([
         {
-            $match: { IsMenu: true } // Filtering menus that are actual menus
+          $lookup: {
+            // ✅ Join with RolePermission table
+            from: "RolePermission",
+            localField: "MenuId",
+            foreignField: "MenuId",
+            as: "permissions",
+            pipeline: [
+              {
+                $match: {
+                  RoleId: RoleId
+                }
+              }
+            ]
+          }
         },
         {
-            $lookup: {
-                from: "RolePermission",
-                let: { menuId: "$MenuId" },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ["$MenuId", "$$menuId"] },
-                                    { $eq: ["$RoleId", RoleId] }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                          IsAdd: { $ifNull: ["$IsAdd", 0] },
-                          IsEdit: { $ifNull: ["$IsEdit", 0] },
-                          IsDel: { $ifNull: ["$IsDel", 0] },
-                          IsView: { $ifNull: ["$IsView", 0] },
-                          IsPrint: { $ifNull: ["$IsPrint", 0] },
-                          IsExport: { $ifNull: ["$IsExport", 0] },
-                          IsRelease: { $ifNull: ["$IsRelease", 0] },
-                          IsPost: { $ifNull: ["$IsPost", 0] }
-                        }
-                    }
-                ],
-                as: "rolePermission"
-            }
+          $project: {
+            // ✅ Return required fields and set default permissions to 0
+            _id: 0,
+            RoleId: 1,
+            MenuId: 1,
+            MenuName: 1,
+            ParentId: 1,
+            IsAdd: 1,
+            IsEdit: 1,
+            IsDel: 1,
+            IsView: 1,
+            IsPrint: 1,
+            IsExport: 1,
+            IsRelease: 1,
+            IsPost: 1
+          }
         },
+      
         {
-            $unwind: {
-                path: "$rolePermission",
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $project: {
-              _id: 0,
-              roleId: RoleId,
-              menuId: "$MenuId",
-              menuName: "$MenuName",
-              parentId: "$ParentId",
-              isAdd: { $ifNull: ["$rolePermission.IsAdd", 0] },
-              isEdit: { $ifNull: ["$rolePermission.IsEdit", 0] },
-              isDel: { $ifNull: ["$rolePermission.IsDel", 0] },
-              isView: { $ifNull: ["$rolePermission.IsView", 0] },
-              isPrint: { $ifNull: ["$rolePermission.IsPrint", 0] },
-              isExport: { $ifNull: ["$rolePermission.IsExport", 0] },
-              isRelease: { $ifNull: ["$rolePermission.IsRelease", 0] },
-              isPost: { $ifNull: ["$rolePermission.IsPost", 0] }
-            }
-        },
-        {
-            $sort: { MenuName: 1 } // Ordering by MenuName
+          $sort: {
+            MenuName: 1
+          }
         }
-    ]);
+      ]);
 
     return{
       status: 1,
       message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-      data: data,
-      rowCount:data?.length
-
+      data: formattedData(data),
+      rowCount: data?.length
     }
 
     return;

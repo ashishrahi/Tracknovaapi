@@ -15,18 +15,17 @@ import {
 export async function AddUpdateEmployee(req, res, next) {
   try {
     const model = req.body;
-    const response  = await AddUpdateEmployeeQuery(model, next);
+    const response  = await AddUpdateEmployeeQuery(model);
   
-    const successResponse = new ApiSuccessResponse(
-      true,
-      StatusCodes.OK,
+    const successResponse = new CommonResponse(
+      1,
       response.message,
       response.data
     );
-    res.status(successResponse.statusCode).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
-    const error = new Error(err.message);
-    error.status = err.statusCode || StatusCodes.BAD_REQUEST;
+    const error = new Error(err.message || err.ErrorMessage);
+    error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
     return next(error);
   }
 }

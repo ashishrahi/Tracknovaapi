@@ -4,7 +4,7 @@ const RolePermissionSchema = new Schema(
   {
     RoleId: { type: String},
     MenuId: { type: Number, },
-    ParentId: { type: Number },
+    ParentId: { type: mongoose.Schema.Types.Mixed },
     IsAdd: { type: Boolean, default: false },
     IsDel: { type: Boolean, default: false },
     IsEdit: { type: Boolean, default: false },
