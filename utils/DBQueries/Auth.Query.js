@@ -620,11 +620,9 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
         // return rtd;
       }
         // First delete all the permissions
-        const deletee = await RolePermission.deleteMany({
+         await RolePermission.deleteMany({
           RoleId: modal.roleId
         })
-        console.log("ergersh",deletee)
-        console.log("Modal id is", typeof modal.roleId)
 
         // const alert = modal.rolePermissions.filter((menu) => menu.menuName = "Alert")
         // console.log("Alert is:",alert);
@@ -649,7 +647,6 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
           return updateFields;
         });
 
-        console.log("bulkOpsForUpdatingPermission", bulkOpsForUpdatingPermission)
         
   
         if (bulkOpsForUpdatingPermission.length > 0) {
