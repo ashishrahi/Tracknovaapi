@@ -14,6 +14,7 @@ import mongoose from "mongoose";
 export const GetvVehicletrackHisQuery = async (modal) => {
    try {
     const { vehicleNo, trackDate } = modal;
+    // console.log('modal')
 
     // Find device ID based on vehicle number
     const device = await mongoose.connection.db.collection("ItemMaster").findOne(

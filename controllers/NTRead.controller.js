@@ -514,7 +514,6 @@ async function getVehicleNotMoved(req, res, next) {
    const model = req.body;
    const dateFrom = new Date(model.dateFrom);
    const dateTo = new Date(model.dateTo);
-   console.log("Start", new Date())
  
    const [ntmv, ntrec] = await Promise.all([
      NT.aggregate([
@@ -536,7 +535,6 @@ async function getVehicleNotMoved(req, res, next) {
      ]).hint({ TrackTime: 1, devid: 1 })
    ]);
  
-   console.log("end", new Date())
    if(!ntmv || !ntrec){
      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Try Again. Internal Server Error")
    }

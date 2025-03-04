@@ -620,18 +620,15 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
         // return rtd;
       }
         // First delete all the permissions
-        const deletee = await RolePermission.deleteMany({
+         await RolePermission.deleteMany({
           RoleId: modal.roleId
         })
-        console.log("ergersh",deletee)
-        console.log("Modal id is", typeof modal.roleId)
 
         // const alert = modal.rolePermissions.filter((menu) => menu.menuName = "Alert")
         // console.log("Alert is:",alert);
 
         // Update role permissions efficiently
         const bulkOpsForUpdatingPermission = modal.rolePermissions.map((perm) => {
-          // const filter = { RoleId: modal.roleId, MenuId: perm.menuId };
           const updateFields = {
             RoleId: modal.roleId,
             MenuId: perm.menuId,
@@ -649,7 +646,6 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
           return updateFields;
         });
 
-        console.log("bulkOpsForUpdatingPermission", bulkOpsForUpdatingPermission)
         
   
         if (bulkOpsForUpdatingPermission.length > 0) {
@@ -698,7 +694,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
     console.log(error);
     throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage)
   }
-  };
+};
 
 
 //////////////////////////////////////////////  GetRoleMaster  ////////////////////////////////////////////////////////////////
@@ -933,75 +929,37 @@ export const GetRolePermissionQuery = async (modal) => {
     const { RoleId } = modal;
     let data;
 
-    if (RoleId === "-1") {
-      data = await Menu.aggregate([
+    // if (RoleId === "-1") {
+      data = await RolePermission.aggregate([
+        {
+          $match:
+            {
+              RoleId: RoleId
+            }
+        },
         {
           $lookup: {
-            from: "RolePermission",
+            // ✅ Join with RolePermission table
+            from: "Menu",
             localField: "MenuId",
             foreignField: "MenuId",
-            as: "permissions",
-            pipeline: [
-              {
-                $match: {
-                  RoleId: RoleId,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $project: {
-            RoleId: 1,
-            MenuId: 1,
-            MenuName: 1,
-            ParentId: 1,
-            IsAdd: 1,
-            IsEdit: 1,
-            IsDel: 1,
-            IsView: 1,
-            IsPrint: 1,
-            IsExport: 1,
-            IsRelease: 1,
-            IsPost: 1,
-          },
-        },
-        {
-          $sort: {
-            MenuName: 1,
-          },
-        },
-      ]);
+            as: "permissions"
+          }
 
-      return {
-        status: 1,
-        message: `RoleID ${RoleId} Details of Role Permission fetched successfully`,
-        data: formattedData(data),
-        rowCount: data?.length,
-      };
-    } else {
-      data = await Menu.aggregate([
+        },
         {
-          $lookup: {
-            from: "RolePermission",
-            localField: "MenuId",
-            foreignField: "MenuId",
-            as: "permissions",
-            pipeline: [
-              {
-                $match: {
-                  RoleId: RoleId,
-                },
-              },
-            ],
-          },
+          $unwind:
+            {
+              path: "$permissions",
+              preserveNullAndEmptyArrays: true
+            }
         },
         {
           $project: {
             _id: 0,
             RoleId: 1,
             MenuId: 1,
-            MenuName: 1,
+            MenuName: "$permissions.MenuName",
             ParentId: 1,
             IsAdd: 1,
             IsEdit: 1,
@@ -1029,10 +987,11 @@ export const GetRolePermissionQuery = async (modal) => {
         rowCount: data.length,
       };
     }
-  } catch (error) {
+   
+  catch (error) {
     return {
       status: 0,
       message: error.message,
     };
   }
-};
+}
