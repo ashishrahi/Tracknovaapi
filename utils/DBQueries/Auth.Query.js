@@ -23,7 +23,7 @@ export const loginQuery = async (model) => {
     const user = await AspNetUsers.findOne({ UserName: username });
     console.log("real user", user)
     if (!user) {
-        throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
+      throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
     }
 
     // Check password
@@ -32,19 +32,22 @@ export const loginQuery = async (model) => {
     // if (!isPasswordValid) {
     //   return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password"));
     // }
-    
+
     // AspUser => EmpMaster => RoleId
-    const empRoleId = await EmpMaster.findOne({UserId: user.Id}).select("RoleId")
+    const empRoleId = await EmpMaster.findOne({ UserId: user.Id }).select("RoleId")
     // console.log("empROleid", empRoleId)
     // // Fetch user roles
     const roles = await AspNetRoles.find(
-      { Id: 
-        { $in: 
-        [empRoleId.RoleId]
-        // ["82763a68-4d8d-4358-96a5-c2d2981e3d0a"]
-       // emp.RoleId
+      {
+        Id:
+        {
+          $in:
+            [empRoleId.RoleId]
+          // ["82763a68-4d8d-4358-96a5-c2d2981e3d0a"]
+          // emp.RoleId
 
-       } }
+        }
+      }
     );
     // console.log("roles: ", roles)
     const rolesString = roles.map(role => role.Name)
@@ -58,7 +61,8 @@ export const loginQuery = async (model) => {
     //     return next(StatusCodes.BAD_REQUEST, "Failed to fetch user permissions");
     // }
 
-    const userPermissions = await  GetUserPermissionMasterQuery({userId: user.Id
+    const userPermissions = await GetUserPermissionMasterQuery({
+      userId: user.Id
       // user.Id
     })
     // console.log("user permission:", userPermissions)
@@ -68,23 +72,23 @@ export const loginQuery = async (model) => {
 
     // Generate JWT Token
     const authClaims = {
-        id: user.Id,
-        username: user.UserName,
-        roles: rolesString,
+      id: user.Id,
+      username: user.UserName,
+      roles: rolesString,
     };
     // console.log(userPermissions);
     // const token = jwt.sign(authClaims, process.env.ACCESS_TOKEN_SECRET, {
     //     expiresIn: "5y", // Token expires in 5 years
     // });
-   
+
     response = {
-        // status: 1,
+      // status: 1,
       // message: "Login Successful",
-      
+
       // message: "Login Successful",
-      
-      token:  user.generateAccessToken(),
-      expiration: Number(process.env.ACCESS_TOKEN_EXPIRY)/1000, // 5 years
+
+      token: user.generateAccessToken(),
+      expiration: Number(process.env.ACCESS_TOKEN_EXPIRY) / 1000, // 5 years
       isSuccess: true,
       message: "Login Successful",
       data: {
@@ -93,52 +97,52 @@ export const loginQuery = async (model) => {
           userName: user.UserName,
           email: user.Email,
           phoneNumber: user.PhoneNumber,
-          roles:  rolesString, // ["User"]//
+          roles: rolesString, // ["User"]//
         },
-        permissions:  userPermissions?.data //formattedData(userPermissions),
+        permissions: userPermissions?.data //formattedData(userPermissions),
       }
     };
     // console.log("response from query", response)
-  return {response: response, refreshToken: user.generateRefreshToken()};
-} catch (error) {
-  console.log("Login Error: ", error);
-  throw new ApiErrorResponse(error.StatusCode  , error.ErrorMessage || error.message);
-  // return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+    return { response: response, refreshToken: user.generateRefreshToken() };
+  } catch (error) {
+    console.log("Login Error: ", error);
+    throw new ApiErrorResponse(error.StatusCode, error.ErrorMessage || error.message);
+    // return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
     // return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
-}
+  }
 
 
   //-----------------OLD CODE
-//   try {
-//     const { username, password } = model;
-//     if( !username || !password || !(username && password) ){
-//       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username & password")
-//     }
-//     // Find user in MongoDB
-//     const user = await AspNetUsers.findOne({ UserName: username });
+  //   try {
+  //     const { username, password } = model;
+  //     if( !username || !password || !(username && password) ){
+  //       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username & password")
+  //     }
+  //     // Find user in MongoDB
+  //     const user = await AspNetUsers.findOne({ UserName: username });
 
-//     if (!user) {
-//         throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
-//     }
+  //     if (!user) {
+  //         throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+  //     }
 
-//     // Compare password with hashed password in DB
-//     const isMatch = await user.isValidPassword(password);
-//     if (!isMatch) {
-//       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
-//     }
+  //     // Compare password with hashed password in DB
+  //     const isMatch = await user.isValidPassword(password);
+  //     if (!isMatch) {
+  //       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
+  //     }
 
-//     const accessToken = await user.generateAccessToken();
-//     const refreshToken = await user.generateRefreshToken();
+  //     const accessToken = await user.generateAccessToken();
+  //     const refreshToken = await user.generateRefreshToken();
 
-//     return {
-//         status: "Success",
-//         message: "Login successful",
-//         accessToken: accessToken,
-//         refreshToken: refreshToken
-//     };
-// } catch (error) {
-//     throw error;
-// }
+  //     return {
+  //         status: "Success",
+  //         message: "Login successful",
+  //         accessToken: accessToken,
+  //         refreshToken: refreshToken
+  //     };
+  // } catch (error) {
+  //     throw error;
+  // }
 
 }
 
@@ -150,7 +154,7 @@ export const RegisterQuery = async (model, res) => {
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
     if (userExists) {
-      return res.status(StatusCodes.CONFLICT).json(new ApiErrorResponse( StatusCodes.CONFLICT, "User already exists!")) ;
+      return res.status(StatusCodes.CONFLICT).json(new ApiErrorResponse(StatusCodes.CONFLICT, "User already exists!"));
     }
 
     // Create new user
@@ -202,10 +206,12 @@ export const GetUserPermissionQuery = async (model) => {
           as: "menuDetails",
         },
       },
-      { $unwind: {
-        path: "$menuDetails",
-        preserveNullAndEmptyArrays: true
-      } },
+      {
+        $unwind: {
+          path: "$menuDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
       {
         $match: {
           RoleId: roleId,
@@ -334,7 +340,7 @@ export const GetUserPermissionMasterQuery = async (modal) => {
       return {
         isSuccess: 1,
         id: userId,
-        createUpdate:"",
+        createUpdate: "",
         msg: "User Permission Details fetched successfully",
         data: usersPermission,
       };
@@ -362,10 +368,12 @@ export const GetUserPermissionMasterQuery = async (modal) => {
             as: "parentMenuDetails",
           },
         },
-        { $unwind:{
-          path: "$parentMenuDetails",
-          preserveNullAndEmptyArrays: true,}
-         },
+        {
+          $unwind: {
+            path: "$parentMenuDetails",
+            preserveNullAndEmptyArrays: true,
+          }
+        },
         {
           $project: {
             UserId: 1,
@@ -384,12 +392,12 @@ export const GetUserPermissionMasterQuery = async (modal) => {
           },
         },
       ]);
-     // Convert first letter of each key to lowercase for every object in the array
-const formatedData = formattedData(data)
+      // Convert first letter of each key to lowercase for every object in the array
+      const formatedData = formattedData(data)
       return {
         isSuccess: 1,
         id: userId,
-        createUpdate:"",
+        createUpdate: "",
         msg: "User Permission Details fetched successfully",
         data: formatedData,
       };
@@ -429,11 +437,11 @@ export const GetUserPermissionListQuery = async (modal) => {
         },
       },
       {
-        $unwind:{ 
-          path:"$userDetails",
+        $unwind: {
+          path: "$userDetails",
           preserveNullAndEmptyArrays: false
         }
-        },
+      },
       {
         $lookup: {
           from: "EmpMaster", // Collection name for role masters
@@ -445,14 +453,14 @@ export const GetUserPermissionListQuery = async (modal) => {
       {
         $unwind: {
           path: "$roleDetails",
-        preserveNullAndEmptyArrays: true,
+          preserveNullAndEmptyArrays: true,
         },
       },
       {
         $project: {
           UserId: '$_id',
-         RoleId: '$roleDetails.RoleId',
-         UserName: '$userDetails.UserName',
+          RoleId: '$roleDetails.RoleId',
+          UserName: '$userDetails.UserName',
         },
       },
     ]);
@@ -559,7 +567,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
   //       name: newRoleMaster.Name,
   //       normalizedName: newRoleMaster.NormalizedName,
   //     }
-      
+
 
 
   //     // Insert permissions
@@ -578,7 +586,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
 
   //     }
   //    }
-    
+
   // } catch (err) {
   //  return{
   //    status: 0,
@@ -619,50 +627,52 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
         // rtd.mesg = "Role not found!";
         // return rtd;
       }
-        // First delete all the permissions
-         await RolePermission.deleteMany({
-          RoleId: modal.roleId
-        })
+      // First delete all the permissions
+      await RolePermission.deleteMany({
+        RoleId: modal.roleId
+      })
 
-        // const alert = modal.rolePermissions.filter((menu) => menu.menuName = "Alert")
-        // console.log("Alert is:",alert);
+      // const alert = modal.rolePermissions.filter((menu) => menu.menuName = "Alert")
+      // console.log("Alert is:",alert);
 
-        // Update role permissions efficiently
-        const bulkOpsForUpdatingPermission = modal.rolePermissions.map((perm) => {
-          const updateFields = {
-            RoleId: modal.roleId,
-            MenuId: perm.menuId,
-            ParentId: perm.parentId,
-            IsAdd: perm.isAdd,
-            IsEdit: perm.isEdit,
-            IsDel: perm.isDel,
-            IsView: perm.isView,
-            IsPrint: perm.isPrint,
-            IsExport: perm.isExport,
-            IsPost: perm.isPost,
-            IsRelease: perm.isRelease,
-          };
-        
-          return updateFields;
-        });
+      // Update role permissions efficiently
+      const bulkOpsForUpdatingPermission = modal?.rolePermissions?.map((perm) => {
+        const updateFields = {
+          RoleId: modal.roleId,
+          MenuId: perm.menuId,
+          ParentId: perm.parentId,
+          IsAdd: perm.isAdd,
+          IsEdit: perm.isEdit,
+          IsDel: perm.isDel,
+          IsView: perm.isView,
+          IsPrint: perm.isPrint,
+          IsExport: perm.isExport,
+          IsPost: perm.isPost,
+          IsRelease: perm.isRelease,
+        };
 
-        
-  
-        if (bulkOpsForUpdatingPermission.length > 0) {
-          await RolePermission.insertMany(bulkOpsForUpdatingPermission);
-        }
+        return updateFields;
+      });
+
+
+
+      if (bulkOpsForUpdatingPermission.length > 0) {
+        await RolePermission.insertMany(bulkOpsForUpdatingPermission);
+      }
 
     } else {
       // Insert new role
+      console.log("for upsert permission",modal)
       modal.Id = crypto.randomUUID();
       updatedRole = new AspNetRoles({
         Id: modal.Id,
         Name: modal.roleName,
         NormalizedName: modal.roleName.toUpperCase(),
       })
+      await updatedRole.save();
 
       if (modal.rolePermissions?.length > 0) {
-        const bulkOps = modal.rolePermission.map((perm) => ({
+        const bulkOps = modal?.rolePermissions?.map((perm) => ({
           insertOne: {
             document: {
               RoleId: modal.Id,
@@ -679,13 +689,13 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
             },
           },
         }));
-  
+
         await RolePermission.bulkWrite(bulkOps);
       }
     }
 
     // Insert new role permissions using bulkWrite
-   
+
 
     rtd.isSuccess = true;
     rtd.mesg = modal.roleId ? "Successfully Updated" : "Successfully Added";
@@ -703,11 +713,11 @@ export const GetRoleMasterQuery = async () => {
   try {
     const roles = await AspNetRoles.find().sort({ Name: 1 });
 
-    const roleList = roles.map((role)=>{
-      return{
+    const roleList = roles.map((role) => {
+      return {
         id: role.Id,
         name: role.Name,
-        normalizedName:role.NormalizedName
+        normalizedName: role.NormalizedName
       }
     })
 
@@ -730,7 +740,7 @@ export const DeleteRoleMasterQuery = async (modal) => {
   try {
     const { RoleId } = modal;
     // console.log('RoleId: ', RoleId);
-    const roleExists = await AspNetRoles.findOne({Id: RoleId });
+    const roleExists = await AspNetRoles.findOne({ Id: RoleId });
 
     if (!roleExists) {
       return {
@@ -764,99 +774,100 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
     // Validation: RoleId required
     if (!roleId || roleId === "0") {
-       return{
+      return {
         isSuccess: 0,
-        internalSuccess:"Created",
+        internalSuccess: "Created",
         mesg: "Role ID is required",
-        insertedId:"",
+        insertedId: "",
         data
-       }
+      }
     }
 
     // Check if role exists
-    let role = await RolePermission.findOne({ RoleId:roleId });
+    let role = await RolePermission.findOne({ RoleId: roleId });
 
     if (role) {
-        // Update role
-        role.RoleId = roleId;
-        await role.save();
+      // Update role
+      role.RoleId = roleId;
+      await role.save();
 
-const updatedRole ={
-  roleId: role.RoleId,
-  menuId: role.MenuId,
-  parentMenuId: role.ParentId,
-  isAdd: role.IsAdd,
-  isDel: role.IsDel,
-  isEdit: role.IsEdit,
-  isExport: role.IsExport,
-  isPost: role.IsPost,
-  isPrint: role.IsPrint,
-  isRelease: role.IsRelease,
-  isView: role.IsView,
-  menuName: role.MenuName
-}
+      const updatedRole = {
+        roleId: role.RoleId,
+        menuId: role.MenuId,
+        parentMenuId: role.ParentId,
+        isAdd: role.IsAdd,
+        isDel: role.IsDel,
+        isEdit: role.IsEdit,
+        isExport: role.IsExport,
+        isPost: role.IsPost,
+        isPrint: role.IsPrint,
+        isRelease: role.IsRelease,
+        isView: role.IsView,
+        menuName: role.MenuName
+      }
 
 
-        return{
-          isSuccess: 1,
-          internalSuccess: "true",
-          mesg: "Role details updated successfully",
-          insertedId:"",
-          data: updatedRole,
-        }
+      return {
+        isSuccess: 1,
+        internalSuccess: "true",
+        mesg: "Role details updated successfully",
+        insertedId: "",
+        data: updatedRole,
+      }
     } else {
-        // Generate new RoleId
-        let tempZoneID = 1;
-        if (modal.roleId === "-1" || modal.roleId === "0") {
-            const maxRole = await RolePermission.find().sort({ RoleId: -1 }).limit(1);
-            tempZoneID = maxRole.length ? parseInt(maxRole[0].RoleId) + 1 : 1;
-        }
+      // Generate new RoleId
+      let tempZoneID = 1;
+      if (modal.roleId === "-1" || modal.roleId === "0") {
+        const maxRole = await RolePermission.find().sort({ RoleId: -1 }).limit(1);
+        tempZoneID = maxRole.length ? parseInt(maxRole[0].RoleId) + 1 : 1;
+      }
 
-        // Create new role
-        const newRole = new RolePermission({ RoleId: tempZoneID.toString(),
-          MenuId:modal.menuId,
-          ParentId:modal.parentId,
-          IsAdd: modal.IsAdd,
-          IsDel: modal.IsDel,
-          IsEdit: modal.IsEdit,
-          IsExport: modal.IsExport,
-          IsPost: modal.IsPost,
-          IsPrint: modal.IsPrint,
-          IsRelease: modal.IsRelease,
-          IsView: modal.IsView,
-          MenuName:modal.menuName
-         });
-        await newRole.save();
+      // Create new role
+      const newRole = new RolePermission({
+        RoleId: tempZoneID.toString(),
+        MenuId: modal.menuId,
+        ParentId: modal.parentId,
+        IsAdd: modal.IsAdd,
+        IsDel: modal.IsDel,
+        IsEdit: modal.IsEdit,
+        IsExport: modal.IsExport,
+        IsPost: modal.IsPost,
+        IsPrint: modal.IsPrint,
+        IsRelease: modal.IsRelease,
+        IsView: modal.IsView,
+        MenuName: modal.menuName
+      });
+      await newRole.save();
 
-const newRolePermission = {
-  roleId: tempZoneID,
-  menuId:newRole.MenuId,
-  parentId:newRole.ParentId,
-  isAdd: newRole.IsAdd,
-  isDel: newRole.IsDel,
-  isEdit: newRole.IsEdit,
-  isExport: newRole.IsExport,
-  isPost: newRole.IsPost,
-  isPrint: newRole.IsPrint,
-  isRelease: newRole.IsRelease,
-  isView: newRole.IsView,
-  menuName:newRole.MenuName
-}
-    return{
-          isSuccess: 1,
-          internalSuccess: "Created",
-          mesg: `Role ${tempZoneID} Created Successfully  `,
-          insertedId:"",
-          data: newRolePermission,
-        }
+      const newRolePermission = {
+        roleId: tempZoneID,
+        menuId: newRole.MenuId,
+        parentId: newRole.ParentId,
+        isAdd: newRole.IsAdd,
+        isDel: newRole.IsDel,
+        isEdit: newRole.IsEdit,
+        isExport: newRole.IsExport,
+        isPost: newRole.IsPost,
+        isPrint: newRole.IsPrint,
+        isRelease: newRole.IsRelease,
+        isView: newRole.IsView,
+        menuName: newRole.MenuName
+      }
+      return {
+        isSuccess: 1,
+        internalSuccess: "Created",
+        mesg: `Role ${tempZoneID} Created Successfully  `,
+        insertedId: "",
+        data: newRolePermission,
+      }
     }
-} catch (error) {
-    return{
+  } catch (error) {
+    return {
       isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: error.message,
     }
-}
+  }
 };
 
 //////////////////////////////////////////////  Get / RolePermissionMaster  ////////////////////////////////////////////////////////////////
@@ -867,55 +878,55 @@ export const GetRolePermissionMasterQuery = async (modal) => {
 
     if (roleId === "-1") {
       const data = await RolePermission.find({}).lean();
-      const roleList = data.map((role)=>{
-        return{
+      const roleList = data.map((role) => {
+        return {
           roleId: role.RoleId,
           isAdd: role.IsAdd,
-          isDel:role.IsDel,
-          isEdit:role.IsEdit,
-          isExport:role.IsExport,
-          isPost:role.IsPost,
-          isPrint:role.IsPrint,
-          isRelease:role.IsRelease,
-          isView:role.IsView,
-          menuName:role.MenuName
+          isDel: role.IsDel,
+          isEdit: role.IsEdit,
+          isExport: role.IsExport,
+          isPost: role.IsPost,
+          isPrint: role.IsPrint,
+          isRelease: role.IsRelease,
+          isView: role.IsView,
+          menuName: role.MenuName
         }
       })
 
       return {
         isSuccess: true,
-        internalSuccess:"",
+        internalSuccess: "",
         mesg: "Role Permission fetched successfully",
-        insertedId:"",
+        insertedId: "",
         data: roleList,
       };
     } else {
       const data = await RolePermission.findOne({ RoleId: roleId }).lean();
-      const oneData ={
+      const oneData = {
         roleId: data.RoleId,
         isAdd: data.IsAdd,
-        isDel:data.IsDel,
-        isEdit:data.IsEdit,
-        isExport:data.IsExport,
-        isPost:data.IsPost,
-        isPrint:data.IsPrint,
-        isRelease:data.IsRelease,
-        isView:data.IsView,
-        menuName:role.MenuName
+        isDel: data.IsDel,
+        isEdit: data.IsEdit,
+        isExport: data.IsExport,
+        isPost: data.IsPost,
+        isPrint: data.IsPrint,
+        isRelease: data.IsRelease,
+        isView: data.IsView,
+        menuName: role.MenuName
 
       }
       return {
         isSuccess: true,
-        internalSuccess:"",
+        internalSuccess: "",
         mesg: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-        insertedId:"",
+        insertedId: "",
         data: oneData,
       };
     }
   } catch (error) {
     return {
       isSuccess: 0,
-      internalSuccess:"",
+      internalSuccess: "",
       mesg: error.message,
     };
   }
@@ -924,103 +935,104 @@ export const GetRolePermissionMasterQuery = async (modal) => {
 //////////////////////////////////////////////  Get / RolePermission  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionQuery = async (modal) => {
-  try {
-    const { RoleId } = modal;
-    let data;
+  // try {
+  const { RoleId } = modal;
+  let data;
 
-    // if (RoleId === "-1") {
-      data = await RolePermission.aggregate([
+  if (RoleId !== "-1") {
+    data = await RolePermission.aggregate([
+      {
+        $match:
         {
-          $match:
-            {
-              RoleId: RoleId
-            }
-        },
-        {
-          $lookup: {
-            // ✅ Join with RolePermission table
-            from: "Menu",
-            localField: "MenuId",
-            foreignField: "MenuId",
-            as: "permissions"
-          }
-        },
-        {
-          $unwind:
-            {
-              path: "$permissions",
-              preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-          $project: {
-            // ✅ Return required fields and set default permissions to 0
-            _id: 0,
-            RoleId: 1,
-            MenuId: 1,
-            MenuName: "$permissions.MenuName",
-            ParentId: 1,
-            IsAdd: 1,
-            IsEdit: 1,
-            IsDel: 1,
-            IsView: 1,
-            IsPrint: 1,
-            IsExport: 1,
-            IsRelease: 1,
-            IsPost: 1
-          }
-        },
-        {
-          $sort: {
-            MenuName: 1
-          }
+          RoleId: RoleId
         }
-      ]);
+      },
+      {
+        $lookup: {
+          // ✅ Join with RolePermission table
+          from: "Menu",
+          localField: "MenuId",
+          foreignField: "MenuId",
+          as: "permissions"
+        }
+      },
+      {
+        $unwind:
+        {
+          path: "$permissions",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          // ✅ Return required fields and set default permissions to 0
+          _id: 0,
+          RoleId: 1,
+          MenuId: 1,
+          MenuName: "$permissions.MenuName",
+          ParentId: 1,
+          IsAdd: 1,
+          IsEdit: 1,
+          IsDel: 1,
+          IsView: 1,
+          IsPrint: 1,
+          IsExport: 1,
+          IsRelease: 1,
+          IsPost: 1
+        }
+      },
+      {
+        $sort: {
+          MenuName: 1
+        }
+      }
+    ]);
 
-    return{
+    return {
       status: 1,
       message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
       data: formattedData(data),
       rowCount: data?.length
     }
 
-    return;
-    // } else {
-        data = await RolePermission.find({ RoleId: RoleId }).lean();
 
-        const newData = data.map((role)=>{
-          return{
-            roleId: role.RoleId,
-            menuId: role.MenuId,
-            parentMenuId: role.ParentId,
-            isAdd: role.IsAdd,
-            isDel:role.IsDel,
-            isEdit: role.IsEdit,
-            isExport: role.IsExport,
-            isPost: role.IsPost,
-            isPrint: role.IsPrint,
-            isRelease: role.IsRelease,
-            isView: role.IsView,
-            menuName: role.MenuName
-          }
-        })
+  } else {
+    data = await Menu.find().lean();
 
-        const rowCount = data.length;
+    // const newData = data.map((role) => {
+    //   return {
+    //     roleId: role.RoleId,
+    //     menuId: role.MenuId,
+    //     parentMenuId: role.ParentId,
+    //     isAdd: role.IsAdd,
+    //     isDel: role.IsDel,
+    //     isEdit: role.IsEdit,
+    //     isExport: role.IsExport,
+    //     isPost: role.IsPost,
+    //     isPrint: role.IsPrint,
+    //     isRelease: role.IsRelease,
+    //     isView: role.IsView,
+    //     menuName: role.MenuName
+    //   }
+    // })
 
-        return{
-          status: 1,
-          message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-          data: newData,
-          rowCount:rowCount
+    const rowCount = data.length;
 
-        }
-    
+    return {
+      status: 1,
+      message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+      data: formattedData(data),
+      rowCount: rowCount
 
-  
-} catch (error) {
-  return{
-    status: 0,
-    message: error.message,
+    }
+
+
+
+    // } catch (error) {
+    //   return{
+    //     status: 0,
+    //     message: error.message,
+    //   }
+    // }
   }
 }
-};
