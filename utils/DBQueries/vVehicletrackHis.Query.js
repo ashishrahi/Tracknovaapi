@@ -12,15 +12,19 @@ import mongoose from "mongoose";
 /////////////////////////////////////////// GetvVehicletrackHisQuery //////////////////////////////////////////
 
 export const GetvVehicletrackHisQuery = async (modal) => {
+
    try {
-    const { vehicleNo, trackDate } = modal;
-    // console.log('modal')
+  
+    const { where:vehicleNo, str4:trackDate } = modal;
+  
+    // console.log('modal:',modal)
 
     // Find device ID based on vehicle number
     const device = await mongoose.connection.db.collection("ItemMaster").findOne(
       { VehicleNo: vehicleNo },
       { projection: { devid: 1 } }
     );
+    // console.log('device:',device)
 
     if (!device || !device.devid) {
       return {
@@ -30,12 +34,15 @@ export const GetvVehicletrackHisQuery = async (modal) => {
     }
 
     const Devid = device.devid.toString();
+    
 
     // Convert trackDate to start and end range
     const startDate = new Date(trackDate);
     const endDate = new Date(trackDate);
     endDate.setDate(endDate.getDate() + 1);
-
+    // console.log('Devid', Devid)
+    // console.log('startDate', startDate)
+    // console.log('endDate', endDate)
     // Fetch all collections that start with 'evts_'
     const collections = await mongoose.connection.db.listCollections().toArray();
 
@@ -44,22 +51,38 @@ export const GetvVehicletrackHisQuery = async (modal) => {
       .filter((name) => name);
      
 
+// console.log('relevantCollections',relevantCollections)
+let aggregatedData = [];
 
-    let aggregatedData = [];
+for (const collectionName of relevantCollections) {
+  const collection = mongoose.connection.db.collection(collectionName);
 
-    for (const collectionName of relevantCollections) {
-      const collection = mongoose.connection.db.collection(collectionName);
-      // console.log("collection:",collection)
+  const data = await collection
+    .aggregate([
+      {
+        $match: {
+          devid: Devid,
+          TrackTime: { $gte: startDate, $lt: endDate }
+        }
+      },
+      {
+        $project: {
+          TrackTime: 1,
+          Longitude: { $toDouble: "$Longitude" },  // Convert to decimal
+          Lattitude: { $toDouble: "$Lattitude" },  // Convert to decimal
+          speed: 1,
+          devid: 1,
+          distance: { $toDouble: "$distance" },    // Convert to decimal
+          Flag: 1,
+          Id: 1
+        }
+      }
+    ])
+    .toArray();
 
-      const data = await collection
-        .find(
-          { devid: Devid, TrackTime: { $gte: startDate, $lt: endDate } },
-          { projection: { TrackTime: 1, Longitude:1, Lattitude: 1, speed: 1, devid: 1, distance:1, Flag: 1, Id: 1 } }
-        )
-        .toArray();
-        // console.log("data:",data)
-      aggregatedData.push(...data);
-    }
+  aggregatedData.push(...data);
+}
+
 
     // Fetch vehicle details from ItemMaster
     const itemMasterMap = await mongoose.connection.db
@@ -73,6 +96,8 @@ export const GetvVehicletrackHisQuery = async (modal) => {
         }, {})
       );
 
+    // console.log("itemMasterMap:",itemMasterMap)
+
     // Fetch employee details from EmpMaster
     const empMasterMap = await mongoose.connection.db
       .collection("EmpMaster")
@@ -85,6 +110,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
         }, {})
       );
 
+      // console.log('empMaster:',empMasterMap)
     // Merge data
     aggregatedData = aggregatedData.map((record) => {
       const itemData = itemMasterMap[record.devid] || {};
