@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 
-import {ApiErrorResponse,ApiSuccessResponse,CommonResponse} from "../utils/apiResponse/index.js";
-import { getDashboardQuery,getVehicleQuery,BinLocationQuery, BinsByWardNumberQuery } from "../utils/DBQueries/index.js";
+import { ApiErrorResponse, ApiSuccessResponse, CommonResponse } from "../utils/apiResponse/index.js";
+import { getDashboardQuery, getVehicleQuery, BinLocationQuery, BinsByWardNumberQuery } from "../utils/DBQueries/index.js";
 
 
 
@@ -59,14 +59,16 @@ export async function getVehicleCurrentDay(req, res) {
 //-------------- getVehicleDistance ------>
 
 export async function getVehicleDistance(req, res) {
- 
-
   try {
-    
-    const { vehicleno, datef, datet } = req.body;
+    /**
+     * parameterValues[0] = vehicle no
+     * 1 = startdate
+     * 2 = end date
+     */
+    const { vehicleno, datef, datet, parameterValues } = req.body;
     // console.log(vehicleno, datef, datet);
     if (
-      [vehicleno, datef, datet].some(
+      parameterValues.some(
         (fields) => fields?.trim() === undefined || ""
       )
     ) {
@@ -77,23 +79,23 @@ export async function getVehicleDistance(req, res) {
             StatusCodes.BAD_REQUEST,
             "Please Provide all valid fields"
           )
-        );
+      );
     }
 
     const itemMasterData = await ItemMaster.find({
-        VehicleNo: vehicleno,
-      }).lean();
-
+      VehicleNo: parameterValues[0],
+    }).lean();
+    console.log("itemMasterData", itemMasterData)
     const { devid, VehicleNo, VehicleTypeId } = itemMasterData[0];
     // console.log(devid)
-
+    console.log(devid, VehicleNo, VehicleTypeId )
     const resultCursor = await NT.aggregate(
       [
         {
           $match: {
             TrackDate: {
-              $gte: new Date(datef),
-              $lte: new Date(datet),
+              $gte: new Date(parameterValues[1]),
+              $lte: new Date(parameterValues[2]),
             },
             devid: devid, // Filter NT by the list of valid devids
           },
@@ -156,7 +158,7 @@ export async function getVehicleDistance(req, res) {
     );
     const data = formattedData(resultCursor)
     // const result1 = await resultCursor.lean();
-    return res.status(200).json(new CommonResponse(1, "Data Fetched Successfully",data,  data?.length));
+    return res.status(200).json(new CommonResponse(1, "Data Fetched Successfully", data, data?.length));
   } catch (error) {
     // console.log(error)
     return res
@@ -186,21 +188,21 @@ export async function getAllBins(req, res) {
   }
 }
 
-export async function getMapBinsWardWise (req,res) {
+export async function getMapBinsWardWise(req, res) {
 
   try {
-  const filter = req.query; 
+    const filter = req.query;
     const binLocations = await BinsByWardNumberQuery(filter.wardNumber);
 
     const successResponse = new CommonResponse(
       1,
-     'MapBinsWardWise data fetched successfully',
+      'MapBinsWardWise data fetched successfully',
       binLocations,
       binLocations?.length
     );
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
-    const errorResponse = new ApiErrorResponse('Failed to fetch All Bins', StatusCodes.NOT_FOUND  );
+    const errorResponse = new ApiErrorResponse('Failed to fetch All Bins', StatusCodes.NOT_FOUND);
     res.status(errorResponse.StatusCode).json(errorResponse);
 
   }
