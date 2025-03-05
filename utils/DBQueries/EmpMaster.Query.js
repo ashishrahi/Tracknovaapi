@@ -222,41 +222,76 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
   let response = { status: "Failed", message: "" };
 
   try {
-      // If UserId is empty, register the user first
+      // If UserId is empty or null, register the user first
       model.registerModel.id = crypto.randomUUID();
-      console.log("model.registerModel.id: ", model.registerModel.id)
 
-      // if userId is given
-      if (!model.userId  && model.registerModel?.username || !model.userId.trim() === "" && model.registerModel?.username) {
-          
+      // if userId is not given register first user
+      if (!model.userId) {
+          console.log(" first if block executed")
+          console.log("Model", model.registerModel)
+          if(model.registerModel?.username?.trim() === "" ){
+            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username")
+          }
+          if(model.registerModel?.password === ""){
+            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid password")
+          }
         // it register user in AspNetUsers Table
+        // if(model.registerModel?.username.trim() === ""){
+        //   throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid Username or UserId")
+        // }
+        // model.registerModel.id  =====> Crypto UUID
         const newAspUser = await RegisterQuery(model.registerModel, res);
 
-        if (!newAspUser) return response.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!")) ;
+        if (!newAspUser) return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!")) ;
         model.userPermission.forEach((perm) => (perm.userId = model.registerModel.id));
         
         // Upsert User Permissions
         const upsertResponse = await AddUpdateUserPermissionMasterQuery(model.registerModel.id, model.userPermission);
-        if (upsertResponse.isSuccess === false) throw new Error(upsertResponse.message);
+        if (upsertResponse.isSuccess === false) throw new ApiErrorResponse(StatusCodes.BAD_REQUEST,upsertResponse.message);
       }
 
       // If UserId already exists, just update permissions
-      if (model.userId && model.registerModel?.username) {
-        await UserPermission.bulkWrite(
-            model.userPermission.map((perm) => ({
-                updateOne: {
-                    filter: { UserId: model.userId, MenuId: perm.menuId },
-                    update: { $set: {  UserId: model.userId, MenuId: perm.menuId, ParentId: perm.parentId, IsAdd: perm.isAdd, IsEdit: perm.isEdit, IsDel: perm.isDel, IsView: perm.isView, IsPrint: perm.isPrint, IsExport: perm.isExport, IsRelease: perm.IsRelease, IsPost: perm.isPost } }, // Ensuring userId is updated
-                    upsert: true,
-                },
-            }))
-        );
+      if (model.userId) {
+       console.log("2nd if block executes")
+        const exisitingDeleted = await UserPermission.deleteMany({ UserId: model.userId});
+        console.log("exisitingDeleted", exisitingDeleted)
+        // await UserPermission.bulkWrite(
+        //     model.userPermission.map((perm) => ({
+        //         updateOne: {
+        //             filter: { UserId: model.userId, MenuId: perm.menuId },
+        //             update: { $set: {  UserId: model.userId, MenuId: perm.menuId, ParentId: perm.parentId, IsAdd: perm.isAdd, IsEdit: perm.isEdit, IsDel: perm.isDel, IsView: perm.isView, IsPrint: perm.isPrint, IsExport: perm.isExport, IsRelease: perm.IsRelease, IsPost: perm.isPost } }, // Ensuring userId is updated
+        //             upsert: true,
+        //         },
+        //     }))
+        // );
+        if (model.userPermission?.length > 0) {
+                const bulkOps = model?.userPermission?.map((perm) => ({
+                  insertOne: {
+                    document: {
+                      UserId: model.userId,
+                      MenuId: perm.menuId,
+                      ParentId: perm.parentId,
+                      IsAdd: perm.isAdd,
+                      IsEdit: perm.isEdit,
+                      IsDel: perm.isDel,
+                      IsView: perm.isView,
+                      IsPrint: perm.isPrint,
+                      IsExport: perm.isExport,
+                      isPost: perm.isPost,
+                      IsRelease: perm.isRelease,
+                    },
+                  },
+                }));
+        
+                const updatedPermission = await UserPermission.bulkWrite(bulkOps);
+                console.log("updatedPermission",updatedPermission)
+              }
         response.status = StatusCodes.CREATED
         response.message = "Permissions has successfully updated";
 
         return response
-    }
-
+      }
+      console.log("Without if block ")
       // Update Employee Data
       const empUpdateResult = await EmpMaster.findOneAndUpdate(
           { Empid : model.empid },
@@ -283,7 +318,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       return response;
 
   } catch (error) {
-      console.log(error)
+    console.log("error is from query",error);
       throw error;
   }
 
