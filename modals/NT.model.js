@@ -29,4 +29,6 @@ const NTSchema = new mongoose.Schema({
     TrackTime: mongoose.Schema.Types.Date,
 }, {timestamps: true, collection: "NT"})
 
+NTSchema.index({TrackTime: 1, acc: 1, devid: 1 })
+
 export const NT = mongoose.model("NT", NTSchema)

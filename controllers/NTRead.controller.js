@@ -525,6 +525,7 @@ async function getVehicleNotMoved(req, res, next) {
        },
        { $group: { _id: "$devid" } }
      ]).hint({ TrackTime: 1, acc: 1, devid: 1 }),
+     
      NT.aggregate([
        {
          $match: {
@@ -532,7 +533,8 @@ async function getVehicleNotMoved(req, res, next) {
          }
        },
        { $group: { _id: "$devid" } }
-     ]).hint({ TrackTime: 1, devid: 1 })
+     ])
+    //  .hint({ TrackTime: 1, devid: 1 })
    ]);
  
    if(!ntmv || !ntrec){
