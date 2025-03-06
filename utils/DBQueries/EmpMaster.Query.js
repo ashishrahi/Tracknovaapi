@@ -228,7 +228,9 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       // if userId is not given register first user
       if (!model.userId) {
           console.log(" first if block executed")
-          console.log("Model", model.registerModel)
+          const  { registerModel , userId, roleId} = model
+          console.table({registerModel , userId, roleId})
+          
           if(model.registerModel?.username?.trim() === "" ){
             throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username")
           }
@@ -243,6 +245,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
         const newAspUser = await RegisterQuery(model.registerModel, res);
 
         if (!newAspUser) return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create a request. Try Again!!")) ;
+        
         model.userPermission.forEach((perm) => (perm.userId = model.registerModel.id));
         
         // Upsert User Permissions
@@ -293,6 +296,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       }
       console.log("Without if block ")
       // Update Employee Data
+      
       const empUpdateResult = await EmpMaster.findOneAndUpdate(
           { Empid : model.empid },
           {

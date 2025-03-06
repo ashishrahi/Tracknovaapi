@@ -249,12 +249,12 @@ export const GetUserPermissionQuery = async (model) => {
 //////////////////////////////////////////////// addUpdateUserPermissionMasterQuery //////////////////////////////////
 
 export const AddUpdateUserPermissionMasterQuery = async (
-  userId,
-  userPermission
+  userId, // It is a uuid
+  userPermission // it is a array of permissions
 ) => {
   try {
     const deleted = await UserPermission.deleteMany({ UserId: userId });
-
+    console.log("userPermission", userPermission)
     const newPermissions = userPermission.map((permission) => ({
       UserId: permission.userId,
       ParentId: permission.parentId,
@@ -357,6 +357,9 @@ export const GetUserPermissionMasterQuery = async (modal) => {
             IsPost: 1,
           },
         },
+        {
+          $sort: {MenuId : 1}
+        }
       ]);
       // Convert first letter of each key to lowercase for every object in the array
       const formatedData = formattedData(data)

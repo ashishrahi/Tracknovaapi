@@ -472,10 +472,10 @@ export async function GetRolePermission(req, res) {
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
-      StatusCodes.BAD_REQUEST,
-      error.message
+      error.StatusCode || error.statusCode ,
+      error.message || error.ErrorMessage
     );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
