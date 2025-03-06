@@ -21,6 +21,7 @@ const app = express();
 connectMongoDB().catch((error) => {
     console.error("Failed to connect to MongoDB:", error.message);
     app.set("dbConnectionFailed", true);
+    process.exit(1);
 });
 
 app.use((req, res, next) => {
@@ -60,6 +61,7 @@ app.use((req, res, next)=>{
 
 // Global error handeling
 app.use((err, req, res, next) => {
+    console.log("error is from middleware", err)
     const statusCode = err.status || err.statusCode || err.StatusCode  || 500;  // Default to 500 if undefined
     return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message|| err.ErrorMessage || "Internal Server Error"));
 });

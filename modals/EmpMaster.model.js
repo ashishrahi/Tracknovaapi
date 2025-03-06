@@ -54,7 +54,7 @@ const EmpMasterSchema = new mongoose.Schema({
     // required: true, 
     match: [/^\d{10}$/, "Phone number must be 10 digits"], // Ensures only valid numbers
  }, // Mobile should be unique
-  EmpStatus: { type: String, enum: ["Active", "Inactive"], default: "Active" },
+  EmpStatus: { type: String, enum: ["Active", "Sleep"], default: "Sleep" },
   EmpPanNumber: { 
     type: String, 
     // required: [true, "PAN Number is required"], 

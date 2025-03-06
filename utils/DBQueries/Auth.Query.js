@@ -110,40 +110,6 @@ export const loginQuery = async (model) => {
     // return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
     // return res.status(500).json({ status: "Failed", message: "An error occurred during login", error: error.message });
   }
-
-
-  //-----------------OLD CODE
-  //   try {
-  //     const { username, password } = model;
-  //     if( !username || !password || !(username && password) ){
-  //       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid username & password")
-  //     }
-  //     // Find user in MongoDB
-  //     const user = await AspNetUsers.findOne({ UserName: username });
-
-  //     if (!user) {
-  //         throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
-  //     }
-
-  //     // Compare password with hashed password in DB
-  //     const isMatch = await user.isValidPassword(password);
-  //     if (!isMatch) {
-  //       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid username or password");
-  //     }
-
-  //     const accessToken = await user.generateAccessToken();
-  //     const refreshToken = await user.generateRefreshToken();
-
-  //     return {
-  //         status: "Success",
-  //         message: "Login successful",
-  //         accessToken: accessToken,
-  //         refreshToken: refreshToken
-  //     };
-  // } catch (error) {
-  //     throw error;
-  // }
-
 }
 
 //---------------RegisterQuery---------->
@@ -154,9 +120,9 @@ export const RegisterQuery = async (model, res) => {
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
     if (userExists) {
-      return res.status(StatusCodes.CONFLICT).json(new ApiErrorResponse(StatusCodes.CONFLICT, "User already exists!"));
+      return res.status(StatusCodes.CONFLICT).json(new ApiErrorResponse(StatusCodes.CONFLICT, "UserId or UserName already exists! Try other one."));
     }
-
+    console.log("asp user", model)
     // Create new user
     const newUser = new AspNetUsers({
       Id: model.id,
@@ -283,12 +249,12 @@ export const GetUserPermissionQuery = async (model) => {
 //////////////////////////////////////////////// addUpdateUserPermissionMasterQuery //////////////////////////////////
 
 export const AddUpdateUserPermissionMasterQuery = async (
-  userId,
-  userPermission
+  userId, // It is a uuid
+  userPermission // it is a array of permissions
 ) => {
   try {
     const deleted = await UserPermission.deleteMany({ UserId: userId });
-
+    console.log("userPermission", userPermission)
     const newPermissions = userPermission.map((permission) => ({
       UserId: permission.userId,
       ParentId: permission.parentId,
@@ -391,6 +357,9 @@ export const GetUserPermissionMasterQuery = async (modal) => {
             IsPost: 1,
           },
         },
+        {
+          $sort: {MenuId : 1}
+        }
       ]);
       // Convert first letter of each key to lowercase for every object in the array
       const formatedData = formattedData(data)
@@ -998,7 +967,7 @@ export const GetRolePermissionQuery = async (modal) => {
 
 
   } else {
-    data = await Menu.find().lean();
+    data = await Menu.find().sort({MenuName: 1}).lean();
 
     // const newData = data.map((role) => {
     //   return {

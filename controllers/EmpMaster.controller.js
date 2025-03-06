@@ -74,9 +74,11 @@ export async function UpsertEmpPermission(req, res, next) {
     return res.status(200).json(new CommonResponse(1, response.message,  response.data, response.rowCount));
   } catch (error) {
       // return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message))
-    const err = new Error(error.message);
-    err.status = error.statusCode || StatusCodes.BAD_REQUEST
-    console.log(error)
+      const code = error.StatusCode || error.statusCode;
+      const msg = error.ErrorMessage || error.message;
+    const err = new ApiErrorResponse(code, msg);
+    // err.status = error.statusCode || StatusCodes.BAD_REQUEST
+    // console.log(error)
     return next(err);
   }
 }

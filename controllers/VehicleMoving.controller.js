@@ -175,7 +175,7 @@ async function VehicleDetailSummarynew(req, res, next){
     const filter = req.body;
     const { Data } = await VehicleMovingStatusdetnew(filter);
     
-    return res.status(StatusCodes.OK).json(Data);
+    return res.status(StatusCodes.OK).json(formattedData(Data));
 
   } catch (error) {
     error.StatusCode = StatusCodes.BAD_REQUEST;
