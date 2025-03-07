@@ -46,8 +46,8 @@ app.use(compression());
 
 
 // all routes starts from here
-// app.use(limiter);
-// app.use(verifyAccessToken)
+app.use(limiter);
+app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
 

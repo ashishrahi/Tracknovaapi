@@ -314,7 +314,7 @@ async function UpsertEmailSetting(req, res, next) {
     let updated = await EmailSetting.findOneAndUpdate(
       { Id: model.id },
       { $set: { IsActive: model.isActive } }, // Activate only the matched record
-      { new: true } // Return updated document & insert if not found
+      { new: false } // Return updated document & insert if not found
     );
     if (!updated) {
       updated = new EmailSetting({
