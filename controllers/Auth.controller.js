@@ -438,7 +438,7 @@ export async function AddUpdateRolePermissionMaster(req, res) {
 
 export async function GetRolePermissionMaster(req, res) {
   try {
-    const modal = req.body;
+    const modal = req.query;
     const {isSuccess, internalSuccess, mesg, insertedId, data} = await GetRolePermissionMasterQuery(modal);
     const successResponse = new ReturnData(
       isSuccess,

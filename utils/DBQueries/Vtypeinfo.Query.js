@@ -117,7 +117,21 @@ export const getVtypeinfoQuery = async (modal) => {
   
     try {
         // Create a filter for the Vtypeinfos model using the provided filter
-        const vTypeInfo = await VehicleTypeChild.find(modal.where, modal.parameterValues).lean()
+        const vTypeInfo = await VehicleTypeChild.find(modal.where, modal.parameterValues).select({
+          id: 1,
+          VehicleTypeId: 1,
+          SessionD1: { $convert: { input: "$SessionD1", to: "double" } }, 
+          SessionD2: { $convert: { input: "$SessionD2", to: "double" } },
+          FuelAlloted: { $convert: { input: "$FuelAlloted", to: "double" } },
+          PetroId: 1,
+          PetroName: 1,
+          EffectiveDate: 1,
+          CreatedBy: 1,
+          UpdatedBy: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        })
+        .lean();
 
         // Extract distinct VehicleTypeIds from vTypeInfo
         const vtypes = [...new Set(vTypeInfo.map(s => s.VehicleTypeId.toString()))];

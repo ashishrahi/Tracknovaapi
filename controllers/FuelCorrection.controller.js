@@ -7,6 +7,7 @@ import {
     AddUpdateFuelCorrectionQuery,
     GetVehListQuery,
 } from "../utils/DBQueries/index.js";
+import { CommonResponse } from "../utils/apiResponse/index.js";
 
 //////////////////////////// AddUpdateFuelCorrection /////////////////////////////////// 
 
@@ -34,21 +35,21 @@ export async function AddUpdateFuelCorrection(req, res) {
 export async function GetVehList(req, res) {
     try {
       const model = req.body;
-      const { data, isSuccess, message, statusCode } =
+      const { status, message, data,  rowCount} =
         await GetVehListQuery(model);
-      const successResponse = new ApiSuccessResponse(
-        isSuccess,
-        statusCode,
+      const successResponse = new CommonResponse(
+        status,
         message,
-        data
+        data,
+        rowCount
       );
-      res.status(successResponse.statusCode).json(successResponse);
+      res.status(StatusCodes.OK).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
         StatusCodes.BAD_REQUEST,
         error.message
       );
-      res.status(errorResponse.statusCode).json(errorResponse);
+      res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }
 

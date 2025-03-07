@@ -295,7 +295,6 @@ async function GetAllEmailSetting(req, res) {
 
     const result = await EmailSetting.find(query).skip(skip).limit(pageSize).lean();
     const newData = dotnetLikeData(result)
-
     return res
       .status(StatusCodes.OK)
       .json(new CommonResponse(1, "Data Fetch Succesffuly !", newData));
@@ -311,11 +310,11 @@ async function UpsertEmailSetting(req, res, next) {
   try {
     const model = req.body;
     // let updated;
-
+// console.log('model:',model)
     let updated = await EmailSetting.findOneAndUpdate(
       { Id: model.id },
-      { $set: { IsActive: true } }, // Activate only the matched record
-      { new: true } // Return updated document & insert if not found
+      { $set: { IsActive: model.isActive } }, // Activate only the matched record
+      { new: false } // Return updated document & insert if not found
     );
     if (!updated) {
       updated = new EmailSetting({

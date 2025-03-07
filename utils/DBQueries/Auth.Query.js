@@ -308,7 +308,7 @@ export const GetUserPermissionMasterQuery = async (modal) => {
         id: userId,
         createUpdate: "",
         msg: "User Permission Details fetched successfully",
-        data: usersPermission,
+        data: usersPermission.length,
       };
     } else {
       const data = await UserPermission.aggregate([
@@ -842,10 +842,11 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 //////////////////////////////////////////////  Get / RolePermissionMaster  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionMasterQuery = async (modal) => {
+  
   try {
-    const { roleId } = modal;
+    const { RoleId } = modal;
 
-    if (roleId === "-1") {
+    if (RoleId === "-1") {
       const data = await RolePermission.find({}).lean();
       const roleList = data.map((role) => {
         return {
