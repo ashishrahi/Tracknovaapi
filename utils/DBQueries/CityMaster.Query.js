@@ -118,19 +118,21 @@ const newCityList ={
         
             const enrichedCities = await Promise.all(
               cities.map(async (city) => {
-                const state = await StateMaster.findOne({ StateID: city.StateId }).lean();
+                const state = await StateMaster.findOne({ StateId: city.StateId }).lean();
+                // console.log('state:',state)
                 return {
                   ...city,
-                  // StateName: state ? state.StateName : null,
+                  StateName: state ? state.StateName : null,
                   
                 };
               })
             );
+            // console.log('enrichedCities:',enrichedCities)
        const listCities = enrichedCities.map((city)=>{
         return{
           cityId: city.CityId,
           cityName: city.CityName,
-          stateId: city.StateId,
+          stateName: city.StateName,
           createdBy: city.CreatedBy,
           updatedBy:city.UpdatedBy,
           createdOn:city.createdAt,
