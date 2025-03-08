@@ -35,6 +35,7 @@ export async function AddUpdateFuelCorrection(req, res) {
 export async function GetVehList(req, res) {
     try {
       const model = req.body;
+      // console.log("model",model)
       const { status, message, data,  rowCount} =
         await GetVehListQuery(model);
       const successResponse = new CommonResponse(

@@ -1,6 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { FuelCorrection } from "../../modals/index.js"
 import { VehicleTrack } from "../../controllers/VehicleMoving.controller.js";
+import { VehicleMovingStatusdetnew } from "./VehicleMovingControllerPipeline.js";
+import { VehicleMovingControllerPipeline } from "./index.js";
 /////////////////////////////////////////// AddUpdateFuelCorrectionQuery //////////////////////////////////////////////////////////////////
 export const AddUpdateFuelCorrectionQuery = async (model) => {
   
@@ -39,8 +41,9 @@ export const GetVehListQuery = async (model) => {
       // }
 
       // Fetch data from MongoDB
-      let vehiclesList = await VehicleTrack(filter)
+      let vehiclesList = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
       // Data processing
+      console.log("vehiclesList:",vehiclesList)
       let processedData = vehiclesList.map(v => {
           v.openingBal = v.openingBal || "0.0";
           v.openingBalD = parseFloat(v.openingBal);

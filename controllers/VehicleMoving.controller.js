@@ -7,7 +7,7 @@ import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 
 //-----------VehicleTrack-------->
-async function VehicleTrack(req, res, next) {
+async function VehicleTrack(req, res) {
   const response = { Status: "Failed", Message: "", Data: [] };
 
   try {
@@ -114,9 +114,9 @@ async function VehicleTrack(req, res, next) {
     response.Message = "Data retrieved successfully";
     return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, response.Message, response.Data));
   } catch (ex) {
-    const error = new Error(ex.message);
-    error.status = StatusCodes.BAD_REQUEST;
-    return next(error);
+    // error.status = StatusCodes.BAD_REQUEST;
+    const error = new ApiErrorResponse(StatusCodes.BAD_REQUEST, ex.message || ex.ErrorMessage);
+    throw error
   }
 }
 

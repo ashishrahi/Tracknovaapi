@@ -4,10 +4,10 @@ import { ItemMaster, SummaryNT } from "../../modals/index.js";
 async function trackDetailsNT(trackFilter) {
   try {
 
-    // console.log("Filter", trackFilter)
+    console.log("trackFilter", trackFilter)
     
     let results = await SummaryNT.find(trackFilter).lean();
-    // console.log(results, "results")
+    console.log("results", results)
    
     // Process records similar to SQL updates
     results = results?.map((doc) => {
@@ -33,11 +33,13 @@ async function VehicleMovingStatusdetnew(body){
     
         try {
             const filter = body;
+            
     
             // Convert dates to MongoDB-compatible format
             const startDate = new Date(filter.date1)
             const endDate = new Date(filter.date2)
-    
+    // console.log("startDate:",startDate)
+    // console.log("endDate:",endDate)
             // Step 1: Filter vehicles based on input criteria
             let vehicleFilter = { ItemFlag: 'V' }; // Assuming 'v' indicates vehicles
             if (filter.str1) {
