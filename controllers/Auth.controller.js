@@ -223,16 +223,23 @@ export async function Logout(req, res, next){
 }
 
 //-------------GetUSER---------->
-export async function GetUSER(req, res, next){
-  const user = req.user;
-  if(!user){
-    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
-  }
-  const userFullDetails = await EmpMaster.findOne({UserId: user.Id})
-  .select("-ImageFile -SignatureFile")
-  .lean();
-
-  return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+export async function GetUSER(req, res){
+ try {
+   const user = req.user;
+   if(!user){
+     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
+   }
+   const userFullDetails = await EmpMaster.findOne({UserId: user.Id})
+   .select("-ImageFile -SignatureFile")
+   .lean();
+ 
+   return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+ 
+ } catch (error) {
+    const statusCode = error.StatusCode;
+    const msg = error.ErrorMessage || error.message;
+    throw new ApiErrorResponse(statusCode, msg);
+ }
 }
 /////////////////////////////////// Get / UserPermissions /////////////////////////////////////////////////
 
