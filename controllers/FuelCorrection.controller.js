@@ -44,13 +44,13 @@ export async function GetVehList(req, res) {
         data,
         rowCount
       );
-      res.status(StatusCodes.OK).json(successResponse);
+      return res.status(StatusCodes.OK).json(successResponse);
     } catch (error) {
       const errorResponse = new ApiErrorResponse(
         StatusCodes.BAD_REQUEST,
-        error.message
+        error.message || error.ErrorMessage
       );
-      res.status(errorResponse.StatusCode).json(errorResponse);
+      return res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }
 
