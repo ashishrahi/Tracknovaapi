@@ -7,7 +7,7 @@ async function trackDetailsNT(trackFilter) {
     console.log("trackFilter", trackFilter)
     
     let results = await SummaryNT.find(trackFilter).lean();
-    console.log("results", results)
+    console.log("results", results.slice(0,3))
    
     // Process records similar to SQL updates
     results = results?.map((doc) => {

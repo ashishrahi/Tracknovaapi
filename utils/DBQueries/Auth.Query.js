@@ -871,7 +871,7 @@ export const GetRolePermissionMasterQuery = async (modal) => {
         data: roleList,
       };
     } else {
-      const data = await RolePermission.findOne({ RoleId: roleId }).lean();
+      const data = await RolePermission.findOne({ RoleId: RoleId }).lean();
       const oneData = {
         roleId: data.RoleId,
         isAdd: data.IsAdd,

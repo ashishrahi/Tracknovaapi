@@ -3,6 +3,7 @@ import { FuelCorrection } from "../../modals/index.js"
 import { VehicleTrack } from "../../controllers/VehicleMoving.controller.js";
 import { VehicleMovingStatusdetnew } from "./VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "./index.js";
+import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 /////////////////////////////////////////// AddUpdateFuelCorrectionQuery //////////////////////////////////////////////////////////////////
 export const AddUpdateFuelCorrectionQuery = async (model) => {
   
@@ -42,9 +43,10 @@ export const GetVehListQuery = async (model) => {
 
       // Fetch data from MongoDB
       let vehiclesList = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)
+
+
       // Data processing
-      console.log("vehiclesList:",vehiclesList)
-      let processedData = vehiclesList.map(v => {
+      let processedData = vehiclesList &&  vehiclesList.Data.map(v => {
           v.openingBal = v.openingBal || "0.0";
           v.openingBalD = parseFloat(v.openingBal);
           v.opBalanceExist = v.openingBalD;
@@ -55,7 +57,7 @@ export const GetVehListQuery = async (model) => {
     //   isSuccess:structuredClone,
       status: true,
       message:'data Fetch successfully',
-      data: processedData,
+      data: formattedData(processedData),
     }
 
   } catch (err) {
