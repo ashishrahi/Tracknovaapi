@@ -73,6 +73,7 @@ export async function login(req, res, next) {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "None", // ✅ Required for cross-site requests
     };
    
     return res.status(StatusCodes.OK)
@@ -201,6 +202,7 @@ export async function Refresh(req, res, next){
       const options = {
         httpOnly: true,
         secure: true,
+        sameSite: "None", // ✅ Required for cross-site requests
       };
 
       return res.status(StatusCodes.OK).cookie("refreshToken", refreshToken, options).json(successResponse);
