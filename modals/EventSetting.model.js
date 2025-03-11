@@ -20,7 +20,7 @@ const EventSettingSchema = new mongoose.Schema(
     SendingType: {
       type: String,
       trim: true, // Add more if needed
-      required: true,
+      // required: true,
     },
     Message: {
       type: String,
@@ -34,12 +34,12 @@ const EventSettingSchema = new mongoose.Schema(
     },
     CreatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     UpdatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
   },
