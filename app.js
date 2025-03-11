@@ -33,15 +33,16 @@ app.use((req, res, next) => {
     next();
 });
 app.use(cors({
-    origin: ["http://localhost:3000", "http://103.12.1.132:8205"],  // Allow frontend origin
-    methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"],
+    origin: ["http://localhost:3000", "http://103.12.1.132:8205" ],  // Allow frontend origin
+    // origin: "*",  // Allow frontend origin
+    methods: ["GET","POST","DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true  // Allow sending cookies with requests
 }));
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
 app.use(cookieParser()); // access to req.cookies
-// app.use(helmet());
+app.use(helmet());
 app.use(compression());
 
 

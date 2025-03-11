@@ -884,12 +884,8 @@ async function UpsertEventSetting(req, res) {
       });
       if (existingEvent) {
         return res
-          .status(StatusCodes.NOT_MODIFIED)
-          .json({
-            status: "Failed",
-            message: "Record Already Exists!",
-            data: existingEvent,
-          });
+          .status(StatusCodes.BAD_REQUEST)
+          .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Record Already Exists!"));
       }
 
       const lastEvent = await EventSetting.findOne().sort({ EventId: -1 });
@@ -907,7 +903,7 @@ async function UpsertEventSetting(req, res) {
       await newEvent.save();
       return res
         .status(StatusCodes.OK)
-        .json({ status: "Success", message: "Added Successfully", });
+        .json(new CommonResponse(1,"Added Successfully"));
     } else {
       await EventSetting.findOneAndUpdate(
         { EventId: model.eventId },
@@ -923,10 +919,12 @@ async function UpsertEventSetting(req, res) {
         },
         { new: true }
       );
-      return res.status(StatusCodes.OK).json({ status: "Success", message: "Updated Successfully" });
+      return res.status(StatusCodes.OK).json(new CommonResponse(1,"Updated Successfully"));
     }
   } catch (error) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ status: "Failed", error: error.message });
+    const status = error.StatusCode 
+    const msg = error.ErrorMessage || error.message
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(status, msg));
   }
 }
 
