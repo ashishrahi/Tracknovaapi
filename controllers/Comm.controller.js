@@ -30,36 +30,36 @@ import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 //-------------GetCommGroup-------->
 async function GetCommGroup(req, res) {
   const { pageNo, pageSize } = req.body;
-  
-  const PageNo = pageNo; 
+
+  const PageNo = pageNo;
   const PageSize = pageSize;
-   let skip = (PageNo - 1) * PageSize; 
-  
+  let skip = (PageNo - 1) * PageSize;
+
   let data;
 
-  if(pageNo === 0 && pageSize === 0){
-    data = await CommGroup.find().select('-_id').lean() 
-  }else{
+  if (pageNo === 0 && pageSize === 0) {
+    data = await CommGroup.find().select('-_id').lean()
+  } else {
     data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
-    .skip(skip) // Skip previous pages
-     .limit(pageSize)
+      .skip(skip) // Skip previous pages
+      .limit(pageSize)
   }
 
 
   // Step 4: Fetch Paginated Data
   // if((PageNo && PageSize) > 0){
-    // data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
-    // .skip(skip) // Skip previous pages
-    //  .limit(pageSize); // Limit to page size
+  // data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
+  // .skip(skip) // Skip previous pages
+  //  .limit(pageSize); // Limit to page size
   // }else{
   //   data = await CommGroup.find().select('-_id').lean() // Exclude `_id` if not needed
 
   // }
 
-     const newData = dotnetLikeData(data)
-     const totalCount = newData.length
+  const newData = dotnetLikeData(data)
+  const totalCount = newData.length
   // Step 5: Return Response
-  return res.status(StatusCodes.OK).json(new CommonResponse(1, "Data Fetched", newData, totalCount, null, pageNo, pageSize )
+  return res.status(StatusCodes.OK).json(new CommonResponse(1, "Data Fetched", newData, totalCount, null, pageNo, pageSize)
     // {
     //   Status: "Success",
     //   PageNo: pageNo,
@@ -67,7 +67,7 @@ async function GetCommGroup(req, res) {
     //   RowCount: totalCount, // Total records count
     //   TotalPages: Math.ceil(totalCount / pageSize),
     //   Data: lNM,
-     
+
     // } // Calculate total pages
   );
 
@@ -82,7 +82,7 @@ async function GetCommGroup(req, res) {
 }
 
 //-------------UpsertCommGroup-------->
-async function UpsertCommGroup(req, res) {
+async function UpsertCommGroup(req, res, next) {
   try {
     let { groupId, name, description, type, isActive, createdBy, updatedBy } =
       req.body;
@@ -94,8 +94,8 @@ async function UpsertCommGroup(req, res) {
     if (!groupId || groupId === 0) {
       if (existingGroup) {
         return res.status(StatusCodes.BAD_REQUEST).json(new CommonResponse(0, "Record Already Exists!", existingGroup))
-          
-          
+
+
         //   {
         //   Status: "Failed",
         //   Message: "Record Already Exists!",
@@ -119,7 +119,7 @@ async function UpsertCommGroup(req, res) {
       });
       await newGroup.save();
 
-      return res.status(StatusCodes.CREATED).json(new CommonResponse(1,"Added Successfully",newGroup))
+      return res.status(StatusCodes.CREATED).json(new CommonResponse(1, "Added Successfully", newGroup))
       //   {
       //   Status: "Success",
       //   Message: "Added Successfully",
@@ -144,24 +144,26 @@ async function UpsertCommGroup(req, res) {
       if (!updatedGroup) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json(new CommonResponse(0,"Internal error. Try again"))
-            // { Status: "Failed", Message: "Internal error. Try again" };
+          .json(new CommonResponse(0, "Internal error. Try again"))
+        // { Status: "Failed", Message: "Internal error. Try again" };
       }
 
-      return res.status(StatusCodes.OK).json( new CommonResponse(1,"Updated successfully",updatedGroup)
-      //   {
-      //   Status: "Success",
-      //   Message: "Updated Successfully",
-      //   Data: updatedGroup,
-      // }
-    );
+      return res.status(StatusCodes.OK).json(new CommonResponse(1, "Updated successfully", updatedGroup)
+        //   {
+        //   Status: "Success",
+        //   Message: "Updated Successfully",
+        //   Data: updatedGroup,
+        // }
+      );
     }
   } catch (error) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json( new CommonResponse(0,error.message))
-        // { Status: "Failed", Error: error.message }
-      // );
+    const StatusCode = error.StatusCode || StatusCodes.BAD_REQUEST;
+    const msg = error.message || error.ErrorMessage;
+    next(new ApiErrorResponse(StatusCode, msg))
+    // return res
+    //   .status(StatusCodes.BAD_REQUEST)
+    //   .json(new ApiErrorResponse(0, error.message))
+   
   }
 }
 
@@ -206,22 +208,22 @@ async function DeleteCommGroup(req, res) {
     if (!deletedGroup) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json(new CommonResponse(0,'GroupId not found!'))
-          // { Status: "Failed", Message: "GroupId not found!" });
+        .json(new CommonResponse(0, 'GroupId not found!'))
+      // { Status: "Failed", Message: "GroupId not found!" });
     }
 
     return res
       .status(StatusCodes.OK)
-      .json(new CommonResponse(1,"Deleted Successfully"))
-      //   { Status: "Success", Message: "Deleted Successfully" }
-      // );
+      .json(new CommonResponse(1, "Deleted Successfully"))
+    //   { Status: "Success", Message: "Deleted Successfully" }
+    // );
   } catch (error) {
     // await session.abortTransaction();
     // session.endSession();
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(0,error.message)
-        // { Status: "Failed", Error: error.message });
+      .json(0, error.message)
+    // { Status: "Failed", Error: error.message });
   }
 }
 
@@ -275,7 +277,7 @@ async function GetCommGroupByEmpId(req, res) {
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiErrorResponse(false,StatusCodes.BAD_REQUEST, error.message));
+      .json(new ApiErrorResponse(false, StatusCodes.BAD_REQUEST, error.message));
   }
 }
 
@@ -310,7 +312,7 @@ async function UpsertEmailSetting(req, res, next) {
   try {
     const model = req.body;
     // let updated;
-// console.log('model:',model)
+    // console.log('model:',model)
     let updated = await EmailSetting.findOneAndUpdate(
       { Id: model.id },
       { $set: { IsActive: model.isActive } }, // Activate only the matched record
@@ -331,7 +333,7 @@ async function UpsertEmailSetting(req, res, next) {
 
       updated = await updated.save();
     }
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Updated Successfully", updated ));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "Updated Successfully", updated));
   } catch (error) {
     const err = new Error(error.message);
     err.status = StatusCodes.BAD_REQUEST;
@@ -373,7 +375,7 @@ async function GetAllSmsSetting(req, res) {
 
     return res
       .status(StatusCodes.OK)
-      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default" , result));
+      .json(new ApiSuccessResponse(true, StatusCodes.OK, "default", result));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -385,8 +387,8 @@ async function GetAllSmsSetting(req, res) {
 async function GetCampaignDetailById(req, res, next) {
   try {
     const { CampaignId } = req.query;
-    
-  
+
+
     const result = await CampaignDetail.aggregate([
       {
         $match: {
@@ -436,12 +438,12 @@ async function GetCampaignDetailById(req, res, next) {
         },
       },
     ]);
-  
-    return res.status(StatusCodes.OK).json(true,StatusCodes.OK, "default", result);
+
+    return res.status(StatusCodes.OK).json(true, StatusCodes.OK, "default", result);
   } catch (error) {
-      const err = new Error(error.message);
-      err.status = StatusCodes.BAD_REQUEST;
-      return next(err);
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_REQUEST;
+    return next(err);
   }
 }
 
@@ -472,19 +474,19 @@ async function GetCampaign(req, res) {
     // Fetch campaign data with filtering and pagination
     const campaigns = await Campaign.find(query).skip(skip).limit(limit).lean()
     // .lean(); // Improves performance by returning plain JS objects
-    const data = dotnetLikeData(campaigns) 
+    const data = dotnetLikeData(campaigns)
     // Get total count of records matching the filter
     const totalCount = await Campaign.countDocuments(query);
 
-    return res.status(StatusCodes.OK).json( new CommonResponse(1,"message", data,  totalCount, pageNo, pageSize)
-    //   {
-    //   Data: campaigns,
-    //   Status: "Success",
-    //   PageNo: pageNo,
-    //   PageSize: pageSize,
-    //   RowCount: totalCount,
-    // }
-  );
+    return res.status(StatusCodes.OK).json(new CommonResponse(1, "message", data, totalCount, pageNo, pageSize)
+      //   {
+      //   Data: campaigns,
+      //   Status: "Success",
+      //   PageNo: pageNo,
+      //   PageSize: pageSize,
+      //   RowCount: totalCount,
+      // }
+    );
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       Status: "Failed",
@@ -494,15 +496,20 @@ async function GetCampaign(req, res) {
 }
 
 //-------------UpsertCampaign-------->
-async function UpsertCampaign(req, res) {
+async function UpsertCampaign(req, res, next) {
   const response = { status: "Failed", message: "", data: null };
   try {
     const model = req.body;
     if (!model.campaignId || model.campaignId === 0) {
+
       // Check if campaign already exists
+      
       const existingCampaign = await Campaign.findOne({
         CampaignName: model.campaignName,
-      });
+      }).lean();
+
+      console.log('existingCampaign:',existingCampaign)
+      
       if (existingCampaign) {
         return res.status(StatusCodes.OK).json({
           status: "Failed",
@@ -512,38 +519,93 @@ async function UpsertCampaign(req, res) {
       }
 
       // Get the last CampaignId and increment
-      const lastCampaign = await Campaign.findOne().sort({ CampaignId: -1 });
+      const lastCampaign = await Campaign.findOne().sort({ CampaignId: -1 }).lean();
+
+      
       model.campaignId = (lastCampaign?.CampaignId || 0) + 1;
 
+
+
       // Get last Id from CampaignDetail
-      const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 });
+      const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 }).lean();
+
       let Id = (lastDetail?.Id || 0) + 1;
-
+      console.log("Id:",Id)
+      
+      
       // Process Groups
-      const listGroups = model.ListGroups.filter((ii) => ii.isSelected);
-      listGroups.forEach((ii) => {
-        ii.Id = Id++;
-        ii.CampaignId = model.campaignId;
-        ii.Message = model.message;
-      });
+      let listGroups = model.listGroups.filter((ii) => ii.isSelected);
+      
+      // Filling data in listGroup
 
-      if (listGroups.length > 0) {
-        await CampaignDetail.insertMany(listGroups);
+      listGroups.forEach((ii) => {
+        ii.id = Id++;
+        ii.campaignId = model.campaignId;
+        ii.message = model.message;
+      });
+    
+      listGroups = listGroups.map((group) => {
+        let newGroup = {}; // Create a new object
+    
+        for (let key in group) {
+            let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+            newGroup[newKey] = group[key]; // Assign the value to the new key
+        }
+    
+        return newGroup;
+    });
+
+      
+
+      // // if(listGroups.length <= 0){
+      //   throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please choose valid Group")
+      // }
+
+      console.log("listGroups:......", listGroups)
+
+      const isSuccess = await CampaignDetail.insertMany(listGroups);
+   
+
+      if(isSuccess.length < 0){
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Group. Try again!")
       }
 
       // Process Members
-      const listMembers = model.ListMembers.filter((ii) => ii.isSelected);
-      listMembers.forEach((ii) => {
-        ii.Id = Id++;
-        ii.CampaignId = model.campaignId;
-        ii.Message = model.message;
-      });
+      let listMembers = model.listMembers.filter((ii) => ii.isSelected);
 
-      if (listMembers.length > 0) {
-        await CampaignDetail.insertMany(listMembers);
+
+      listMembers.forEach((ii) => {
+        ii.id = Id++;
+        ii.campaignId = model.campaignId; 
+        ii.message = model.message;
+      });
+    
+      listMembers = listMembers.map((member) => {
+        let newMembers = {}; // Create a new object
+    
+        for (let key in member) {
+            let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+            newMembers[newKey] = member[key]; // Assign the value to the new key
+        }
+    
+        return newMembers;
+      });
+    
+      if(listMembers.length <= 0){
+        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please choose valid Members")
+      }
+   
+      console.log("listMembers:......", listMembers)
+      const isSavedMemberSuccess =  await CampaignDetail.insertMany(listMembers);
+      
+      if(isSavedMemberSuccess.length <= 0){
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Members. Try again!")
       }
 
+
       // Insert new campaign
+      // console.log("model: ,", model)
+      return;
       await Campaign.create(model);
 
       response.status = "Success";
@@ -580,9 +642,13 @@ async function UpsertCampaign(req, res) {
       return res.status(StatusCodes.OK).json(response);
     }
   } catch (error) {
-    response.status = "Failed";
-    response.message = error.message;
-    return res.status(StatusCodes.BAD_REQUEST).json(response);
+    console.log(error);
+    const StatusCode = error.StatusCode;
+    const msg = error.ErrorMessage || error.message;
+    return next(new ApiErrorResponse(StatusCode, msg))
+    // response.status = "Failed";
+    // response.message = error.message;
+    // return res.status(StatusCodes.BAD_REQUEST).json(response);
   }
 
   // return res.status(StatusCodes.OK).json(response);
@@ -670,16 +736,16 @@ async function GetCampaignTemplate(req, res) {
 
     const totalCount = data.length;
 
-    return res.status(StatusCodes.OK).json( new CommonResponse(1,'Fetch Successfully',data,totalCount,pageNo,pageSize)
-      
-    //   {
-    //   status: "Success",
-    //   data: campaignTemplateResult,
-    //   pageNo: pageNo,
-    //   pageSize: pageSize,
-    //   rowCount: totalCount,
-    // }
-  );
+    return res.status(StatusCodes.OK).json(new CommonResponse(1, 'Fetch Successfully', data, totalCount, pageNo, pageSize)
+
+      //   {
+      //   status: "Success",
+      //   data: campaignTemplateResult,
+      //   pageNo: pageNo,
+      //   pageSize: pageSize,
+      //   rowCount: totalCount,
+      // }
+    );
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -697,6 +763,9 @@ async function UpsertCampaignTemplate(req, res) {
   };
 
   try {
+    if(!model.template.trim().length > 0 ){
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid template message.")
+    }
     if (model.templateId === 0) {
       // Check if the template already exists
       const existingTemplate = await CampaignTemplate.findOne({
@@ -769,8 +838,8 @@ async function UpsertCampaignTemplate(req, res) {
     }
   } catch (error) {
     return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
+      .status(StatusCodes.BAD_REQUEST || error.StatusCode)
+      .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message || error.ErrorMessage));
   }
 }
 
@@ -854,18 +923,18 @@ async function GetEventSetting(req, res) {
       .skip((pageNo - 1) * pageSize)
       .limit(pageSize).lean();
 
-      const newData = dotnetLikeData(eventSettings)
+    const newData = dotnetLikeData(eventSettings)
 
     return res.status(StatusCodes.OK).json(
-  new CommonResponse(1,'Fetch Successfully',newData,eventSettings.length,pageNo,pageSize)    
-    //   {
-    //   data: eventSettings,
-    //   status: "Success",
-    //   pageNo: pageNo,
-    //   pageSize: pageSize,
-    //   rowCount: eventSettings.length,
-    // }
-  );
+      new CommonResponse(1, 'Fetch Successfully', newData, eventSettings.length, pageNo, pageSize)
+      //   {
+      //   data: eventSettings,
+      //   status: "Success",
+      //   pageNo: pageNo,
+      //   pageSize: pageSize,
+      //   rowCount: eventSettings.length,
+      // }
+    );
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       status: "Failed",
@@ -903,7 +972,7 @@ async function UpsertEventSetting(req, res) {
       await newEvent.save();
       return res
         .status(StatusCodes.OK)
-        .json(new CommonResponse(1,"Added Successfully"));
+        .json(new CommonResponse(1, "Added Successfully"));
     } else {
       await EventSetting.findOneAndUpdate(
         { EventId: model.eventId },
@@ -919,36 +988,36 @@ async function UpsertEventSetting(req, res) {
         },
         { new: true }
       );
-      return res.status(StatusCodes.OK).json(new CommonResponse(1,"Updated Successfully"));
+      return res.status(StatusCodes.OK).json(new CommonResponse(1, "Updated Successfully"));
     }
   } catch (error) {
-    const status = error.StatusCode 
+    const status = error.StatusCode
     const msg = error.ErrorMessage || error.message
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(status, msg));
   }
 }
 
 //-------------DeleteEventSetting-------->
-async function DeleteEventSetting(req, res){
+async function DeleteEventSetting(req, res) {
   try {
     const model = req.body;
     if (!model.eventId) {
       return res.status(StatusCodes.NOT_MODIFIED).json({ status: "Failed", message: "Invalid Event ID" });
     }
-   
+
     const deletedEvent = await EventSetting.findOneAndDelete({ EventId: model.eventId });
-      if (!deletedEvent) {
-        return res.status(StatusCodes.NOT_FOUND).json({ status: "Failed", message: "Event not found!" });
-      }
-      return res.status(StatusCodes.OK).json({ status: "Success", message: "Deleted Successfully" });
+    if (!deletedEvent) {
+      return res.status(StatusCodes.NOT_FOUND).json({ status: "Failed", message: "Event not found!" });
+    }
+    return res.status(StatusCodes.OK).json({ status: "Success", message: "Deleted Successfully" });
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({ status: "Failed", error: error.message });
   }
 }
 
 //-------------GetMasters-------->
-async function GetMasters(req, res, next){
-  const query =  req.body;
+async function GetMasters(req, res, next) {
+  const query = req.body;
   try {
     let mastersData = {};
 
@@ -970,7 +1039,7 @@ async function GetMasters(req, res, next){
       }).lean();
     }
 
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", mastersData ));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", mastersData));
   } catch (error) {
     const err = new Error(error.message);
     err.status = StatusCodes.BAD_REQUEST;
@@ -980,7 +1049,7 @@ async function GetMasters(req, res, next){
 }
 
 //-------------UpsertSmsSetting-------->
-async function UpsertSmsSetting(req, res){
+async function UpsertSmsSetting(req, res) {
   const model = req.body;
   try {
     await SmsSetting.updateMany({}, { $set: { IsActive: false } }); // Deactivate all

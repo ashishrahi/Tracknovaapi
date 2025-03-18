@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const CampaignDetailSchema = new mongoose.Schema({
+  Id: {
+    type: Number,
+    required: true
+  },
   CampaignId: {
     type: Number,
     required: [true, "Campaign ID is required"],
@@ -10,7 +14,7 @@ const CampaignDetailSchema = new mongoose.Schema({
   },
   MemberId: {
     type: Number,
-    required: [true, "Member ID is required"],
+    // required: [true, "Member ID is required"],
   },
   Message: {
     type: String,
@@ -19,6 +23,7 @@ const CampaignDetailSchema = new mongoose.Schema({
   EmailId: {
     type: String,
     required: [true, "Email ID is required"],
+    default: "mailnotexists@gmail.com",
     validate: {
       validator: function (value) {
         // Check if the email is in valid format
@@ -29,7 +34,7 @@ const CampaignDetailSchema = new mongoose.Schema({
   },
   MobileNo: {
     type: String,
-    required: [true, "Mobile number is required"],
+    // required: [true, "Mobile number is required"],
     match: [
       /^[0-9]{10}$/, // Ensure the number is 10 digits
       "Mobile number must be a valid 10-digit number",
@@ -37,7 +42,7 @@ const CampaignDetailSchema = new mongoose.Schema({
   },
   ReceiverType: {
     type: String,
-    required: [true, "Receiver type is required"],
+    // required: [true, "Receiver type is required"],
   },
 }, {timestamps: true, collection: "CampaignDetail"});
 

@@ -8,7 +8,7 @@ const CommGroupSchema = new mongoose.Schema({
         trim: true,
         minlength: [3, 'Name must be at least 3 characters long'],
         maxlength: [50, 'Name cannot exceed 50 characters'],
-        match: [/^[a-zA-Z ]+$/, 'Name can only contain letters and spaces']
+        // match: [/^[a-zA-Z ]+$/, 'Name can only contain letters and spaces']
       },
     Type: String,
     Description: String,

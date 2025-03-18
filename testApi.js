@@ -179,3 +179,57 @@ console.log(new Date("2023-12-01"))
 
 
 
+
+
+
+let listGroups =  [
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 1,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  },
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 2,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  },
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 3,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  }
+]
+
+listGroups = listGroups.map((group) => {
+  let newGroup = {}; // Create a new object
+
+  for (let key in group) {
+      let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+      newGroup[newKey] = group[key]; // Assign the value to the new key
+  }
+
+  return newGroup;
+});
+
+console.log("listGroups: ", listGroups)

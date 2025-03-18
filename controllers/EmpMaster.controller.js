@@ -24,9 +24,11 @@ export async function AddUpdateEmployee(req, res, next) {
     );
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
-    const error = new Error(err.message || err.ErrorMessage);
-    error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
-    return next(error);
+    const msg = err.message || err.ErrorMessage
+    const statusCode = err.StatusCode
+    console.log(err)
+    // error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(statusCode, msg));
   }
 }
 

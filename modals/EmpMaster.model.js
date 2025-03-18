@@ -33,7 +33,7 @@ const EmpMasterSchema = new mongoose.Schema({
       ) // Capitalize each word
       .join(" ");
 } },
-  EmpspauseName: { type: String, default: null,  set: (value) => {
+  EmpspauseName: { type: String,  set: (value) => {
     return value
       .split(" ") // Split string into words
       .map(
@@ -57,7 +57,7 @@ const EmpMasterSchema = new mongoose.Schema({
   EmpStatus: { type: String, enum: ["Active", "Sleep"], default: "Sleep" },
   EmpPanNumber: { 
     type: String, 
-    // required: [true, "PAN Number is required"], 
+    // required: [true, "PAN Number is required"],
     unique: true, 
     match: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // Validates PAN format
     trim: true
@@ -86,7 +86,8 @@ const EmpMasterSchema = new mongoose.Schema({
   EmpStateId: {
     type: Number,
   },
-  EmpCountryId: {
+  // EmpCountryID
+  EmpCountryID: {
     type: Number,
   },
   EmpCityId: {
@@ -100,7 +101,7 @@ const EmpMasterSchema = new mongoose.Schema({
   ImageFile: { type: mongoose.Schema.Types.Mixed, default: null }, // Can store file paths or cloud URLs
   SignatureFile: { type: mongoose.Schema.Types.Mixed, default: null },
   Email: { type: String, default: "NA", lowercase: true, trim: true,  match: [/^\S+@\S+\.\S+$/, "Invalid email format"], },
-  DLNo: { type: String, default: null }, // Driving License No.
+  DLNo: { type: String}, // Driving License No.
   Gender: { type: String, 
     // enum: ["Male", "Female", "Other"], 
     // required: true },
