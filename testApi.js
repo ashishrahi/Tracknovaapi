@@ -174,8 +174,146 @@ lisret1.forEach(item => {
 
 // console.log("lisret1", lisret1);
 
-console.log(new Date("2023-12-01"))
+// console.log(new Date("2023-12-01"))
 
 
 
+const regexForEmail = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
 
+
+
+let listGroups = [
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 1,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  },
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 2,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  },
+  {
+    id: 0,
+    campaignId: 0,
+    groupId: 3,
+    memberId: 0,
+    message: '',
+    emailId: '',
+    mobileNo: '',
+    receiverType: '',
+    name: '',
+    isSelected: true
+  }
+]
+
+listGroups = listGroups.map((group) => {
+  let newGroup = {}; // Create a new object
+
+  for (let key in group) {
+    let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+    newGroup[newKey] = group[key]; // Assign the value to the new key
+  }
+
+  return newGroup;
+});
+
+// console.log("listGroups: ", listGroups)
+
+
+const model = {
+  campaignId: 5,
+  campaignName: 'After holisdcvfdb',
+  campaignDate: '2025-03-18',
+  campaignType: 'Email',
+  tamplateId: '6',
+  message: '<p><strong>Subject:</strong> 📢 Office Closed Tomorrow</p><p>Dear [Team/All],</p><p>This is to inform you that the office will remain <strong>closed tomorrow ([Date])</strong> due to [Reason, e.g., a public holiday/maintenance, etc.].</p><p>Please plan your tasks accordingly and enjoy your day off! 🎉</p><p>For any urgent matters, feel free to reach out via email or [alternative contact method].</p><p>Best regards,</p><p> [Your Name]</p><p> [Your Designation]</p><p> [Company Name]</p>',
+  status: 'Immediately',
+  fromDate: '2025-03-18',
+  toDate: '2025-03-18',
+  toTime: '15:42:09',
+  createdBy: 'Saurabh',
+  updatedBy: 'Saurabh',
+  createdOn: '2025-03-18',
+  updatedOn: '2025-03-18',
+  listGroups: [
+    {
+      id: 102,
+      campaignId: 5,
+      groupId: 1,
+      memberId: 0,
+      message: '<p><strong>Subject:</strong> 📢 Office Closed Tomorrow</p><p>Dear [Team/All],</p><p>This is to inform you that the office will remain <strong>closed tomorrow ([Date])</strong> due to [Reason, e.g., a public holiday/maintenance, etc.].</p><p>Please plan your tasks accordingly and enjoy your day off! 🎉</p><p>For any urgent matters, feel free to reach out via email or [alternative contact method].</p><p>Best regards,</p><p> [Your Name]</p><p> [Your Designation]</p><p> [Company Name]</p>',
+      emailId: 'saurabh@gmail.com',
+      mobileNo: '',
+      receiverType: 'RealSuperAdmin',
+      name: 'Office Inspection',
+      isSelected: true
+    }
+  ],
+  listMembers: [
+    {
+      id: 103,
+      campaignId: 5,
+      groupId: 0,
+      memberId: 540,
+      message: '<p><strong>Subject:</strong> 📢 Office Closed Tomorrow</p><p>Dear [Team/All],</p><p>This is to inform you that the office will remain <strong>closed tomorrow ([Date])</strong> due to [Reason, e.g., a public holiday/maintenance, etc.].</p><p>Please plan your tasks accordingly and enjoy your day off! 🎉</p><p>For any urgent matters, feel free to reach out via email or [alternative contact method].</p><p>Best regards,</p><p> [Your Name]</p><p> [Your Designation]</p><p> [Company Name]</p>',
+      emailId: 'saurabh@gmail.com',
+      mobileNo: '9889840089',
+      receiverType: 'RealSuperAdmin',
+      name: 'Saurabh',
+      isSelected: true
+    },
+    {
+      id: 104,
+      campaignId: 5,
+      groupId: 0,
+      memberId: 539,
+      message: '<p><strong>Subject:</strong> 📢 Office Closed Tomorrow</p><p>Dear [Team/All],</p><p>This is to inform you that the office will remain <strong>closed tomorrow ([Date])</strong> due to [Reason, e.g., a public holiday/maintenance, etc.].</p><p>Please plan your tasks accordingly and enjoy your day off! 🎉</p><p>For any urgent matters, feel free to reach out via email or [alternative contact method].</p><p>Best regards,</p><p> [Your Name]</p><p> [Your Designation]</p><p> [Company Name]</p>',
+      emailId: 'testreal@gmail.com',
+      mobileNo: '9889840089',
+      receiverType: 'Employee',
+      name: 'Testing',
+      isSelected: true
+    },
+    {
+      id: 105,
+      campaignId: 5,
+      groupId: 0,
+      memberId: 538,
+      message: '<p><strong>Subject:</strong> 📢 Office Closed Tomorrow</p><p>Dear [Team/All],</p><p>This is to inform you that the office will remain <strong>closed tomorrow ([Date])</strong> due to [Reason, e.g., a public holiday/maintenance, etc.].</p><p>Please plan your tasks accordingly and enjoy your day off! 🎉</p><p>For any urgent matters, feel free to reach out via email or [alternative contact method].</p><p>Best regards,</p><p> [Your Name]</p><p> [Your Designation]</p><p> [Company Name]</p>',
+      emailId: 'admin@admin.com',
+      mobileNo: '9889558866',
+      receiverType: 'Employee',
+      name: 'Sandeep',
+      isSelected: true
+    }
+  ],
+  srno: 0,
+  isExecute: true
+}
+
+
+let updatedCampaignModel = {}
+for (let key in model) {
+  if (key !== "listMembers" && key !== "listGroups") {
+    updatedCampaignModel[key.charAt(0).toUpperCase() + key.slice(1)] = model[key];
+  }
+}
+
+
+
+console.log("updatedCampaignModel", updatedCampaignModel)

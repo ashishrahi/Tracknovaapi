@@ -43,9 +43,8 @@ const CampaignSchema = new mongoose.Schema(
     },
     Status: {
       type: String,
-      // required: true,
-    //   enum: ["Immediately", "Scheduled", "Draft"], // Standardized values
-    //   default: "Draft",
+      required: true,
+      enum: ["Immediately", "Scheduled", "Repeated", "Complete"], // Standardized values
     },
     FromDate: {
       type: Date,

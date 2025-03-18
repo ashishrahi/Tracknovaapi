@@ -8,7 +8,7 @@ const CampaignTemplateSchema = new mongoose.Schema({
         },
         Template: {
           type: String,
-          required: true,
+          required: [true, "Template Message is required"],
           trim: true // Removes extra spaces from the beginning and end
         },
         TemplateType: {
@@ -24,11 +24,12 @@ const CampaignTemplateSchema = new mongoose.Schema({
         CreatedBy: {
           type: String,
           trim: true,
-          
+          required: [true, "Please provide valid CreatedBy user name."],
         },
         UpdatedBy: {
           type: String,
-          trim: true
+          trim: true,
+          required: [true, "Please provide valid UpdatedBy user name."],
         }
       
     },{ timestamps: true, collection: "CampaignTemplate" } 

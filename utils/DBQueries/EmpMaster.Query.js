@@ -25,11 +25,13 @@ export const AddUpdateEmployeeQuery = async (model) => {
     const validFormedData = {};
       
     for(const value of correctKeys){
+      console.log("Value for employee", value)
+      // console.log("model", model)
       if(value === "Dlno"){
-        validFormedData["DLNO"]  = model[value.charAt(0).toLowerCase() + value.slice(1)];
-      } //else if(value === "Dlno"){} 
+        validFormedData["DLNo"]  = value &&  model[value?.charAt(0).toLowerCase() + value?.slice(1)];
+      }
       else {
-        validFormedData[value]  = model[value.charAt(0).toLowerCase() + value.slice(1)];
+        validFormedData[value]  = value &&  model[value?.charAt(0).toLowerCase() + value?.slice(1)];
       }
     } 
 
@@ -59,7 +61,8 @@ export const AddUpdateEmployeeQuery = async (model) => {
 
     } else {
       // Update Existing Employee
-      const updatedEmp = await EmpMaster.updateOne({ Empid: model.empid }, { $set: validFormedData});
+      console.log("validFormedData", validFormedData)
+      const updatedEmp = await EmpMaster.updateOne({ Empid: model.Empid }, { $set: validFormedData});
         if(!updatedEmp.acknowledged){
           throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update the Employee")
         }
@@ -176,7 +179,7 @@ export const GetEmployeeQuery = async (model) => {
           empDeptId: "$EmpDeptId",
           empStateId: "$EmpStateId",
           empCountryID: "$EmpCountryID",
-          empCityId: "$empCityId",
+          empCityId: "$EmpCityId",
           empPincode: "$EmpPincode",
           createdBy: "$CreatedBy",
           updatedBy: "$updatedBy",
@@ -187,7 +190,7 @@ export const GetEmployeeQuery = async (model) => {
           // imageFile: "$Image",
           // signatureFile: "$SignatureFile",
           email: "$Email",
-          dlno: "$DLNO",
+          dlno: "$DLNo",
           gender: "$Gender",
           departmentName:
             "$Department.DepartmentName",
