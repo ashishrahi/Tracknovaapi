@@ -27,14 +27,15 @@ const CampaignDetailSchema = new mongoose.Schema({
     validate: {
       validator: function (value) {
         // Check if the email is in valid format
-        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value);
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
       },
       message: "Invalid email format",
     },
   },
   MobileNo: {
     type: String,
-    // required: [true, "Mobile number is required"],
+    required: [true, "Mobile number is required"],
+    default: "0000000000",
     match: [
       /^[0-9]{10}$/, // Ensure the number is 10 digits
       "Mobile number must be a valid 10-digit number",

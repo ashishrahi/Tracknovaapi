@@ -30,11 +30,6 @@ export const AddUpdateEmployeeQuery = async (model) => {
       if(value === "Dlno"){
         validFormedData["DLNo"]  = value &&  model[value?.charAt(0).toLowerCase() + value?.slice(1)];
       }
-      // if(value === "EmpCountryId"){
-      //   console.
-      //   validFormedData["EmpCountryID"]  = value &&  model[value?.charAt(0).toLowerCase() + value?.slice(1)];
-      // }
-       //else if(value === "Dlno"){} 
       else {
         validFormedData[value]  = value &&  model[value?.charAt(0).toLowerCase() + value?.slice(1)];
       }

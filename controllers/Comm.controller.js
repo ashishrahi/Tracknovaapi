@@ -163,7 +163,7 @@ async function UpsertCommGroup(req, res, next) {
     // return res
     //   .status(StatusCodes.BAD_REQUEST)
     //   .json(new ApiErrorResponse(0, error.message))
-   
+
   }
 }
 
@@ -503,13 +503,13 @@ async function UpsertCampaign(req, res, next) {
     if (!model.campaignId || model.campaignId === 0) {
 
       // Check if campaign already exists
-      
+
       const existingCampaign = await Campaign.findOne({
         CampaignName: model.campaignName,
       }).lean();
 
-      console.log('existingCampaign:',existingCampaign)
-      
+      console.log('existingCampaign:', existingCampaign)
+
       if (existingCampaign) {
         return res.status(StatusCodes.OK).json({
           status: "Failed",
@@ -521,7 +521,7 @@ async function UpsertCampaign(req, res, next) {
       // Get the last CampaignId and increment
       const lastCampaign = await Campaign.findOne().sort({ CampaignId: -1 }).lean();
 
-      
+
       model.campaignId = (lastCampaign?.CampaignId || 0) + 1;
 
 
@@ -530,43 +530,36 @@ async function UpsertCampaign(req, res, next) {
       const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 }).lean();
 
       let Id = (lastDetail?.Id || 0) + 1;
-      console.log("Id:",Id)
-      
-      
+      console.log("Id:", Id)
+
+
       // Process Groups
       let listGroups = model.listGroups.filter((ii) => ii.isSelected);
-      
+
       // Filling data in listGroup
 
       listGroups.forEach((ii) => {
         ii.id = Id++;
         ii.campaignId = model.campaignId;
         ii.message = model.message;
+
       });
-    
+
       listGroups = listGroups.map((group) => {
         let newGroup = {}; // Create a new object
-    
+
         for (let key in group) {
-            let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
-            newGroup[newKey] = group[key]; // Assign the value to the new key
+          let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+          newGroup[newKey] = group[key]; // Assign the value to the new key
         }
-    
+
         return newGroup;
-    });
-
-      
-
-      // // if(listGroups.length <= 0){
-      //   throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please choose valid Group")
-      // }
-
-      console.log("listGroups:......", listGroups)
+      });
 
       const isSuccess = await CampaignDetail.insertMany(listGroups);
-   
 
-      if(isSuccess.length < 0){
+
+      if (isSuccess.length < 0) {
         throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Group. Try again!")
       }
 
@@ -576,37 +569,47 @@ async function UpsertCampaign(req, res, next) {
 
       listMembers.forEach((ii) => {
         ii.id = Id++;
-        ii.campaignId = model.campaignId; 
+        ii.campaignId = model.campaignId;
         ii.message = model.message;
+        ii.groudId = listGroups[0][GroupId];
       });
-    
+
       listMembers = listMembers.map((member) => {
         let newMembers = {}; // Create a new object
-    
+
         for (let key in member) {
-            let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
-            newMembers[newKey] = member[key]; // Assign the value to the new key
+          let newKey = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize key
+          newMembers[newKey] = member[key]; // Assign the value to the new key
         }
-    
+
         return newMembers;
       });
-    
-      if(listMembers.length <= 0){
+
+      if (listMembers.length <= 0) {
         throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please choose valid Members")
       }
-   
-      console.log("listMembers:......", listMembers)
-      const isSavedMemberSuccess =  await CampaignDetail.insertMany(listMembers);
-      
-      if(isSavedMemberSuccess.length <= 0){
+
+      const isSavedMemberSuccess = await CampaignDetail.insertMany(listMembers);
+
+      if (isSavedMemberSuccess.length <= 0) {
         throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Members. Try again!")
       }
 
 
       // Insert new campaign
       // console.log("model: ,", model)
-      return;
-      await Campaign.create(model);
+      // return;
+
+      let updatedCampaignModel = {}
+      for (let key in model) {
+        if (key !== "listMembers" && key !== "listGroups") {
+          updatedCampaignModel[key.charAt(0).toUpperCase() + key.slice(1)] = model[key];
+        }
+      }
+      const createdCampaign = await new Campaign(updatedCampaignModel).save();
+      if (!createdCampaign) {
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create. Try again!")
+      }
 
       response.status = "Success";
       response.message = "Added Successfully";
@@ -763,7 +766,7 @@ async function UpsertCampaignTemplate(req, res) {
   };
 
   try {
-    if(!model.template.trim().length > 0 ){
+    if (!model.template.trim().length > 0) {
       throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please provide valid template message.")
     }
     if (model.templateId === 0) {
