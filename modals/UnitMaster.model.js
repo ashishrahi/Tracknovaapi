@@ -20,7 +20,7 @@ const UnitMasterSchema = new mongoose.Schema(
     },
     CreatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true
     },
     UpdatedBy: {

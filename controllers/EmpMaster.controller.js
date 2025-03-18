@@ -15,6 +15,7 @@ import {
 export async function AddUpdateEmployee(req, res, next) {
   try {
     const model = req.body;
+    console.log("model:",model)
     const response  = await AddUpdateEmployeeQuery(model);
   
     const successResponse = new CommonResponse(

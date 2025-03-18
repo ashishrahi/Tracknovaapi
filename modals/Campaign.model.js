@@ -4,13 +4,13 @@ const CampaignSchema = new mongoose.Schema(
   {
     CampaignId: {
       type: Number,
-      required: true,
+      // required: true,
       unique: true,
       //   index: true, // Improves query performance
     },
     CampaignName: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       set: (value) => {
         return value
@@ -23,27 +23,27 @@ const CampaignSchema = new mongoose.Schema(
     },
     CampaignDate: {
       type: Date,
-      required: true,
+      // required: true,
     },
     CampaignType: {
       type: String,
-      required: true,
+      // required: true,
       uppercase: true, // Prevents invalid types
     },
     TemplateId: {
       type: mongoose.Schema.Types.Int32,
-      required: true,
+      // required: true,
        // Supports both null and ObjectId
       // default: null,
     },
     Message: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     Status: {
       type: String,
-      required: true,
+      // required: true,
     //   enum: ["Immediately", "Scheduled", "Draft"], // Standardized values
     //   default: "Draft",
     },
@@ -66,12 +66,12 @@ const CampaignSchema = new mongoose.Schema(
     },
     CreatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     UpdatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
   },
