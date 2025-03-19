@@ -4,10 +4,6 @@ import { ApiErrorResponse } from '../apiResponse/index.js';
 import { AuthController } from '../../controllers/index.js';
 import { AddUpdateUserPermissionMasterQuery, RegisterQuery } from "../DBQueries/Auth.Query.js"
 
-
-
-
-
 //---------AddUpdateEmployeeQuery------> 
 export const AddUpdateEmployeeQuery = async (model) => {
   try {
@@ -61,10 +57,15 @@ export const AddUpdateEmployeeQuery = async (model) => {
 
     } else {
       // Update Existing Employee
-      console.log("validFormedData", validFormedData)
-      const updatedEmp = await EmpMaster.updateOne({ Empid: model.Empid }, { $set: validFormedData});
-        if(!updatedEmp.acknowledged){
+      // console.log("validFormedData", validFormedData)
+      const updatedEmp = await EmpMaster.updateOne({ Empid: model.empid }, { $set: validFormedData});
+      console.log("updatedEmp", updatedEmp)
+
+        if(!updatedEmp.acknowledged ){
           throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update the Employee")
+        }
+        if(updatedEmp.modifiedCount < 0){
+          throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Employee not found")
         }
       response.message = "Employee Successfully Updated";
     }
@@ -258,7 +259,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
 
       // If UserId already exists, just update permissions
       if (model.userId) {
-       console.log("2nd if block executes")
+      //  console.log("2nd if block executes")
         const exisitingDeleted = await UserPermission.deleteMany({ UserId: model.userId});
         console.log("exisitingDeleted", exisitingDeleted)
         // await UserPermission.bulkWrite(

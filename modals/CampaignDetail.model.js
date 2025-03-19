@@ -34,7 +34,7 @@ const CampaignDetailSchema = new mongoose.Schema({
   },
   MobileNo: {
     type: String,
-    required: [true, "Mobile number is required"],
+    // required: [true, "Mobile number is required"],
     default: "0000000000",
     match: [
       /^[0-9]{10}$/, // Ensure the number is 10 digits

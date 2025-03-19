@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import sendMail from '../utils/nodeMailer/nodeMailer.js'
 import dotnetLikeData from '../utils/dotnet-like-format/dotnetLikeData.js'
 import {
   CommGroup,
@@ -500,6 +501,7 @@ async function UpsertCampaign(req, res, next) {
   const response = { status: "Failed", message: "", data: null };
   try {
     const model = req.body;
+    // console.log('model:',model)
     if (!model.campaignId || model.campaignId === 0) {
 
       // Check if campaign already exists
@@ -508,7 +510,7 @@ async function UpsertCampaign(req, res, next) {
         CampaignName: model.campaignName,
       }).lean();
 
-      console.log('existingCampaign:', existingCampaign)
+      // console.log('existingCampaign:', existingCampaign)
 
       if (existingCampaign) {
         return res.status(StatusCodes.OK).json({
@@ -530,7 +532,7 @@ async function UpsertCampaign(req, res, next) {
       const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 }).lean();
 
       let Id = (lastDetail?.Id || 0) + 1;
-      console.log("Id:", Id)
+      // console.log("Id:", Id)
 
 
       // Process Groups
@@ -554,8 +556,8 @@ async function UpsertCampaign(req, res, next) {
         }
 
         return newGroup;
-      });
-
+      });        
+      console.log('listGroups',listGroups[0].GroupId)
       const isSuccess = await CampaignDetail.insertMany(listGroups);
 
 
@@ -566,12 +568,11 @@ async function UpsertCampaign(req, res, next) {
       // Process Members
       let listMembers = model.listMembers.filter((ii) => ii.isSelected);
 
-
       listMembers.forEach((ii) => {
         ii.id = Id++;
         ii.campaignId = model.campaignId;
         ii.message = model.message;
-        ii.groudId = listGroups[0][GroupId];
+        ii.groupId = listGroups[0].GroupId;
       });
 
       listMembers = listMembers.map((member) => {
@@ -620,27 +621,31 @@ async function UpsertCampaign(req, res, next) {
       response.status = "Success";
       response.message = "Updated Successfully";
     }
-
-    if (model.IsExecute) {
+// console.log('model.isExecute',model.isExecute)
+    if (model.isExecute) {
       // Send emails to selected members
-      const selectedMembers = model.ListMembers.filter((ii) => ii.IsSelected);
+      const selectedMembers = model.listMembers.filter((ii) => ii.isSelected);
+      // console.log('selectedMembers:',selectedMembers)
       for (const member of selectedMembers) {
         await sendMail(member.EmailId, model.CampaignName, member.Message);
       }
 
       // Send emails to employees in selected groups
-      const selectedGroups = model.ListGroups.filter(
-        (ii) => ii.IsSelected && ii.ReceiverType === "Employee"
-      );
+      // const selectedGroups = model.listGroups.filter(
+      //   (ii) => ii.isSelected && ii.receiverType === "Employee"
+      // );
 
       for (const group of selectedGroups) {
-        const members = await CommMembers.find({ GroupId: group.GroupId });
+        // console.log('group:',group)
+        // console.log("GroupId:", group.groupId)
+        const members = await CommMembers.find({ GroupId: group.groupId });
         for (const member of members) {
+          console.log('member:',member)
           const emp = await EmpMaster.findOne({ Empid: member.MemberId });
-          if (emp) await sendMail(emp.Email, model.CampaignName, group.Message);
+          if (emp) await sendMail(emp.Email, model.CampaignName, group.message);
         }
       }
-
+      return
       response.message = "Mail Sent!!";
       return res.status(StatusCodes.OK).json(response);
     }
