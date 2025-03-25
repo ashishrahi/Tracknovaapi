@@ -6,6 +6,7 @@ import {
 import {
     AddUpdateStateQuery,
     GetStateQuery,
+    GetStatesByCountryQuery,
     DeleteStateQuery,
 } from "../utils/DBQueries/State.Query.js";
 
@@ -56,7 +57,30 @@ export async function GetState(req,res){
     }
 }
 
+/////////////////////////////////////////////////// GetStatesByCountry //////////////////////////////////////////////////////////////////
 
+
+export async function GetStatesByCountry(req,res){
+    try {
+        const { CountryId }  = req.params;
+        console.log("CountryId:",CountryId)
+        const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetStatesByCountryQuery(CountryId);
+        const successResponse = new ReturnData(
+            isSuccess,
+            internalSuccess,
+            mesg,
+            insertedId,
+            data
+        );
+        res.status(StatusCodes.OK).json(successResponse);
+
+    } catch (error) {
+        const apiErrorResponse = new ApiErrorResponse(
+             StatusCodes.BAD_REQUEST, 
+             error.message);
+        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+    }
+}
 
 //////////////////////////////////////////////////// DeleteState //////////////////////////////////////////////////////////////////
 

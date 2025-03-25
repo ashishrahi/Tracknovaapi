@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import AppRoutes from "./routes/index.js";
 import cors from "cors";
-import connectMongoDB from "./db/connectMongoDB.js";
+import { connectMongoDB, connectTenantDB} from "./db/connectMongoDB.js";
 import compression from "compression";
 import { ApiErrorResponse } from "./utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";

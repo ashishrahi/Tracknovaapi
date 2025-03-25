@@ -17,6 +17,12 @@ import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscra
 import { AddUpdateVendorMaster, GetVendorMaster, DeleteVendorMaster } from "./VendorMaster.controller.js";
 import { GetPeriods } from "./Period.controller.js";
 
+import { getAllCompanies } from "./Company.controller.js";
+
+
+export const CompanyController = {
+  getAllCompanies: getAllCompanies
+}
 
 export const NTReadController = {
     probWireTamp: probWireTamp,
@@ -217,6 +223,7 @@ import {
 import {
   AddUpdateState,
   GetState,
+  GetStatesByCountry,
   DeleteState,
 } from "./State.controller.js";
 
@@ -580,6 +587,7 @@ export const VendorMasterController = {
 
 export const StateController ={
 AddUpdateState,
+GetStatesByCountry,
   GetState,
   DeleteState,
 }

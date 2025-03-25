@@ -316,4 +316,8 @@ for (let key in model) {
 
 
 
-console.log("updatedCampaignModel", updatedCampaignModel)
+// console.log("updatedCampaignModel", updatedCampaignModel)
+
+
+
+console.log("Alt67KKKK7j@gmail.com".toLowerCase());
