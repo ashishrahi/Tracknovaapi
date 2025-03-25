@@ -62,10 +62,14 @@ export const AddUpdateEmployeeQuery = async (model) => {
     } else {
       // Update Existing Employee
       console.log("validFormedData", validFormedData)
-      const updatedEmp = await EmpMaster.updateOne({ Empid: model.Empid }, { $set: validFormedData});
-        if(!updatedEmp.acknowledged){
-          throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update the Employee")
-        }
+      const updatedEmp = await EmpMaster.updateOne({ Empid: model.empid }, { $set: validFormedData});
+      if(!updatedEmp.acknowledged){
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update the Employee. Try again!")
+      }
+      if(updatedEmp.modifiedCount < 1){
+        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Employee may not exists.")
+      }
+
       response.message = "Employee Successfully Updated";
     }
 

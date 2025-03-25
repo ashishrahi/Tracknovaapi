@@ -26,6 +26,7 @@ import NodePermission from "./NodePermission.model.js";
 import VendorMaster from "./VendorMaster.model.js";
 import SummaryNT from "./SummaryNT.model.js";
 import AspNetUsers from "./AspNetUsers.model.js";
+import SubscriptionRequest from "./SubscriptionRequest.model.js";
 
 
 
@@ -68,6 +69,8 @@ import {VehicleTypeChild} from './VehicleTypeChild.modal.js'
 import { Node } from "./Node.modal.js";
 
 
+
+
 export { 
     // NTCurrentDay,
     // NT,
@@ -102,6 +105,8 @@ export {
     // ZoneMaster,
     AreaWardMaster,
     // VehicleTypeMaster,
-    VehicleTypeChild
+    VehicleTypeChild,
+    //-----SAAS Related----->
+    SubscriptionRequest
 }
 
