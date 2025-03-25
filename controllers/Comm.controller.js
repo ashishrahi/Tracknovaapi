@@ -564,10 +564,8 @@ async function UpsertCampaign(req, res, next) {
       if (isSuccess.length < 0) {
         throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Group. Try again!")
       }
-
       // Process Members
       let listMembers = model.listMembers.filter((ii) => ii.isSelected);
-
       listMembers.forEach((ii) => {
         ii.id = Id++;
         ii.campaignId = model.campaignId;
@@ -625,7 +623,7 @@ async function UpsertCampaign(req, res, next) {
     if (model.isExecute) {
       // Send emails to selected members
       const selectedMembers = model.listMembers.filter((ii) => ii.isSelected);
-      // console.log('selectedMembers:',selectedMembers)
+      console.log('selectedMembers:',selectedMembers)
       for (const member of selectedMembers) {
         await sendMail(member.EmailId, model.CampaignName, member.Message);
       }
