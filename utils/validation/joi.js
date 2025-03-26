@@ -1,6 +1,6 @@
 import Joi from "joi";
 
- function validateRegisterCompanyModel(model){
+function validateRegisterCompanyModel(model){
     const schema = Joi.object({
         companyName: Joi.string().min(3).max(100).required().messages({
             "string.base": "Company name must be a string.",
@@ -98,9 +98,11 @@ import Joi from "joi";
         }).required(),
     
         database: Joi.object({
-            dbName: Joi.string().required().messages({
-                "string.empty": "Database name is required."
-            }),
+            dbName: ""
+            // .required().messages({
+            //     "string.empty": "Database name is required."
+            // }),,
+            ,
             backupEnabled: Joi.boolean().default(false)
         }).optional()
     });
@@ -108,4 +110,20 @@ import Joi from "joi";
     return schema.validate(model, { abortEarly: true });
 }
 
-export { validateRegisterCompanyModel }
+function validateSigninModel(model){
+    const Schema = Joi.object({
+        username: Joi.string().email().required().messages({
+            "string.email": "Invalid email format",
+            "any.required": "Email is required"
+        }),
+        password: Joi.string().required().messages({ // ✅ FIXED: Use .messages()
+            "string.empty": "Password is required.",
+            "any.required": "Password is required."
+        }),
+        
+    })
+
+    return Schema.validate(model, { abortEarly: true });
+}
+
+export { validateRegisterCompanyModel, validateSigninModel }

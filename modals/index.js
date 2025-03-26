@@ -27,11 +27,13 @@ import VendorMaster from "./VendorMaster.model.js";
 import SummaryNT from "./SummaryNT.model.js";
 import AspNetUsers from "./AspNetUsers.model.js";
 import SubscriptionRequest from "./SubscriptionRequest.model.js";
+import Company from "./Company.model.js"
+import Idp_account from "./Idp_account.model.js";
 
 
 
 
-export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting, FuelType, ItemTypeMaster, ItemCategoryMaster, UnitMaster, TaxMaster, BrandMaster, VehicleAddTempInfo, ContractorMaster, NodePermission, VendorMaster, SummaryNT, AspNetUsers }
+export { NTCurrentDay, NT, ItemMaster, VehicleTypeMaster, EmpMaster, Department, ZoneMaster, Geofencing, CommGroup, CommMembers, EmailSetting, SmsSetting, CampaignDetail, Campaign, CampaignTemplate, EventSetting, FuelType, ItemTypeMaster, ItemCategoryMaster, UnitMaster, TaxMaster, BrandMaster, VehicleAddTempInfo, ContractorMaster, NodePermission, VendorMaster, SummaryNT, AspNetUsers, Company, Idp_account }
 
 // import {NTCurrentDay} from "./NTCurrentDay.modal.js";
 // import {NT} from "./NT.modal.js";

@@ -14,7 +14,7 @@ const CompanySchema = new mongoose.Schema({
     trim: true
   },
 
-  companyEmail: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  companyEmail: { type: String, required: true, lowercase: true, trim: true },
 
   pan: {
     type: String,
@@ -41,7 +41,7 @@ const CompanySchema = new mongoose.Schema({
 
   admin: {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, lowercase: true, unique: true, trim: true },
+    email:  { type: String, required: true, lowercase: true, trim: true },
     phone: { type: String, required: true, match: /^[0-9]{10}$/, trim: true },
     role: {
       type: String,
@@ -58,7 +58,7 @@ const CompanySchema = new mongoose.Schema({
   },
 
   database: {
-    dbName: { type: String, required: true, unique: true, trim: true },
+    dbName: { type: String, required: true, unique: [true, "This Db name already present"], trim: true },
     backupEnabled: { type: Boolean, default: false }
   }
 },

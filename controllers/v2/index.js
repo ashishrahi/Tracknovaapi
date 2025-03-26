@@ -1,10 +1,11 @@
-import { signup } from "./auth.controller.js";
-import { register } from "./company_manage.controller.js";
+import { signin } from "./auth.controller.js";
+import { register, find } from "./company_manage.controller.js";
 
 export const v2AuthController = {
-    signup: signup
+    signin: signin
 }
 
 export const v2CompanyManageController = {
-    register: register
+    register: register,
+    find: find
 }
