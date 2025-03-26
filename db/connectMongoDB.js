@@ -8,7 +8,7 @@ const uri = String(process.env.MONGODB_SERVER_URI);
 async function connectMongoDB() {
 
     try {
-        const dbName = "Inventory"   //String(process.env.DB_NAME)
+        const dbName = "central_db"   //String(process.env.DB_NAME)
         connection = await mongoose.connect(uri + "/" + dbName);
         console.log("MongoDB Connected");
         console.log("Connected DB is :",connection.connections[0].name)
