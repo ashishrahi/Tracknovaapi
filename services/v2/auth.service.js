@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { Idp_account } from "../../modals/index.js";
+import { Company, Idp_account } from "../../modals/index.js";
 import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { authControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js"
 import jwt from "jsonwebtoken";
@@ -9,14 +9,17 @@ export async function signinService(value){
     const isUserRegistered = await Idp_account.findOne({username: value.username.toLowerCase()});
 
     if(!isUserRegistered){
-        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound)
+        throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
     }
 
     const isValidPassword = await isUserRegistered.isValidPassword(value.password);
 
     if(!isValidPassword){
-        throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp)
+        throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp);
     }
+
+    const role = await Company.findById(isUserRegistered.accountOwner).select("admin");
+    console.log("role is: ",role)
 
     function generateRefreshToken(){
         const payload = {
@@ -34,8 +37,8 @@ export async function signinService(value){
     function generateAccessToken(){
       const payload = {
         Id: isUserRegistered.accountOwner,
-        // UserName: this.UserName,
-        // Email: this.Email
+        OwnerName: role.name,
+        Email: role.email
       }
       const secret = process.env.ACCESS_TOKEN_SECRET;
       const option = {
@@ -48,6 +51,7 @@ export async function signinService(value){
 
     return {
         accessToken : generateAccessToken(),
-        refreshToken: generateRefreshToken()
+        refreshToken: generateRefreshToken(),
+        role: role.admin.role
     }
 }

@@ -16,11 +16,11 @@ export async function signin(req, res, next) {
             secure: true,
             sameSite: "None", // ✅ Required for cross-site requests
         };
-        const { accessToken, refreshToken} = await v2AuthService.signinService(value);
+        const { accessToken, refreshToken, role } = await v2AuthService.signinService(value);
 
         return res.status(StatusCodes.OK)
-        // .cookie("refreshToken")
-        .json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.loginSuccess, accessToken))
+            // .cookie("refreshToken")
+            .json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.loginSuccess, {accessToken, role}))
 
     } catch (error) {
         next(error);
