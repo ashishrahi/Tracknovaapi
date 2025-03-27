@@ -166,6 +166,7 @@ import {
 // CityMaster
 import {
   AddUpdateCityMaster,
+  GetCitiesByState,
   GetCityMaster,
   DeleteCityMaster,
 } from "./CityMaster.controller.js";
@@ -223,7 +224,7 @@ import {
 import {
   AddUpdateState,
   GetState,
-  GetStatesByCountry,
+  GetStatebyCountry,
   DeleteState,
 } from "./State.controller.js";
 
@@ -426,6 +427,7 @@ export const HandheldMasterController = {
 
 export const CityMasterController = {
   AddUpdateCityMaster: AddUpdateCityMaster,
+  GetCitiesByState:GetCitiesByState,
   GetCityMaster: GetCityMaster,
   DeleteCityMaster: DeleteCityMaster,
 };
@@ -587,7 +589,7 @@ export const VendorMasterController = {
 
 export const StateController ={
 AddUpdateState,
-GetStatesByCountry,
+GetStatebyCountry,
   GetState,
   DeleteState,
 }

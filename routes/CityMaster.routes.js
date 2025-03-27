@@ -3,11 +3,13 @@ import { CityMasterController } from "../controllers/index.js";
 
 const router = express.Router();
 
-// BinManage Routes
+// CityMaster Routes
 router.post(
   "/AddUpdateDistrictMaster",
   CityMasterController.AddUpdateCityMaster
 );
+
+router.post("/Cities/:StateId", CityMasterController.GetCitiesByState);
 router.post("/GetDistrictMaster", CityMasterController.GetCityMaster);
 router.delete("/DeleteDistrictMaster", CityMasterController.DeleteCityMaster);
 

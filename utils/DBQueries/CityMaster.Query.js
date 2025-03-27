@@ -100,6 +100,35 @@ const newCityList ={
   }
     
 }
+
+///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const GetCitiesByStateQuery = async (model) => {
+  try {
+    const { StateId } = model;
+    // console.log("StateId",StateId)
+    const cityList = await CityMaster.find({StateId:StateId})
+    // const newCityList = cityList.map((city)=>city.CityName)
+
+    return {
+      isSuccess: true,
+      internalSuccess: "",
+      mesg: "States fetched successfully",
+      insertedId: "",
+      data: cityList,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: error.message,
+    };
+  }
+
+}
+
+
+
 ////////////////////////////////////////////  GetCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
     export const GetCityMasterQuery = async (model) =>{
         

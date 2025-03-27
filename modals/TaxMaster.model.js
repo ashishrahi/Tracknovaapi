@@ -23,7 +23,7 @@ const TaxMasterSchema = new mongoose.Schema(
       },
     CreatedBy: {
       type: String,
-      required: true,
+      // required: true,
       trim: true
     },
     UpdatedBy: {

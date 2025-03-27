@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import sendMail from '../utils/nodeMailer/nodeMailer.js'
 import dotnetLikeData from '../utils/dotnet-like-format/dotnetLikeData.js'
 import {
   CommGroup,
@@ -501,6 +502,7 @@ async function UpsertCampaign(req, res, next) {
   const response = { status: "Failed", message: "", data: null };
   try {
     const model = req.body;
+    // console.log('model:',model)
     if (!model.campaignId || model.campaignId === 0) {
 
       // Check if campaign already exists
@@ -509,7 +511,7 @@ async function UpsertCampaign(req, res, next) {
         CampaignName: model.campaignName,
       }).lean();
 
-      console.log('existingCampaign:', existingCampaign)
+      // console.log('existingCampaign:', existingCampaign)
 
       if (existingCampaign) {
         return res.status(StatusCodes.OK).json({
@@ -530,7 +532,7 @@ async function UpsertCampaign(req, res, next) {
       const lastDetail = await CampaignDetail.findOne().sort({ Id: -1 }).lean();
 
       let Id = (lastDetail?.Id || 0) + 1;
-      console.log("Id:", Id)
+      // console.log("Id:", Id)
 
 
       // Process Groups
@@ -554,19 +556,16 @@ async function UpsertCampaign(req, res, next) {
         }
 
         return newGroup;
-      });
-
+      });        
+      console.log('listGroups',listGroups[0].GroupId)
       const isSuccess = await CampaignDetail.insertMany(listGroups);
 
 
       if (isSuccess.length < 0) {
         throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to save Group. Try again!")
       }
-
       // Process Members
       let listMembers = model.listMembers.filter((ii) => ii.isSelected);
-
-
       listMembers.forEach((ii) => {
         ii.id = Id++;
         ii.campaignId = model.campaignId;

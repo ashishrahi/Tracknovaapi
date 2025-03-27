@@ -4,10 +4,6 @@ import { ApiErrorResponse } from '../apiResponse/index.js';
 import { AuthController } from '../../controllers/index.js';
 import { AddUpdateUserPermissionMasterQuery, RegisterQuery } from "../DBQueries/Auth.Query.js"
 
-
-
-
-
 //---------AddUpdateEmployeeQuery------> 
 export const AddUpdateEmployeeQuery = async (model) => {
   try {
@@ -262,7 +258,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
 
       // If UserId already exists, just update permissions
       if (model.userId) {
-       console.log("2nd if block executes")
+      //  console.log("2nd if block executes")
         const exisitingDeleted = await UserPermission.deleteMany({ UserId: model.userId});
         console.log("exisitingDeleted", exisitingDeleted)
         // await UserPermission.bulkWrite(

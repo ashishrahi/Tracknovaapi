@@ -9,6 +9,7 @@ router.post(
   CountryMasterController.AddUpdateCountryMaster
 );
 router.post("/GetCountryMaster", CountryMasterController.GetCountryMaster);
+
 router.delete(
   "/DeleteCountryMaster",
   CountryMasterController.DeleteCountryMaster
