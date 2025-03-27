@@ -12,6 +12,11 @@ export async function registerService(value){
          * 02: Then insert data in idp collection using Idp Model.
          */
         const newCompanyData = new Company(value);
+        if(value.database.backupEnabled === "Active"){
+            newCompanyData.database.backupEnabled = true
+        }else{
+            newCompanyData.database.backupEnabled = false
+        }
         const isDBNameExists = await Company.findOne({ "database.dbName" : value.database.dbName })
         
         if(isDBNameExists){
@@ -60,6 +65,7 @@ export async function registerService(value){
 
         return resgiteredNewCompany;
     } catch (error) {
+        console.log("error from service",error);
         throw error;
     }
     

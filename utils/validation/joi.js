@@ -77,7 +77,7 @@ function validateRegisterCompanyModel(model){
                 "any.only": "Role must be one of 'SuperAdmin', 'Admin', or 'User'.",
                 "any.required": "Admin role is required."
             })
-        }).required(),
+        }),
     
         subscription: Joi.object({
             plan: Joi.string().valid("Basic", "Pro", "Enterprise").required().messages({
@@ -95,16 +95,12 @@ function validateRegisterCompanyModel(model){
             status: Joi.string().valid("Active", "Suspended", "Expired").default("Active").messages({
                 "any.only": "Subscription status must be Active, Suspended, or Expired."
             })
-        }).required(),
+        }),
     
         database: Joi.object({
-            dbName: ""
-            // .required().messages({
-            //     "string.empty": "Database name is required."
-            // }),,
-            ,
-            backupEnabled: Joi.boolean().default(false)
-        }).optional()
+            dbName: Joi.string(),
+            backupEnabled: Joi.string().valid("Active", "Inactive").default("Active")
+        })
     });
 
     return schema.validate(model, { abortEarly: true });
