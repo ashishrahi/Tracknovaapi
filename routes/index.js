@@ -48,14 +48,11 @@ import WardMasterRoutes from "./WardMaster.routes.js";
 import ZoneMasterRoutes from "./ZoneMaster.route.js";
 import CompanyRoutes from "./Company.routes.js"
 
+import v2Routes from "./v2/index.js"
 
 //------- Saas Specific Routes-------->
 
 router.use("/company", CompanyRoutes)
-
-
-
-
 //-------- All Routes ----------------->
 
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
@@ -103,5 +100,9 @@ router.use("/vVehicleTrackForOverSpeed", vVehicleTrackForOverSpeedRoutes);
 router.use("/vVehicletrackHis", vVehicletrackHisRoutes);
 router.use("/WardMaster", WardMasterRoutes);
 router.use("/Zone", ZoneMasterRoutes);
+
+// from here v2 routes start
+
+router.use("/v2", v2Routes)
 
 export default router;

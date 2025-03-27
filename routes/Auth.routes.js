@@ -4,6 +4,7 @@ import { AuthController } from "../controllers/index.js";
 
 const router = express.Router();
 
+
 // UserPermissions Routes
 router.post("/Register", AuthController.Register);
 router.post("/login",  AuthController.login);

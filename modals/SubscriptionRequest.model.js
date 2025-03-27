@@ -2,15 +2,48 @@ import mongoose from "mongoose";
 
 
 const SubscriptionRequestSchema = new mongoose.Schema({
-  companyName: { type: String, required: true },
-  industryType: { type: String, default: "Vehicle Tracking Service" },
-  fleetSize: { type: Number, default: 10 },
-  country: { type: String, default: "India" },
-  adminName: { type: String, required: true, trim: true },
-  adminEmail: { type: String, required: true, unique: true },
-  phoneNumber: { type: String, required: true },
-  requestedPlan: { type: String, enum: ["Basic", "Pro", "Enterprise"], required: true },
-  status: { type: String, enum: ["Pending", "Contacted", "Paid", "Rejected"], default: "Pending" },
+  company: {
+    type: String,
+    required: true,
+  },
+
+  customerName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true },
+
+  address: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  pincode: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+
+  industryType: { type: String }, // Optional field to match the company model
+
+  fleetSizeRequirement: { type: Number, default: 0 }, // Matches `fleetSize` from Company model
+
+  subscriptionPreference: {
+    plan: {
+      type: String,
+      enum: ["Basic", "Pro", "Enterprise"],
+      required: true,
+    },
+    preferredStartDate: { type: Date, required: true },
+  },
   notes: { type: String }, // Notes from admin after contacting
 }, { timestamps: true });
 
@@ -18,3 +51,4 @@ const SubscriptionRequestSchema = new mongoose.Schema({
 const SubscriptionRequest = mongoose.model("SubscriptionRequest", SubscriptionRequestSchema);
 
 export default SubscriptionRequest;
+
