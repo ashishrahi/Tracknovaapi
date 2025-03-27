@@ -17,14 +17,14 @@ export async function register(req, res, next) {
 
         const resgiteredNewCompany = await v2CompanyManageService.registerService(value)
         
-        return res.json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.companycreated, resgiteredNewCompany ) )
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.companycreated, resgiteredNewCompany ) )
 
     } catch (error) {
         console.log("error from controller", error)
         next(error);
     }
 }
-
+ 
 export async function find(req, res, next){
     try {
         const companies = await v2CompanyManageService.findService();

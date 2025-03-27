@@ -52,7 +52,7 @@ import v2Routes from "./v2/index.js"
 
 //------- Saas Specific Routes-------->
 
-router.use("/company", CompanyRoutes)
+// router.use("/company", CompanyRoutes)
 //-------- All Routes ----------------->
 
 router.use("/AreaWardMaster", AreaWardMasterRoutes);
@@ -60,7 +60,7 @@ router.use("/Auth", AuthRoutes);
 router.use("/BinLocation", BinlLocationRoutes);
 router.use("/BinManage", BinManageRoutes);
 router.use("/Brand", BrandRoutes);
-router.use("/M10_District", CityMasterRoutes);
+router.use("/CityMaster", CityMasterRoutes);
 router.use("/Comm", CommRoutes);
 router.use("/Country", CountryMasterRoutes);
 router.use("/Dashboard", DashboardRoutes);
