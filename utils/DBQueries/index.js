@@ -30,7 +30,7 @@ import {AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteE
 import {AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery} from './GeoFencing.Query.js'
 
 //CityMasterQuery
-import {AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
+import {AddUpdateCityMasterQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
 
 //FuelCorrectionQuery
 import {AddUpdateFuelCorrectionQuery,GetVehListQuery} from './FuelCorrection.Query.js'
@@ -60,7 +60,7 @@ export {
     GetDeviceTypeQuery,
     AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteEmployeeQuery,
     AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery,
-    AddUpdateCityMasterQuery,GetCityMasterQuery,DeleteCityMasterQuery,
+    AddUpdateCityMasterQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery,
     AddUpdateFuelCorrectionQuery,GetVehListQuery,
     AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery,
     AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery

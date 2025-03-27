@@ -5,7 +5,8 @@ import { StatusCodes } from "http-status-codes";
 
 export const AddUpdateStateQuery = async (model) => {
   try {
-    const { stateId, stateName, stateCode, countryId, createdBy, updatedBy } = model;
+    const { stateId, stateName, stateCode, countryId, createdBy, updatedBy } =
+      model;
 
     if (!stateName) {
       return {
@@ -13,8 +14,8 @@ export const AddUpdateStateQuery = async (model) => {
         internalSuccess: false,
         mesg: "State Name is required",
         insertedId: null,
-        data: null
-      }
+        data: null,
+      };
     }
     if (!stateId || stateId === 0) {
       return {
@@ -22,7 +23,7 @@ export const AddUpdateStateQuery = async (model) => {
         internalSuccess: false,
         mesg: "State ID is required",
         insertedId: null,
-        data: null
+        data: null,
       };
     }
 
@@ -45,15 +46,14 @@ export const AddUpdateStateQuery = async (model) => {
         countryId: state.CountryId,
         createdBy: state.CreatedBy,
         updatedBy: state.UpdatedBy,
-      }
-
+      };
 
       return {
         isSuccess: true,
         internalSuccess: true,
         mesg: `${updateState.stateName} State Successfully Updated`,
         insertedId: state.StateId,
-        data: updateState
+        data: updateState,
       };
     } else {
       // Generate a new stateId if not provided
@@ -81,15 +81,14 @@ export const AddUpdateStateQuery = async (model) => {
         countryId: newState.CountryId,
         createdBy: newState.CreatedBy,
         updatedBy: newState.UpdatedBy,
-      }
-
+      };
 
       return {
         isSuccess: true,
         internalSuccess: true,
         mesg: `State ${newState.StateName} Successfully Added`,
         insertedId: newState.StateId,
-        data: newlyState
+        data: newlyState,
       };
     }
   } catch (error) {
@@ -99,7 +98,7 @@ export const AddUpdateStateQuery = async (model) => {
         internalSuccess: false,
         mesg: "State Name Already Exists",
         insertedId: null,
-        data: null
+        data: null,
       };
     }
     return {
@@ -107,10 +106,33 @@ export const AddUpdateStateQuery = async (model) => {
       internalSuccess: false,
       mesg: error.message,
       insertedId: null,
-      data: null
+      data: null,
     };
   }
-}
+};
+
+///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
+
+export const GetStatebyCountryQuery = async (model) => {
+  try {
+    const { CountryId } = model;
+    const stateList = await StateMaster.find({CountryId:CountryId})
+    //  const newList = stateList.map((statename)=>statename.StateName)
+    return {
+      isSuccess: true,
+      internalSuccess: "",
+      mesg: "States fetched successfully",
+      insertedId: "",
+      data: stateList,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: error.message,
+    };
+  }
+};
 
 /////////////////////////////////////////////////// GetStateQuery //////////////////////////////////////////////////////////////////
 
@@ -137,17 +159,17 @@ export const GetStateQuery = async (model) => {
       // Step 2: Lookup (equivalent to `GroupJoin`)
       {
         $lookup: {
-          from: 'CountryMaster', // Collection name for CountryMaster
-          localField: 'CountryId', // Field in StateMaster
-          foreignField: 'CountryId', // Field in CountryMaster
-          as: 'countryDetails', // Output array field
+          from: "CountryMaster", // Collection name for CountryMaster
+          localField: "CountryId", // Field in StateMaster
+          foreignField: "CountryId", // Field in CountryMaster
+          as: "countryDetails", // Output array field
         },
       },
 
       // Step 3: Unwind (similar to `DefaultIfEmpty` in LINQ for joins)
       {
         $unwind: {
-          path: '$countryDetails',
+          path: "$countryDetails",
           preserveNullAndEmptyArrays: true, // Ensure no documents are dropped if no match
         },
       },
@@ -157,9 +179,9 @@ export const GetStateQuery = async (model) => {
         $project: {
           stateId: "$StateId",
           stateName: "$StateName",
-          stateCode: { $ifNull: ['$StateCode', ''] }, // Handle null StateCode
+          stateCode: { $ifNull: ["$StateCode", ""] }, // Handle null StateCode
           countryId: "$CountryId",
-          countryName: '$countryDetails.CountryName',
+          countryName: "$countryDetails.CountryName",
           createdBy: "$CreatedBy",
           updatedBy: "$UpdatedBy",
           createdOn: "$CreatedOn",
@@ -171,49 +193,44 @@ export const GetStateQuery = async (model) => {
     return {
       isSuccess: true,
       internalSuccess: "",
-      mesg: 'States fetched successfully',
+      mesg: "States fetched successfully",
       insertedId: "",
       data: states,
-    }
+    };
   } catch (err) {
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in AddUpdateStateQuery: ${err.message}`,
-    }
+    };
   }
-}
+};
 
 /////////////////////////////////////////////////// GetStateQuery //////////////////////////////////////////////////////////////////
 
 export const GetStatesByCountryQuery = async (CountryId) => {
   try {
     // console.log("Model:",model)
-    const states = await StateMaster({ CountryId: CountryId})
+    const states = await StateMaster({ CountryId: CountryId });
     return {
       isSuccess: true,
       internalSuccess: "",
-      mesg: 'States fetched successfully',
+      mesg: "States fetched successfully",
       insertedId: "",
       data: states,
-    }
-
+    };
   } catch (error) {
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in AddUpdateStateQuery: ${err.message}`,
-    }
-
+    };
   }
-
-}
+};
 
 ////////////////////////////////////////////////////// DeleteStateQuery //////////////////////////////////////////////////////////////////
 
 export const DeleteStateQuery = async (model) => {
-
-
   try {
     // Find the state(s) with the given StateId
     const states = await StateMaster.find({ StateId: model.stateId }).exec();
@@ -226,21 +243,19 @@ export const DeleteStateQuery = async (model) => {
         isSuccess: true,
         internalSuccess: "",
         mesg: `StateId ${model.stateId} successfully deleted`,
-      }
+      };
     } else {
       return {
         isSuccess: false,
         statusCode: StatusCodes.NOT_FOUND,
         mesg: `StateId ${model.stateId} not found`,
-      }
+      };
     }
   } catch (error) {
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in DeleteStateQuery: ${error.message}`,
-    }
+    };
   }
-
 };
-

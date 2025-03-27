@@ -111,7 +111,6 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 
 }
 
-
 //////////////////////////////  GetCountryMasterQuery //////////////////////////////////////////////////
 
 export const GetCountryMasterQuery = async (model) => {
