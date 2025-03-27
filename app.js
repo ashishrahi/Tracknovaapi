@@ -10,6 +10,7 @@ import verifyAccessToken from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import limiter from "./utils/rate-limiter/rateLimiter.js";
+import { getLoggedInCompany } from "./middlewares/index.js";
 
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use(compression());
 // all routes starts from here
 app.use(limiter);
 // app.use(verifyAccessToken)
+app.use(getLoggedInCompany) // for getting logged in company details
 app.use("/api", AppRoutes);
 
 
