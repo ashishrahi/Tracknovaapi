@@ -94,7 +94,6 @@ export async function connectMongoDB() {
         CentralDBModels = {
             Company: central_db.model("Company", CompanySchema),
             Idp_account: central_db.model("Idp_account", Idp_accountSchema),
-
         };
         console.log("🔍 Loaded Models:", Object.keys(CentralDBModels));
 
@@ -123,6 +122,10 @@ export async function getCentralDBModels() {
 
     return CentralDBModels;
 }
+
+
+//-------- connectTenantDB ----------->
+
 
 export async function connectTenantDB(dbName) {
     tenantDBName = dbName

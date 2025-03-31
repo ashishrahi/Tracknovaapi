@@ -1,11 +1,13 @@
 import { AreaWardMaster,ZoneMaster,RouteAreaDetail,RouteAreaBinDetail,BinLocation } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { getTenantDBModels } from "../../db/index.js";
 
 //////////////////////////////////////////////// AddUpdateAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
   try {
+    const { AreaWardMaster} = await getTenantDBModels();
     if (modal.areaID === 0) {
       // Check if the record already exists
       const existingRecord = await AreaWardMaster.findOne({
