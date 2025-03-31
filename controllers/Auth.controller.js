@@ -63,6 +63,7 @@ export async function login(req, res, next) {
   try {
     const modal = req.body;
     // console.log(modal)
+    console.log("req.db", req.db);
     const { response, refreshToken} = await loginQuery(modal);
     const successResponse = new CommonResponse(
       1,

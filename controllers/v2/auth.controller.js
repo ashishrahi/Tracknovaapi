@@ -6,17 +6,17 @@ import { authControllerResponse as apiTextResponse } from "../../utils/static-re
 export async function signin(req, res, next) {
     try {
         const model = req.body;
-        console.log("model is", model)
+        // console.log("model is", model)
         const { value, error } = validateSigninModel(model);
         if (error) {
             throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.details[0].message);
         }
+        const { accessToken, refreshToken, role } = await v2AuthService.signinService(value);
         const options = {
             httpOnly: true,
             secure: true,
             sameSite: "None", // ✅ Required for cross-site requests
         };
-        const { accessToken, refreshToken, role } = await v2AuthService.signinService(value);
 
         return res.status(StatusCodes.OK)
             // .cookie("refreshToken")

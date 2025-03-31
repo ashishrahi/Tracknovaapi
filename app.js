@@ -10,19 +10,38 @@ import verifyAccessToken from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import limiter from "./utils/rate-limiter/rateLimiter.js";
+import { getLoggedInCompany } from "./middlewares/index.js";
 
 
 dotenv.config();
 
 const app = express();
 
+// ✅ Export Models Directly for Easy Access
+export let CentralDBModels = {}; // Will hold models once initialized
 
+
+// (async () => {
+//  try {
+//      const { Idp_account, Company } = await connectMongoDB();
+//      CentralDBModels = { 
+//         Idp_account: Idp_account, 
+//         Company: Company,
+//     };
+//  } catch (error) {
+//     console.error("Failed to connect to MongoDB:", error.message);
+//     app.set("dbConnectionFailed", true);
+//     process.exit(1);
+//  }
+// })();
 // connectDBMongo();
+
 connectMongoDB().catch((error) => {
     console.error("Failed to connect to MongoDB:", error.message);
     app.set("dbConnectionFailed", true);
     process.exit(1);
 });
+
 
 app.use((req, res, next) => {
     if (app.get("dbConnectionFailed")) {
@@ -48,6 +67,7 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
+app.use(getLoggedInCompany) // for getting loggedIn company details. When someone logged in.
 // app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 

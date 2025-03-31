@@ -321,3 +321,14 @@ for (let key in model) {
 
 
 console.log("Alt67KKKK7j@gmail.com".toLowerCase());
+
+
+
+import { log } from "console";
+import fs from "fs";
+import path from "path";
+
+const modelsPath = path.resolve("./models"); // Adjust path if needed
+const modelFile = fs.readdirSync(modelsPath).find((file) => file.endsWith("js"));
+
+console.log(modelFile)

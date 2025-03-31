@@ -1,39 +1,49 @@
 import { StatusCodes } from "http-status-codes";
-import { Company, Idp_account } from "../../modals/index.js";
+// import { Company, Idp_account } from "../../modals/index.js";
 import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { companyManageControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js";
 import generatePassword from "../../utils/password-generator/passwordGenerator.js";
+import { getCentralDBModels } from "../../db/connectMongoDB.js";
+import mongoose from "mongoose";
 
-export async function registerService(value){
+// const { Company, Idp_account } = await getCentralDBModels();
+
+export async function registerService(value) {
 
     try {
+        
+        console.log("Company", Company)
+        if(!Company || !Idp_account) throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. failed to load models")
         /**
          * 01: First insert data in companies collection using Company Model
          * 02: Then insert data in idp collection using Idp Model.
          */
+        // const newCompanyData = new Company(value);
+
+        // console.log("getCentralDBModels", getCentralDBModels)
         const newCompanyData = new Company(value);
-        if(value.database.backupEnabled === "Active"){
+        if (value.database.backupEnabled === "Active") {
             newCompanyData.database.backupEnabled = true
-        }else{
+        } else {
             newCompanyData.database.backupEnabled = false
         }
-        const isDBNameExists = await Company.findOne({ "database.dbName" : value.database.dbName })
-        
-        if(isDBNameExists){
-            newCompanyData.database.dbName = (value.companyName.split(" ")[0]+ "_1" + "_db").toLowerCase()
+        const isDBNameExists = await Company.findOne({ "database.dbName": value.database.dbName })
+
+        if (isDBNameExists) {
+            newCompanyData.database.dbName = (value.companyName.split(" ")[0] + "_1" + "_db").toLowerCase()
             const resgiteredNewCompany = await newCompanyData.save();
-            if(!resgiteredNewCompany){
+            if (!resgiteredNewCompany) {
                 throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError)
             }
             // throw new ApiErrorResponse(StatusCodes.CONFLICT, apiTextResponse.dbNameExists ) 
         }
-    
+
         // const newCompanyData = new Company(value);
         newCompanyData.database.dbName = (value.companyName.split(" ")[0] + "_db").toLowerCase()
         const resgiteredNewCompany = await newCompanyData.save();
 
-    
-        if(!resgiteredNewCompany){
+
+        if (!resgiteredNewCompany) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError)
         }
 
@@ -41,7 +51,7 @@ export async function registerService(value){
 
         console.log(`Password is ${generatedPassword}`);
 
-        const isIdpAlreadyGenerated = await Idp_account.findOne({ username: (value?.admin?.email).toLowerCase()})
+        const isIdpAlreadyGenerated = await Idp_account.findOne({ username: (value?.admin?.email).toLowerCase() })
         console.log("isIdpAlreadyGenerated", isIdpAlreadyGenerated);
 
         /**
@@ -49,7 +59,7 @@ export async function registerService(value){
          * It means we need to assign only one idp for all db access
         */
 
-        if(!isIdpAlreadyGenerated){
+        if (!isIdpAlreadyGenerated) {
             console.log("idp creation start")
             const newIdpData = new Idp_account({
                 username: value.admin.email,
@@ -57,26 +67,37 @@ export async function registerService(value){
                 accountOwner: resgiteredNewCompany._id
             })
             const registeredIdp = await newIdpData.save();
-            if(!registeredIdp){
+            if (!registeredIdp) {
                 throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError)
             }
         }
-        
-
         return resgiteredNewCompany;
     } catch (error) {
-        console.log("error from service",error);
+        console.log("error from service", error);
         throw error;
     }
-    
+
 
 }
 
-export async function findService(){
+export async function findService() {
     try {
+        const { Company } = await getCentralDBModels();  // 🚀 Ensure connection
+        
+        if (!Company) {
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. Failed to load models");
+        }
         const companiesData = await Company.find().lean();
+        if(!companiesData){
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get Companies")
+        }
         return companiesData;
     } catch (error) {
+        console.log("error from find service", error)
         throw error
     }
+}
+
+export function switchCompanyWithDbNameService(company) {
+
 }
