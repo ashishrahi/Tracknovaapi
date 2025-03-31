@@ -13,31 +13,12 @@ import limiter from "./utils/rate-limiter/rateLimiter.js";
 import { getLoggedInCompany } from "./middlewares/index.js";
 
 
-dotenv.config();
+dotenv.configDotenv();
 
 const app = express();
 
-// ✅ Export Models Directly for Easy Access
-export let CentralDBModels = {}; // Will hold models once initialized
-
-
-// (async () => {
-//  try {
-//      const { Idp_account, Company } = await connectMongoDB();
-//      CentralDBModels = { 
-//         Idp_account: Idp_account, 
-//         Company: Company,
-//     };
-//  } catch (error) {
-//     console.error("Failed to connect to MongoDB:", error.message);
-//     app.set("dbConnectionFailed", true);
-//     process.exit(1);
-//  }
-// })();
-// connectDBMongo();
-
 connectMongoDB().catch((error) => {
-    console.error("Failed to connect to MongoDB:", error.message);
+    console.error("Failed to connect to MongoDB:", error.message || error.ErrorMessage);
     app.set("dbConnectionFailed", true);
     process.exit(1);
 });

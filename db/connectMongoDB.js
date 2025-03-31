@@ -59,6 +59,9 @@ import {
     VendorMasterSchema,
     ZoneMasterSchema,
 } from "../modals/index.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const uri = String(process.env.MONGODB_SERVER_URI);
 
@@ -76,14 +79,10 @@ mongoose.set("debug", true); //
 
 export async function connectMongoDB() {
     if (central_db) return CentralDBModels; // ✅ Reuse existing connection
-
+    console.log("`${uri}/central_db`", `${uri}/central_db`)
     try {
         central_db = await mongoose
-            .createConnection(`${uri}/central_db`, {
-                serverSelectionTimeoutMS: 30000, // ⏳ Wait longer for MongoDB
-                socketTimeoutMS: 45000, // ⏳ Allow more time for queries
-                bufferCommands: false,
-            })
+            .createConnection(`${uri}/central_db`)
             .asPromise();
         console.log(
             `✅ Connected to Central DB: ${central_db.name} and central_db object is `,
