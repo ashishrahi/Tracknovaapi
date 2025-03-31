@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const AspNetRolesSchema = new Schema(
+export const AspNetRolesSchema = new Schema(
   {
     Id: { type: String,  trim: true },
     Name: { type: String, required: true, trim: true },
