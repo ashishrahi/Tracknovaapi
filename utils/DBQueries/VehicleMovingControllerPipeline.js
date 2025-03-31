@@ -1,9 +1,12 @@
 
 import { ItemMaster, SummaryNT } from "../../modals/index.js";
+import { getTenantDBModels } from "../../db/index.js";
+
 
 async function trackDetailsNT(trackFilter) {
   try {
 
+   const { SummaryNT, } = await getTenantDBModels()
     console.log("trackFilter", trackFilter)
     
     let results = await SummaryNT.find(trackFilter).lean();
@@ -32,6 +35,8 @@ async function VehicleMovingStatusdetnew(body){
     const response = { Status: 'Failed', Message: '', Data: [] };
     
         try {
+            const { ItemMaster, } = await getTenantDBModels()
+
             const filter = body;
             
     

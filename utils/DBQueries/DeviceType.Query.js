@@ -1,10 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import { DeviceType } from "../../modals/DeviceType.modal.js";
+import { getTenantDBModels } from "../../db/index.js";
 
 ///////////////////////////////// GetDeviceTypeQuery //////////////////////////////////////////
 
 export const GetDeviceTypeQuery = async (model) => {
   try {
+    const { DeviceType } = await getTenantDBModels();
     const { pageNo, pageSize } = model;
     const skip = (pageNo - 1) * pageSize;
 
@@ -24,8 +26,8 @@ export const GetDeviceTypeQuery = async (model) => {
       };
     });
 
-    const rowCount = deviceTypesList.length
-    const msg = rowCount > 0  ? "Data Successfully Fetched" : "No record found";
+    const rowCount = deviceTypesList.length;
+    const msg = rowCount > 0 ? "Data Successfully Fetched" : "No record found";
 
     return {
       status: 1,

@@ -1,11 +1,14 @@
 import { AreaWardMaster,ZoneMaster,RouteAreaDetail,RouteAreaBinDetail,BinLocation } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import {getTenantDBModels} from '../../db/index.js'
+
 
 //////////////////////////////////////////////// AddUpdateAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
   try {
+    const {AreaWardMaster} = await getTenantDBModels()
     if (modal.areaID === 0) {
       // Check if the record already exists
       const existingRecord = await AreaWardMaster.findOne({
@@ -102,6 +105,8 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 //////////////////////////////////////////////// GetAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const GetAreaWardMasterQuery = async (modal) => {
+  const {AreaWardMaster} = await getTenantDBModels()
+
   const { pageNo, pageSize } = modal; // Assuming filter is passed via query params
 
   try {
@@ -202,6 +207,8 @@ export const DeleteAreaWardMasterQuery = async (modal) => {
     
 
     try {
+    const { RouteAreaDetail, RouteAreaBinDetail, BinLocation, AreaWardMaster } = await getTenantDBModels()
+
      
       const area = await RouteAreaDetail.findOne({ AreaID: modal.areaID }).exec();
       if (area) {

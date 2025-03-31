@@ -1,5 +1,7 @@
 import { Node } from "../../modals/index.js";
 import formattedData from '../dotnet-like-format/dotnetLikeData.js'
+import { getTenantDBModels } from "../../db/index.js";
+
 
 
 //////////////////////////////////////////////////  AddUpdateNewNodeMasterQuery //////////////////////////////////////////////////////////////////
@@ -8,6 +10,8 @@ import formattedData from '../dotnet-like-format/dotnetLikeData.js'
 export const AddUpdateNewNodeMasterQuery = async (modal) => {
    
   try {
+     const { Node } = await getTenantDBModels();
+
     let { nodeId, nodeName,parentId,displayNo,location,icon } = modal;
 
     if (!nodeId || nodeId === 0) {
@@ -63,6 +67,8 @@ export const AddUpdateNewNodeMasterQuery = async (modal) => {
 export const GetAllNodesQuery = async (modal) => {
 
     try {
+      const { Node } = await getTenantDBModels();
+
         const nodes = await Node.find().sort({ NodeName: 1 }).select("-_id").lean();
         const allNodes = formattedData(nodes)
         return{
@@ -82,6 +88,8 @@ export const GetAllNodesQuery = async (modal) => {
 
 export const DeleteNodeQuery = async (modal) => {
     try {
+      const { Node } = await getTenantDBModels();
+
         const { nodeId } = modal;
         if (!nodeId) {
             return { 

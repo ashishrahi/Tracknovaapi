@@ -121,6 +121,8 @@ export const loginQuery = async (model) => {
 
 export const RegisterQuery = async (model, res) => {
   try {
+  const { AspNetUsers } = await getTenantDBModels()
+
     // Check if user already exists
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
@@ -161,7 +163,10 @@ export const RegisterQuery = async (model, res) => {
 
 export const GetUserPermissionQuery = async (model) => {
   try {
+   const { RolePermission, UserPermission } = await getTenantDBModels()
+
     const { userId, roleId } = model || {};
+
 
     if (!userId || !roleId) {
       throw new Error("Missing required parameters: userId or roleId");
@@ -258,6 +263,8 @@ export const AddUpdateUserPermissionMasterQuery = async (
   userPermission // it is a array of permissions
 ) => {
   try {
+   const { UserPermission } = await getTenantDBModels()
+
     const deleted = await UserPermission.deleteMany({ UserId: userId });
     console.log("userPermission", userPermission)
     const newPermissions = userPermission.map((permission) => ({
@@ -391,6 +398,7 @@ export const GetUserPermissionMasterQuery = async (modal) => {
 export const GetUserPermissionListQuery = async (modal) => {
   try {
     const { userId } = modal;
+   const { UserPermission } = await getTenantDBModels()
 
     const userPermissions = await UserPermission.aggregate([
       {
@@ -460,6 +468,8 @@ export const GetUserPermissionListQuery = async (modal) => {
 export const DeleteUserPermissionMasterQuery = async (modal) => {
   try {
     const { userId } = modal;
+   const { UserPermission } = await getTenantDBModels()
+
 
     const permissions = await UserPermission.find({ UserId: userId });
 
@@ -491,6 +501,8 @@ export const DeleteUserPermissionMasterQuery = async (modal) => {
 
 export const AddUpdateRoleMasterQuery = async (modal) => {
   // const { roleId, roleName, normalizedRoleName, rolePermissions } = modal;
+  const { AspNetRoles } = await getTenantDBModels()
+
   // try {
   //   let roleMaster = await AspNetRoles.findOne({Id: roleId });
 

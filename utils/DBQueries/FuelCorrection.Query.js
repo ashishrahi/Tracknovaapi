@@ -4,6 +4,8 @@ import { VehicleTrack } from "../../controllers/VehicleMoving.controller.js";
 import { VehicleMovingStatusdetnew } from "./VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "./index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
+
+
 /////////////////////////////////////////// AddUpdateFuelCorrectionQuery //////////////////////////////////////////////////////////////////
 export const AddUpdateFuelCorrectionQuery = async (model) => {
   
@@ -12,10 +14,10 @@ export const AddUpdateFuelCorrectionQuery = async (model) => {
 /////////////////////////////////////////// GetVehListQuery //////////////////////////////////////////////////////////////////
 export const GetVehListQuery = async (model) => {
   
-  const filter = model;  // Assuming data is sent in the body
-
-//   let resp = { ...CommonResponse };
   try {
+    const filter = model;  // Assuming data is sent in the body
+
+    //   let resp = { ...CommonResponse };
       // let { condition1, date1, date2, list1, listInt1, flag } = filter;
       
       // let d1, d2;

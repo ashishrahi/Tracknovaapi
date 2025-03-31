@@ -1,11 +1,13 @@
 import { BinLocation,Route,RouteAreaBinDetail } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import {getTenantDBModels} from '../../db/index.js'
 
 
 ////////////////////////////// AddUpdateBinManageQuery ////////////////////////////////////
 
 export const AddUpdateBinManageQuery = async (model) => {
   try {
+    const {RouteAreaBinDetail} = await getTenantDBModels()
     const results = []; 
 
     // Loop over routeAreaBinDetailCmd for processing
@@ -94,6 +96,8 @@ export const AddUpdateBinManageQuery = async (model) => {
 export const GetBinManageQuery = async (model) => {
 
   try {
+    const {Route} = await getTenantDBModels()
+
     const { pageNo, pageSize } = model;
     const pipeline = [
       {
