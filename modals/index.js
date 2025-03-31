@@ -112,3 +112,9 @@ export {
     SubscriptionRequest
 }
 
+//----------Import Schemas------------>
+
+import { Idp_accountSchema } from "./Idp_account.model.js";
+import { CompanySchema } from "./Company.model.js";
+
+export { Idp_accountSchema, CompanySchema }

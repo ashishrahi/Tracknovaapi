@@ -1,36 +1,82 @@
-import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
+import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
+import loadTenantModels from "../utils/tenant-models/loadTenantModels.js";
+import { CompanySchema, Idp_accountSchema } from "../modals/index.js";
 
-let connection = {};
 const uri = String(process.env.MONGODB_SERVER_URI);
+let CentralDBModels = {}; // Store models
+let central_db = null;
 
-async function connectMongoDB() {
+// mongoose.set("debug", true); // 
+
+
+export async function connectMongoDB() {
+    if (central_db) return CentralDBModels; // ✅ Reuse existing connection
 
     try {
-        const dbName = "central_db"   //String(process.env.DB_NAME)
-        connection = await mongoose.connect(uri + "/" + dbName);
-        console.log("MongoDB Connected");
-        console.log("Connected DB is :",connection.connections[0].name)
-        return connection;
-    } catch (error) {
-        console.error("Database Connection Error:", error.message);
-        // error.status = StatusCodes.INTERNAL_SERVER_ERROR;
-        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+        central_db = await mongoose.createConnection(`${uri}/central_db`,
+            {
+                serverSelectionTimeoutMS: 30000,  // ⏳ Wait longer for MongoDB
+                socketTimeoutMS: 45000,          // ⏳ Allow more time for queries
+                bufferCommands: false
+            }).asPromise();
+        console.log(`✅ Connected to Central DB: ${central_db.name} and central_db object is `, central_db.readyState);
 
+        // Define models once
+        CentralDBModels = {
+            Company:  central_db.model("Company", CompanySchema),
+            Idp_account:  central_db.model("Idp_account", Idp_accountSchema),
+        };
+        console.log("🔍 Loaded Models:", Object.keys(CentralDBModels));
+
+        return CentralDBModels;
+    } catch (error) {
+        console.error("❌ Database Connection Error:", error.message);
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
     }
 }
 
+/**
+ * Get models safely after ensuring connection
+ */
+
+export async function getCentralDBModels() {
+    console.log("🛠 Checking CentralDBModels:", Object.keys(CentralDBModels)); // ✅ Check loaded models
+
+    if (!central_db) {
+        console.log("⏳ Connecting to MongoDB again...");
+        return await connectMongoDB();
+    }
+    
+    return CentralDBModels;
+}
+
+
+
 async function connectTenantDB(dbName) {
     try {
-        connection = await mongoose.connect(uri + "/" + dbName);
-        console.log("MongoDB Connected");
-        return connection;
-    } catch (error) {
-        console.error("Database Connection Error:", error.message);
-        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
-    }
+        await mongoose.connection.close(); // close existing connection;
+        if (connections[dbName]) {
+            console.log(`🔄 Reusing existing connection for ${dbName}`);
+            return connections[dbName];
+        }
 
+        console.log(`🔄 Creating new connection for ${dbName}`);
+        const tenantConnection_db = await mongoose.createConnection(`${uri}/${dbName}`);
+
+        // connections[dbName] = tenantConnection;
+
+        tenantConnection_db.on("connected", () => console.log(`✅ Tenant DB Connected: ${dbName}`));
+        tenantConnection_db.on("error", (err) => console.error(`❌ Tenant DB Error: ${err.message}`));
+        tenantConnection_db.on("disconnected", () => console.log(`⚠️ Tenant DB Disconnected: ${dbName}`));
+
+        loadTenantModels(tenantConnection);
+        return tenantConnection_db;
+    } catch (error) {
+        console.error(`❌ Tenant DB Connection Error (${dbName}):`, error.message);
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
+    }
 }
 
 mongoose.connection.on("connected", () => {
@@ -51,4 +97,4 @@ process.on("SIGINT", async () => {
     process.exit(0);
 })
 
-export { connectMongoDB, connectTenantDB };
+export { connectTenantDB };

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import argon2 from "argon2";
 
-const Idp_accountSchema = new mongoose.Schema({
+export const Idp_accountSchema = new mongoose.Schema({
   username: {
     type: String,
     require: true,

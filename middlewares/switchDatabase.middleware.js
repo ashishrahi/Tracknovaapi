@@ -1,39 +1,51 @@
 import mongoose from "mongoose";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { StatusCodes } from "http-status-codes";
+import { middlewareResponse as apiResponse } from "../utils/static-response-message/index.js";
+import { connectTenantDB } from "../db/connectMongoDB.js";
 // import { Request, Response, NextFunction } from "express";
 
 let connections = {}; // Store active connections
 
-export const switchDatabase = async (req, res, next) => {
+async function switchDatabase(req, res, next) {
   try {
-    const { company } = req.body;
-    if (!company || !company.dbName) {
-      return res.status(400).json({ message: "Company database information missing" });
+    const company = req.company;
+    console.log("company is", company);
+
+    if (!company) {
+      next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please Login"));
     }
 
-    const { dbName } = company;
+    //  if(company && company.admin.role === "SuperAdmin"){
+    //     return new ApiSuccessResponse(true, StatusCodes.OK, "Login Successfull", { redirect: "/company", message: "Super Admin Dashboard" } )
+    //  }
 
+    console.log("company from switchdatabase", company)
+    const { database } = company;
+    console.log("database from switchdatabase", database)
     // If already connected, attach it to the request
-    if (connections[dbName]) {
-      req.db = connections[dbName];
-      return next();
+    const tenantDB = await connectTenantDB(dbName);
+
+    if (!tenantDB) {
+      throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
     }
-
     // Create a new connection if not already established
-    const db = mongoose.createConnection(
-      `mongodb://localhost:27017/${dbName}`,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
+    // const db = mongoose.createConnection(`${process.env.MONGODB_SERVER_URI}/${database.dbName}`);
 
-    connections[dbName] = db;
-    req.db = db;
+    // if(!db){
+    //   throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
+    // }
 
-    console.log(`🔹 Connected to database: ${dbName}`);
+    // connections[database.dbName] = db;
+    req.db = tenantDB;
+
+    console.log(`🔹 Connected to database: ${database.dbName}`);
     next();
   } catch (error) {
     console.error("Database switching error:", error);
-    res.status(500).json({ message: "Error switching database", error });
+    return res.status(500).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Error switching database"));
   }
 };
+
+
+export default switchDatabase;

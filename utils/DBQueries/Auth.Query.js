@@ -8,20 +8,24 @@ import {
 } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
-import jwt from "jsonwebtoken"
+// import jwt from "jsonwebtoken"
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
-
+// import mongoose from "mongoose";
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
   try {
     const { username, password } = model;
-    // console.log(model)
-
+    console.log(model)
+    
     let response;
     // Find user by username
+    // console.log("req.db", req.db)
+    // const AspNetUsers = req.db.models("AspNetUsers");
+    // const AspNetUsers = mongoose.model("AspNetUsers");
     const user = await AspNetUsers.findOne({ UserName: username });
-    // console.log("real user", user)
+    // console.log("user is", user)
+    // // console.log("real user", user)
     if (!user) {
       throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Invalid Username or Password");
     }

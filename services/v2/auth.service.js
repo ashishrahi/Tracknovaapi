@@ -1,11 +1,15 @@
 import { StatusCodes } from "http-status-codes";
-import { Company, Idp_account } from "../../modals/index.js";
+// import { Company, Idp_account } from "../../modals/index.js";
 import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { authControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js"
 import jwt from "jsonwebtoken";
+import { getCentralDBModels } from "../../db/index.js";
+
 
 
 export async function signinService(value){
+    const { Idp_account, Company } = await getCentralDBModels(); // geting models
+    
     const isUserRegistered = await Idp_account.findOne({username: value.username.toLowerCase()});
 
     if(!isUserRegistered){
@@ -50,8 +54,8 @@ export async function signinService(value){
     }
 
     return {
-        accessToken : generateAccessToken(),
-        refreshToken: generateRefreshToken(),
-        role: role.admin.role
+      accessToken : generateAccessToken(),
+      refreshToken: generateRefreshToken(),
+      role: role.admin.role
     }
 }

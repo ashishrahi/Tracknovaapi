@@ -37,6 +37,7 @@ export async function AddUpdateEmployee(req, res, next) {
 
 export async function GetEmployee(req, res, next) {
   try {
+    console.log("get employee starts")
     const model = req.body;
     const response = await GetEmployeeQuery(model);
 
