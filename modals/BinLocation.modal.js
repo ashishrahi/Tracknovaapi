@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const BinLocationSchema = new Schema(
+export const BinLocationSchema = new Schema(
   {
     AreaID: { type: Number, index: true },  // Added index for better queries
     BinLocCode: { type: String, trim: true },

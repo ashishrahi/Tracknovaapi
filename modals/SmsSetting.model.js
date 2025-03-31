@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const SmsSettingSchema = new mongoose.Schema(
+export const SmsSettingSchema = new mongoose.Schema(
   {
     Id: {
         type: Number,

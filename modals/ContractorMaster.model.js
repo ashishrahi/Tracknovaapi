@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ContractorMasterSchema = new mongoose.Schema({
+export const ContractorMasterSchema = new mongoose.Schema({
     Id: {
         type: Number,
         required: true,

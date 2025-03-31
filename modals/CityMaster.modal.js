@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const CityMasterSchema = new Schema(
+export const CityMasterSchema = new Schema(
   {
     CityId: { type: Number, required: true, unique: true, index: true },
     CityName: { type: String, required: true, trim: true },

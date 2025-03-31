@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const DepartmentSchema = new Schema(
+export const DepartmentSchema = new Schema(
   {
     DepartmentId: { type: Number, required: true, unique: true, index: true },
     DepartmentName: { type: String, required: true, trim: true },

@@ -114,7 +114,61 @@ export {
 
 //----------Import Schemas------------>
 
-import { Idp_accountSchema } from "./Idp_account.model.js";
 import { CompanySchema } from "./Company.model.js";
+import { AspNetRolesSchema } from "./AspNetRoles.modal.js";
+import { AreaWardMasterSchema } from "./AreaWardMaster.modal.js";
+import { AspNetUsersSchema } from "./AspNetUsers.model.js";
+import { BinLocationSchema } from "./BinLocation.modal.js";
+import { BrandMasterSchema } from "./BrandMaster.model.js";
+import { CampaignSchema } from "./Campaign.model.js";
+import { CampaignDetailSchema } from "./CampaignDetail.model.js";
+import { CampaignTemplateSchema } from "./CampaignTemplate.model.js";
+import { CityMasterSchema } from "./CityMaster.modal.js";
+import { CommGroupSchema } from "./CommGroup.model.js";
+import { CommMembersSchema } from "./CommMembers.model.js";
+import { ContractorMasterSchema } from "./ContractorMaster.model.js";
+import { CountryMasterSchema } from "./CountryMaster.modal.js";
+import { DepartmentSchema } from "./Department.model.js";
+import { DesignationSchema } from "./Designation.modal.js";
+import { DeviceTypeSchema } from "./DeviceType.modal.js";
+import { EmailSettingSchema } from "./EmailSetting.model.js";
+import { EmpMasterSchema } from "./EmpMaster.model.js";
+import { EventSettingSchema } from "./EventSetting.model.js";
+import { FuelCorrectionSchema } from "./FuelCorrection.modal.js";
+import { FuelTypeSchema } from "./FuelType.model.js";
+import { GeofencingSchema } from "./Geofencing.model.js";
+import { HandheldMasterSchema } from "./HandheldMaster.modal.js";
+import { HelpCreateSchema } from "./HelpCreation.modal.js";
+import { Idp_accountSchema } from "./Idp_account.model.js";
+import { ItemCategoryMasterSchema } from "./ItemCategoryMaster.model.js";
+import { ItemMasterSchema } from "./ItemMaster.model.js";
+import { ItemTypeMasterSchema } from "./ItemTypeMaster.model.js";
+import { MenuSchema } from "./MenuMaster.modal.js";
+import { NodeSchema } from "./Node.modal.js";
+import { NodePermissionSchema } from "./NodePermission.model.js";
+import { NTSchema } from "./NT.model.js";
+import { NTCurrentDaySchema } from "./NTCurrentDay.modal.js";
+import { PeriodSchema } from "./Period.model.js";
+import { Petrol_Pump_tblSchema } from "./Petrol_Pump_tbl.modal.js";
+import { RolePermissionSchema } from "./RolePermission.modal.js";
+import { RosterPlanSchema } from "./RosterPlan.modal.js";
+import { RosterPlanDetailSchema } from "./RosterPlanDetail.modal.js";
+import { RouteSchema } from "./Route.modal.js";
+import { RouteAreaBinDetailSchema } from "./RouteAreaBinDetail.modal.js";
+import { RouteAreaDetailSchema } from "./RouteAreaDetail.modal.js";
+import { SmsSettingSchema } from "./SmsSetting.model.js";
+import { StateMasterSchema } from "./StateMaster.modal.js";
+import { SubscriptionRequestSchema } from "./SubscriptionRequest.model.js";
+import { SummaryNTSchema } from "./SummaryNT.model.js";
+import { TaxMasterSchema } from "./TaxMaster.model.js";
+import { tc_usersSchema } from "./TC_User.modal.js";
+import { UnitMasterSchema } from "./UnitMaster.model.js";
+// User
+import { UserPermissionSchema } from "./UserPermission.modal.js";
+import { VehicleAddTempInfoSchema } from "./VehicleAddTempInfo.model.js";
+import { VehicleTypeChildSchema } from "./VehicleTypeChild.modal.js";
+import { VehicleTypeMasterSchema } from "./VehicleTypeMaster.model.js";
+import { VendorMasterSchema } from "./VendorMaster.model.js";
+import { ZoneMasterSchema } from "./ZoneMaster.model.js";
 
-export { Idp_accountSchema, CompanySchema }
+export { Idp_accountSchema, CompanySchema, AspNetRolesSchema, AreaWardMasterSchema, AspNetUsersSchema, BinLocationSchema, BrandMasterSchema, CampaignSchema, CampaignDetailSchema, CampaignTemplateSchema, CityMasterSchema, CommGroupSchema, CommMembersSchema, ContractorMasterSchema,CountryMasterSchema, DepartmentSchema, DesignationSchema, DeviceTypeSchema, EmailSettingSchema, EmpMasterSchema, EventSettingSchema, FuelCorrectionSchema, FuelTypeSchema, GeofencingSchema, HandheldMasterSchema, HelpCreateSchema,ItemCategoryMasterSchema, ItemMasterSchema,ItemTypeMasterSchema, MenuSchema, NodeSchema, NodePermissionSchema, NTSchema, NTCurrentDaySchema, PeriodSchema, Petrol_Pump_tblSchema, RolePermissionSchema, RosterPlanSchema,RosterPlanDetailSchema, RouteSchema, RouteAreaBinDetailSchema, RouteAreaDetailSchema, SmsSettingSchema, StateMasterSchema, SubscriptionRequestSchema, SummaryNTSchema, TaxMasterSchema, tc_usersSchema, UnitMasterSchema, UserPermissionSchema, VehicleAddTempInfoSchema, VehicleTypeChildSchema, VehicleTypeMasterSchema, VendorMasterSchema, ZoneMasterSchema           }

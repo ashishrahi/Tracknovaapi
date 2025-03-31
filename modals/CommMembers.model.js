@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const CommMembersSchema = new mongoose.Schema({
+export const CommMembersSchema = new mongoose.Schema({
     Id: mongoose.Schema.Types.Int32,
     GroupId: mongoose.Schema.Types.Int32,
     MemberId: mongoose.Schema.Types.Int32,

@@ -1,6 +1,6 @@
 import mongoose from   "mongoose";
 
-const CampaignTemplateSchema = new mongoose.Schema({
+export const CampaignTemplateSchema = new mongoose.Schema({
         TemplateId: {
           type: mongoose.Schema.Types.Int32,
           required: true,

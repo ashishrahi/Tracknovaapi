@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const SubscriptionRequestSchema = new mongoose.Schema({
+export const SubscriptionRequestSchema = new mongoose.Schema({
   company: {
     type: String,
     required: true,

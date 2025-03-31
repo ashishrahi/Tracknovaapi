@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const FuelCorrectionSchema = new Schema(
+export const FuelCorrectionSchema = new Schema(
   {
     CorrId: { type: Number, required: true, unique: true, index: true },
     CorrectionDate: { type: Date, required: true },

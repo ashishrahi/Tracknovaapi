@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ItemCategoryMasterSchema = new mongoose.Schema(
+export const ItemCategoryMasterSchema = new mongoose.Schema(
   {
     ItemCategoryId: {
       type: Number,

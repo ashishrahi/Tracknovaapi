@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const RosterPlanSchema = new Schema(
+export const RosterPlanSchema = new Schema(
   {
     RosterID: { type: Number, required: true, unique: true },
     RosterNo: { type: String, required: true, trim: true },

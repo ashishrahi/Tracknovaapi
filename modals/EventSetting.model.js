@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const EventSettingSchema = new mongoose.Schema(
+export const EventSettingSchema = new mongoose.Schema(
   {
     EventId: {
       type: Number,

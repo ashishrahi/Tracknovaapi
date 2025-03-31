@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const EmailSettingSchema = new mongoose.Schema({
+export const EmailSettingSchema = new mongoose.Schema({
   Id: {
     type: Number,
     required: true,

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const NodePermissionSchema = new mongoose.Schema({
+export const NodePermissionSchema = new mongoose.Schema({
     ID: {
         type: Number,
         required: true,

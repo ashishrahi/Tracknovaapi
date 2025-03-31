@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const BrandMasterSchema = new mongoose.Schema({
+export const BrandMasterSchema = new mongoose.Schema({
     brandId: {
         type: Number,
         unique: true,

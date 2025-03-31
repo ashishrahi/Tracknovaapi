@@ -1,7 +1,7 @@
 // VehicleAddTempInfo
 import mongoose from "mongoose";
 
-const VehicleAddTempInfoSchema = new mongoose.Schema(
+export const VehicleAddTempInfoSchema = new mongoose.Schema(
   {
     VehicleNo: { type: String, required: true },
     VehicleId: { type: String, default: null },

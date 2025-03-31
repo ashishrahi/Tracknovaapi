@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UnitMasterSchema = new mongoose.Schema(
+export const UnitMasterSchema = new mongoose.Schema(
   {
     UnitId: {
       type: Number,

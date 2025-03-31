@@ -49,5 +49,5 @@ Idp_accountSchema.methods.isValidPassword = async function(plainTextPassword){
 
 
 const Idp_account = mongoose.model("Idp_account", Idp_accountSchema);
-
+ 
 export default Idp_account;

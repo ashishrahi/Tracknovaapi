@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const HelpCreateSchema = new mongoose.Schema({
+export const HelpCreateSchema = new mongoose.Schema({
   formatName: {
     type: String,
     maxlength: 300,

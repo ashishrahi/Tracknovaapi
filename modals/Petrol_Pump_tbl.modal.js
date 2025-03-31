@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const Petrol_Pump_tblSchema = new Schema(
+export const Petrol_Pump_tblSchema = new Schema(
   {
     id: { type: Number, required: true, unique: true, index: true },
     PetroPump: { type: String, required: true, trim: true },

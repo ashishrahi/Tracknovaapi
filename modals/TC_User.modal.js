@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const tc_usersSchema = new Schema(
+export const tc_usersSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -34,4 +34,4 @@ const tc_usersSchema = new Schema(
   }
 );
 
-export const tc_users = model("tc_users", tc_usersSchema);
+export const tc_users = mongoose.model("tc_users", tc_usersSchema);

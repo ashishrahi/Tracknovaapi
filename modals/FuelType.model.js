@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const FuelTypeSchema = new mongoose.Schema(
+export const FuelTypeSchema = new mongoose.Schema(
   {
     FuelTypeId: {
         type: Number,

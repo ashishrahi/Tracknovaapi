@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
 
-const AspNetUsersSchema = new mongoose.Schema( {
+export const AspNetUsersSchema = new mongoose.Schema( {
     Id: {
       type: String,
       default: null,

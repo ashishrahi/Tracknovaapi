@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const GeofencingSchema = new mongoose.Schema({
+export const GeofencingSchema = new mongoose.Schema({
     AreaId: mongoose.Schema.Types.Mixed,
     CompanyId: mongoose.Schema.Types.Mixed,
     DateSave: mongoose.Schema.Types.Date,

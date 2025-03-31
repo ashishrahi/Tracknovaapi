@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const EmpMasterSchema = new mongoose.Schema({
+export const EmpMasterSchema = new mongoose.Schema({
   Empid: { type: Number, unique: true }, // Unique Employee ID
   EmpName: {
     type: String,
