@@ -5,8 +5,11 @@ import loadTenantModels from "../utils/tenant-models/loadTenantModels.js";
 import { CompanySchema, Idp_accountSchema } from "../modals/index.js";
 
 const uri = String(process.env.MONGODB_SERVER_URI);
-let CentralDBModels = {}; // Store models
 let central_db = null;
+let CentralDBModels = {}; // Store models
+
+let tenant_db = null;
+let TenantDBModels = {};
 
 // mongoose.set("debug", true); // 
 
@@ -56,28 +59,34 @@ export async function getCentralDBModels() {
 
 async function connectTenantDB(dbName) {
     try {
-        await mongoose.connection.close(); // close existing connection;
-        if (connections[dbName]) {
+        // await mongoose.connection.close(); // close existing connection;
+        if (tenant_db) {
             console.log(`🔄 Reusing existing connection for ${dbName}`);
-            return connections[dbName];
+            return tenant_db;
         }
 
         console.log(`🔄 Creating new connection for ${dbName}`);
-        const tenantConnection_db = await mongoose.createConnection(`${uri}/${dbName}`);
+        tenant_db = await mongoose.createConnection(`${uri}/${dbName}`).asPromise();
 
+        
         // connections[dbName] = tenantConnection;
 
-        tenantConnection_db.on("connected", () => console.log(`✅ Tenant DB Connected: ${dbName}`));
-        tenantConnection_db.on("error", (err) => console.error(`❌ Tenant DB Error: ${err.message}`));
-        tenantConnection_db.on("disconnected", () => console.log(`⚠️ Tenant DB Disconnected: ${dbName}`));
+        // tenantConnection_db.on("connected", () => console.log(`✅ Tenant DB Connected: ${dbName}`));
+        // tenantConnection_db.on("error", (err) => console.error(`❌ Tenant DB Error: ${err.message}`));
+        // tenantConnection_db.on("disconnected", () => console.log(`⚠️ Tenant DB Disconnected: ${dbName}`));
 
-        loadTenantModels(tenantConnection);
-        return tenantConnection_db;
+        // loadTenantModels(tenantConnection);
+        TenantDBModels = {
+            Company:  central_db.model("Company", CompanySchema),
+            Idp_account:  central_db.model("Idp_account", Idp_accountSchema),
+        }
+        return tenant_db;
     } catch (error) {
         console.error(`❌ Tenant DB Connection Error (${dbName}):`, error.message);
         throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
     }
 }
+
 
 mongoose.connection.on("connected", () => {
     console.log("Mongoose Connected to DB");
