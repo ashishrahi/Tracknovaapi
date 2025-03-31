@@ -140,6 +140,7 @@ export async function connectTenantDB(dbName) {
         tenant_db = await mongoose.createConnection(`${uri}/${tenantDBName}`).asPromise();
 
         TenantDBModels = {
+            tenant_db: tenant_db,
             Company: tenant_db.model("Company", CompanySchema),
             Idp_account: tenant_db.model("Idp_account", Idp_accountSchema),
             AreaWardMaster: tenant_db.model("AreaWardMaster", AreaWardMasterSchema),
