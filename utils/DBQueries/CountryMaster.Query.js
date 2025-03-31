@@ -1,12 +1,16 @@
 import { StatusCodes } from "http-status-codes";
 import { CountryMaster } from "../../modals/index.js";
 import { StateMaster } from "../../modals/index.js";
+import {getTenantDBModels} from '../../db/index.js'
+
 /////////////////////////////// AddUpdateCountryMasterQuery ///////////////////////////////
 
 export const AddUpdateCountryMasterQuery = async (model) => {
  
 
     try {
+    const {CountryMaster} = await getTenantDBModels()
+
         if (!model.countryName) {
             
       return{
@@ -114,10 +118,12 @@ export const AddUpdateCountryMasterQuery = async (model) => {
 //////////////////////////////  GetCountryMasterQuery //////////////////////////////////////////////////
 
 export const GetCountryMasterQuery = async (model) => {
-    const { countryId } = model; 
-
+   
     try {
-        if (countryId === -1) {
+        const {CountryMaster} = await getTenantDBModels()
+        const { countryId } = model; 
+   
+    if (countryId === -1) {
             // Fetch all countries
             const country = await CountryMaster.find({}).lean();
 
@@ -180,6 +186,8 @@ export const GetCountryMasterQuery = async (model) => {
 
 export const DeleteCountryQuery = async (model) => { 
     try {
+        const { StateMaster, CountryMaster} = await getTenantDBModels()
+
         const { countryId } = model;
 
         // Check if the country is referenced in StateMaster

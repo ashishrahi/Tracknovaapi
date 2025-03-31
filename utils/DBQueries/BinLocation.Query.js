@@ -1,11 +1,14 @@
 import { BinLocation } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import {getTenantDBModels} from '../../db/index.js'
 
 ////////////////////////////// AddUpdateBinLocationQuery //////////////////////////////////////////
 
 
 export const AddUpdateBinLocationQuery = async (model) => {
   try {
+   const {BinLocation} = await getTenantDBModels()
+
     const {
         binLocID,
         binLocName,
@@ -135,6 +138,7 @@ return{
 export const GetBinLocationQuery = async (model) => {
   try {
     // Extract pageNo and pageSize from the model
+     const {BinLocation} = await getTenantDBModels()
     let { pageNo, pageSize } = model;
 
     // If pageNo or pageSize are missing, throw an error
@@ -265,6 +269,8 @@ export const GetBinLocationQuery = async (model) => {
 
 export const DeleteBinLocationQuery = async (model) => {
   try {
+   const {BinLocation} = await getTenantDBModels()
+
     const { binLocID, areaID } = model;
 
     if (areaID !== 0) {

@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { CityMaster,StateMaster } from "../../modals/index.js";
+import {getTenantDBModels} from '../../db/index.js'
 
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7,7 +8,7 @@ import { CityMaster,StateMaster } from "../../modals/index.js";
 export const AddUpdateCityMasterQuery = async (model) => {
    
   try {
-
+    const {CityMaster} = await getTenantDBModels()
 
     // Validate CityName
     if (!model.cityName || model.cityName.trim() === '') {
@@ -105,6 +106,8 @@ const newCityList ={
 
 export const GetCitiesByStateQuery = async (model) => {
   try {
+    const {CityMaster} = await getTenantDBModels()
+
     const { StateId } = model;
     // console.log("StateId",StateId)
     const cityList = await CityMaster.find({StateId:StateId})
@@ -133,6 +136,8 @@ export const GetCitiesByStateQuery = async (model) => {
     export const GetCityMasterQuery = async (model) =>{
         
           try {
+                 const { CityMaster , StateMaster } = await getTenantDBModels()
+
             const filter = {};
         
             if (model.cityId && model.cityId !== -1) {
@@ -192,6 +197,8 @@ export const GetCitiesByStateQuery = async (model) => {
 export const DeleteCityMasterQuery = async (model) => {
 
 try {
+  const { CityMaster } = await getTenantDBModels()
+
     // Find districts by CityId
     const districts = await CityMaster.find({ CityId: model.cityId }).lean();
 

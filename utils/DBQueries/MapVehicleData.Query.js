@@ -1,9 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import { AspNetRoles,NT } from "../../modals/index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../../db/index.js";
+
+
 //////////////////////////////////////////////// GetMapVehicleData /////////////
 export async function GetMapVehicleDataQuery(){
     try {
+    const { NT } = await getTenantDBModels();
+
         // Fetch data from MongoDB
         const result = await NT.find({ Id: { $gt: 42 } })
           .sort({ TrackTime: 1 }) // Sort by TrackTime

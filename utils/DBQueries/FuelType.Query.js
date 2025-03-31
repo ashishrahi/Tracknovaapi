@@ -1,10 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
 import {FuelType} from '../../modals/index.js'
+import { getTenantDBModels } from "../../db/index.js";
+
+
 
 /////////////////////////// AddUpdateFuelTypeQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateFuelTypeQuery = async (model) => {
   try {
+   const { FuelType, } = await getTenantDBModels()
     let fuelType;
     let data;
 
@@ -91,6 +95,8 @@ export const AddUpdateFuelTypeQuery = async (model) => {
 export const GetFuelTypeQuery = async (model) => {
 
   try {
+   const { FuelType, } = await getTenantDBModels()
+
     if (!model || typeof model !== 'object') {
       throw new Error('Invalid input: model should be an object');
     }
@@ -135,6 +141,8 @@ export const GetFuelTypeQuery = async (model) => {
 export const DeleteFuelTypeQuery = async (model) => {
 
     try {
+   const { FuelType, } = await getTenantDBModels()
+      
         // Check FuelTypeId value, if it is 0, set it to -1
         const fuelTypeId = model.fuelTypeId === 0 ? -1 : model.fuelTypeId;
 

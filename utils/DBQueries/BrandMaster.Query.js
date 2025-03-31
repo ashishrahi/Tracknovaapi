@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import BrandMaster  from "../../modals/BrandMaster.model.js";
+import {getTenantDBModels} from '../../db/index.js'
 
 
 
@@ -8,6 +9,7 @@ import BrandMaster  from "../../modals/BrandMaster.model.js";
 
 export const AddUpdateBrandMasterQuery = async (model) => {
   try {
+    const {BrandMaster} = await getTenantDBModels()
     // Convert input field names to match schema
     let brandData = {
         ...model,
@@ -84,6 +86,9 @@ export const AddUpdateBrandMasterQuery = async (model) => {
 
 
 export const GetBrandQuery = async (model) => {
+
+    const {BrandMaster} = await getTenantDBModels()
+
     const { brandId, brandname } = model;
     
     const brandQuery = {};
@@ -119,6 +124,8 @@ export const GetBrandQuery = async (model) => {
 
 export const DeleteBrandQuery = async (model) => {
     try {
+        const {BrandMaster} = await getTenantDBModels()
+
         let { brandId } = model;
 
         if (!brandId || brandId === 0) {

@@ -1,9 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { Department } from "../../modals/index.js";
+import {getTenantDBModels} from '../../db/index.js'
+
 
 /////////////////////////////////// AddUpdateDepartmentMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 export const AddUpdateDepartmentMasterQuery = async (model) => {
   try {
+    const {Department} = await getTenantDBModels()
+
     if (!model.departmentName || model.departmentName.trim() === "") {
       return {
         isSuccess: 0,
@@ -118,6 +122,8 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
 /////////////////////////////////// GetDepartmentMasterQuery //////////////////////////////////////////////////////////////////
 export const GetDepartmentMasterQuery = async (model) => {
   try {
+    const {Department} = await getTenantDBModels()
+
     const queryConditions = {};
 
     // Add conditions to the query object
@@ -166,6 +172,8 @@ export const GetDepartmentMasterQuery = async (model) => {
 
 export const DeleteDepartmentMasterQuery = async (model) => {
   try {
+    const {Department} = await getTenantDBModels()
+
     const department = await Department.find({
       DepartmentId: model.departmentId,
     }).exec();
