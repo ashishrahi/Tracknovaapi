@@ -8,12 +8,13 @@ import {
 } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
-// import jwt from "jsonwebtoken"
+import { getTenantDBModels } from "../../db/index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
-// import mongoose from "mongoose";
+
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
+  const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels()
   try {
     const { username, password } = model;
     console.log(model)
@@ -302,6 +303,7 @@ export const AddUpdateUserPermissionMasterQuery = async (
 
 export const GetUserPermissionMasterQuery = async (modal) => {
   try {
+    const { UserPermission} = await getTenantDBModels();
     const { userId } = modal;
 
     if (userId === "-1") {
