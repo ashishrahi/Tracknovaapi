@@ -1,11 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import { VehicleTypeMaster, ItemMaster } from "../modals/index.js";
 import { ApiSuccessResponse, CommonResponse, DBReturn } from "../utils/apiResponse/index.js";
+import { getTenantDBModels } from "../db/index.js";
 
 
 //-----------AddUpdateVehicleType------>
 async function AddUpdateVehicleType(req, res, next) {
   try {
+    const {VehicleTypeMaster, } = await getTenantDBModels()
+
     const model = req.body;
     // const db = mongoose.connection.db; // Get MongoDB connection
     // const vehicleTypeCollection = db.collection("VehicleTypes"); // Collection name
@@ -85,6 +88,8 @@ async function AddUpdateVehicleType(req, res, next) {
 async function GetVehicleType(req, res, next){
         
       try {
+    const {VehicleTypeMaster, } = await getTenantDBModels()
+
         const model = req.body;
         
 
@@ -120,6 +125,8 @@ async function GetVehicleType(req, res, next){
 //-----------DeleteVehicleType------>
 async function DeleteVehicleType(req, res, next){
       try {
+    const {VehicleTypeMaster, } = await getTenantDBModels()
+
         const model = req.body;
         if (model.vehicleTypeId === 0) {
             const error = new Error("Invalid VehicleTypeId");
@@ -159,6 +166,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
       // const vehicleTypeCollection = db.collection('VehicleTypeMaster');
       // const itemMasterCollection = db.collection('ItemMaster');
       // const eScarpVehicleTypeCollection = db.collection('v01_VehicleType');
+      const {VehicleTypeMaster,vehicleTypeCollection } = await getTenantDBModels()
 
       const model = req.body;
       let escrVehtypename = '';
@@ -243,6 +251,8 @@ async function AddUpdateEscrapVehicleType(req, res, next){
 async function DeleteEscrapVehicleType(req, res, next){
 
   try {
+    const {ItemMaster, VehicleTypeMaster } = await getTenantDBModels()
+
       const model = req.body;
       if (model.vehicleTypeId !== 0) {
           const finduse = await ItemMaster.findOne(
@@ -283,6 +293,8 @@ async function DeleteEscrapVehicleType(req, res, next){
 async function GetEscrapVehicleType(req, res, next){
 
   try {
+    const { VehicleTypeMaster } = await getTenantDBModels()
+
     // Fetch vehicle types with filters
     const model = req.body;
     // const { pageNo = 1, pageSize = 10 } = req.body;

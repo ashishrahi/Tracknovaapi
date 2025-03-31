@@ -6,6 +6,7 @@ import formattedData from '../utils/dotnet-like-format/dotnetLikeData.js';
 
 async function VehicleFuelDateRange(req, res, next) {
   try {
+    
   const filter = req.body;
   const fuelComsumed = await VehicleFuelDateRangePipeline.VehicleFuelDateRange(filter)
   const data = formattedData(fuelComsumed?.data)

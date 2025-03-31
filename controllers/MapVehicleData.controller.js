@@ -8,6 +8,8 @@ import {
   GetMapVehicleDataQuery,
 } from "../utils/DBQueries/MapVehicleData.Query.js";
 
+
+
 export async function GetMapVehicleData(req, res) {
     try {
         const { status, message, data,RowCount } = await GetMapVehicleDataQuery();

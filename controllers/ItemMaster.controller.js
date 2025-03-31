@@ -3,12 +3,15 @@ import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { ContractorMaster, ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
 import {ApiErrorResponse, ApiSuccessResponse, CommonResponse, ReturnData} from "../utils/apiResponse/index.js";
 // import {ApiSuccessResponse} from "../utils/apiResponse/ApiSuccessResponse.js";
+import { getTenantDBModels } from "../db/index.js";
 
 //--------------AddUpdateItemMaster-------->
 async function AddUpdateItemMaster( req, res, next){
     // const session = await mongoose.startSession();
     // session.startTransaction();
     try {
+    const { ItemMaster, VehicleAddTempInfo } = await getTenantDBModels();
+
         const model = req.body;
         // let vNo = model.EScarp ? model.VehicleNo : "";
         let vNo =  model.vehicleNo;
@@ -198,6 +201,8 @@ async function AddUpdateItemMaster( req, res, next){
 async function GetItemMaster(req, res, next){
 
     try {
+    const { ItemMaster } = await getTenantDBModels();
+
         const { itemmasterid, vehicleNo } = req.body;
         let query = [];
         if (itemmasterid === -1) {
@@ -333,6 +338,8 @@ async function GetItemMaster(req, res, next){
 //--------------DeleteItemMaster-------->
 async function DeleteItemMaster(req, res, next){
     try {
+    const { ContractorMaster, ItemMaster } = await getTenantDBModels();
+
     const { itemMasterId } = req.body;
         // const response = { status: "Failed", message: "" };
 

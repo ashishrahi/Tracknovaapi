@@ -1,227 +1,219 @@
 import { StatusCodes } from "http-status-codes";
 import { CountryMaster } from "../../modals/index.js";
 import { StateMaster } from "../../modals/index.js";
-import {getTenantDBModels} from '../../db/index.js'
+import { getTenantDBModels } from "../../db/index.js";
 
 /////////////////////////////// AddUpdateCountryMasterQuery ///////////////////////////////
 
 export const AddUpdateCountryMasterQuery = async (model) => {
- 
+  try {
+    const { CountryMaster } = await getTenantDBModels();
 
-    try {
-    const {CountryMaster} = await getTenantDBModels()
-
-        if (!model.countryName) {
-            
-      return{
-                isSuccess: true,
-                internalSuccess: false,
-                mesg: 'Country Name Is Required',
-                
-            }
-        }
-
-        // Try to find an existing record by CountryId
-        const existingCountry = await CountryMaster.findOne({ CountryId: model.countryId });
-
-        if (existingCountry) {
-            // Country exists, so update it
-            existingCountry.CountryName = model.countryName || existingCountry.CountryName;
-            existingCountry.CountryCode = model.countryCode || existingCountry.CountryCode;
-            existingCountry.CreatedBy = model.createdBy || existingCountry.CreatedBy;
-            existingCountry.UpdatedBy = model.updatedBy || existingCountry.UpdatedBy;
-
-
-            // Save the updated record
-            await existingCountry.save()
-
-   const updatedCountry ={
-     countryId: existingCountry.CountryId,
-     countryName: existingCountry.CountryName,
-     countryCode: existingCountry.CountryCode,
-     updatedBy: existingCountry.UpdatedBy,
-     createdBy: existingCountry.CreatedBy,
- 
-   }
-
-
-            
-            return{
-                isSuccess:true,
-                internalSuccess: false,
-                mesg: `Country ${existingCountry.CountryName} Successfully Updated`,
-                insertedId:"",
-                data: updatedCountry
-            }
-        } else {
-            // Country does not exist, so create a new record
-            let newCountryId = model.countryId;
-
-            if (model.countryId === -1 || !model.countryId) {
-                const lastCountry = await CountryMaster.findOne().sort({ CountryId: -1 }).limit(1);
-                newCountryId = lastCountry ? lastCountry.CountryId + 1 : 1;
-            }
-
-            // Check for existing CountryName
-            const countryNameExists = await CountryMaster.findOne({ CountryName: model.countryName });
-            if (countryNameExists) {
-                
-             return{
-                    isSuccess:false,
-                    internalSuccess: "true",
-                    mesg: `Country ${countryNameExists.CountryName} Already Exists`,
-                    insertedId: "",
-                    data: countryNameExists
-                }
-            }
-
-            const newCountry = new CountryMaster({
-                CountryId: newCountryId,
-                CountryName: model.countryName,
-                CountryCode: model.countryCode,
-                UpdatedBy: model.updatedBy || 'Admin',
-                CreatedBy: model.createdBy || 'Admin',
-            });
-
-            await newCountry.save()
-
-            const newCountryname ={
-                countryId: newCountry.CountryId,
-                countryName: newCountry.CountryName,
-                countryCode: newCountry.CountryCode,
-                updatedBy: newCountry.UpdatedBy,
-                createdBy: newCountry.CreatedBy,
-            }
-
-
-
-
-
-            return {
-                    isSuccess:true,
-                    internalSuccess:false,
-                    mesg:`Country ${newCountryname.countryName} has been Added successfully`,
-                    insertedId: "",
-                    data:newCountryname
-                }
-        }
-    } catch (error) {
-        return{
-            isSuccess:false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            mesg: error.message,
-        }
+    if (!model.countryName) {
+      return {
+        isSuccess: true,
+        internalSuccess: false,
+        mesg: "Country Name Is Required",
+      };
     }
 
-}
+    // Try to find an existing record by CountryId
+    const existingCountry = await CountryMaster.findOne({
+      CountryId: model.countryId,
+    });
+
+    if (existingCountry) {
+      // Country exists, so update it
+      existingCountry.CountryName =
+        model.countryName || existingCountry.CountryName;
+      existingCountry.CountryCode =
+        model.countryCode || existingCountry.CountryCode;
+      existingCountry.CreatedBy = model.createdBy || existingCountry.CreatedBy;
+      existingCountry.UpdatedBy = model.updatedBy || existingCountry.UpdatedBy;
+
+      // Save the updated record
+      await existingCountry.save();
+
+      const updatedCountry = {
+        countryId: existingCountry.CountryId,
+        countryName: existingCountry.CountryName,
+        countryCode: existingCountry.CountryCode,
+        updatedBy: existingCountry.UpdatedBy,
+        createdBy: existingCountry.CreatedBy,
+      };
+
+      return {
+        isSuccess: true,
+        internalSuccess: false,
+        mesg: `Country ${existingCountry.CountryName} Successfully Updated`,
+        insertedId: "",
+        data: updatedCountry,
+      };
+    } else {
+      // Country does not exist, so create a new record
+      let newCountryId = model.countryId;
+
+      if (model.countryId === -1 || !model.countryId) {
+        const lastCountry = await CountryMaster.findOne()
+          .sort({ CountryId: -1 })
+          .limit(1);
+        newCountryId = lastCountry ? lastCountry.CountryId + 1 : 1;
+      }
+
+      // Check for existing CountryName
+      const countryNameExists = await CountryMaster.findOne({
+        CountryName: model.countryName,
+      });
+      if (countryNameExists) {
+        return {
+          isSuccess: false,
+          internalSuccess: "true",
+          mesg: `Country ${countryNameExists.CountryName} Already Exists`,
+          insertedId: "",
+          data: countryNameExists,
+        };
+      }
+
+      const newCountry = new CountryMaster({
+        CountryId: newCountryId,
+        CountryName: model.countryName,
+        CountryCode: model.countryCode,
+        UpdatedBy: model.updatedBy || "Admin",
+        CreatedBy: model.createdBy || "Admin",
+      });
+
+      await newCountry.save();
+
+      const newCountryname = {
+        countryId: newCountry.CountryId,
+        countryName: newCountry.CountryName,
+        countryCode: newCountry.CountryCode,
+        updatedBy: newCountry.UpdatedBy,
+        createdBy: newCountry.CreatedBy,
+      };
+
+      return {
+        isSuccess: true,
+        internalSuccess: false,
+        mesg: `Country ${newCountryname.countryName} has been Added successfully`,
+        insertedId: "",
+        data: newCountryname,
+      };
+    }
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: error.message,
+    };
+  }
+};
 
 //////////////////////////////  GetCountryMasterQuery //////////////////////////////////////////////////
 
 export const GetCountryMasterQuery = async (model) => {
-   
-    try {
-        const {CountryMaster} = await getTenantDBModels()
-        const { countryId } = model; 
-   
+  try {
+    const { CountryMaster } = await getTenantDBModels();
+    const { countryId } = model;
+
     if (countryId === -1) {
-            // Fetch all countries
-            const country = await CountryMaster.find({}).lean();
+      // Fetch all countries
+      const country = await CountryMaster.find({}).lean();
 
-            const countryList = country.map((list)=>{
-                
-                return{
-                    countryCode: list.CountryCode,
-                    countryId: list.CountryId,
-                    countryName: list.CountryName,
-                    createdBy: list.CreatedBy,
-                    updatedBy: list.UpdatedBy,
-                    createdOn:list.createdAt,
-                    updatedOn:list.updatedAt
-                    
-                }
-            })
-          
-            return {
-                   isSuccess:true,
-                //    internalSuccess:false,
-                   mesg:'Country Data has been fetched successfully',
-                   insertedId:"",
-                   internalSuccess:false,
-                   data: countryList                 
-                 };
-        } else {
-            // Fetch specific country by CountryId
-            const country = await CountryMaster.findOne({ CountryId:countryId })
+      const countryList = country.map((list) => {
+        return {
+          countryCode: list.CountryCode,
+          countryId: list.CountryId,
+          countryName: list.CountryName,
+          createdBy: list.CreatedBy,
+          updatedBy: list.UpdatedBy,
+          createdOn: list.createdAt,
+          updatedOn: list.updatedAt,
+        };
+      });
 
-           const countryDetail = {
-                countryCode: country.CountryCode,
-                countryId: country.CountryId,
-                countryName: country.CountryName,
-                createdBy: country.CreatedBy,
-                updatedBy: country.UpdatedBy,
-                createdOn:country.createdAt,
-                updatedOn:country.updatedAt
-                
-            }
+      return {
+        isSuccess: true,
+        //    internalSuccess:false,
+        mesg: "Country Data has been fetched successfully",
+        insertedId: "",
+        internalSuccess: false,
+        data: countryList,
+      };
+    } else {
+      // Fetch specific country by CountryId
+      const country = await CountryMaster.findOne({ CountryId: countryId });
 
+      const countryDetail = {
+        countryCode: country.CountryCode,
+        countryId: country.CountryId,
+        countryName: country.CountryName,
+        createdBy: country.CreatedBy,
+        updatedBy: country.UpdatedBy,
+        createdOn: country.createdAt,
+        updatedOn: country.updatedAt,
+      };
 
-            return {
-                isSuccess: true,
-                internalSuccess: false,
-                mesg:`Country ${country.CountryName} details has been fetched successfully`,
-                insertedId:"",
-                data:countryDetail,
-
-            }
-        }
-    } catch (error) {
-        return{
-            isSuccess:false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            mesg: error.message,
-        }
-    }}
+      return {
+        isSuccess: true,
+        internalSuccess: false,
+        mesg: `Country ${country.CountryName} details has been fetched successfully`,
+        insertedId: "",
+        data: countryDetail,
+      };
+    }
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: error.message,
+    };
+  }
+};
 
 /////////////////////////////  DeleteCountryQuery  /////////////////////////////////////////////////
 
-export const DeleteCountryQuery = async (model) => { 
-    try {
-        const { StateMaster, CountryMaster} = await getTenantDBModels()
+export const DeleteCountryQuery = async (model) => {
+  try {
+    const { StateMaster, CountryMaster } = await getTenantDBModels();
 
-        const { countryId } = model;
+    const { countryId } = model;
 
-        // Check if the country is referenced in StateMaster
-        const stateReference = await StateMaster.findOne({ CountryId: countryId }).exec();
-        if (stateReference) {
-            return {
-                isSuccess: true,
-                internalSuccess: false,
-                mesg: `${countryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`
-            };
-        }
-
-        // Find the country
-        const country = await CountryMaster.findOne({ CountryId: countryId }).exec();
-        if (country) {
-            await CountryMaster.deleteOne({ CountryId: countryId });
-            return {
-                isSuccess: true,
-                internalSuccess: true,
-                mesg: `Country ${country.CountryName} deleted successfully.`
-            };
-        } else {
-            return {
-                isSuccess: false,
-                statusCode: StatusCodes.NOT_FOUND,
-                mesg: `Country ${countryId} not found!`
-            };
-        }
-    } catch (error) {
-        return {
-            isSuccess: false,
-            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            mesg: error.message
-        };
+    // Check if the country is referenced in StateMaster
+    const stateReference = await StateMaster.findOne({
+      CountryId: countryId,
+    }).exec();
+    if (stateReference) {
+      return {
+        isSuccess: true,
+        internalSuccess: false,
+        mesg: `${countryId} is used in StateMaster of ${stateReference.StateName}, so it can't be deleted.`,
+      };
     }
 
-}
+    // Find the country
+    const country = await CountryMaster.findOne({
+      CountryId: countryId,
+    }).exec();
+    if (country) {
+      await CountryMaster.deleteOne({ CountryId: countryId });
+      return {
+        isSuccess: true,
+        internalSuccess: true,
+        mesg: `Country ${country.CountryName} deleted successfully.`,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        mesg: `Country ${countryId} not found!`,
+      };
+    }
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      mesg: error.message,
+    };
+  }
+};

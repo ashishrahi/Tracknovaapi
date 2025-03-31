@@ -2,9 +2,13 @@
 import { trackDetailsNT } from '../../utils/DBQueries/VehicleMovingControllerPipeline.js';
 import { ItemMaster } from '../../modals/index.js';
 import moment from 'moment';
+import { getTenantDBModels } from "../../db/index.js";
+
 
 async function VehicleFuelDateRange(filter) {
   try {
+    const { ItemMaster } = await getTenantDBModels();
+
     const retd = [];
 
     // Date handling (same as before)

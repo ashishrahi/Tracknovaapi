@@ -8,7 +8,7 @@
 // import { StatusCodes } from "http-status-codes";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 // import mongoose from "mongoose";
-import { getTenantDBModels } from "../../db/connectMongoDB.js";
+import { getTenantDBModels } from "../../db/index.js";
 /////////////////////////////////////////// GetvVehicletrackHisQuery //////////////////////////////////////////
 
 export const GetvVehicletrackHisQuery = async (modal) => {

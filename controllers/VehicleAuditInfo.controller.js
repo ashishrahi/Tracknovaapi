@@ -1,10 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import { VehicleAddTempInfo } from "../modals/index.js";
 import { ApiSuccessResponse, CommonResponse } from "../utils/apiResponse/index.js";
+import { getTenantDBModels } from "../db/index.js";
 
 //-------------AddUpdateVehicleAuditInfo------->
 async function AddUpdateVehicleAuditInfo(req, res, next) {
   try {
+    const {VehicleAddTempInfo, } = await getTenantDBModels()
     const model = req.body;
     // return res.json({model})
     if (model.id === 0 || !model.id) {
@@ -115,6 +117,8 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
 //-------------GetVehicleAuditInfo------->
 async function GetVehicleAuditInfo(req, res, next) {
   try {
+    const {VehicleAddTempInfo, } = await getTenantDBModels()
+
     let query = { };
 
     // let { id, vehicleNo, vehicleId, simNo, deviceNo, problemType, serviceEngg, olddeviceNo, oldSimNo, empName, empMobileNo, empId, deviceType, simType,  } = req.body;
@@ -161,6 +165,8 @@ async function GetVehicleAuditInfo(req, res, next) {
 //-------------DeleteVehicleAuditInfo------->
 async function DeleteVehicleAuditInfo(req, res, next){
     try {
+    const {VehicleAddTempInfo, } = await getTenantDBModels()
+
         let query = { };
     
         let { id, vehicleNo, vehicleId, simNo, deviceNo, problemType, serviceEngg, olddeviceNo, oldSimNo, empName, empMobileNo, empId, deviceType, simType, repair,  } = req.body;

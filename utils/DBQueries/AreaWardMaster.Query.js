@@ -1,22 +1,25 @@
-import { AreaWardMaster,ZoneMaster,RouteAreaDetail,RouteAreaBinDetail,BinLocation } from "../../modals/index.js";
+import {
+  AreaWardMaster,
+  ZoneMaster,
+  RouteAreaDetail,
+  RouteAreaBinDetail,
+  BinLocation,
+} from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 
 import { getTenantDBModels } from "../../db/index.js";
 
-
 //////////////////////////////////////////////// AddUpdateAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const AddUpdateAreaWardMasterQuery = async (modal) => {
-
   try {
-
-    const {  AreaWardMaster } = await getTenantDBModels();
+    const { AreaWardMaster } = await getTenantDBModels();
 
     if (modal.areaID === 0) {
       // Check if the record already exists
       const existingRecord = await AreaWardMaster.findOne({
         areaName: modal.areaName,
-        wardNumber: modal.wardNumber
+        wardNumber: modal.wardNumber,
       });
 
       if (existingRecord) {
@@ -44,20 +47,20 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
           createdBy: modal.zoneMaster.createdBy,
           updatedBy: modal.zoneMaster.updatedBy,
           srno: modal.zoneMaster.srno,
-          checked: modal.zoneMaster.checked
-        }
+          checked: modal.zoneMaster.checked,
+        },
       });
 
       await newRecord.save();
 
-    const newData ={
-      areaID: newRecord.AreaID,
-      areaName: newRecord.AreaName,
-      wardNumber: newRecord.WardNumber,
-      zoneID: newRecord.ZoneID,
-      createdBy: newRecord.CreatedBy,
-      updatedBy: newRecord.UpdatedBy,
-    }
+      const newData = {
+        areaID: newRecord.AreaID,
+        areaName: newRecord.AreaName,
+        wardNumber: newRecord.WardNumber,
+        zoneID: newRecord.ZoneID,
+        createdBy: newRecord.CreatedBy,
+        updatedBy: newRecord.UpdatedBy,
+      };
 
       return {
         status: 1,
@@ -80,8 +83,8 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
             zoneAbbrevation: modal.zoneMaster.zoneAbbrevation,
             updatedBy: modal.zoneMaster.updatedBy,
             srno: modal.zoneMaster.srno,
-            checked: modal.zoneMaster.checked
-          }
+            checked: modal.zoneMaster.checked,
+          },
         });
 
         await entity.save();
@@ -92,7 +95,7 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
         };
       } else {
         return {
-          status:0,
+          status: 0,
           message: "Area Ward not found",
         };
       }
@@ -103,12 +106,12 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
       message: error.message,
     };
   }
-}
+};
 
 //////////////////////////////////////////////// GetAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const GetAreaWardMasterQuery = async (modal) => {
-  const {AreaWardMaster} = await getTenantDBModels()
+  const { AreaWardMaster } = await getTenantDBModels();
 
   const { pageNo, pageSize } = modal; // Assuming filter is passed via query params
 
@@ -116,80 +119,75 @@ export const GetAreaWardMasterQuery = async (modal) => {
     let pipeline = [
       {
         $lookup: {
-          from: 'ZoneMaster', // The collection name for ZoneMaster
-          localField: 'ZoneID', // Local field that references the ZoneMaster collection
-          foreignField: 'ZoneID', // The foreign field in the ZoneMaster collection
-          as: 'ZoneMaster',
+          from: "ZoneMaster", // The collection name for ZoneMaster
+          localField: "ZoneID", // Local field that references the ZoneMaster collection
+          foreignField: "ZoneID", // The foreign field in the ZoneMaster collection
+          as: "ZoneMaster",
         },
       },
       {
         $unwind: {
-          path: '$ZoneMaster',
+          path: "$ZoneMaster",
           preserveNullAndEmptyArrays: true, // Ensures that if ZoneMaster is not found, it doesn't fail the query
         },
       },
       {
         $project: {
           AreaID: 1,
-          AreaName: { $ifNull: ['$AreaName', ''] },
-          WardNumber: { $ifNull: ['$WardNumber', ''] },
+          AreaName: { $ifNull: ["$AreaName", ""] },
+          WardNumber: { $ifNull: ["$WardNumber", ""] },
           ZoneID: 1,
-          CreatedBy: { $ifNull: ['$CreatedBy', ''] },
-          UpdatedBy: { $ifNull: ['$UpdatedBy', ''] },
-          CreatedOn: { $ifNull: ['$CreatedOn', new Date(0)] }, // Default to Unix Epoch date if null
-          UpdatedOn: { $ifNull: ['$UpdatedOn', new Date(0)] }, // Default to Unix Epoch date if null
+          CreatedBy: { $ifNull: ["$CreatedBy", ""] },
+          UpdatedBy: { $ifNull: ["$UpdatedBy", ""] },
+          CreatedOn: { $ifNull: ["$CreatedOn", new Date(0)] }, // Default to Unix Epoch date if null
+          UpdatedOn: { $ifNull: ["$UpdatedOn", new Date(0)] }, // Default to Unix Epoch date if null
           ZoneMaster: {
-            ZoneID: { $ifNull: ['$ZoneMaster.ZoneID', ''] },
-            ZoneName: { $ifNull: ['$ZoneMaster.ZoneName', ''] },
-            ZoneAbbrevation: { $ifNull: ['$ZoneMaster.ZoneAbbrevation', ''] },
-            CreatedBy: { $ifNull: ['$ZoneMaster.CreatedBy', ''] },
-            UpdatedBy: { $ifNull: ['$ZoneMaster.UpdatedBy', ''] },
-            CreatedOn: { $ifNull: ['$ZoneMaster.CreatedOn', new Date(0)] },
-            UpdatedOn: { $ifNull: ['$ZoneMaster.UpdatedOn', new Date(0)] },
+            ZoneID: { $ifNull: ["$ZoneMaster.ZoneID", ""] },
+            ZoneName: { $ifNull: ["$ZoneMaster.ZoneName", ""] },
+            ZoneAbbrevation: { $ifNull: ["$ZoneMaster.ZoneAbbrevation", ""] },
+            CreatedBy: { $ifNull: ["$ZoneMaster.CreatedBy", ""] },
+            UpdatedBy: { $ifNull: ["$ZoneMaster.UpdatedBy", ""] },
+            CreatedOn: { $ifNull: ["$ZoneMaster.CreatedOn", new Date(0)] },
+            UpdatedOn: { $ifNull: ["$ZoneMaster.UpdatedOn", new Date(0)] },
           },
         },
       },
     ];
-  
+
     if (!(pageNo === 0 && pageSize === 0)) {
       const skip = (pageNo - 1) * pageSize;
       const limit = parseInt(pageSize);
       pipeline.push({ $skip: skip }, { $limit: limit });
     }
-  
+
     // Query the database using aggregation
     const data = await AreaWardMaster.aggregate(pipeline);
 
-const newData = data.map(
-  (doc) => ({
-    areaID: doc.AreaID,
-    areaName: doc.AreaName,
-    wardNumber: doc.WardNumber,
-    zoneID: doc.ZoneID,
-    createdBy: doc.CreatedBy,
-    updatedBy: doc.UpdatedBy,
-    createdOn: doc.CreatedOn,
-    updatedOn: doc.UpdatedOn,
-    zoneMaster: {
-      zoneID: doc.ZoneMaster.ZoneID,
-      zoneName: doc.ZoneMaster.ZoneName,
-      zoneAbbreviation: doc.ZoneMaster.ZoneAbbreviation,
-      createdBy: doc.ZoneMaster.CreatedBy,
-      updatedBy: doc.ZoneMaster.UpdatedBy,
-      createdOn: doc.ZoneMaster.CreatedOn,
-      updatedOn: doc.ZoneMaster.UpdatedOn,
-    },
-  })
-)
-
-
-
+    const newData = data.map((doc) => ({
+      areaID: doc.AreaID,
+      areaName: doc.AreaName,
+      wardNumber: doc.WardNumber,
+      zoneID: doc.ZoneID,
+      createdBy: doc.CreatedBy,
+      updatedBy: doc.UpdatedBy,
+      createdOn: doc.CreatedOn,
+      updatedOn: doc.UpdatedOn,
+      zoneMaster: {
+        zoneID: doc.ZoneMaster.ZoneID,
+        zoneName: doc.ZoneMaster.ZoneName,
+        zoneAbbreviation: doc.ZoneMaster.ZoneAbbreviation,
+        createdBy: doc.ZoneMaster.CreatedBy,
+        updatedBy: doc.ZoneMaster.UpdatedBy,
+        createdOn: doc.ZoneMaster.CreatedOn,
+        updatedOn: doc.ZoneMaster.UpdatedOn,
+      },
+    }));
 
     const totalCount = await AreaWardMaster.countDocuments();
-  
+
     return {
       status: 1,
-      message: 'AreaWardMaster fetch Successfully!',
+      message: "AreaWardMaster fetch Successfully!",
       data: newData,
       RowCount: totalCount,
       pageNo: pageNo,
@@ -201,81 +199,79 @@ const newData = data.map(
       message: error.message,
     };
   }
-  
-}
+};
 
 //////////////////////////////////////////////// DeleteAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const DeleteAreaWardMasterQuery = async (modal) => {
-    
+  try {
+    const { RouteAreaDetail, RouteAreaBinDetail, BinLocation, AreaWardMaster } =
+      await getTenantDBModels();
 
-    try {
-    const { RouteAreaDetail, RouteAreaBinDetail, BinLocation, AreaWardMaster } = await getTenantDBModels()
+    const area = await RouteAreaDetail.findOne({ AreaID: modal.areaID }).exec();
+    if (area) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.CONFLICT,
+        message: `Area ID ${area.AreaID} is used in RouteAreaDetail so can\'t delete.`,
+      };
+    }
 
-     
-      const area = await RouteAreaDetail.findOne({ AreaID: modal.areaID }).exec();
-      if (area) {
-        return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: `Area ID ${area.AreaID} is used in RouteAreaDetail so can\'t delete.`,
-        }
-      }
-  
-      // Check if AreaID is used in RouteAreaBinDetail
-      const rut = await RouteAreaBinDetail.findOne({ AreaID: modal.areaID }).exec();
-      if (rut) {
-        return{
-            isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: `Area ID ${rut.AreaID} is used in RouteAreaBinDetail so can\'t delete.`,
-        }
-      }
-  
-      // Check if AreaID is used in BinLocation
-      const dward = await BinLocation.findOne({ AreaID: modal.areaID }).exec();
-      if (dward) {
-       return{
-             isSuccess: false,
-            statusCode: StatusCodes.CONFLICT,
-            message: `Area ID ${dward.AreaID}is used in BinLocation so can\'t delete.`,
- 
-       }
-      }
-  
-      // If no references found, proceed to delete the AreaWardMaster entry
-      if (modal.areaID !== 0) {
-        const enity = await AreaWardMaster.findOne({AreaID:modal.areaID}).exec();
-        if(enity){
-        return{
+    // Check if AreaID is used in RouteAreaBinDetail
+    const rut = await RouteAreaBinDetail.findOne({
+      AreaID: modal.areaID,
+    }).exec();
+    if (rut) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.CONFLICT,
+        message: `Area ID ${rut.AreaID} is used in RouteAreaBinDetail so can\'t delete.`,
+      };
+    }
+
+    // Check if AreaID is used in BinLocation
+    const dward = await BinLocation.findOne({ AreaID: modal.areaID }).exec();
+    if (dward) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.CONFLICT,
+        message: `Area ID ${dward.AreaID}is used in BinLocation so can\'t delete.`,
+      };
+    }
+
+    // If no references found, proceed to delete the AreaWardMaster entry
+    if (modal.areaID !== 0) {
+      const enity = await AreaWardMaster.findOne({
+        AreaID: modal.areaID,
+      }).exec();
+      if (enity) {
+        return {
           isSuccess: true,
           statusCode: StatusCodes.OK,
           message: "Deleted successfully",
-        }}
-        else {
-        return{
-            isSuccess: false,
-            statusCode: StatusCodes.OK,
-            message: `AreaId not found`,
-        }
-        }
-  
-        // Remove the AreaWardMaster
-        await AreaWardMaster.findOneAndDelete({AreaID:modal.areaID}).exec();
+        };
+      } else {
+        return {
+          isSuccess: false,
+          statusCode: StatusCodes.OK,
+          message: `AreaId not found`,
+        };
       }
-  
-     return{
-        isSuccess: true,
-        statusCode: StatusCodes.OK,
-        message: `AreaId ${entity.AreaID} of AreaWardMaster deleted Successfully`,
-      
-     }
-    } catch (ex) {
-     return{
-        isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: ex.message,
-     }
+
+      // Remove the AreaWardMaster
+      await AreaWardMaster.findOneAndDelete({ AreaID: modal.areaID }).exec();
     }
-  
-}
+
+    return {
+      isSuccess: true,
+      statusCode: StatusCodes.OK,
+      message: `AreaId ${entity.AreaID} of AreaWardMaster deleted Successfully`,
+    };
+  } catch (ex) {
+    return {
+      isSuccess: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: ex.message,
+    };
+  }
+};

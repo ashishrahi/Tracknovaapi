@@ -1,10 +1,14 @@
 import { StateMaster } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { getTenantDBModels } from "../../db/index.js";
+
 
 ///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
 
 export const AddUpdateStateQuery = async (model) => {
   try {
+    const { StateMaster } = await getTenantDBModels();
+
     const { stateId, stateName, stateCode, countryId, createdBy, updatedBy } =
       model;
 
@@ -115,6 +119,8 @@ export const AddUpdateStateQuery = async (model) => {
 
 export const GetStatebyCountryQuery = async (model) => {
   try {
+    const { StateMaster } = await getTenantDBModels();
+
     const { CountryId } = model;
     const stateList = await StateMaster.find({CountryId:CountryId})
     //  const newList = stateList.map((statename)=>statename.StateName)
@@ -138,6 +144,8 @@ export const GetStatebyCountryQuery = async (model) => {
 
 export const GetStateQuery = async (model) => {
   try {
+    const { StateMaster } = await getTenantDBModels();
+
     // Construct match conditions based on the model
     const matchConditions = {};
 
@@ -210,6 +218,8 @@ export const GetStateQuery = async (model) => {
 
 export const GetStatesByCountryQuery = async (CountryId) => {
   try {
+    const { StateMaster } = await getTenantDBModels();
+
     // console.log("Model:",model)
     const states = await StateMaster({ CountryId: CountryId });
     return {
@@ -232,6 +242,8 @@ export const GetStatesByCountryQuery = async (CountryId) => {
 
 export const DeleteStateQuery = async (model) => {
   try {
+    const { StateMaster } = await getTenantDBModels();
+
     // Find the state(s) with the given StateId
     const states = await StateMaster.find({ StateId: model.stateId }).exec();
 

@@ -1,6 +1,11 @@
 import  { NTCurrentDay, ItemMaster, VehicleTypeMaster} from "../../modals/index.js"
+import { getTenantDBModels } from "../../db/index.js";
+
 
 async function GetNTDashboardPipeline(){
+
+      const { NTCurrentDay, ItemMaster, VehicleTypeMaster   } = await getTenantDBModels();
+  
     const groupedData = await NTCurrentDay.aggregate([
         {
           $sort: { TrackTime: -1 }, // Sort by TrackTime descending
@@ -157,6 +162,8 @@ async function GetNTDashboardPipeline(){
 
 async function NTCurrentPipeline(devids){
   // const devids = devs; 
+  const { NTCurrentDay, ItemMaster } = await getTenantDBModels();
+
   if(!devids) devids = null;
     const latestRecords = await NTCurrentDay.aggregate([
       {

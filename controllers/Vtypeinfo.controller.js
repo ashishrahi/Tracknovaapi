@@ -11,6 +11,7 @@ import {
 } from "../utils/DBQueries/Vtypeinfo.Query.js";
 
 
+
 ///////////////////////////////////////////////// AddUpdateVtypeinfo //////////////////////////////////////////////////
 
 export async function AddUpdateVtypeinfo(req,res){

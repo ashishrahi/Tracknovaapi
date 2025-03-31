@@ -1,11 +1,14 @@
 import { TaxMaster } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { getTenantDBModels } from "../../db/index.js";
+
 
 
 /////////////////////////////////////////// AddUpdateTaxMasterQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateTaxMasterQuery = async (model) => {
     try {
+        const { TaxMaster } = await getTenantDBModels();
         
         if(!model.taxName || model.taxName ==="")
             {
@@ -86,6 +89,8 @@ return{
 export const GetTaxMasterQuery = async (model) => {
 
     try {
+        const { TaxMaster } = await getTenantDBModels();
+
         if (model.taxId === -1) {
             const data = await TaxMaster.find({}).lean();
 
@@ -145,6 +150,8 @@ export const GetTaxMasterQuery = async (model) => {
 
 export const DeleteTaxMasterQuery = async (model) => {
     try {
+        const { TaxMaster } = await getTenantDBModels();
+
         const records = await TaxMaster.find({TaxId:model.taxId});
        
         if(records && records.length >0){

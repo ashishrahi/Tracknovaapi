@@ -12,11 +12,12 @@ import {
 } from "../modals/index.js";
 import { GetNTDashboardPipeline, NTCurrentPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../db/index.js";
 
 //----------- Sample ---------------->
 async function sample(req, res, next) {
   try {
-    const { devid } = req.query;
+  const { devid } = req.query;
     if (!devid) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -74,9 +75,13 @@ async function sample(req, res, next) {
 
 //-------------SmpCurr----------->
 async function SmpCurr(req, res) {
-  const { trackdate } = req.query;
 
   try {
+  const {NTCurrentDay, } = await getTenantDBModels()
+
+  const { trackdate } = req.query;
+
+
     // Converting `currentDay` to a JavaScript Date object
     const currentDay = new Date(trackdate);
     currentDay.setHours(0, 0, 0, 0);
@@ -198,6 +203,8 @@ async function SmpCurr(req, res) {
 async function Geofence(req, res) {
 
   try {
+  const {Geofencing, } = await getTenantDBModels()
+
     const { FenceId, FenceName, dateSaveFr, dateSaveTo } = req.body;
 
     let filter = {};
@@ -230,6 +237,8 @@ async function Geofence(req, res) {
 //-------------NTCurrent----------->
 async function NTCurrent(req, res) {
   // const { devids } = req.query;
+  const {NTCurrentDay, ItemMaster } = await getTenantDBModels()
+
   const devids = null;
   const latestRecords = await NTCurrentDay.aggregate([
     {
@@ -338,6 +347,8 @@ async function NTCurrent(req, res) {
 //-------------VehCurrStat----------->
 // Done
 async function VehCurrStat(req, res) {
+  const {NTCurrentDay, ItemMaster } = await getTenantDBModels()
+
   const vehAll = await NTCurrentDay.aggregate([
     {
       $group: {
@@ -435,6 +446,8 @@ async function VehCurrStat(req, res) {
 //-------------GetDashData----------->
 async function GetDashData(req, res) {
   try {
+  const {Geofencing, ItemMaster } = await getTenantDBModels()
+
     const { fencId, fenceName, lsVehType, lsVehNos, dateSaveFr, dateSaveTo } = req.body;
     //  Step 1: Fetch Geofencing data
     let filter = {};
@@ -508,6 +521,8 @@ async function GetDashData(req, res) {
 async function getVehicleNotMoved(req, res, next) {
 
  try {
+  const { ItemMaster } = await getTenantDBModels()
+
    // const client = new MongoClient('mongodb://localhost:27017');
    //   await client.connect();
    //   const db = client.db('your_database_name');
@@ -951,6 +966,7 @@ async function getVehicleNotMoved(req, res, next) {
 //--------------GetNTDashboard------>
 async function GetNTDashboard(req, res) {
   try {
+
     // Filter out records without VehicleNo
     const ntList = await GetNTDashboardPipeline()
     const data = ntList.filter((nt) => nt.VehicleNo);

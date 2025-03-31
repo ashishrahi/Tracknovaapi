@@ -5,12 +5,14 @@ import { ItemMaster, NT } from "../modals/index.js";
 import { trackDetailsNT, VehicleMovingStatusdetnew } from "../utils/DBQueries/VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "../utils/DBQueries/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../db/index.js";
 
 //-----------VehicleTrack-------->
 async function VehicleTrack(req, res) {
   const response = { Status: "Failed", Message: "", Data: [] };
 
   try {
+    const {ItemMaster, } = await getTenantDBModels()
     const filter = req.body;
 
     // Convert dates to MongoDB-compatible format
@@ -123,6 +125,7 @@ async function VehicleTrack(req, res) {
 //-----------VehicleMovingTrackStatusdetnew-------->
 async function VehicleMovingTrackStatusdetnew(req, res, next) {
   try {
+
     const filter = req.body;
     // let retStat = "";
 
@@ -189,6 +192,8 @@ async function VehicleDetailSummarynew(req, res, next){
 async function GetDevTamp(req, res, next) {
 
   try {
+    const {NT, } = await getTenantDBModels()
+
     const model = req.body;
     // Ensure date range is provided
     if (!model.date1 || !model.date2) {
@@ -367,6 +372,7 @@ async function GetDevTamp(req, res, next) {
 async function VehicleFuelConsumenew(req, res, next) {
 
   try {
+
     
 const filter = req.body;
 const fuelComsumed = await VehicleMovingControllerPipeline.VehicleMovingStatusdetnew(filter)

@@ -1,14 +1,12 @@
-import { StatusCodes } from 'http-status-codes';
-import {FuelType} from '../../modals/index.js'
+import { StatusCodes } from "http-status-codes";
+import { FuelType } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
-
-
 
 /////////////////////////// AddUpdateFuelTypeQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateFuelTypeQuery = async (model) => {
   try {
-   const { FuelType, } = await getTenantDBModels()
+    const { FuelType } = await getTenantDBModels();
     let fuelType;
     let data;
 
@@ -40,7 +38,7 @@ export const AddUpdateFuelTypeQuery = async (model) => {
       return {
         isSuccess: 1,
         id: data.fuelTypeId,
-        createUpdate:"Created",
+        createUpdate: "Created",
         msg: `Fuel type '${newData.FuelTypename}' created successfully.`,
         data,
       };
@@ -87,18 +85,16 @@ export const AddUpdateFuelTypeQuery = async (model) => {
       msg: error.message,
     };
   }
-
-}
+};
 
 //////////////////////////  GetFuelTypeQuery  //////////////////////////////////////////////////////////////////
 
 export const GetFuelTypeQuery = async (model) => {
-
   try {
-   const { FuelType, } = await getTenantDBModels()
+    const { FuelType } = await getTenantDBModels();
 
-    if (!model || typeof model !== 'object') {
-      throw new Error('Invalid input: model should be an object');
+    if (!model || typeof model !== "object") {
+      throw new Error("Invalid input: model should be an object");
     }
 
     const filter = {};
@@ -106,7 +102,7 @@ export const GetFuelTypeQuery = async (model) => {
       filter.FuelTypeId = model.fuelTypeId;
     }
     if (model.fuelTypename) {
-      filter.FuelTypename = new RegExp(model.fuelTypename, 'i'); // Case-insensitive search
+      filter.FuelTypename = new RegExp(model.fuelTypename, "i"); // Case-insensitive search
     }
 
     // Query MongoDB
@@ -139,35 +135,32 @@ export const GetFuelTypeQuery = async (model) => {
 /////////////////////////// DeleteFuelTypeQuery //////////////////////////////////////////////////////////////////
 
 export const DeleteFuelTypeQuery = async (model) => {
+  try {
+    const { FuelType } = await getTenantDBModels();
 
-    try {
-   const { FuelType, } = await getTenantDBModels()
-      
-        // Check FuelTypeId value, if it is 0, set it to -1
-        const fuelTypeId = model.fuelTypeId === 0 ? -1 : model.fuelTypeId;
+    // Check FuelTypeId value, if it is 0, set it to -1
+    const fuelTypeId = model.fuelTypeId === 0 ? -1 : model.fuelTypeId;
 
-        // Find and delete the fuel type document based on FuelTypeId
-        const result = await FuelType.findOneAndDelete({ FuelTypeId: fuelTypeId });
+    // Find and delete the fuel type document based on FuelTypeId
+    const result = await FuelType.findOneAndDelete({ FuelTypeId: fuelTypeId });
 
-        if (!result) {
-            return {
-              isSuccess:0,
-              id,
-              msg:`fuel type ${fuelTypeId} not found`,
-            }
-        } else {
-             return {
-              isSuccess:1,
-              id:fuelTypeId,
-              msg:`fuelTypeId ${result.FuelTypename} has been deleted successfully`,
-            }
-        }
-    } catch (error) {
-       
-        return{
-          isSuccess:0,
-          msg: error.message,
-        }
+    if (!result) {
+      return {
+        isSuccess: 0,
+        id,
+        msg: `fuel type ${fuelTypeId} not found`,
+      };
+    } else {
+      return {
+        isSuccess: 1,
+        id: fuelTypeId,
+        msg: `fuelTypeId ${result.FuelTypename} has been deleted successfully`,
+      };
     }
-   
-}
+  } catch (error) {
+    return {
+      isSuccess: 0,
+      msg: error.message,
+    };
+  }
+};

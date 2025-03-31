@@ -1,7 +1,7 @@
 import { BinLocation, AreaWardMaster } from "../../modals/index.js";
 import ZoneMaster from "../../modals/ZoneMaster.model.js";
 import { StatusCodes } from "http-status-codes";
-import { getTenantDBModels } from "../../db/connectMongoDB.js";
+import { getTenantDBModels } from "../../db/index.js";
 /////////////////////////////////////////// AddUpdateZoneMasterQuery //////////////////////////////////////////
 
 export const AddUpdateZoneMasterQuery = async (modal) => {

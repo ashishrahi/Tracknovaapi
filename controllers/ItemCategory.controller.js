@@ -2,11 +2,15 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse, CommonResponse } from "../utils/apiResponse/index.js";
 import { ItemCategoryMaster } from "../modals/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../db/index.js";
 
 //-------------AddUpdateItemCategory------->
 async function AddUpdateItemCategory(req, res) {
-  const model = req.body;
   try {
+    const { ItemCategoryMaster } = await getTenantDBModels();
+
+  const model = req.body;
+
     const response = { status: "", message: "", data: null, error: null };
 
     const existingCategory = await ItemCategoryMaster.findOne({
@@ -100,6 +104,8 @@ async function AddUpdateItemCategory(req, res) {
 //-------------GetItemCategory------->
 async function GetItemCategory(req, res) {
   try {
+    const { ItemCategoryMaster } = await getTenantDBModels();
+
     const {
       itemCategoryId,
       itemCategory,
@@ -152,6 +158,8 @@ async function GetItemCategory(req, res) {
 //-------------DeleteItemCategory------->
 async function DeleteItemCategory(req, res){
     try {
+    const { ItemCategoryMaster } = await getTenantDBModels();
+
     const model = req.body;
         if (!model.itemCategoryId) throw new Error("ItemCategoryId is required");
         

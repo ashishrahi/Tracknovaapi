@@ -1,10 +1,14 @@
 import { Route,RouteAreaBinDetail,BinLocation,RouteAreaDetail} from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { getTenantDBModels } from "../../db/index.js";
+
 
 ////////////////////////////////////////// AddUpdateRoutesQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateRoutesQuery = async (model) => {
     try {
+          const { Route, RouteAreaDetail } = await getTenantDBModels();
+      
         if (model.routeID === 0) {
           // Check if route already exists
           const existingRoute = await Route.findOne({ RouteName: model.routeName });
@@ -160,6 +164,8 @@ export const AddUpdateRoutesQuery = async (model) => {
 
 export const GetRoutesQuery = async (model) => {
   try {
+    const { Route} = await getTenantDBModels();
+
     const { where, pageNo, pageSize } = model;
 
     // Ensure RouteID is an ObjectId to prevent buffer issues
@@ -258,6 +264,8 @@ export const GetRoutesQuery = async (model) => {
 
 export const DeleteRoutesQuery = async (model) => {
     try {
+    const  { Route, RouteAreaDetail } = await getTenantDBModels();
+
         const routeInAreaDetail = await RouteAreaDetail.findOne({ RouteID: model.routeID });
         if (routeInAreaDetail) {
           return {

@@ -1,29 +1,27 @@
 import { StatusCodes } from "http-status-codes";
-import { CityMaster,StateMaster } from "../../modals/index.js";
-import {getTenantDBModels} from '../../db/index.js'
-
+import { CityMaster, StateMaster } from "../../modals/index.js";
+import { getTenantDBModels } from "../../db/index.js";
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const AddUpdateCityMasterQuery = async (model) => {
-   
   try {
-    const {CityMaster} = await getTenantDBModels()
+    const { CityMaster } = await getTenantDBModels();
 
     // Validate CityName
-    if (!model.cityName || model.cityName.trim() === '') {
+    if (!model.cityName || model.cityName.trim() === "") {
       return {
         isSuccess: false,
-        internalSuccess:"",
-        mesg: 'City Name is required',
+        internalSuccess: "",
+        mesg: "City Name is required",
       };
     }
     // Validate CityId
     if (!model.cityId || model.cityId == 0) {
       return {
         isSuccess: false,
-        internalSuccess:"",
-        mesg: 'City Id is required',
+        internalSuccess: "",
+        mesg: "City Id is required",
       };
     }
 
@@ -64,21 +62,21 @@ export const AddUpdateCityMasterQuery = async (model) => {
 
       await newCity.save();
 
-const newCityList ={
-  cityId: newCity.CityId,
-  cityName: newCity.CityName,
-  stateId: newCity.StateId,
-  createdBy: newCity.CreatedBy,
-  updatedBy: newCity.UpdatedBy,
-  createdOn: newCity.createdAt,
-  updatedOn: newCity.updatedAt,
-}
+      const newCityList = {
+        cityId: newCity.CityId,
+        cityName: newCity.CityName,
+        stateId: newCity.StateId,
+        createdBy: newCity.CreatedBy,
+        updatedBy: newCity.UpdatedBy,
+        createdOn: newCity.createdAt,
+        updatedOn: newCity.updatedAt,
+      };
 
       return {
         isSuccess: true,
-        internalSuccess: "", 
+        internalSuccess: "",
         message: `${newCityList.cityName} City Created Successfully `,
-        insertedId:"",
+        insertedId: "",
         data: newCityList,
       };
     }
@@ -87,7 +85,7 @@ const newCityList ={
     if (error.code === 11000) {
       return {
         isSuccess: false,
-        internalSuccess:"",
+        internalSuccess: "",
         mesg: `City Name ${CityName} already exists`,
       };
     }
@@ -99,18 +97,17 @@ const newCityList ={
       mesg: error.message,
     };
   }
-    
-}
+};
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const GetCitiesByStateQuery = async (model) => {
   try {
-    const {CityMaster} = await getTenantDBModels()
+    const { CityMaster } = await getTenantDBModels();
 
     const { StateId } = model;
     // console.log("StateId",StateId)
-    const cityList = await CityMaster.find({StateId:StateId})
+    const cityList = await CityMaster.find({ StateId: StateId });
     // const newCityList = cityList.map((city)=>city.CityName)
 
     return {
@@ -127,107 +124,99 @@ export const GetCitiesByStateQuery = async (model) => {
       mesg: error.message,
     };
   }
-
-}
-
-
+};
 
 ////////////////////////////////////////////  GetCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
-    export const GetCityMasterQuery = async (model) =>{
-        
-          try {
-                 const { CityMaster , StateMaster } = await getTenantDBModels()
+export const GetCityMasterQuery = async (model) => {
+  try {
+    const { CityMaster, StateMaster } = await getTenantDBModels();
 
-            const filter = {};
-        
-            if (model.cityId && model.cityId !== -1) {
-              filter.CityId = model.cityId;
-            }
-        
-            if (model.stateId && model.stateId !== -1) {
-              filter.StateId = model.stateId;
-            }
-        
-            const cities = await CityMaster.find(filter).lean();
-        
-            const enrichedCities = await Promise.all(
-              cities.map(async (city) => {
-                const state = await StateMaster.findOne({ StateId: city.StateId }).lean();
-                // console.log('state:',state)
-                return {
-                  ...city,
-                  StateName: state ? state.StateName : null,
-                  
-                };
-              })
-            );
-            // console.log('enrichedCities:',enrichedCities)
-       const listCities = enrichedCities.map((city)=>{
-        return{
-          cityId: city.CityId,
-          cityName: city.CityName,
-          stateName: city.StateName,
-          createdBy: city.CreatedBy,
-          updatedBy:city.UpdatedBy,
-          createdOn:city.createdAt,
-          updatedOn:city.updatedAt
-        }
-       })
-        
-            return{
-                isSuccess:true,
-                internalSuccess: "",
-                mesg: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
-                insertedId:"",
-                data: listCities,
-  
-            }
-          } catch (error) {
-         return{
-          isSuccess: false,
-          internalSuccess:"",
-          mesg: error.message,
-         }
-          }
-        
+    const filter = {};
+
+    if (model.cityId && model.cityId !== -1) {
+      filter.CityId = model.cityId;
     }
+
+    if (model.stateId && model.stateId !== -1) {
+      filter.StateId = model.stateId;
+    }
+
+    const cities = await CityMaster.find(filter).lean();
+
+    const enrichedCities = await Promise.all(
+      cities.map(async (city) => {
+        const state = await StateMaster.findOne({
+          StateId: city.StateId,
+        }).lean();
+        // console.log('state:',state)
+        return {
+          ...city,
+          StateName: state ? state.StateName : null,
+        };
+      })
+    );
+    // console.log('enrichedCities:',enrichedCities)
+    const listCities = enrichedCities.map((city) => {
+      return {
+        cityId: city.CityId,
+        cityName: city.CityName,
+        stateName: city.StateName,
+        createdBy: city.CreatedBy,
+        updatedBy: city.UpdatedBy,
+        createdOn: city.createdAt,
+        updatedOn: city.updatedAt,
+      };
+    });
+
+    return {
+      isSuccess: true,
+      internalSuccess: "",
+      mesg: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
+      insertedId: "",
+      data: listCities,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      internalSuccess: "",
+      mesg: error.message,
+    };
+  }
+};
 
 ////////////////////////////////////////////// DeleteCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const DeleteCityMasterQuery = async (model) => {
-
-try {
-  const { CityMaster } = await getTenantDBModels()
+  try {
+    const { CityMaster } = await getTenantDBModels();
 
     // Find districts by CityId
     const districts = await CityMaster.find({ CityId: model.cityId }).lean();
 
     if (districts.length > 0) {
-        // Delete districts
-        await CityMaster.deleteMany({ CityId: model.cityId });
+      // Delete districts
+      await CityMaster.deleteMany({ CityId: model.cityId });
 
-      return{
-          isSuccess: true,
-          internalSuccess: "",
-          mesg: `CityId ${model.cityId} Of Cities successfully deleted`,
-        }
+      return {
+        isSuccess: true,
+        internalSuccess: "",
+        mesg: `CityId ${model.cityId} Of Cities successfully deleted`,
+      };
     } else {
-        
-        return{
-          isSuccess: false,
-          internalSuccess: "",
-          mesg: `No Citiess found for CityId ${model.cityId}`,
-        }
+      return {
+        isSuccess: false,
+        internalSuccess: "",
+        mesg: `No Citiess found for CityId ${model.cityId}`,
+      };
     }
-} catch (error) {
-  
-    return{
+  } catch (error) {
+    return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      mesg: error.message + ";" + (error.innerException? error.innerException : error.message)
-    }
-}
-
-      }
-    
-    
+      mesg:
+        error.message +
+        ";" +
+        (error.innerException ? error.innerException : error.message),
+    };
+  }
+};

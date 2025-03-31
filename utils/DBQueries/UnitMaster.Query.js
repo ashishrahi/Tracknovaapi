@@ -1,10 +1,14 @@
 import { UnitMaster } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
+import { getTenantDBModels } from "../../db/index.js";
+
 
 /////////////////////////////////////////// AddUpdateTaxMasterQuery //////////////////////////////////////////////////////////////////
 
 export const AddUpdateUnitMasterQuery = async (modal) => {
   try {
+    const { UnitMaster } = await getTenantDBModels();
+
     // Validate required fields
     if (!modal.unitName || modal.unitName.trim() === "") {
         return {
@@ -101,6 +105,8 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
 
 export const GetUnitMasterQuery = async (modal) => {
   try {
+    const { UnitMaster } = await getTenantDBModels();
+
     if (modal.unitId == -1) {
       const data = await UnitMaster.find();
 
@@ -147,6 +153,8 @@ export const GetUnitMasterQuery = async (modal) => {
 
 export const DeleteUnitMasterQuery = async (modal) => {
   try {
+    const { UnitMaster } = await getTenantDBModels();
+
     const units = await UnitMaster.find({ UnitId: modal.UnitId });
     if (units.length > 0) {
       await UnitMaster.deleteMany({ UnitId: modal.UnitId });

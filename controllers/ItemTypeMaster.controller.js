@@ -2,10 +2,13 @@ import { StatusCodes } from "http-status-codes";
 import { ItemTypeMaster } from "../modals/index.js";
 import { ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../db/index.js";
 
 async function AddUpdateItemTypeMaster(req, res, next){
 
     try {
+    const { ItemTypeMaster } = await getTenantDBModels();
+
         const { itemTypeMasterId, itemType, itemTypecode, createdBy, updatedBy} = req.body;
 
         if (!itemType || itemType.trim() === "") {
@@ -60,6 +63,8 @@ async function AddUpdateItemTypeMaster(req, res, next){
 
 async function GetItemTypeMaster(req, res, next){
     try {
+    const { ItemTypeMaster } = await getTenantDBModels();
+
     const { itemTypeMasterId, itemType, itemTypecode  } = req.body;
         let query = {}; // Default to fetch all records
         if(itemTypeMasterId  && itemTypeMasterId !== -1 && itemTypeMasterId !== 0) query.ItemTypeMasterId = itemTypeMasterId;
@@ -82,6 +87,7 @@ async function GetItemTypeMaster(req, res, next){
 
 async function DeleteItemTypeMaster(req, res, next){
   try {
+    const { ItemTypeMaster } = await getTenantDBModels();
     const { itemTypeMasterId }  = req.body;
     if(!itemTypeMasterId){
       const error = new Error("Please Provide ItemTypeMasterId");

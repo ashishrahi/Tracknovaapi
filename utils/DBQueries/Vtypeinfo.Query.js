@@ -1,7 +1,8 @@
 import { model } from "mongoose";
 import { VehicleTypeMaster, ItemMaster, VehicleTypeChild, NT } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
-import { getTenantDBModels } from "../../db/connectMongoDB.js";
+import { getTenantDBModels } from "../../db/index.js";
+
 //////////////////////////////////////////////// AddUpdateVtypeinfoQuery /////////////////////////////////////////////////////
 
 export const AddUpdateVtypeinfoQuery = async (modal) => {

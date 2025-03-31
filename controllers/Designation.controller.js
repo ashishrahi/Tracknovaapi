@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ReturnData } from "../utils/apiResponse/index.js";
 import {
   AddUpdateDesignationMasterQuery,
   GetDesignationMasterQuery,
@@ -13,7 +10,7 @@ import {
 export async function AddUpdateDesignationmaster(req, res) {
   try {
     const model = req.body;
-    const {isSuccess, internalSuccess, mesg, insertedId, data } =
+    const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await AddUpdateDesignationMasterQuery(model);
     const successResponse = new ReturnData(
       isSuccess,

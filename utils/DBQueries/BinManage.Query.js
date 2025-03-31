@@ -1,33 +1,33 @@
-import { BinLocation,Route,RouteAreaBinDetail } from "../../modals/index.js";
+import { BinLocation, Route, RouteAreaBinDetail } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
-import {getTenantDBModels} from '../../db/index.js'
-
+import { getTenantDBModels } from "../../db/index.js";
 
 ////////////////////////////// AddUpdateBinManageQuery ////////////////////////////////////
 
 export const AddUpdateBinManageQuery = async (model) => {
   try {
-    const {RouteAreaBinDetail} = await getTenantDBModels()
-    const results = []; 
+    const { RouteAreaBinDetail } = await getTenantDBModels();
+    const results = [];
 
     // Loop over routeAreaBinDetailCmd for processing
     for (const cmd of model.routeAreaBinDetailCmd) {
-      const { 
-        routeDetailBinId, 
-        routeDetailId, 
-        binID, 
-        routeID, 
-        areaID, 
-        serialNo, 
-        timing, 
-        createdBy, 
-        updatedBy 
+      const {
+        routeDetailBinId,
+        routeDetailId,
+        binID,
+        routeID,
+        areaID,
+        serialNo,
+        timing,
+        createdBy,
+        updatedBy,
       } = cmd;
 
-      const existingBinDetail = await RouteAreaBinDetail.findOne({ RouteDetailBinId: routeDetailBinId });
+      const existingBinDetail = await RouteAreaBinDetail.findOne({
+        RouteDetailBinId: routeDetailBinId,
+      });
 
       if (existingBinDetail) {
-        
         const updatedBinDetail = await RouteAreaBinDetail.findOneAndUpdate(
           { RouteDetailBinId: routeDetailBinId },
           {
@@ -45,7 +45,7 @@ export const AddUpdateBinManageQuery = async (model) => {
         );
 
         results.push({
-          action: 'updated',
+          action: "updated",
           message: `Successfully updated ${routeDetailBinId}.`,
           data: updatedBinDetail,
         });
@@ -65,7 +65,7 @@ export const AddUpdateBinManageQuery = async (model) => {
 
         await newBinDetail.save();
         results.push({
-          action: 'added',
+          action: "added",
           message: `${newBinDetail.RouteDetailBinId} has been successfully added.`,
           data: newBinDetail,
         });
@@ -73,8 +73,10 @@ export const AddUpdateBinManageQuery = async (model) => {
     }
 
     // Aggregate results after loop
-    const addedCount = results.filter((item) => item.action === 'added').length;
-    const updatedCount = results.filter((item) => item.action === 'updated').length;
+    const addedCount = results.filter((item) => item.action === "added").length;
+    const updatedCount = results.filter(
+      (item) => item.action === "updated"
+    ).length;
 
     return {
       isSuccess: true,
@@ -89,75 +91,100 @@ export const AddUpdateBinManageQuery = async (model) => {
       message: err.message,
     };
   }
-  };
+};
 
 ////////////////////////////// GetBinManageQuery //////////////////////////////////////////
 
 export const GetBinManageQuery = async (model) => {
-
   try {
-    const {Route} = await getTenantDBModels()
+    const { Route } = await getTenantDBModels();
 
     const { pageNo, pageSize } = model;
     const pipeline = [
       {
         $lookup: {
-          from: 'routeareabindetail',
-          localField: 'routeid',
-          foreignField: 'routeid',
-          as: 'routeareabindetail',
+          from: "routeareabindetail",
+          localField: "routeid",
+          foreignField: "routeid",
+          as: "routeareabindetail",
         },
       },
-      { $unwind: { path: '$routeareabindetail', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$routeareabindetail",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $lookup: {
-          from: 'binlocation',
-          localField: 'routeareabindetail.binid',
-          foreignField: 'binlocid',
-          as: 'routeareabindetail.binlocation',
+          from: "binlocation",
+          localField: "routeareabindetail.binid",
+          foreignField: "binlocid",
+          as: "routeareabindetail.binlocation",
         },
       },
-      { $unwind: { path: '$routeareabindetail.binlocation', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$routeareabindetail.binlocation",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $project: {
           routeid: 1,
-          routename: { $ifNull: ['$routename', ''] },
-          description: { $ifNull: ['$description', ''] },
-          routedate: { $ifNull: ['$routedate', null] },
-          createdby: { $ifNull: ['$createdby', ''] },
-          updatedby: { $ifNull: ['$updatedby', ''] },
-          createdon: { $ifNull: ['$createdon', null] },
-          updatedon: { $ifNull: ['$updatedon', null] },
-          'routeareabindetail.routedetailbinid': 1,
-          'routeareabindetail.routeid': 1,
-          'routeareabindetail.binlocation': {
-            binlocid: { $ifNull: ['$routeareabindetail.binlocation.binlocid', null] },
-            binlocname: { $ifNull: ['$routeareabindetail.binlocation.binlocname', ''] },
-            binloccode: { $ifNull: ['$routeareabindetail.binlocation.binloccode', ''] },
-            latitude: { $ifNull: ['$routeareabindetail.binlocation.latitude', null] },
-            longitude: { $ifNull: ['$routeareabindetail.binlocation.longitude', null] },
-            locationname: { $ifNull: ['$routeareabindetail.binlocation.locationname', ''] },
-            locimage: { $ifNull: ['$routeareabindetail.binlocation.locimage', null] },
-            description: { $ifNull: ['$routeareabindetail.binlocation.description', ''] },
+          routename: { $ifNull: ["$routename", ""] },
+          description: { $ifNull: ["$description", ""] },
+          routedate: { $ifNull: ["$routedate", null] },
+          createdby: { $ifNull: ["$createdby", ""] },
+          updatedby: { $ifNull: ["$updatedby", ""] },
+          createdon: { $ifNull: ["$createdon", null] },
+          updatedon: { $ifNull: ["$updatedon", null] },
+          "routeareabindetail.routedetailbinid": 1,
+          "routeareabindetail.routeid": 1,
+          "routeareabindetail.binlocation": {
+            binlocid: {
+              $ifNull: ["$routeareabindetail.binlocation.binlocid", null],
+            },
+            binlocname: {
+              $ifNull: ["$routeareabindetail.binlocation.binlocname", ""],
+            },
+            binloccode: {
+              $ifNull: ["$routeareabindetail.binlocation.binloccode", ""],
+            },
+            latitude: {
+              $ifNull: ["$routeareabindetail.binlocation.latitude", null],
+            },
+            longitude: {
+              $ifNull: ["$routeareabindetail.binlocation.longitude", null],
+            },
+            locationname: {
+              $ifNull: ["$routeareabindetail.binlocation.locationname", ""],
+            },
+            locimage: {
+              $ifNull: ["$routeareabindetail.binlocation.locimage", null],
+            },
+            description: {
+              $ifNull: ["$routeareabindetail.binlocation.description", ""],
+            },
           },
         },
       },
       {
         $group: {
-          _id: '$_id',
-          routeid: { $first: '$routeid' },
-          routename: { $first: '$routename' },
-          description: { $first: '$description' },
-          routedate: { $first: '$routedate' },
-          createdby: { $first: '$createdby' },
-          updatedby: { $first: '$updatedby' },
-          createdon: { $first: '$createdon' },
-          updatedon: { $first: '$updatedon' },
-          routeareabindetail: { $push: '$routeareabindetail' },
+          _id: "$_id",
+          routeid: { $first: "$routeid" },
+          routename: { $first: "$routename" },
+          description: { $first: "$description" },
+          routedate: { $first: "$routedate" },
+          createdby: { $first: "$createdby" },
+          updatedby: { $first: "$updatedby" },
+          createdon: { $first: "$createdon" },
+          updatedon: { $first: "$updatedon" },
+          routeareabindetail: { $push: "$routeareabindetail" },
         },
       },
     ];
-  
+
     // Apply pagination only if pageNo and pageSize are greater than 0
     if (pageNo > 0 && pageSize > 0) {
       pipeline.push(
@@ -165,19 +192,18 @@ export const GetBinManageQuery = async (model) => {
         { $limit: parseInt(pageSize, 10) }
       );
     }
-  
+
     const data = await Route.aggregate(pipeline);
     const rowCount = await Route.countDocuments();
-  
-    return { 
+
+    return {
       status: 1,
-      message: 'Data fetched successfully',
+      message: "Data fetched successfully",
       data: data,
-      pageNo: pageNo, 
+      pageNo: pageNo,
       pageSize: pageSize,
-      rowCount: rowCount 
+      rowCount: rowCount,
     };
-  
   } catch (error) {
     return {
       status: false,
@@ -186,4 +212,3 @@ export const GetBinManageQuery = async (model) => {
     };
   }
 };
-

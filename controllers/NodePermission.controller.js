@@ -1,11 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { NodePermission } from "../modals/index.js";
 import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { getTenantDBModels } from "../db/index.js";
 
 
 async function AddUpdateNodePermission(req, res, next){
 
     try {
+        const {NodePermission, } = await getTenantDBModels()
         const model = req.body;
         // **Step 1: Remove existing permissions for the UserId**
         await NodePermission.deleteMany({ UserId: model.userId });

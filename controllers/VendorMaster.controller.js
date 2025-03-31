@@ -3,9 +3,13 @@ import { StatusCodes } from "http-status-codes";
 import { ApiSuccessResponse,ReturnData } from "../utils/apiResponse/index.js";
 import { VendorMaster } from "../modals/index.js"
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
+import { getTenantDBModels } from "../db/index.js";
+
 //----------AddUpdateVendorMaster------------>
 async function AddUpdateVendorMaster(req, res, next){
     try {
+       const {VendorMaster, } = await getTenantDBModels()
+
         const modal = req.body;
         // Validate required field
         if (!modal.name || modal.name.trim() === "") {
@@ -79,6 +83,7 @@ async function AddUpdateVendorMaster(req, res, next){
 //----------GetVendorMaster------------>
 async function GetVendorMaster(req, res, next){
     try {
+       const {VendorMaster, } = await getTenantDBModels()
         const { venderId } = req.body; // Extract venderId from request body
         if(!venderId){
             const error = new Error("Please Provide VenderId")
@@ -105,6 +110,8 @@ async function GetVendorMaster(req, res, next){
 //----------DeleteVendorMaster------------>
 async function DeleteVendorMaster(req, res, next){
     try {
+       const {VendorMaster, } = await getTenantDBModels()
+
         const { venderId } = req.body;
 
         // Directly attempt deletion and check if a document was deleted
