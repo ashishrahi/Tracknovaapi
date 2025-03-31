@@ -61,13 +61,18 @@ import {
 } from "../modals/index.js";
 
 const uri = String(process.env.MONGODB_SERVER_URI);
+
+// For Cental DB
 let central_db = null;
 let CentralDBModels = {}; // Store models
 
+// For Tenant DB
 let tenant_db = null;
 let TenantDBModels = {};
 
-// mongoose.set("debug", true); //
+let tenantDBName = null;
+
+mongoose.set("debug", true); //
 
 export async function connectMongoDB() {
     if (central_db) return CentralDBModels; // ✅ Reuse existing connection
@@ -120,16 +125,17 @@ export async function getCentralDBModels() {
     return CentralDBModels;
 }
 
-async function connectTenantDB(dbName) {
+export async function connectTenantDB(dbName) {
+    tenantDBName = dbName
     try {
         // await mongoose.connection.close(); // close existing connection;
         if (tenant_db) {
-            console.log(`🔄 Reusing existing connection for ${dbName}`);
-            return tenant_db;
+            console.log(`🔄 Reusing existing connection for ${tenantDBName}`);
+            return TenantDBModels;
         }
 
-        console.log(`🔄 Creating new connection for ${dbName}`);
-        tenant_db = await mongoose.createConnection(`${uri}/${dbName}`).asPromise();
+        console.log(`🔄 Creating new connection for ${tenantDBName}`);
+        tenant_db = await mongoose.createConnection(`${uri}/${tenantDBName}`).asPromise();
 
         TenantDBModels = {
             Company: tenant_db.model("Company", CompanySchema),
@@ -188,15 +194,26 @@ async function connectTenantDB(dbName) {
         
         
         };
-        return tenant_db;
+        return TenantDBModels;
     } catch (error) {
-        console.error(`❌ Tenant DB Connection Error (${dbName}):`, error.message);
+        console.error(`❌ Tenant DB Connection Error (${tenantDBName}):`, error.message);
         throw new ApiErrorResponse(
             StatusCodes.INTERNAL_SERVER_ERROR,
             error.message
         );
     }
 }
+
+export async function getTenantDBModels (){
+    console.log("🛠 Checking CentralDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
+    if(!TenantDBModels){
+        console.log("⏳ Connecting to MongoDB Again for tenant connection...");
+        return await connectTenantDB(tenantDBName);
+    }
+    return TenantDBModels;
+}
+
+
 
 mongoose.connection.on("connected", () => {
     console.log("Mongoose Connected to DB");
@@ -216,4 +233,4 @@ process.on("SIGINT", async () => {
     process.exit(0);
 });
 
-export { connectTenantDB };
+
