@@ -194,6 +194,7 @@ async function connectTenantDB(dbName) {
         
         };
         return tenant_db;
+        
     } catch (error) {
         console.error(`❌ Tenant DB Connection Error (${dbName}):`, error.message);
         throw new ApiErrorResponse(
