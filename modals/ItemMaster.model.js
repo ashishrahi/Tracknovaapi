@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ItemMasterSchema = new mongoose.Schema(
+export const ItemMasterSchema = new mongoose.Schema(
   {
     ItemMasterId: { type: Number, required: true },
     ItemName: {

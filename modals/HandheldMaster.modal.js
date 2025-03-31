@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const HandheldMasterSchema = new Schema(
+export const HandheldMasterSchema = new Schema(
   {
     ID: { type: Number, required: true, unique: true, index: true },
     HandheldName: { type: String, required: true, trim: true },

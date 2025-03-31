@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserPermissionSchema = new mongoose.Schema(
+export const UserPermissionSchema = new mongoose.Schema(
   {
     UserId: {
       type: String, // UUID as a string

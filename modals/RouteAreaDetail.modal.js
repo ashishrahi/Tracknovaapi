@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RouteAreaDetailSchema = new mongoose.Schema(
+export const RouteAreaDetailSchema = new mongoose.Schema(
   {
     RouteDetailId: { type: Number, required: true },
     RouteID: { type: Number},

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RosterPlanDetailSchema = new mongoose.Schema(
+export const RosterPlanDetailSchema = new mongoose.Schema(
   {
     RosterDetailID: { type: Number, required: true, unique: true },
     RosterID: { type: Number, required: true },

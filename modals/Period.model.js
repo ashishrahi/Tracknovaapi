@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const PeriodSchema = new mongoose.Schema({
+export const PeriodSchema = new mongoose.Schema({
     index: Number,
     StartDate: Date,
     EndDate: Date,

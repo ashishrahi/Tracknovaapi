@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const TaxMasterSchema = new mongoose.Schema(
+export const TaxMasterSchema = new mongoose.Schema(
   {
     TaxId: {
       type: Number,

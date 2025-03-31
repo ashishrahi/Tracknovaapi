@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const AreaWardMasterSchema = new Schema(
+export const AreaWardMasterSchema = new Schema(
   {
     AreaID: { type: Number, required: true, index: true },
     AreaName: { type: String, required: true, trim: true },

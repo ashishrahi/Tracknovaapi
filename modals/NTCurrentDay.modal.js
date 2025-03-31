@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const NTCurrentDaySchema = new mongoose.Schema({
+export const NTCurrentDaySchema = new mongoose.Schema({
     acc : Boolean,
     AreaId: mongoose.Schema.Types.Mixed,
     BinVisited: String,

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const VendorMasterSchema = new mongoose.Schema({
+export const VendorMasterSchema = new mongoose.Schema({
     "VenderId": {
         type: Number,
         require: true,

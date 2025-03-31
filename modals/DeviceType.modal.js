@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const DeviceTypeSchema = new Schema(
+export const DeviceTypeSchema = new Schema(
   {
     Id: { type: Number, required: true, unique: true, index: true },
     dtype: { type: String, required: true, trim: true },

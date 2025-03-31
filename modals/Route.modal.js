@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RouteSchema = new mongoose.Schema(
+export const RouteSchema = new mongoose.Schema(
   {
     Description: { type: String, trim: true },
     RouteDate: { type: Date, },

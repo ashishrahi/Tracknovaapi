@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const CommGroupSchema = new mongoose.Schema({
+export const CommGroupSchema = new mongoose.Schema({
     GroupId: mongoose.Schema.Types.Int32,
     Name: {
         type: String,

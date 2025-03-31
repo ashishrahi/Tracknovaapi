@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const CountryMasterSchema = new Schema(
+export const CountryMasterSchema = new Schema(
   {
     CountryId: { type: Number, required: true, unique: true, index: true },
     CountryName: { type: String, required: true, trim: true },

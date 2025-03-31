@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const CampaignSchema = new mongoose.Schema(
+export const CampaignSchema = new mongoose.Schema(
   {
     CampaignId: {
       type: Number,

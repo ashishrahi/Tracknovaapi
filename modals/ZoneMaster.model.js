@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ZoneMasterSchema = new mongoose.Schema(
+export const ZoneMasterSchema = new mongoose.Schema(
   {
     CreatedBy: { type: String,  trim: true },
     UpdatedBy: { type: String,  trim: true },

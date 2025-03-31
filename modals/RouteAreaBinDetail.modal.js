@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RouteAreaBinDetailSchema = new mongoose.Schema(
+export const RouteAreaBinDetailSchema = new mongoose.Schema(
   {
     AreaID: { type: Number, required: true },  // Changed to Number for consistency
     BinID: { type: mongoose.Schema.Types.Int32, required: true },

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
-const VehicleTypeMasterSchema = new Schema({
+export const VehicleTypeMasterSchema = new Schema({
     CreatedBy: String,
     ShortName: String,
     UpdatedBy: String,
