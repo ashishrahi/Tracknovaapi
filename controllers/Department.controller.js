@@ -29,7 +29,7 @@ export async function AddUpdateDepartmentMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -53,7 +53,7 @@ export async function GetDepartmentMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -77,6 +77,6 @@ export async function DeleteDepartmentMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

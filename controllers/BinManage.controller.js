@@ -26,7 +26,7 @@ export async function AddUpdateBinManage(req, res) {
       StatusCodes.INTERNAL_SERVER_ERROR,
      error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -51,6 +51,6 @@ export async function GetBinManage(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

@@ -25,7 +25,7 @@ export async function AddUpdateDesignationmaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -49,7 +49,7 @@ export async function GetDesignationmaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -73,6 +73,6 @@ export async function DeleteDesignationmaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

@@ -29,7 +29,7 @@ export async function AddUpdateFuelType(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -51,7 +51,7 @@ export async function GetFuelType(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -75,6 +75,6 @@ export async function DeleteFuelType(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

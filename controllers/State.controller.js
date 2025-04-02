@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse,ReturnData} from "../utils/apiResponse/index.js";
 import {
     AddUpdateStateQuery,
     GetStateQuery,
