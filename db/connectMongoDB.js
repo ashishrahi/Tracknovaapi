@@ -94,6 +94,8 @@ export async function connectMongoDB() {
         CentralDBModels = {
             Company: central_db.model("Company", CompanySchema),
             Idp_account: central_db.model("Idp_account", Idp_accountSchema),
+            CountryMaster: central_db.model("CountryMaster", CountryMasterSchema),
+            StateMaster: central_db.model("StateMaster", StateMasterSchema),
         };
         console.log("🔍 Loaded Models:", Object.keys(CentralDBModels));
 

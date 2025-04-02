@@ -1,0 +1,2560 @@
+[{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 42,
+  "ParentId": null,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 59,
+  "ParentId": 68,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 39,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 1,
+  "ParentId": null,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 123,
+  "ParentId": "null",
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 87,
+  "ParentId": 92,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 88,
+  "ParentId": 92,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 101,
+  "ParentId": 92,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 126,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": true,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 144,
+  "ParentId": 38,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 12,
+  "ParentId": 2,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 151,
+  "ParentId": 0,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.966Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 8,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 65,
+  "ParentId": null,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 112,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 19,
+  "ParentId": 69,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 6,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 94,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 96,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 10,
+  "ParentId": 67,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 128,
+  "ParentId": 67,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 129,
+  "ParentId": 67,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 58,
+  "ParentId": 67,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 78,
+  "ParentId": 81,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 84,
+  "ParentId": 81,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 74,
+  "ParentId": 81,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 81,
+  "ParentId": null,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 76,
+  "ParentId": 81,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 14,
+  "ParentId": 67,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 67,
+  "ParentId": null,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 26,
+  "ParentId": 2,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 20,
+  "ParentId": 2,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 149,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 140,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 146,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 115,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 60,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 127,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": true,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 92,
+  "ParentId": null,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 148,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.967Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 66,
+  "ParentId": 81,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 89,
+  "ParentId": 92,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 64,
+  "ParentId": 62,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 15,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 18,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 24,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 33,
+  "ParentId": 69,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 133,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 51,
+  "ParentId": 46,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 53,
+  "ParentId": 18,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 72,
+  "ParentId": 24,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 34,
+  "ParentId": 69,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 35,
+  "ParentId": 69,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 5,
+  "ParentId": 3,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 16,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 25,
+  "ParentId": 67,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 105,
+  "ParentId": 1,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 154,
+  "ParentId": 0,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 2,
+  "ParentId": 1,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 80,
+  "ParentId": 65,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 134,
+  "ParentId": 1,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 29,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 21,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 56,
+  "ParentId": 22,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 27,
+  "ParentId": 67,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 109,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.968Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 121,
+  "ParentId": 123,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 152,
+  "ParentId": 1,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 147,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 23,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 22,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 31,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 93,
+  "ParentId": null,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": true,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 4,
+  "ParentId": 3,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 90,
+  "ParentId": 92,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 91,
+  "ParentId": 92,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 95,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 85,
+  "ParentId": 82,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 3,
+  "ParentId": 1,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.969Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 63,
+  "ParentId": 62,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 32,
+  "ParentId": 62,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 82,
+  "ParentId": 65,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 79,
+  "ParentId": 82,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 75,
+  "ParentId": 82,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 77,
+  "ParentId": 82,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 47,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 54,
+  "ParentId": 18,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 73,
+  "ParentId": 24,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 7,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 30,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 28,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 49,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 50,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 40,
+  "ParentId": null,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.970Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 41,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 11,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 83,
+  "ParentId": 65,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 13,
+  "ParentId": 2,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 9,
+  "ParentId": 2,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 104,
+  "ParentId": 3,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 36,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 111,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 153,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 69,
+  "ParentId": 38,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 125,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 37,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 117,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 107,
+  "ParentId": 106,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 135,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 136,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 122,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 38,
+  "ParentId": null,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 113,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.971Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 130,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 139,
+  "ParentId": 38,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 61,
+  "ParentId": 68,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 150,
+  "ParentId": 93,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 17,
+  "ParentId": 62,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 62,
+  "ParentId": null,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 110,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 102,
+  "ParentId": 93,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 46,
+  "ParentId": 40,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 55,
+  "ParentId": 22,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 108,
+  "ParentId": 42,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 52,
+  "ParentId": 46,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 86,
+  "ParentId": 92,
+  "IsAdd": true,
+  "IsDel": true,
+  "IsEdit": true,
+  "IsExport": true,
+  "IsPost": false,
+  "IsPrint": true,
+  "IsRelease": true,
+  "IsView": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 103,
+  "ParentId": 2,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+},
+{
+  "RoleId": "e45b5e06-01bc-4881-b748-edf1cff433b3",
+  "MenuId": 145,
+  "ParentId": 38,
+  "IsAdd": false,
+  "IsDel": false,
+  "IsEdit": false,
+  "IsExport": false,
+  "IsPost": false,
+  "IsPrint": false,
+  "IsRelease": false,
+  "IsView": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T11:32:29.972Z"
+  }
+}]

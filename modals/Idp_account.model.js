@@ -22,7 +22,17 @@ export const Idp_accountSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
     required: true
-  }
+  },
+  users: [
+    {
+      username: { type: String, required: true },
+      password: {type: String, required: true},
+      email: { type: String, required: true },
+      role: { type: String, required: true }
+    }
+  ]
+
+
 })
 
 Idp_accountSchema.pre("save", async function (next) {

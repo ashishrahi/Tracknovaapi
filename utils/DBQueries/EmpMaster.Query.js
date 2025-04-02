@@ -243,7 +243,6 @@ export const GetEmployeeQuery = async (model) => {
 
 export const UpsertEmpPermissionQuery = async (model, res) => {
   let response = { status: "Failed", message: "" };
-  // console.log("model",model)
   try {
     const { EmpMaster, UserPermission } = await getTenantDBModels();
 
@@ -254,7 +253,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
     if (!model.userId) {
       console.log(" first if block executed");
       const { registerModel, userId, roleId } = model;
-      console.table({ registerModel, userId, roleId });
+      // console.table({ registerModel, userId, roleId });
 
       if (model.registerModel?.username?.trim() === "") {
         throw new ApiErrorResponse(
@@ -307,7 +306,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       const exisitingDeleted = await UserPermission.deleteMany({
         UserId: model.userId,
       });
-      console.log("exisitingDeleted", exisitingDeleted);
+      // console.log("exisitingDeleted", exisitingDeleted);
       // await UserPermission.bulkWrite(
       //     model.userPermission.map((perm) => ({
       //         updateOne: {
