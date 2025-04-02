@@ -1,4 +1,4 @@
-import { registerService, findService, signinService, switchCompanyWithDbNameService, getCountry, getStatebyCountry } from "./v2/index.js";
+import { registerService, findService, signinService, switchCompanyWithDbNameService, getCountry, getStatebyCountry, getCitybyState } from "./v2/index.js";
 
 
 export const v2CompanyManageService = {
@@ -17,4 +17,8 @@ export const v2CountryService = {
 
 export const v2StateService = {
     getStatebyCountry: getStatebyCountry
+}
+
+export const v2CityService = {
+    getCitybyState: getCitybyState
 }

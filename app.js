@@ -48,8 +48,8 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
-app.use(getLoggedInCompany) // for getting loggedIn company details. When someone logged in.
-app.use(verifyAccessToken)
+// app.use(getLoggedInCompany) // for getting loggedIn company details. When someone logged in.
+// app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
 
