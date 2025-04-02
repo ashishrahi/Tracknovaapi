@@ -4,7 +4,7 @@ import argon2 from "argon2";
 export const Idp_accountSchema = new mongoose.Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
     trim: true,
   },
   password: {
@@ -28,11 +28,10 @@ export const Idp_accountSchema = new mongoose.Schema({
       username: { type: String, required: true },
       password: {type: String, required: true},
       email: { type: String, required: true },
-      role: { type: String, required: true }
+      role: { type: String, required: true },
+      dbName: {type: String, required: true}
     }
   ]
-
-
 })
 
 Idp_accountSchema.pre("save", async function (next) {
