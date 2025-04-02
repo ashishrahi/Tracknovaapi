@@ -133,13 +133,17 @@ export const RegisterQuery = async (model, res) => {
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
     if (userExists) {
-      return res
-        .status(StatusCodes.CONFLICT)
-        .json(
-          new ApiErrorResponse(
-            StatusCodes.CONFLICT,
-            "UserId or UserName already exists! Try other one."
-          )
+      // return res
+      //   .status(StatusCodes.CONFLICT)
+      //   .json(
+      //     new ApiErrorResponse(
+      //       StatusCodes.CONFLICT,
+      //       "UserId or UserName already exists! Try other one."
+      //     )
+      //   );
+      throw new ApiErrorResponse(
+          StatusCodes.CONFLICT,
+          "UserId or UserName already exists! Try other one."
         );
     }
     console.log("asp user", model);
@@ -702,6 +706,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
 
 export const GetRoleMasterQuery = async () => {
   try {
+    const { AspNetRoles} = await getTenantDBModels();
     const roles = await AspNetRoles.find().sort({ Name: 1 });
 
     const roleList = roles.map((role) => {
@@ -729,6 +734,7 @@ export const GetRoleMasterQuery = async () => {
 
 export const DeleteRoleMasterQuery = async (modal) => {
   try {
+    const { AspNetRoles, RolePermission } = getTenantDBModels();
     const { RoleId } = modal;
     // console.log('RoleId: ', RoleId);
     const roleExists = await AspNetRoles.findOne({ Id: RoleId });
@@ -761,6 +767,7 @@ export const DeleteRoleMasterQuery = async (modal) => {
 
 export const AddUpdateRolePermissionMasterQuery = async (modal) => {
   try {
+    const { RolePermission } = getTenantDBModels();
     const { roleId } = modal;
 
     // Validation: RoleId required
@@ -866,6 +873,7 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
 export const GetRolePermissionMasterQuery = async (modal) => {
   try {
+    const { RolePermission} = getTenantDBModels();
     const { RoleId } = modal;
 
     if (RoleId === "-1") {
@@ -926,97 +934,87 @@ export const GetRolePermissionMasterQuery = async (modal) => {
 //////////////////////////////////////////////  Get / RolePermission  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionQuery = async (modal) => {
-  // try {
-  const { RoleId } = modal;
-  let data;
+  
 
-  if (RoleId !== "-1") {
-    data = await RolePermission.aggregate([
-      {
-        $match: {
-          RoleId: RoleId,
+  try {
+    const { RolePermission, Menu } = await getTenantDBModels();
+
+    const { RoleId } = modal;
+    let data;
+  
+    if (RoleId !== "-1") {
+      data = await RolePermission.aggregate([
+        {
+          $match: {
+            RoleId: RoleId,
+          },
         },
-      },
-      {
-        $lookup: {
-          // ✅ Join with RolePermission table
-          from: "Menu",
-          localField: "MenuId",
-          foreignField: "MenuId",
-          as: "permissions",
+        {
+          $lookup: {
+            // ✅ Join with RolePermission table
+            from: "Menu",
+            localField: "MenuId",
+            foreignField: "MenuId",
+            as: "permissions",
+          },
         },
-      },
-      {
-        $unwind: {
-          path: "$permissions",
-          preserveNullAndEmptyArrays: true,
+        {
+          $unwind: {
+            path: "$permissions",
+            preserveNullAndEmptyArrays: true,
+          },
         },
-      },
-      {
-        $project: {
-          // ✅ Return required fields and set default permissions to 0
-          _id: 0,
-          RoleId: 1,
-          MenuId: 1,
-          MenuName: "$permissions.MenuName",
-          ParentId: 1,
-          IsAdd: 1,
-          IsEdit: 1,
-          IsDel: 1,
-          IsView: 1,
-          IsPrint: 1,
-          IsExport: 1,
-          IsRelease: 1,
-          IsPost: 1,
+        {
+          $project: {
+            // ✅ Return required fields and set default permissions to 0
+            _id: 0,
+            RoleId: 1,
+            MenuId: 1,
+            MenuName: "$permissions.MenuName",
+            ParentId: 1,
+            IsAdd: 1,
+            IsEdit: 1,
+            IsDel: 1,
+            IsView: 1,
+            IsPrint: 1,
+            IsExport: 1,
+            IsRelease: 1,
+            IsPost: 1,
+          },
         },
-      },
-      {
-        $sort: {
-          MenuName: 1,
+        {
+          $sort: {
+            MenuName: 1,
+          },
         },
-      },
-    ]);
-
-    return {
-      status: 1,
-      message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-      data: formattedData(data),
-      rowCount: data?.length,
-    };
-  } else {
-    data = await Menu.find().sort({ MenuName: 1 }).lean();
-
-    // const newData = data.map((role) => {
-    //   return {
-    //     roleId: role.RoleId,
-    //     menuId: role.MenuId,
-    //     parentMenuId: role.ParentId,
-    //     isAdd: role.IsAdd,
-    //     isDel: role.IsDel,
-    //     isEdit: role.IsEdit,
-    //     isExport: role.IsExport,
-    //     isPost: role.IsPost,
-    //     isPrint: role.IsPrint,
-    //     isRelease: role.IsRelease,
-    //     isView: role.IsView,
-    //     menuName: role.MenuName
-    //   }
-    // })
-
-    const rowCount = data.length;
-
-    return {
-      status: 1,
-      message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
-      data: formattedData(data),
-      rowCount: rowCount,
-    };
-
-    // } catch (error) {
-    //   return{
-    //     status: 0,
-    //     message: error.message,
-    //   }
-    // }
+      ]);
+  
+      return {
+        status: 1,
+        message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        data: formattedData(data),
+        rowCount: data?.length,
+      };
+    } else {
+      data = await Menu.find().sort({ MenuName: 1 }).lean();
+      
+  
+      return {
+        status: 1,
+        message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
+        data: formattedData(data),
+        rowCount: data?.length,
+      };
+  
+      // } catch (error) {
+      //   return{
+      //     status: 0,
+      //     message: error.message,
+      //   }
+      // }
+    }
+  } catch (error) {
+    throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message)
   }
+
 };

@@ -1,19 +1,23 @@
 import { StatusCodes } from "http-status-codes";
+import fs from "fs";
 // import { Company, Idp_account } from "../../modals/index.js";
 import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { companyManageControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js";
 import generatePassword from "../../utils/password-generator/passwordGenerator.js";
-import { getCentralDBModels } from "../../db/connectMongoDB.js";
-import mongoose from "mongoose";
-
-// const { Company, Idp_account } = await getCentralDBModels();
+import { getCentralDBModels } from "../../db/index.js";
+import { connectTenantDB } from "../../db/connectMongoDB.js";
+import { getTenantDBModels } from "../../db/index.js";
+// import { RegisterQuery } from "../../utils/DBQueries/index.js";
+import { EmpMasterController } from "../../controllers/index.js";
+import { AddUpdateEmployeeQuery, UpsertEmpPermissionQuery } from "../../utils/DBQueries/index.js";
+import EmpMaster from "../../modals/EmpMaster.model.js";
 
 export async function registerService(value) {
 
     try {
-        
-        console.log("Company", Company)
-        if(!Company || !Idp_account) throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. failed to load models")
+        const { Company, Idp_account } = await getCentralDBModels();
+
+        if (!Company || !Idp_account) throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. failed to load models")
         /**
          * 01: First insert data in companies collection using Company Model
          * 02: Then insert data in idp collection using Idp Model.
@@ -21,6 +25,7 @@ export async function registerService(value) {
         // const newCompanyData = new Company(value);
 
         // console.log("getCentralDBModels", getCentralDBModels)
+
         const newCompanyData = new Company(value);
         if (value.database.backupEnabled === "Active") {
             newCompanyData.database.backupEnabled = true
@@ -63,6 +68,10 @@ export async function registerService(value) {
             console.log("idp creation start")
             const newIdpData = new Idp_account({
                 username: value.admin.email,
+                /**
+                 * we need to fetch same password as before and sent it  
+                 * current generation again password and sent it
+                 */
                 password: generatedPassword,
                 accountOwner: resgiteredNewCompany._id
             })
@@ -71,6 +80,117 @@ export async function registerService(value) {
                 throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError)
             }
         }
+
+        /**
+         * Now creating a user to access Database
+         * 1. Admin => username: admin
+         *             password: admin
+         * 2. Now giving him a full permissions in later update we will create a seprate permisison page to provide permissions.
+         * 
+         * 3. For Doing all these need to connect with database.
+         * 
+         * 
+         * 
+         */
+
+        await connectTenantDB(newCompanyData.database.dbName);
+        const { Menu, AspNetRoles, RolePermission } = await getTenantDBModels();
+
+        // const admin = await EmpMasterController.AddUpdateEmployee()
+
+        const payload =
+        {
+            "userId": null,
+            "empid": 0, // will update inside query
+            "empName": newCompanyData.admin.name,
+            "empCode": "",
+            "empPerAddress": newCompanyData.companyAddress,
+            "empLocalAddress": newCompanyData.companyAddress,
+            "empFatherName": null,
+            "empspauseName": null,
+            "empMotherName": null,
+            "empMobileNo": newCompanyData.admin.phone,
+            "empStatus": "Active",
+            "empPanNumber": newCompanyData.pan,
+            "empAddharNo": newCompanyData.aadhaar,
+            "empDob": null,
+            "empJoiningDate": Date.now(),
+            "empretirementDate": null,
+            "empDesignationId": null,
+            "empDeptId": null,
+            "empStateId": newCompanyData.state,
+            "empCountryID": newCompanyData.country,
+            "empCityId": newCompanyData.city,
+            "empPincode": newCompanyData.pincode,
+            "createdBy": null,
+            "updatedBy": null,
+            "createdOn": "2025-04-01",
+            "updatedOn": "2025-04-01",
+            "roleId": "",
+            "imageFile": "",
+            "email": newCompanyData.admin.email,
+            "dlno": null,
+            "gender": null,
+            // "departmentName": "",
+            // "designationName": "",
+            // "empStateName": "",
+            // "empCountryName": "",
+            // "empCityName": "",
+            // "srno": 0,
+            // "empDepName": "",
+            // ---------For Login---------->
+            "registerModel": {
+                "id": "",
+                "username": "",
+                "email": "user@example.com",
+                "password": "1234",
+                "role": ""
+            },
+            "userPermission": []
+        }
+
+        const { data } = await AddUpdateEmployeeQuery(payload); // Emp created
+        // updating payload
+        payload.empid = data.Empid;
+
+        // Inserting all menus to show sidebar and for permissions;
+        const menuJsonData = JSON.parse(fs.readFileSync("../../utils/db-default-data/Menu.json", "utf-8"));
+
+        const menuResult = await Menu.insertMany(menuJsonData);
+        if(menuResult.insertedCount < 1){
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Menu data")
+        }
+
+        // Inserting Role name
+        const roleName = await AspNetRoles.insertOne({
+            Id : "e45b5e06-01bc-4881-b748-edf1cff433b3",
+            Name: "Admin",
+            NormalizedName: "ADMIN"
+        });
+        if(!roleName){
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Role data")
+        }
+
+        // Inserting Role's Related Permission;
+        const rolePermissionJsonData = JSON.parse(fs.readFileSync("../../utils/db-default-data/RolePermission.json", "utf-8"));
+
+        const rolePermissionResult = await RolePermission.insertMany(rolePermissionJsonData);
+        if(rolePermissionResult.insertedCount < 1){
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Role's Permission");
+        }
+
+        // Now finally upserting data.
+       
+        payload.registerModel.username = "admin";
+        payload.registerModel.password = "admin";
+        payload.registerModel.email = newCompanyData.admin.email;
+        payload.userPermission = rolePermissionJsonData;
+
+        const upsertAdminPermissionAndCreatingAdminAccount = await UpsertEmpPermissionQuery(payload); 
+        if(upsertAdminPermissionAndCreatingAdminAccount.state !== 1){
+            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create admin and their permissions");
+        }
+        
         return resgiteredNewCompany;
     } catch (error) {
         console.log("error from service", error);
@@ -83,12 +203,12 @@ export async function registerService(value) {
 export async function findService() {
     try {
         const { Company } = await getCentralDBModels();  // 🚀 Ensure connection
-        
+
         if (!Company) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. Failed to load models");
         }
         const companiesData = await Company.find().lean();
-        if(!companiesData){
+        if (!companiesData) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get Companies")
         }
         return companiesData;
@@ -101,3 +221,7 @@ export async function findService() {
 export function switchCompanyWithDbNameService(company) {
 
 }
+
+
+
+

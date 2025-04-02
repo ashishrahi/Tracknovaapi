@@ -8,7 +8,7 @@ import { getDashboardQuery, getVehicleQuery, BinLocationQuery, BinsByWardNumberQ
 import ItemMaster from "../modals/ItemMaster.model.js";
 import { NT } from "../modals/NT.model.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
-
+import { getTenantDBModels } from "../db/index.js";
 //-------------- getDashboard ------>
 
 export async function getDashboard(req, res) {
@@ -60,6 +60,7 @@ export async function getVehicleCurrentDay(req, res) {
 
 export async function getVehicleDistance(req, res) {
   try {
+    const { ItemMaster, NT } = getTenantDBModels()
     /**
      * parameterValues[0] = vehicle no
      * 1 = startdate
@@ -182,7 +183,7 @@ export async function getAllBins(req, res) {
     res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
 
-    const errorResponse = new ApiErrorResponse(false, StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
+    const errorResponse = new ApiErrorResponse(StatusCodes.NOT_FOUND, 'Failed to fetch All Bins');
     res.status(errorResponse.StatusCode).json(errorResponse);
 
   }
@@ -210,6 +211,7 @@ export async function getMapBinsWardWise(req, res) {
 
 export async function getvVehicleNo(req, res, next) {
   try {
+    const { ItemMaster} = getTenantDBModels();
     const vehicleNumbers = await ItemMaster.aggregate([
       { $match: { ItemFlag: "V" } },
       { $group: { _id: "$VehicleNo" } },

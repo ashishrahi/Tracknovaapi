@@ -1,0 +1,2582 @@
+[
+
+  {
+  "_id": {
+    "$oid": "67b6ef3be1cb2a7e6dd2ec15"
+  },
+  "MenuId": 1,
+  "MenuName": "Admin",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec16"
+  },
+  "MenuId": 2,
+  "MenuName": "Masters",
+  "ParentId": 1,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec17"
+  },
+  "MenuId": 3,
+  "MenuName": "Security",
+  "ParentId": 1,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec18"
+  },
+  "MenuId": 4,
+  "MenuName": "Roles",
+  "ParentId": 3,
+  "PageUrl": "Admin/Security/Role",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec19"
+  },
+  "MenuId": 5,
+  "MenuName": "Juridiction Wise File Store",
+  "ParentId": 3,
+  "PageUrl": "Admin/Security/Juridiction",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1a"
+  },
+  "MenuId": 6,
+  "MenuName": "Country",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/Countries",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1b"
+  },
+  "MenuId": 7,
+  "MenuName": "State",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/States",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1c"
+  },
+  "MenuId": 8,
+  "MenuName": "City",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/City",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1d"
+  },
+  "MenuId": 9,
+  "MenuName": "Unit",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/Unit",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1e"
+  },
+  "MenuId": 10,
+  "MenuName": "Department",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/Departments",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec1f"
+  },
+  "MenuId": 11,
+  "MenuName": "Tax",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/Tax",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec20"
+  },
+  "MenuId": 12,
+  "MenuName": "Category",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/ItemCategory",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec21"
+  },
+  "MenuId": 13,
+  "MenuName": "Type",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/ItemType",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 8,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec22"
+  },
+  "MenuId": 14,
+  "MenuName": "Employee",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/Employee",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec23"
+  },
+  "MenuId": 15,
+  "MenuName": "Item Detail",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/Item",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 10,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec24"
+  },
+  "MenuId": 16,
+  "MenuName": "Licensing/Insurance",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/Licence",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec25"
+  },
+  "MenuId": 17,
+  "MenuName": "Vendor",
+  "ParentId": 62,
+  "PageUrl": "Admin/Masters/Vendor",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec26"
+  },
+  "MenuId": 18,
+  "MenuName": "Item Issue",
+  "ParentId": 40,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 12,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec27"
+  },
+  "MenuId": 19,
+  "MenuName": "Complaint",
+  "ParentId": 69,
+  "PageUrl": "Admin/Masters/ItemComplaint",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec28"
+  },
+  "MenuId": 20,
+  "MenuName": "Folder Location",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/FolderLocations",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 14,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec29"
+  },
+  "MenuId": 21,
+  "MenuName": "Off.Purchase Indent",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/OfficePurchase",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2a"
+  },
+  "MenuId": 22,
+  "MenuName": "PurchaseOrder",
+  "ParentId": 40,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2b"
+  },
+  "MenuId": 23,
+  "MenuName": "PurchaseInvoice",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/PurchaseInvoice",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2c"
+  },
+  "MenuId": 24,
+  "MenuName": "Item Return",
+  "ParentId": 40,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2d"
+  },
+  "MenuId": 25,
+  "MenuName": "Location",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/Location",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 14,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2e"
+  },
+  "MenuId": 26,
+  "MenuName": "Financial Year",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/FinancialYears",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 14,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec2f"
+  },
+  "MenuId": 27,
+  "MenuName": "Organization",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/Company",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 14,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec30"
+  },
+  "MenuId": 28,
+  "MenuName": "Stock General",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/StockLedgers",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 15,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec31"
+  },
+  "MenuId": 29,
+  "MenuName": "Mrn",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/Mrn",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 15,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec32"
+  },
+  "MenuId": 30,
+  "MenuName": "Stock Bin",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/StocksBin",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 15,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec33"
+  },
+  "MenuId": 31,
+  "MenuName": "QC",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/Qc",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 15,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec34"
+  },
+  "MenuId": 32,
+  "MenuName": "Services",
+  "ParentId": 62,
+  "PageUrl": "Admin/Masters/Services",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec35"
+  },
+  "MenuId": 33,
+  "MenuName": "Job Card",
+  "ParentId": 69,
+  "PageUrl": "Admin/Masters/JobCards",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec36"
+  },
+  "MenuId": 34,
+  "MenuName": "JobWorkChallan",
+  "ParentId": 69,
+  "PageUrl": "Admin/Masters/JobWorkChallan",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec37"
+  },
+  "MenuId": 35,
+  "MenuName": "JobWorkChallanRecieve",
+  "ParentId": 69,
+  "PageUrl": "Admin/Masters/JobWorkRecieve",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 8,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec38"
+  },
+  "MenuId": 36,
+  "MenuName": "UtilizationLog",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/UtilizationLog",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec39"
+  },
+  "MenuId": 37,
+  "MenuName": "Vehicle Detail",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/Vehicledetail",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec3a"
+  },
+  "MenuId": 38,
+  "MenuName": "Vehicle Management",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec3b"
+  },
+  "MenuId": 39,
+  "MenuName": " Maintenance/Warranty",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/Maintenance",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec3c"
+  },
+  "MenuId": 40,
+  "MenuName": "Store Management",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec3d"
+  },
+  "MenuId": 41,
+  "MenuName": "Store Master",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/Store",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec3f"
+  },
+  "MenuId": 46,
+  "MenuName": "WorkShop Indent",
+  "ParentId": 40,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec40"
+  },
+  "MenuId": 47,
+  "MenuName": "Staff Indent",
+  "ParentId": 40,
+  "PageUrl": "Admin/Masters/Staff",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec41"
+  },
+  "MenuId": 49,
+  "MenuName": "Stock Ledger",
+  "ParentId": 42,
+  "PageUrl": "http://103.20.213.26:8088/Viewer.aspx?report=StockLedger2",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec42"
+  },
+  "MenuId": 50,
+  "MenuName": "Stock Summary",
+  "ParentId": 42,
+  "PageUrl": "http://103.20.213.26:8088/Viewer.aspx?report=StockSummary",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec43"
+  },
+  "MenuId": 51,
+  "MenuName": "JobCard Indent",
+  "ParentId": 46,
+  "PageUrl": "Admin/Masters/JobCard",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec44"
+  },
+  "MenuId": 52,
+  "MenuName": "Wrk. Pur. Indent",
+  "ParentId": 46,
+  "PageUrl": "Admin/Masters/WorkShopPurchase",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec45"
+  },
+  "MenuId": 53,
+  "MenuName": "JobCard Item Issue",
+  "ParentId": 18,
+  "PageUrl": "Admin/Masters/IssueDetail/JobCard",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 12,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec46"
+  },
+  "MenuId": 54,
+  "MenuName": "Staff Item Issue",
+  "ParentId": 18,
+  "PageUrl": "Admin/Masters/IssueDetail/Staff",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 12,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec47"
+  },
+  "MenuId": 55,
+  "MenuName": "Workshop",
+  "ParentId": 22,
+  "PageUrl": "Admin/Masters/PurchaseOrder/Workshop",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec48"
+  },
+  "MenuId": 56,
+  "MenuName": "Office",
+  "ParentId": 22,
+  "PageUrl": "Admin/Masters/PurchaseOrder/Office",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec49"
+  },
+  "MenuId": 58,
+  "MenuName": "Designation Master",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/DesignationMasterN",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 13,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec4b"
+  },
+  "MenuId": 60,
+  "MenuName": "Fuel Type",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/FuelTypeMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 17,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec4c"
+  },
+  "MenuId": 61,
+  "MenuName": "Vehicle Type Master",
+  "ParentId": 68,
+  "PageUrl": "Admin/Masters/VehicleTypeMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 18,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec4d"
+  },
+  "MenuId": 62,
+  "MenuName": "Vendor Info",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec4e"
+  },
+  "MenuId": 63,
+  "MenuName": "Service Contract",
+  "ParentId": 62,
+  "PageUrl": "Admin/Masters/VendorContractDetailMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec4f"
+  },
+  "MenuId": 64,
+  "MenuName": "Item Contract",
+  "ParentId": 62,
+  "PageUrl": "Admin/Masters/ItemContractMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec50"
+  },
+  "MenuId": 65,
+  "MenuName": "Communication",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec51"
+  },
+  "MenuId": 66,
+  "MenuName": "Group",
+  "ParentId": 81,
+  "PageUrl": "Comm/CommGroup",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec52"
+  },
+  "MenuId": 67,
+  "MenuName": "Employee Info",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec53"
+  },
+  "MenuId": 69,
+  "MenuName": "Vehicle Complaints",
+  "ParentId": 38,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec54"
+  },
+  "MenuId": 72,
+  "MenuName": "JobCard Item Return",
+  "ParentId": 24,
+  "PageUrl": "Admin/Masters/ReturnDetail/JobCard",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec55"
+  },
+  "MenuId": 73,
+  "MenuName": "Staff Item Return",
+  "ParentId": 24,
+  "PageUrl": "Admin/Masters/ReturnDetail/Staff",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec56"
+  },
+  "MenuId": 74,
+  "MenuName": "Email Settings",
+  "ParentId": 81,
+  "PageUrl": "Comm/EmailSettings",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec57"
+  },
+  "MenuId": 75,
+  "MenuName": "Sms Settings",
+  "ParentId": 82,
+  "PageUrl": "Comm/SmsSetting",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec58"
+  },
+  "MenuId": 76,
+  "MenuName": "Email Tamplate",
+  "ParentId": 81,
+  "PageUrl": "Comm/EmailTemplate",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec59"
+  },
+  "MenuId": 77,
+  "MenuName": "Sms Tamplate",
+  "ParentId": 82,
+  "PageUrl": "Comm/SmsTemplate",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5a"
+  },
+  "MenuId": 78,
+  "MenuName": "Email Campaign",
+  "ParentId": 81,
+  "PageUrl": "Comm/Campaign/EMAIL",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5b"
+  },
+  "MenuId": 79,
+  "MenuName": "Sms Campaign",
+  "ParentId": 82,
+  "PageUrl": "Comm/Campaign/SMS",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5c"
+  },
+  "MenuId": 80,
+  "MenuName": "Members",
+  "ParentId": 65,
+  "PageUrl": "Comm/Member",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5d"
+  },
+  "MenuId": 81,
+  "MenuName": "Email System",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5e"
+  },
+  "MenuId": 82,
+  "MenuName": "Sms",
+  "ParentId": 65,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec5f"
+  },
+  "MenuId": 83,
+  "MenuName": "Template(SMS/Email)",
+  "ParentId": 65,
+  "PageUrl": "Comm/CampaignTemplates",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec60"
+  },
+  "MenuId": 84,
+  "MenuName": "Email Event Settings",
+  "ParentId": 81,
+  "PageUrl": "Comm/EventSetting/EMAIL",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec61"
+  },
+  "MenuId": 85,
+  "MenuName": "SMS Event Settings",
+  "ParentId": 82,
+  "PageUrl": "Comm/EventSetting/SMS",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec62"
+  },
+  "MenuId": 86,
+  "MenuName": "Zone",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/Zone",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec63"
+  },
+  "MenuId": 87,
+  "MenuName": "Area/Ward",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/AreaWard",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec64"
+  },
+  "MenuId": 88,
+  "MenuName": "Bin/KudaGhar",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/BinLocations",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec65"
+  },
+  "MenuId": 89,
+  "MenuName": "Handheld Info",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/HandheldInfo",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec66"
+  },
+  "MenuId": 90,
+  "MenuName": "Roster Plan",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/RosterPlans",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec67"
+  },
+  "MenuId": 91,
+  "MenuName": "Route Detail",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/RouteDetails",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec68"
+  },
+  "MenuId": 92,
+  "MenuName": "Garbage Collection",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec69"
+  },
+  "MenuId": 93,
+  "MenuName": "Reports",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": false,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6a"
+  },
+  "MenuId": 94,
+  "MenuName": "Daily Roster Plan",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/DailyRoster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6b"
+  },
+  "MenuId": 95,
+  "MenuName": "Route Deviation",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/RouteDeviationRep",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6c"
+  },
+  "MenuId": 96,
+  "MenuName": "Defaulter Roster",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/RosterDefaulterRep",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6d"
+  },
+  "MenuId": 101,
+  "MenuName": "Bin/KudaGhar Priority",
+  "ParentId": 92,
+  "PageUrl": "Admin/Masters/BinSerialwise",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6e"
+  },
+  "MenuId": 102,
+  "MenuName": "Weekly Garbage Collection",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/WeeklyGarbageCollection",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 8,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec6f"
+  },
+  "MenuId": 103,
+  "MenuName": "ZoneM",
+  "ParentId": 2,
+  "PageUrl": "Admin/Masters/Zone",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec70"
+  },
+  "MenuId": 104,
+  "MenuName": "User Permission",
+  "ParentId": 3,
+  "PageUrl": "Admin/Security/UserPermission",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec71"
+  },
+  "MenuId": 105,
+  "MenuName": "Maps",
+  "ParentId": 1,
+  "PageUrl": "Admin/Masters/Maps",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec72"
+  },
+  "MenuId": 107,
+  "MenuName": "Vehicle Item Report",
+  "ParentId": 106,
+  "PageUrl": "Admin/Masters/ItemConsumed",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec73"
+  },
+  "MenuId": 108,
+  "MenuName": "Workshop Service",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/ItemConsumed",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 10,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec74"
+  },
+  "MenuId": 109,
+  "MenuName": "OutSource Service",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/VehicleService",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec75"
+  },
+  "MenuId": 110,
+  "MenuName": "Vendor Item Detail",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/VendorItem",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 12,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec76"
+  },
+  "MenuId": 111,
+  "MenuName": "Vehicle Age Rep",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/VehicleAge",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 13,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec77"
+  },
+  "MenuId": 112,
+  "MenuName": "Complain Status",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/ComplainStatusSummary",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 14,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec78"
+  },
+  "MenuId": 113,
+  "MenuName": "Vehicle Track",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehicleTrackNew",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 9,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec79"
+  },
+  "MenuId": 115,
+  "MenuName": "Fuel Consumption",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehicleMileageNew",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 11,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec7a"
+  },
+  "MenuId": 117,
+  "MenuName": "Vehicle Detail Summary",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehicleDetailStatusNew",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 13,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec7b"
+  },
+  "MenuId": 121,
+  "MenuName": "Overspeed Alert",
+  "ParentId": 123,
+  "PageUrl": "Admin/Masters/VehicleOverSpeed",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec7c"
+  },
+  "MenuId": 122,
+  "MenuName": "Vehicle Location",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehiclePassingLocation",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 18,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec7d"
+  },
+  "MenuId": 123,
+  "MenuName": "Alert",
+  "ParentId": "null",
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 5,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec7f"
+  },
+  "MenuId": 125,
+  "MenuName": "Vehicle Detail",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/Vehicledetail",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 1,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec80"
+  },
+  "MenuId": 126,
+  "MenuName": "Brand Master",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/BrandMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec81"
+  },
+  "MenuId": 127,
+  "MenuName": "Fuel Type",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/FuelTypeMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec82"
+  },
+  "MenuId": 128,
+  "MenuName": "Department",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/Departments",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 2,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec83"
+  },
+  "MenuId": 129,
+  "MenuName": "Designation",
+  "ParentId": 67,
+  "PageUrl": "Admin/Masters/DesignationMasterN",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec84"
+  },
+  "MenuId": 130,
+  "MenuName": "Vehicle Type",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/VehicleTypeMaster",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 4,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec85"
+  },
+  "MenuId": 133,
+  "MenuName": "Job Card Status ",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/Jobcardstatus",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec86"
+  },
+  "MenuId": 134,
+  "MenuName": "MenuCreate",
+  "ParentId": 1,
+  "PageUrl": "Admin/Masters/MenuCreate",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 3,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec87"
+  },
+  "MenuId": 135,
+  "MenuName": "Vehicle Item Service",
+  "ParentId": 42,
+  "PageUrl": "Admin/Masters/VehicleItemService",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 15,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec88"
+  },
+  "MenuId": 136,
+  "MenuName": "Vehicle Kudaghar Visited",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehicleDistanceSummaryRep",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 10,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec89"
+  },
+  "MenuId": 139,
+  "MenuName": "Vehicle Type Info",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/VTypeChild",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 19,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8a"
+  },
+  "MenuId": 140,
+  "MenuName": "Fuel Consp With Opening",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/FuelConsumption",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 19,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8b"
+  },
+  "MenuId": 144,
+  "MenuName": "CamTrack",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/CamTrack",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 20,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8c"
+  },
+  "MenuId": 145,
+  "MenuName": "test multisel",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/CallMultiSelectTst",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 21,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8d"
+  },
+  "MenuId": 146,
+  "MenuName": "Fuel Consp Without Opening",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehicleFuelDateRange",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 20,
+  "IsMenu": true,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8e"
+  },
+  "MenuId": 147,
+  "MenuName": "Probable Wire Tempering",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/ProbableWireTempering",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 21,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec8f"
+  },
+  "MenuId": 148,
+  "MenuName": "Geo Fencing Report",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/GeoFencingRep",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 22,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec90"
+  },
+  "MenuId": 149,
+  "MenuName": "Fuel Bal Correction",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/FuelBalCorrection",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 22,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec91"
+  },
+  "MenuId": 150,
+  "MenuName": "Vehicles Not Moved",
+  "ParentId": 93,
+  "PageUrl": "Admin/Masters/VehiclesNotMoved",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 23,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec92"
+  },
+  "MenuId": 151,
+  "MenuName": "Change Password",
+  "ParentId": 0,
+  "PageUrl": "Admin/Masters/ResetPassw",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 6,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec93"
+  },
+  "MenuId": 152,
+  "MenuName": "PlacesSearch",
+  "ParentId": 1,
+  "PageUrl": "Admin/Masters/PlacesSearch",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec94"
+  },
+  "MenuId": 153,
+  "MenuName": "Vehicle Audit Information",
+  "ParentId": 38,
+  "PageUrl": "Admin/Masters/VehicleAudit",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 8,
+  "IsMenu": true,
+  "IsAdd": true,
+  "IsEdit": true,
+  "IsDel": true,
+  "IsView": true,
+  "IsPrint": true,
+  "IsExport": true,
+  "IsRelease": true,
+  "IsPost": true
+},
+{
+  "_id": {
+    "$oid": "67b6ef3ce1cb2a7e6dd2ec95"
+  },
+  "MenuId": 154,
+  "MenuName": "Master",
+  "ParentId": 0,
+  "PageUrl": "",
+  "Icon": "",
+  "DisplayNo": 1,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67caddfba4c3ebf91e6530e9"
+  },
+  "MenuId": 131,
+  "MenuName": "Tracking Data",
+  "ParentId": 38,
+  "PageUrl": "Vehicle Management/Tracking Data",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": true,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67caed16a4c3ebf91e6530ea"
+  },
+  "MenuId": 43,
+  "MenuName": "Help",
+  "ParentId": null,
+  "PageUrl": null,
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+},
+{
+  "_id": {
+    "$oid": "67caed61a4c3ebf91e6530eb"
+  },
+  "MenuId": 44,
+  "MenuName": "Help Creation",
+  "ParentId": 43,
+  "PageUrl": "Help/Help Creation",
+  "Icon": "fa fa-th-large",
+  "DisplayNo": 7,
+  "IsMenu": false,
+  "IsAdd": false,
+  "IsEdit": false,
+  "IsDel": false,
+  "IsView": false,
+  "IsPrint": false,
+  "IsExport": false,
+  "IsRelease": false,
+  "IsPost": false
+}]
