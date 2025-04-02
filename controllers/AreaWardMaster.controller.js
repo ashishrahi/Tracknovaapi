@@ -25,7 +25,7 @@ export async function AddUpdateAreaWardMaster(req,res){
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( StatusCodes.BAD_REQUEST, error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }
 
@@ -45,7 +45,7 @@ export async function GetAreaWardMaster(req,res){
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( StatusCodes.BAD_REQUEST, error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }
 
@@ -64,6 +64,6 @@ export async function DeleteAreaWardMaster(req,res){
 
     } catch (error) {
         const apiErrorResponse = new ApiErrorResponse( StatusCodes.BAD_REQUEST, error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }

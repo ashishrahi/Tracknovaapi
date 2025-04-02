@@ -54,7 +54,7 @@ export async function GetMenuMaster(req,res){
         const apiErrorResponse = new ApiErrorResponse(
             StatusCodes.BAD_REQUEST,
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }}
 
     
@@ -77,7 +77,7 @@ export async function GetParentMenuMaster(req,res){
         const apiErrorResponse = new ApiErrorResponse(
              StatusCodes.BAD_REQUEST, 
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }
 
@@ -100,7 +100,7 @@ export async function GetChildMenuMaster(req,res){
         const apiErrorResponse = new ApiErrorResponse(
             StatusCodes.INTERNAL_SERVER_ERROR, 
             error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }}
 /////////////////////// DeleteMenuMaster //////////////////////////////////////////////////
 
@@ -121,5 +121,5 @@ export async function DeleteMenuMaster(req,res){
         const apiErrorResponse = new ApiErrorResponse(
              StatusCodes.BAD_REQUEST, 
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }}

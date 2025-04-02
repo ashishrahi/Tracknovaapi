@@ -29,7 +29,7 @@ export async function AddUpdateCountryMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -53,7 +53,7 @@ export async function GetCountryMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -78,6 +78,6 @@ export async function DeleteCountryMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

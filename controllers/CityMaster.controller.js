@@ -30,7 +30,7 @@ export async function AddUpdateCityMaster(req, res) {
         StatusCodes.BAD_REQUEST,
         error.message
       );
-      res.status(errorResponse.statusCode).json(errorResponse);
+      res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }
 
@@ -78,7 +78,7 @@ export async function GetCityMaster(req, res) {
         StatusCodes.BAD_REQUEST,
         error.message
       );
-      res.status(errorResponse.statusCode).json(errorResponse);
+      res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }
 
@@ -103,6 +103,6 @@ export async function DeleteCityMaster(req, res) {
         StatusCodes.BAD_REQUEST,
         error.message
       );
-      res.status(errorResponse.statusCode).json(errorResponse);
+      res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }

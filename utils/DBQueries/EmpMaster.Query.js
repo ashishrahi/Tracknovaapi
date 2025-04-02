@@ -9,12 +9,13 @@ import {
 import { getTenantDBModels } from "../../db/index.js";
 
 //---------AddUpdateEmployeeQuery------>
+
 export const AddUpdateEmployeeQuery = async (model) => {
   try {
     const { EmpMaster } = await getTenantDBModels();
 
-    let response = {};
-
+    let response = {}; 
+    
     // Check if Employee Exists
     const existingEmployee = await EmpMaster.findOne(
       { EmpName: model.empName, EmpMobileNo: model.empMobileNo }
@@ -135,7 +136,7 @@ export const GetEmployeeQuery = async (model) => {
         },
       },
       // Lookup State
-      {
+      {  
         $lookup: {
           from: "StateMaster",
           localField: "EmpStateId",

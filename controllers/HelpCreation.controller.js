@@ -29,7 +29,7 @@ export async function AddHelpCreation(req,res){
         const apiErrorResponse = new ApiErrorResponse( 
             StatusCodes.BAD_REQUEST,
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }}
 
 ////////////////////////////////////////////////// GetHelpCreationController //////////////////////////////////////////////////

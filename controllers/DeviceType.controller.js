@@ -32,6 +32,6 @@ export async function GetDeviceType(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

@@ -27,7 +27,7 @@ export async function AddUpdateHandheldMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -49,7 +49,7 @@ export async function GetHandheldMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -71,6 +71,6 @@ export async function DeleteHandheldMaster(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    return res.status(errorResponse.statusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }

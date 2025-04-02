@@ -27,7 +27,7 @@ export async function AddUpdateGeoFencing(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 //////////////////////////////////////////////// GetGeoFencing //////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ export async function GetGeoFencing(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 
@@ -71,6 +71,6 @@ export async function DeleteGeoFencing(req, res) {
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
