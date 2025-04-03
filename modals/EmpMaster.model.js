@@ -17,6 +17,7 @@ export const EmpMasterSchema = new mongoose.Schema({
   },
   EmpCode: {
     type: String,
+    default: null 
     // required: true
   }, // Indexed for faster lookups
   EmpPerAddress: {
@@ -29,6 +30,7 @@ export const EmpMasterSchema = new mongoose.Schema({
   },
   EmpFatherName: {
     type: String,
+    default: null,
     set: (value) => {
       return value
         .split(" ") // Split string into words
@@ -39,7 +41,9 @@ export const EmpMasterSchema = new mongoose.Schema({
     }
   },
   EmpspauseName: {
-    type: String, set: (value) => {
+    type: String,
+    default: null,
+    set: (value) => {
       return value
         .split(" ") // Split string into words
         .map(
@@ -49,7 +53,9 @@ export const EmpMasterSchema = new mongoose.Schema({
     }
   },
   EmpMotherName: {
-    type: String, set: (value) => {
+    type: String, 
+    default: null,
+    set: (value) => {
       return value
         .split(" ") // Split string into words
         .map(
@@ -80,41 +86,46 @@ export const EmpMasterSchema = new mongoose.Schema({
   },
   EmpDob: {
     type: Date,
+    default: null
     // required: true
   },
   EmpJoiningDate: {
     type: Date,
+    default: null
     // required: true
   },
   EmpRetirementDate: { type: Date, default: null },
 
   EmpDesignationId: {
     type: Number,
+    default: null 
   },
   EmpDeptId: {
     type: Number,
+    default: null 
   },
   EmpStateId: {
-    type: Number,
+    type: mongoose.Schema.Types.Mixed
   },
   // EmpCountryID
   EmpCountryID: {
-    type: Number,
+    type: mongoose.Schema.Types.Mixed
   },
   EmpCityId: {
-    type: Number,
+    type: mongoose.Schema.Types.Mixed
   },
   EmpPincode: { type: mongoose.Schema.Types.Mixed },
-  CreatedBy: { type: String },
-  UpdatedBy: { type: String },
+  CreatedBy: { type: String, default: null  },
+  UpdatedBy: { type: String, default: null  },
   UserId: { type: mongoose.Schema.Types.Mixed },
   RoleId: { type: mongoose.Schema.Types.Mixed },
   ImageFile: { type: mongoose.Schema.Types.Mixed, default: null }, // Can store file paths or cloud URLs
   SignatureFile: { type: mongoose.Schema.Types.Mixed, default: null },
   Email: { type: String, default: "mailnotexists@gmail.com", lowercase: true, trim: true, match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email format"], },
-  DLNo: { type: String }, // Driving License No.
+  DLNo: { type: String, default: null  }, // Driving License No.
   Gender: {
     type: String,
+    default: null 
     // enum: ["Male", "Female", "Other"], 
     // required: true },
   },

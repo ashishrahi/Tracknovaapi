@@ -403,11 +403,12 @@ export async function GetRoleMaster(req, res) {
 
 export async function DeleteRoleMaster(req, res) {
   try {
-    const modal = req.body;
+    const { RoleId } = req.query;
 
-    const {status, message, data} = await DeleteRoleMasterQuery(modal);
+    const { status, message, data } = await DeleteRoleMasterQuery(RoleId);
     const successResponse = new ApiSuccessResponse(
       status,
+      StatusCodes.OK,
       message,
       data
     );

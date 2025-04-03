@@ -12,6 +12,7 @@ import { EmpMasterController } from "../../controllers/index.js";
 import { AddUpdateEmployeeQuery, UpsertEmpPermissionQuery } from "../../utils/DBQueries/index.js";
 import EmpMaster from "../../modals/EmpMaster.model.js";
 
+//--------- registerService -------->
 export async function registerService(value) {
 
     try {
@@ -56,7 +57,10 @@ export async function registerService(value) {
 
         console.log(`Password is ${generatedPassword}`);
 
-        const isIdpAlreadyGenerated = await Idp_account.findOne({ username: (value?.admin?.email).toLowerCase() })
+        // userName for Admin. It is also unique.
+        const adminUserName = (value.admin.name.split(" ")[0] + "_admin").toLowerCase();
+        const isIdpAlreadyGenerated = await Idp_account.findOne({ username: adminUserName });
+
         console.log("isIdpAlreadyGenerated", isIdpAlreadyGenerated);
 
         /**
@@ -67,19 +71,31 @@ export async function registerService(value) {
         if (!isIdpAlreadyGenerated) {
             console.log("idp creation start")
             const newIdpData = new Idp_account({
-                username: value.admin.email,
+                username: adminUserName,
                 /**
                  * we need to fetch same password as before and sent it  
                  * current generation again password and sent it
                  */
                 password: generatedPassword,
-                accountOwner: resgiteredNewCompany._id
+                accountOwner: resgiteredNewCompany._id,
+                users: [
+                    {
+                        username: adminUserName,
+                        password: generatedPassword,
+                        email: value.admin.email,
+                        role: value.admin.role,
+                    }
+                ]
             })
             const registeredIdp = await newIdpData.save();
             if (!registeredIdp) {
                 throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError)
             }
         }
+
+        // If isIdpAlreadyGenerated is true , It means this owner has a already company registed with us.
+
+
 
         /**
          * Now creating a user to access Database
@@ -106,31 +122,31 @@ export async function registerService(value) {
             "empCode": "",
             "empPerAddress": newCompanyData.companyAddress,
             "empLocalAddress": newCompanyData.companyAddress,
-            "empFatherName": null,
-            "empspauseName": null,
-            "empMotherName": null,
+            // "empFatherName": null,
+            // "empspauseName": null,
+            // "empMotherName": null,
             "empMobileNo": newCompanyData.admin.phone,
             "empStatus": "Active",
             "empPanNumber": newCompanyData.pan,
             "empAddharNo": newCompanyData.aadhaar,
-            "empDob": null,
+            // "empDob": null,
             "empJoiningDate": Date.now(),
-            "empretirementDate": null,
-            "empDesignationId": null,
-            "empDeptId": null,
+            // "empretirementDate": null,
+            // "empDesignationId": null,
+            // "empDeptId": null,
             "empStateId": newCompanyData.state,
             "empCountryID": newCompanyData.country,
             "empCityId": newCompanyData.city,
             "empPincode": newCompanyData.pincode,
-            "createdBy": null,
-            "updatedBy": null,
+            // "createdBy": null,
+            // "updatedBy": null,
             "createdOn": "2025-04-01",
             "updatedOn": "2025-04-01",
             "roleId": "",
             "imageFile": "",
             "email": newCompanyData.admin.email,
-            "dlno": null,
-            "gender": null,
+            // "dlno": null,
+            // "gender": null,
             // "departmentName": "",
             // "designationName": "",
             // "empStateName": "",
@@ -154,7 +170,7 @@ export async function registerService(value) {
         payload.empid = data.Empid;
 
         // Inserting all menus to show sidebar and for permissions;
-        const menuJsonData = JSON.parse(fs.readFileSync("../../utils/db-default-data/Menu.json", "utf-8"));
+        const menuJsonData = JSON.parse(fs.readFileSync("./utils/db-default-data/Menu.json", "utf-8"));
 
         const menuResult = await Menu.insertMany(menuJsonData);
         if(menuResult.insertedCount < 1){
@@ -162,17 +178,21 @@ export async function registerService(value) {
         }
 
         // Inserting Role name
-        const roleName = await AspNetRoles.insertOne({
+        const roleObject = new AspNetRoles({
             Id : "e45b5e06-01bc-4881-b748-edf1cff433b3",
             Name: "Admin",
             NormalizedName: "ADMIN"
         });
+
+        const roleName = await roleObject.save();
         if(!roleName){
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Role data")
         }
 
+
+
         // Inserting Role's Related Permission;
-        const rolePermissionJsonData = JSON.parse(fs.readFileSync("../../utils/db-default-data/RolePermission.json", "utf-8"));
+        const rolePermissionJsonData = JSON.parse(fs.readFileSync("./utils/db-default-data/RolePermission.json", "utf-8"));
 
         const rolePermissionResult = await RolePermission.insertMany(rolePermissionJsonData);
         if(rolePermissionResult.insertedCount < 1){
@@ -181,13 +201,19 @@ export async function registerService(value) {
 
         // Now finally upserting data.
        
-        payload.registerModel.username = "admin";
-        payload.registerModel.password = "admin";
+        payload.registerModel.username = adminUserName;
+        payload.registerModel.password = generatedPassword;
         payload.registerModel.email = newCompanyData.admin.email;
         payload.userPermission = rolePermissionJsonData;
+        payload.roleId = roleName.Id;
 
+        // console.log("Payload resgister model is, payload", payload.registerModel);
+        // console.log("Payload userPermisison is is, payload", payload.userPermission);
+
+        // Upserting admin related permissions
         const upsertAdminPermissionAndCreatingAdminAccount = await UpsertEmpPermissionQuery(payload); 
-        if(upsertAdminPermissionAndCreatingAdminAccount.state !== 1){
+        
+        if(upsertAdminPermissionAndCreatingAdminAccount.status !== 1){
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create admin and their permissions");
         }
         

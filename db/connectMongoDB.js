@@ -75,7 +75,7 @@ let TenantDBModels = {};
 
 let tenantDBName = null;
 
-mongoose.set("debug", true); //
+// mongoose.set("debug", true); 
 
 export async function connectMongoDB() {
     if (central_db) return CentralDBModels; // ✅ Reuse existing connection
@@ -97,6 +97,7 @@ export async function connectMongoDB() {
             CountryMaster: central_db.model("CountryMaster", CountryMasterSchema),
             StateMaster: central_db.model("StateMaster", StateMasterSchema),
             CityMaster: central_db.model("CityMaster", CityMasterSchema),
+            Menu: central_db.model("Menu", MenuSchema),
 
         };
         console.log("🔍 Loaded Models:", Object.keys(CentralDBModels));
@@ -217,7 +218,7 @@ export async function connectTenantDB(dbName) {
 }
 
 export async function getTenantDBModels (){
-    console.log("🛠 Checking CentralDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
+    console.log("🛠 Checking TenantDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
     if(!TenantDBModels){
         console.log("⏳ Connecting to MongoDB Again for tenant connection...");
         return await connectTenantDB(tenantDBName);

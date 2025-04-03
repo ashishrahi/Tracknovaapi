@@ -2,10 +2,11 @@ import mongoose, { Schema, model } from "mongoose";
 
 export const MenuSchema = new Schema(
   {
+    _id: mongoose.Schema.Types.ObjectId,  // Ensure ObjectId type
     MenuId: { type: Number, required: true, unique: true, index: true },
     MenuName: { type: String, required: true, trim: true },
-    ParentId: { type: Number },
-    PageUrl: { type: String, trim: true },
+    ParentId: { type: mongoose.Schema.Types.Mixed },
+    PageUrl: { type:  mongoose.Schema.Types.Mixed , trim: true },
     Icon: { type: String, trim: true },
     DisplayNo: { type: Number },
     IsMenu: { type: Boolean, default: false },

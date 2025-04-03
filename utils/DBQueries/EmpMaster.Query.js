@@ -319,19 +319,20 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       // );
       if (model.userPermission?.length > 0) {
         const bulkOps = model?.userPermission?.map((perm) => ({
+
           insertOne: {
             document: {
-              UserId: model.userId,
-              MenuId: perm.menuId,
-              ParentId: perm.parentId,
-              IsAdd: perm.isAdd,
-              IsEdit: perm.isEdit,
-              IsDel: perm.isDel,
-              IsView: perm.isView,
-              IsPrint: perm.isPrint,
-              IsExport: perm.isExport,
-              isPost: perm.isPost,
-              IsRelease: perm.isRelease,
+              UserId: model.userId || model.UserId ,
+              MenuId: perm.menuId || model.MenuId ,
+              ParentId: perm.parentId || model.ParentId ,
+              IsAdd: perm.isAdd || model.IsAdd ,
+              IsEdit: perm.isEdit || model.IsEdit ,
+              IsDel: perm.isDel || model.IsDel ,
+              IsView: perm.isView || model.IsView ,
+              IsPrint: perm.isPrint || model.IsPrint ,
+              IsExport: perm.isExport || model.IsExport ,
+              isPost: perm.isPost || model.isPost ,
+              IsRelease: perm.isRelease || model.IsRelease ,
             },
           },
         }));
@@ -339,7 +340,7 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
         const updatedPermission = await UserPermission.bulkWrite(bulkOps);
         console.log("updatedPermission", updatedPermission);
       }
-      response.status = StatusCodes.CREATED;
+      response.status = 1;
       response.message = "Permissions has successfully updated";
 
       return response;

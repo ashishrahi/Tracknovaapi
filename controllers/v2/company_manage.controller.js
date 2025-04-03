@@ -40,7 +40,6 @@ export async function find(req, res, next) {
 }
 
 // For switching company database.
-
 export async function switchCompanyDatabase(req, res, next) {
     try {
         return res.json({

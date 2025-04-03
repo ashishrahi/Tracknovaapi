@@ -325,10 +325,38 @@ console.log("Alt67KKKK7j@gmail.com".toLowerCase());
 
 
 import { log } from "console";
-import fs from "fs";
+// import fs from "fs";
 import path from "path";
 
-const modelsPath = path.resolve("./models"); // Adjust path if needed
-const modelFile = fs.readdirSync(modelsPath).find((file) => file.endsWith("js"));
+// const modelsPath = path.resolve("./models"); // Adjust path if needed
+// const modelFile = fs.readdirSync(modelsPath).find((file) => file.endsWith("js"));
 
-console.log(modelFile)
+// console.log(modelFile)
+
+import fs from "fs";
+
+// Read and parse JSON file
+const data = fs.readFileSync("./utils/db-default-data/RolePermission.json", "utf-8");
+let dataa = JSON.parse(data);
+
+function cleanDateFields(uy) {
+  uy.forEach((item) => {
+    if (item.createdAt && item.createdAt.$date) {
+      item.createdAt = item.createdAt.$date;
+    }
+    if (item.updatedAt && item.updatedAt.$date) {
+      item.updatedAt = item.updatedAt.$date;
+    }
+  });
+}
+
+// Call function
+cleanDateFields(dataa);
+
+// Log the cleaned data
+console.log(JSON.stringify(dataa));
+
+
+import argon2 from "argon2";
+
+console.log(await argon2.hash("SuperAdmin@123"))
