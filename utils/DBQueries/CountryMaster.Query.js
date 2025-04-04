@@ -173,11 +173,12 @@ export const GetCountryMasterQuery = async (model) => {
 
 /////////////////////////////  DeleteCountryQuery  /////////////////////////////////////////////////
 
-export const DeleteCountryQuery = async (model) => {
+export const DeleteCountryQuery = async (countryId) => {
   try {
     const { StateMaster, CountryMaster } = await getTenantDBModels();
 
-    const { countryId } = model;
+    // const { countryId } = model;
+    // console.log(countryId)
 
     // Check if the country is referenced in StateMaster
     const stateReference = await StateMaster.findOne({
