@@ -282,19 +282,19 @@ export const AddUpdateUserPermissionMasterQuery = async (
     const { UserPermission } = await getTenantDBModels();
 
     const deleted = await UserPermission.deleteMany({ UserId: userId });
-    console.log("userPermission", userPermission);
+    // console.log("userPermission", userPermission);
     const newPermissions = userPermission.map((permission) => ({
-      UserId: permission.userId,
-      ParentId: permission.parentId,
-      MenuId: permission.menuId,
-      IsAdd: permission.isAdd || false,
-      IsDel: permission.isDel || false,
-      IsEdit: permission.isEdit || false,
-      IsExport: permission.isExport || false,
-      IsPost: permission.isPost || false,
-      IsPrint: permission.isPrint || false,
-      IsRelease: permission.isRelease || false,
-      IsView: permission.isView || false,
+      UserId: permission.userId || permission.UserId ,
+      ParentId: permission.parentId || permission.ParentId ,
+      MenuId: permission.menuId || permission.MenuId ,
+      IsAdd: permission.isAdd || permission.IsAdd  || false,
+      IsDel: permission.isDel || permission.IsDel  || false,
+      IsEdit: permission.isEdit || permission.IsEdit  || false,
+      IsExport: permission.isExport || permission.IsExport  || false,
+      IsPost: permission.isPost || permission.IsPost  || false,
+      IsPrint: permission.isPrint || permission.IsPrint  || false,
+      IsRelease: permission.isRelease || permission.IsRelease  || false,
+      IsView: permission.isView || permission.IsView  || false,
     }));
 
     if (newPermissions.length === 0) {
@@ -516,80 +516,9 @@ export const DeleteUserPermissionMasterQuery = async (modal) => {
 
 export const AddUpdateRoleMasterQuery = async (modal) => {
   // const { roleId, roleName, normalizedRoleName, rolePermissions } = modal;
-  const { AspNetRoles } = await getTenantDBModels();
-
-  // try {
-  //   let roleMaster = await AspNetRoles.findOne({Id: roleId });
-
-  //   // Check if the role exists
-  //   if (roleMaster) {
-  //     // Role exists, update it
-  //     roleMaster.Id = roleId
-  //     roleMaster.Name = roleName;
-  //     roleMaster.NormalizedName = normalizedRoleName; // You can customize this
-
-  //     await roleMaster.save();
-
-  //     const updatedRole = {
-  //       id: roleMaster.Id,
-  //       name: roleMaster.Name,
-  //       normalizedName: roleMaster.NormalizedName,
-  //     }
-
-  //     // Remove old permissions and add new ones
-  //     await RolePermission.deleteMany({RoleId: roleId });
-
-  //     const permissions = rolePermissions.map(permission => ({
-  //       ...permission,
-  //       roleId
-  //     }));
-  //     const data = await RolePermission.insertMany(permissions);
-
-  //     return{
-  //       status: 1,
-  //       message: `Role ${roleName} updated successfully`,
-  //       data: updatedRole
-  //     }
-  //   } else {
-  //     // Role doesn't exist, create a new role
-  //     const newRoleMaster = new AspNetRoles({
-  //       Id: crypto.randomUUID(),
-  //       Name:roleName,
-  //       NormalizedName: normalizedRoleName
-  //     });
-
-  //     await newRoleMaster.save();
-
-  //     const insertedRole = {
-  //       id: newRoleMaster.Id,
-  //       name: newRoleMaster.Name,
-  //       normalizedName: newRoleMaster.NormalizedName,
-  //     }
-
-  //     // Insert permissions
-
-  //     const permissions = rolePermissions.map(permission => ({
-  //       ...permission,
-  //       roleId: newRoleMaster.roleId
-  //     }));
-  //      await RolePermission.insertMany(permissions);
-
-  //    return{
-  //     status: 1,
-  //      message: `Role ${roleName} created successfully`,
-  //      data:insertedRole
-
-  //     }
-  //    }
-
-  // } catch (err) {
-  //  return{
-  //    status: 0,
-  //    message: err.message,
-  //  }
-  // }
-
   try {
+  
+    const { AspNetRoles, RolePermission } = await getTenantDBModels();
     let rtd = { isSuccess: false, mesg: "" };
 
     // Check if role already exists (when adding a new role)
@@ -732,17 +661,17 @@ export const GetRoleMasterQuery = async () => {
 
 //////////////////////////////////////////////  Delete / RoleMaster  ////////////////////////////////////////////////////////////////
 
-export const DeleteRoleMasterQuery = async (modal) => {
+export const DeleteRoleMasterQuery = async (RoleId) => {
   try {
-    const { AspNetRoles, RolePermission } = getTenantDBModels();
-    const { RoleId } = modal;
-    // console.log('RoleId: ', RoleId);
+    const { AspNetRoles, RolePermission } = await getTenantDBModels();
+    // const { RoleId } = modal;
+    console.log('RoleId: ', RoleId);
     const roleExists = await AspNetRoles.findOne({ Id: RoleId });
 
     if (!roleExists) {
       return {
-        status: 0,
-        message: `RoleID  Not Found!`,
+        status: false,
+        message: "RoleID  Not Found!",
       };
     }
 
@@ -752,12 +681,12 @@ export const DeleteRoleMasterQuery = async (modal) => {
     await RolePermission.deleteMany({ RoleID: RoleId });
 
     return {
-      status: 1,
-      message: `RoleID  deleted successfully`,
+      status: true,
+      message: "RoleID  deleted successfully",
     };
   } catch (error) {
     return {
-      status: 0,
+      status: false,
       message: error.message,
     };
   }

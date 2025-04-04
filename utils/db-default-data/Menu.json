@@ -126,7 +126,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec1c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec1c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 8,
     "MenuName": "City",
     "ParentId": 2,
@@ -144,7 +148,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec1d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec1d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 9,
     "MenuName": "Unit",
     "ParentId": 2,
@@ -162,7 +170,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec1e",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec1e",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 10,
     "MenuName": "Department",
     "ParentId": 67,
@@ -180,7 +192,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec1f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec1f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 11,
     "MenuName": "Tax",
     "ParentId": 2,
@@ -198,7 +214,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec20",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec20",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 12,
     "MenuName": "Category",
     "ParentId": 2,
@@ -216,7 +236,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec21",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec21",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 13,
     "MenuName": "Type",
     "ParentId": 2,
@@ -234,7 +258,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec22",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec22",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 14,
     "MenuName": "Employee",
     "ParentId": 67,
@@ -252,7 +280,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec23",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec23",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 15,
     "MenuName": "Item Detail",
     "ParentId": 40,
@@ -270,7 +302,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec24",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec24",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 16,
     "MenuName": "Licensing/Insurance",
     "ParentId": 68,
@@ -288,7 +324,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec25",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec25",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 17,
     "MenuName": "Vendor",
     "ParentId": 62,
@@ -306,7 +346,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec26",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec26",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 18,
     "MenuName": "Item Issue",
     "ParentId": 40,
@@ -324,7 +368,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec27",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec27",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 19,
     "MenuName": "Complaint",
     "ParentId": 69,
@@ -342,7 +390,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec28",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec28",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 20,
     "MenuName": "Folder Location",
     "ParentId": 2,
@@ -360,7 +412,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec29",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec29",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 21,
     "MenuName": "Off.Purchase Indent",
     "ParentId": 40,
@@ -378,7 +434,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec2a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec2a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 22,
     "MenuName": "PurchaseOrder",
     "ParentId": 40,
@@ -396,7 +456,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec2b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec2b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 23,
     "MenuName": "PurchaseInvoice",
     "ParentId": 40,
@@ -414,7 +478,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec2c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec2c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 24,
     "MenuName": "Item Return",
     "ParentId": 40,
@@ -432,7 +500,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec2d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec2d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 25,
     "MenuName": "Location",
     "ParentId": 67,
@@ -468,7 +540,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec2f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec2f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 27,
     "MenuName": "Organization",
     "ParentId": 67,
@@ -486,7 +562,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec30",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec30",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 28,
     "MenuName": "Stock General",
     "ParentId": 40,
@@ -522,7 +602,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec32",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec32",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 30,
     "MenuName": "Stock Bin",
     "ParentId": 2,
@@ -540,7 +624,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec33",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec33",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 31,
     "MenuName": "QC",
     "ParentId": 40,
@@ -558,7 +646,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec34",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec34",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 32,
     "MenuName": "Services",
     "ParentId": 62,
@@ -576,7 +668,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec35",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec35",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 33,
     "MenuName": "Job Card",
     "ParentId": 69,
@@ -594,7 +690,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec36",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec36",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 34,
     "MenuName": "JobWorkChallan",
     "ParentId": 69,
@@ -612,7 +712,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec37",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec37",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 35,
     "MenuName": "JobWorkChallanRecieve",
     "ParentId": 69,
@@ -630,7 +734,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec38",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec38",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 36,
     "MenuName": "UtilizationLog",
     "ParentId": 68,
@@ -648,7 +756,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec39",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec39",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 37,
     "MenuName": "Vehicle Detail",
     "ParentId": 68,
@@ -666,7 +778,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec3a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec3a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 38,
     "MenuName": "Vehicle Management",
     "ParentId": null,
@@ -684,7 +800,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec3b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec3b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 39,
     "MenuName": " Maintenance/Warranty",
     "ParentId": 68,
@@ -702,7 +822,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec3c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec3c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 40,
     "MenuName": "Store Management",
     "ParentId": null,
@@ -720,7 +844,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec3d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec3d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 41,
     "MenuName": "Store Master",
     "ParentId": 40,
@@ -738,7 +866,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec3f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec3f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 46,
     "MenuName": "WorkShop Indent",
     "ParentId": 40,
@@ -756,7 +888,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec40",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec40",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 47,
     "MenuName": "Staff Indent",
     "ParentId": 40,
@@ -774,7 +910,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec41",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec41",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 49,
     "MenuName": "Stock Ledger",
     "ParentId": 42,
@@ -792,7 +932,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec42",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec42",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 50,
     "MenuName": "Stock Summary",
     "ParentId": 42,
@@ -846,7 +990,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec45",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec45",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 53,
     "MenuName": "JobCard Item Issue",
     "ParentId": 18,
@@ -864,7 +1012,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec46",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec46",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 54,
     "MenuName": "Staff Item Issue",
     "ParentId": 18,
@@ -882,7 +1034,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec47",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec47",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 55,
     "MenuName": "Workshop",
     "ParentId": 22,
@@ -918,7 +1074,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec49",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec49",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 58,
     "MenuName": "Designation Master",
     "ParentId": 67,
@@ -936,7 +1096,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec4b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec4b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 60,
     "MenuName": "Fuel Type",
     "ParentId": 68,
@@ -954,7 +1118,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec4c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec4c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 61,
     "MenuName": "Vehicle Type Master",
     "ParentId": 68,
@@ -990,7 +1158,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec4e",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec4e",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 63,
     "MenuName": "Service Contract",
     "ParentId": 62,
@@ -1008,7 +1180,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec4f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec4f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 64,
     "MenuName": "Item Contract",
     "ParentId": 62,
@@ -1026,7 +1202,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec50",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec50",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 65,
     "MenuName": "Communication",
     "ParentId": null,
@@ -1044,7 +1224,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec51",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec51",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 66,
     "MenuName": "Group",
     "ParentId": 81,
@@ -1062,7 +1246,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec52",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec52",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 67,
     "MenuName": "Employee Info",
     "ParentId": null,
@@ -1080,7 +1268,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec53",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec53",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 69,
     "MenuName": "Vehicle Complaints",
     "ParentId": 38,
@@ -1098,7 +1290,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec54",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec54",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 72,
     "MenuName": "JobCard Item Return",
     "ParentId": 24,
@@ -1134,7 +1330,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec56",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec56",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 74,
     "MenuName": "Email Settings",
     "ParentId": 81,
@@ -1152,7 +1352,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec57",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec57",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 75,
     "MenuName": "Sms Settings",
     "ParentId": 82,
@@ -1170,7 +1374,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec58",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec58",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 76,
     "MenuName": "Email Tamplate",
     "ParentId": 81,
@@ -1188,7 +1396,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec59",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec59",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 77,
     "MenuName": "Sms Tamplate",
     "ParentId": 82,
@@ -1206,7 +1418,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 78,
     "MenuName": "Email Campaign",
     "ParentId": 81,
@@ -1224,7 +1440,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 79,
     "MenuName": "Sms Campaign",
     "ParentId": 82,
@@ -1242,7 +1462,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 80,
     "MenuName": "Members",
     "ParentId": 65,
@@ -1260,7 +1484,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 81,
     "MenuName": "Email System",
     "ParentId": null,
@@ -1278,7 +1506,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5e",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5e",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 82,
     "MenuName": "Sms",
     "ParentId": 65,
@@ -1296,7 +1528,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec5f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec5f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 83,
     "MenuName": "Template(SMS/Email)",
     "ParentId": 65,
@@ -1314,7 +1550,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec60",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec60",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 84,
     "MenuName": "Email Event Settings",
     "ParentId": 81,
@@ -1332,7 +1572,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec61",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec61",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 85,
     "MenuName": "SMS Event Settings",
     "ParentId": 82,
@@ -1350,7 +1594,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec62",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec62",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 86,
     "MenuName": "Zone",
     "ParentId": 92,
@@ -1368,7 +1616,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec63",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec63",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 87,
     "MenuName": "Area/Ward",
     "ParentId": 92,
@@ -1386,7 +1638,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec64",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec64",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 88,
     "MenuName": "Bin/KudaGhar",
     "ParentId": 92,
@@ -1404,7 +1660,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec65",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec65",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 89,
     "MenuName": "Handheld Info",
     "ParentId": 92,
@@ -1422,7 +1682,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec66",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec66",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 90,
     "MenuName": "Roster Plan",
     "ParentId": 92,
@@ -1440,7 +1704,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec67",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec67",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 91,
     "MenuName": "Route Detail",
     "ParentId": 92,
@@ -1476,7 +1744,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec69",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec69",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 93,
     "MenuName": "Reports",
     "ParentId": null,
@@ -1494,7 +1766,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 94,
     "MenuName": "Daily Roster Plan",
     "ParentId": 93,
@@ -1512,7 +1788,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 95,
     "MenuName": "Route Deviation",
     "ParentId": 93,
@@ -1530,7 +1810,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 96,
     "MenuName": "Defaulter Roster",
     "ParentId": 93,
@@ -1548,7 +1832,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 101,
     "MenuName": "Bin/KudaGhar Priority",
     "ParentId": 92,
@@ -1566,7 +1854,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6e",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6e",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 102,
     "MenuName": "Weekly Garbage Collection",
     "ParentId": 93,
@@ -1584,7 +1876,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec6f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec6f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 103,
     "MenuName": "ZoneM",
     "ParentId": 2,
@@ -1602,7 +1898,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec70",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec70",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 104,
     "MenuName": "User Permission",
     "ParentId": 3,
@@ -1620,7 +1920,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec71",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec71",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 105,
     "MenuName": "Maps",
     "ParentId": 1,
@@ -1674,7 +1978,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec74",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec74",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 109,
     "MenuName": "OutSource Service",
     "ParentId": 42,
@@ -1692,7 +2000,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec75",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec75",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 110,
     "MenuName": "Vendor Item Detail",
     "ParentId": 42,
@@ -1710,7 +2022,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec76",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec76",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 111,
     "MenuName": "Vehicle Age Rep",
     "ParentId": 42,
@@ -1728,7 +2044,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec77",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec77",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 112,
     "MenuName": "Complain Status",
     "ParentId": 42,
@@ -1746,7 +2066,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec78",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec78",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 113,
     "MenuName": "Vehicle Track",
     "ParentId": 93,
@@ -1764,7 +2088,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec79",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec79",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 115,
     "MenuName": "Fuel Consumption",
     "ParentId": 93,
@@ -1782,7 +2110,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec7a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec7a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 117,
     "MenuName": "Vehicle Detail Summary",
     "ParentId": 93,
@@ -1800,7 +2132,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec7b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec7b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 121,
     "MenuName": "Overspeed Alert",
     "ParentId": 123,
@@ -1818,7 +2154,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec7c",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec7c",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 122,
     "MenuName": "Vehicle Location",
     "ParentId": 93,
@@ -1854,7 +2194,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec7f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec7f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 125,
     "MenuName": "Vehicle Detail",
     "ParentId": 38,
@@ -1872,7 +2216,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec80",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec80",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 126,
     "MenuName": "Brand Master",
     "ParentId": 38,
@@ -1908,7 +2256,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec82",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec82",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 128,
     "MenuName": "Department",
     "ParentId": 67,
@@ -1944,7 +2296,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec84",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec84",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 130,
     "MenuName": "Vehicle Type",
     "ParentId": 38,
@@ -1962,7 +2318,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec85",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec85",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 133,
     "MenuName": "Job Card Status ",
     "ParentId": 42,
@@ -1980,7 +2340,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec86",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec86",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 134,
     "MenuName": "MenuCreate",
     "ParentId": 1,
@@ -1998,7 +2362,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec87",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec87",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 135,
     "MenuName": "Vehicle Item Service",
     "ParentId": 42,
@@ -2016,7 +2384,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec88",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec88",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 136,
     "MenuName": "Vehicle Kudaghar Visited",
     "ParentId": 93,
@@ -2034,7 +2406,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec89",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec89",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 139,
     "MenuName": "Vehicle Type Info",
     "ParentId": 38,
@@ -2052,7 +2428,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec8a",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec8a",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 140,
     "MenuName": "Fuel Consp With Opening",
     "ParentId": 93,
@@ -2070,7 +2450,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec8b",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec8b",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 144,
     "MenuName": "CamTrack",
     "ParentId": 38,
@@ -2106,7 +2490,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec8d",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec8d",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 146,
     "MenuName": "Fuel Consp Without Opening",
     "ParentId": 93,
@@ -2124,7 +2512,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec8e",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec8e",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 147,
     "MenuName": "Probable Wire Tempering",
     "ParentId": 93,
@@ -2142,7 +2534,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec8f",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec8f",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 148,
     "MenuName": "Geo Fencing Report",
     "ParentId": 93,
@@ -2160,7 +2556,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec90",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec90",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 149,
     "MenuName": "Fuel Bal Correction",
     "ParentId": 38,
@@ -2178,7 +2578,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec91",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec91",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 150,
     "MenuName": "Vehicles Not Moved",
     "ParentId": 93,
@@ -2196,7 +2600,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec92",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec92",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 151,
     "MenuName": "Change Password",
     "ParentId": 0,
@@ -2214,7 +2622,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec93",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec93",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 152,
     "MenuName": "PlacesSearch",
     "ParentId": 1,
@@ -2232,7 +2644,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec94",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec94",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 153,
     "MenuName": "Vehicle Audit Information",
     "ParentId": 38,
@@ -2250,7 +2666,11 @@
     "IsPost": true
   },
   {
+<<<<<<< HEAD
     "_id":  "67b6ef3ce1cb2a7e6dd2ec95",
+=======
+    "_id": "67b6ef3ce1cb2a7e6dd2ec95",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 154,
     "MenuName": "Master",
     "ParentId": 0,
@@ -2268,7 +2688,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67caddfba4c3ebf91e6530e9",
+=======
+    "_id": "67caddfba4c3ebf91e6530e9",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 131,
     "MenuName": "Tracking Data",
     "ParentId": 38,
@@ -2286,7 +2710,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67caed16a4c3ebf91e6530ea",
+=======
+    "_id": "67caed16a4c3ebf91e6530ea",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 43,
     "MenuName": "Help",
     "ParentId": null,
@@ -2304,7 +2732,11 @@
     "IsPost": false
   },
   {
+<<<<<<< HEAD
     "_id":  "67caed61a4c3ebf91e6530eb",
+=======
+    "_id": "67caed61a4c3ebf91e6530eb",
+>>>>>>> 0c5ea0bb23fa23378b05d6c03b0b1777376cf665
     "MenuId": 44,
     "MenuName": "Help Creation",
     "ParentId": 43,

@@ -127,6 +127,7 @@ export const GetCitiesByStateQuery = async (model) => {
 };
 
 ////////////////////////////////////////////  GetCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const GetCityMasterQuery = async (model) => {
   try {
     const { CityMaster, StateMaster } = await getTenantDBModels();

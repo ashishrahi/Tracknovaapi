@@ -124,8 +124,98 @@ export const getCitybyState = async (stateId) => {
 };
 
 // cityList
-export const cityList = async (stateId) => {} 
+export const cityList = async (model) => {
+  try {
+      const { CityMaster, StateMaster } = await getCentralDBModels();
+  
+      const filter = {};
+  
+      if (model.cityId && model.cityId !== -1) {
+        filter.CityId = model.cityId;
+      }
+  
+      if (model.stateId && model.stateId !== -1) {
+        filter.StateId = model.stateId;
+      }
+  
+      const cities = await CityMaster.find(filter).lean();
+  
+      const enrichedCities = await Promise.all(
+        cities.map(async (city) => {
+          const state = await StateMaster.findOne({
+            StateId: city.StateId,
+          }).lean();
+          // console.log('state:',state)
+          return {
+            ...city,
+            StateName: state ? state.StateName : null,
+          };
+        })
+      );
+      // console.log('enrichedCities:',enrichedCities)
+      const listCities = enrichedCities.map((city) => {
+        return {
+          cityId: city.CityId,
+          cityName: city.CityName,
+          stateName: city.StateName,
+          createdBy: city.CreatedBy,
+          updatedBy: city.UpdatedBy,
+          createdOn: city.createdAt,
+          updatedOn: city.updatedAt,
+        };
+      });
+  
+      return {
+        isSuccess: true,
+        internalSuccess: "",
+        mesg: `Details of CityId ${model.cityId} and StateId ${model.stateId} retrieved successfully`,
+        insertedId: "",
+        data: listCities,
+      };
+    } catch (error) {
+      return {
+        isSuccess: false,
+        internalSuccess: "",
+        mesg: error.message,
+      };
+    }
+
+} 
 
 // deleteCity
-export const deleteCity = async (stateId) => {}
+export const deleteCity = async (model) => {
+   try {
+      const { CityMaster } = await getCentralDBModels();
+  
+      // Find districts by CityId
+      const districts = await CityMaster.find({ CityId: model.cityId }).lean();
+  
+      if (districts.length > 0) {
+        // Delete districts
+        await CityMaster.deleteMany({ CityId: model.cityId });
+  
+        return {
+          isSuccess: true,
+          internalSuccess: "",
+          mesg: `CityId ${model.cityId} Of Cities successfully deleted`,
+        };
+      } else {
+        return {
+          isSuccess: false,
+          internalSuccess: "",
+          mesg: `No Citiess found for CityId ${model.cityId}`,
+        };
+      }
+    } catch (error) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        mesg:
+          error.message +
+          ";" +
+          (error.innerException ? error.innerException : error.message),
+      };
+    }
+}
  
+

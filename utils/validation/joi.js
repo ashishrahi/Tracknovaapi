@@ -108,8 +108,7 @@ function validateRegisterCompanyModel(model){
 
 function validateSigninModel(model){
     const Schema = Joi.object({
-        username: Joi.string().email().required().messages({
-            "string.email": "Invalid email format",
+        username: Joi.string().lowercase().required().messages({
             "any.required": "Email is required"
         }),
         password: Joi.string().required().messages({ // ✅ FIXED: Use .messages()

@@ -11,7 +11,7 @@ export async function signin(req, res, next) {
         if (error) {
             throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.details[0].message);
         }
-        const { accessToken, refreshToken, role } = await v2AuthService.signinService(value);
+        const { accessToken, refreshToken, role, navigateTo, username } = await v2AuthService.signinService(value);
         const options = {
             httpOnly: true,
             secure: true,
@@ -20,7 +20,7 @@ export async function signin(req, res, next) {
 
         return res.status(StatusCodes.OK)
             // .cookie("refreshToken")
-            .json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.loginSuccess, {accessToken, role}))
+            .json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.loginSuccess, { accessToken, role, navigateTo, username }))
 
     } catch (error) {
         next(error);
