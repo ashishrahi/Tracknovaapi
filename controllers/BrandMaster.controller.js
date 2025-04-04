@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {
-  ApiErrorResponse,CommonResponse,
+  ApiErrorResponse, CommonResponse,
   DBReturn,
 } from "../utils/apiResponse/index.js";
 import {
@@ -12,8 +12,8 @@ import {
 export async function AddUpdateBrandMaster(req, res) {
   try {
     const model = req.body;
-    const { isSuccess,id,createUpdate,msg,data } = await AddUpdateBrandMasterQuery(model);
-    const apiResponse= new DBReturn(
+    const { isSuccess, id, createUpdate, msg, data } = await AddUpdateBrandMasterQuery(model);
+    const apiResponse = new DBReturn(
       isSuccess,
       id,
       createUpdate,
@@ -29,6 +29,7 @@ export async function AddUpdateBrandMaster(req, res) {
     res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
+
 export async function GetBrand(req, res) {
   try {
     const model = req.body;
@@ -38,21 +39,21 @@ export async function GetBrand(req, res) {
       message,
       data
     );
-    res.status(StatusCodes.OK).json(successResponse);
+    return res.status(StatusCodes.OK).json(successResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
       error.message
     );
-    res.status(errorResponse.StatusCode).json(errorResponse);
+    return res.status(errorResponse.StatusCode).json(errorResponse);
   }
 }
 export async function DeleteBrand(req, res) {
   try {
     const model = req.body;
 
-    const { isSuccess,id,createUpdate,msg,data} = await DeleteBrandQuery(model);
-    const apiResponse = new DBReturn(isSuccess,id,createUpdate,msg,data);
+    const { isSuccess, id, createUpdate, msg, data } = await DeleteBrandQuery(model);
+    const apiResponse = new DBReturn(isSuccess, id, createUpdate, msg, data);
     res.status(StatusCodes.OK).json(apiResponse);
   } catch (error) {
     const errorResponse = new ApiErrorResponse(

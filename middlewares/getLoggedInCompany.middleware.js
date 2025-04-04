@@ -6,39 +6,40 @@ import jwt from "jsonwebtoken";
 import { getCentralDBModels } from "../db/index.js";
 
 
-const excludedRoutes = ["/api/Auth/login", "/api/Auth/Refresh", "/api/Auth/Logout", "/api/v2/auth/signin"];
+const excludedRoutes = [
+  // "/api/Auth/login", 
+  "/api/Auth/Refresh", "/api/Auth/Logout", "/api/v2/auth/signin"];
 
 const getLoggedInCompany = async (req, res, next) => {
   try {
-    const { Company } = await getCentralDBModels();
-    console.log("Company is", Company)
+    const { Company, Idp_account } = await getCentralDBModels();
     if (excludedRoutes.includes(req.path)) {
       return next();
     }
-    if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
+    if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied due to access token not provided"));
 
     const token = req.headers["authorization"].split(" ")[1];
         
-    const payloadData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const { ownerId, userId, username } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-  //   const company = await Company.find( 
-  //   // { $or: [
-  //       { _id: payloadData.Id },
-  //       // { UserName: payloadData.UserName }
-  //   // ]}
-  // )
-    const company = await Company.findById( 
-    // { $or: [
-         payloadData.Id 
-        // { UserName: payloadData.UserName }
-    // ]}
-  )
+    /*
+    * ownerId === company objectid. Company has all details
+    * userId === idp_accounts have users array.
+    */
 
-    if (!company) {
-      return res.status(StatusCodes.UNAUTHORIZED).json(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please login again"));
+    const user = await Idp_account.findOne({"users._id" : userId});
+    const company = await Company.findById(ownerId);
+
+    /**
+     * If company is not present it means user is a SuperAdmin
+     */
+
+    if (!user) {
+      return res.status(StatusCodes.UNAUTHORIZED).json(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please be a valid user"));
     }
 
     req.company = company;
+    req.user = user;
     next()
   } catch (error) {
     error.ErrorMessage = error.ErrorMessage || error.message;

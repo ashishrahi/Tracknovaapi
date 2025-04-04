@@ -805,6 +805,9 @@ async function DeleteCampaign(req, res) {
 //-------------GetCampaignTemplate-------->
 async function GetCampaignTemplate(req, res) {
   try {
+ 
+    const { CampaignTemplate } = await getTenantDBModels()
+
     let query = {};
     const {
       templateId,

@@ -14,19 +14,16 @@ import formattedData from "../dotnet-like-format/dotnetLikeData.js";
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
-  const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
   try {
+    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
     const { username, password } = model;
-    console.log(model);
 
     let response;
+
     // Find user by username
-    // console.log("req.db", req.db)
-    // const AspNetUsers = req.db.models("AspNetUsers");
-    // const AspNetUsers = mongoose.model("AspNetUsers");
     const user = await AspNetUsers.findOne({ UserName: username });
-    // console.log("user is", user)
-    // // console.log("real user", user)
+    console.log("user is ", user)
+
     if (!user) {
       throw new ApiErrorResponse(
         StatusCodes.UNAUTHORIZED,
@@ -142,9 +139,9 @@ export const RegisterQuery = async (model, res) => {
       //     )
       //   );
       throw new ApiErrorResponse(
-          StatusCodes.CONFLICT,
-          "UserId or UserName already exists! Try other one."
-        );
+        StatusCodes.CONFLICT,
+        "UserId or UserName already exists! Try other one."
+      );
     }
     console.log("asp user", model);
     // Create new user
@@ -284,17 +281,17 @@ export const AddUpdateUserPermissionMasterQuery = async (
     const deleted = await UserPermission.deleteMany({ UserId: userId });
     // console.log("userPermission", userPermission);
     const newPermissions = userPermission.map((permission) => ({
-      UserId: permission.userId || permission.UserId ,
-      ParentId: permission.parentId || permission.ParentId ,
-      MenuId: permission.menuId || permission.MenuId ,
-      IsAdd: permission.isAdd || permission.IsAdd  || false,
-      IsDel: permission.isDel || permission.IsDel  || false,
-      IsEdit: permission.isEdit || permission.IsEdit  || false,
-      IsExport: permission.isExport || permission.IsExport  || false,
-      IsPost: permission.isPost || permission.IsPost  || false,
-      IsPrint: permission.isPrint || permission.IsPrint  || false,
-      IsRelease: permission.isRelease || permission.IsRelease  || false,
-      IsView: permission.isView || permission.IsView  || false,
+      UserId: permission.userId || permission.UserId,
+      ParentId: permission.parentId || permission.ParentId,
+      MenuId: permission.menuId || permission.MenuId,
+      IsAdd: permission.isAdd || permission.IsAdd || false,
+      IsDel: permission.isDel || permission.IsDel || false,
+      IsEdit: permission.isEdit || permission.IsEdit || false,
+      IsExport: permission.isExport || permission.IsExport || false,
+      IsPost: permission.isPost || permission.IsPost || false,
+      IsPrint: permission.isPrint || permission.IsPrint || false,
+      IsRelease: permission.isRelease || permission.IsRelease || false,
+      IsView: permission.isView || permission.IsView || false,
     }));
 
     if (newPermissions.length === 0) {
@@ -517,7 +514,7 @@ export const DeleteUserPermissionMasterQuery = async (modal) => {
 export const AddUpdateRoleMasterQuery = async (modal) => {
   // const { roleId, roleName, normalizedRoleName, rolePermissions } = modal;
   try {
-  
+
     const { AspNetRoles, RolePermission } = await getTenantDBModels();
     let rtd = { isSuccess: false, mesg: "" };
 
@@ -635,7 +632,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
 
 export const GetRoleMasterQuery = async () => {
   try {
-    const { AspNetRoles} = await getTenantDBModels();
+    const { AspNetRoles } = await getTenantDBModels();
     const roles = await AspNetRoles.find().sort({ Name: 1 });
 
     const roleList = roles.map((role) => {
@@ -802,7 +799,7 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
 export const GetRolePermissionMasterQuery = async (modal) => {
   try {
-    const { RolePermission} = getTenantDBModels();
+    const { RolePermission } = getTenantDBModels();
     const { RoleId } = modal;
 
     if (RoleId === "-1") {
@@ -863,14 +860,14 @@ export const GetRolePermissionMasterQuery = async (modal) => {
 //////////////////////////////////////////////  Get / RolePermission  ////////////////////////////////////////////////////////////////
 
 export const GetRolePermissionQuery = async (modal) => {
-  
+
 
   try {
     const { RolePermission, Menu } = await getTenantDBModels();
 
     const { RoleId } = modal;
     let data;
-  
+
     if (RoleId !== "-1") {
       data = await RolePermission.aggregate([
         {
@@ -917,7 +914,7 @@ export const GetRolePermissionQuery = async (modal) => {
           },
         },
       ]);
-  
+
       return {
         status: 1,
         message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
@@ -926,15 +923,15 @@ export const GetRolePermissionQuery = async (modal) => {
       };
     } else {
       data = await Menu.find().sort({ MenuName: 1 }).lean();
-      
-  
+
+
       return {
         status: 1,
         message: `RoleID ${data.RoleId} Details of Role Permission fetched successfully`,
         data: formattedData(data),
         rowCount: data?.length,
       };
-  
+
       // } catch (error) {
       //   return{
       //     status: 0,

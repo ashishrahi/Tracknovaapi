@@ -20,8 +20,8 @@ async function verifyAccessToken(req, res, next){
     
         const user = await AspNetUsers.findOne( 
         { $or: [
-            { Id: payloadData.Id },
-            { UserName: payloadData.UserName }
+            // { Id: payloadData.Id },
+            { UserName: payloadData.username }
         ]}).select("-PasswordHash")
         req.user = user;
         // console.log(user)

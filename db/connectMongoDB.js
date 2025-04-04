@@ -79,13 +79,12 @@ let tenantDBName = null;
 
 export async function connectMongoDB() {
     if (central_db) return CentralDBModels; // ✅ Reuse existing connection
-    console.log("`${uri}/central_db`", `${uri}/central_db`)
     try {
         central_db = await mongoose
             .createConnection(`${uri}/central_db`)
             .asPromise();
         console.log(
-            `✅ Connected to Central DB: ${central_db.name} and central_db object is `,
+            `✅ Connected to Central DB: ${central_db.name} and central_db ready state is `,
             central_db.readyState
         );
 
@@ -100,7 +99,6 @@ export async function connectMongoDB() {
             Menu: central_db.model("Menu", MenuSchema),
 
         };
-        console.log("🔍 Loaded Models:", Object.keys(CentralDBModels));
 
 
         return CentralDBModels;
@@ -118,7 +116,7 @@ export async function connectMongoDB() {
  */
 
 export async function getCentralDBModels() {
-    console.log("🛠 Checking CentralDBModels:", Object.keys(CentralDBModels)); // ✅ Check loaded models
+    // console.log("🛠 Checking CentralDBModels:", Object.keys(CentralDBModels)); // ✅ Check loaded models
 
     if (!central_db) {
         console.log("⏳ Connecting to MongoDB again...");
@@ -152,7 +150,7 @@ export async function connectTenantDB(dbName) {
             AspNetRoles: tenant_db.model("AspNetRoles", AspNetRolesSchema),
             AspNetUsers: tenant_db.model("AspNetUsers", AspNetUsersSchema),
             BinLocation: tenant_db.model("BinLocation", BinLocationSchema),
-            brandMaster: tenant_db.model("brandMaster", BrandMasterSchema),
+            BrandMaster: tenant_db.model("brandMaster", BrandMasterSchema),
             Campaign: tenant_db.model("Campaign", CampaignSchema),
             CampaignDetail: tenant_db.model("CampaignDetail", CampaignDetailSchema),
             CampaignTemplate: tenant_db.model("CampaignTemplate", CampaignTemplateSchema),
@@ -204,8 +202,8 @@ export async function connectTenantDB(dbName) {
             VendorMaster: tenant_db.model("VendorMaster", VendorMasterSchema),
             // Ward Master    
             ZoneMaster: tenant_db.model("ZoneMaster", ZoneMasterSchema),
-            
-        
+
+
         };
         return TenantDBModels;
     } catch (error) {
@@ -217,9 +215,9 @@ export async function connectTenantDB(dbName) {
     }
 }
 
-export async function getTenantDBModels (){
-    console.log("🛠 Checking TenantDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
-    if(!TenantDBModels){
+export async function getTenantDBModels() {
+    // console.log("🛠 Checking TenantDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
+    if (!TenantDBModels) {
         console.log("⏳ Connecting to MongoDB Again for tenant connection...");
         return await connectTenantDB(tenantDBName);
     }

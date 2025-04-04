@@ -7,7 +7,6 @@ import { getCentralDBModels } from "../../db/index.js";
 import { connectTenantDB } from "../../db/connectMongoDB.js";
 
 
-
 export async function signinService(value) {
 
   const { Idp_account, Company } = await getCentralDBModels(); // geting models
@@ -16,7 +15,7 @@ export async function signinService(value) {
   // fetching data from users array
   const isUserRegistered = await Idp_account.findOne({ "users.username": value.username });
 
-  console.log("isUserRegistered", isUserRegistered)
+  // console.log("isUserRegistered", isUserRegistered)
 
   if (!isUserRegistered) {
     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
@@ -59,7 +58,7 @@ export async function signinService(value) {
       userId: isUserRegistered.users[0]._id,
       username: isUserRegistered.users[0].username,
       email: isUserRegistered.users[0].email,
-      dbName: companyDBDetails?.database?.dbName || null
+      // dbName: companyDBDetails?.database?.dbName || null
     }
     const secret = process.env.ACCESS_TOKEN_SECRET;
     const option = {

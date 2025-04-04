@@ -22,7 +22,7 @@ export const Idp_accountSchema = new mongoose.Schema({
   accountOwner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
-    required: true
+    required: true,
   },
   users: [
     {
