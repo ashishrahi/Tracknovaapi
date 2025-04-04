@@ -48,7 +48,7 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
-// app.use(getLoggedInCompany) // for getting loggedIn company details. When someone logged in.
+app.use(getLoggedInCompany); // for getting loggedIn company details. When someone logged in.
 // app.use(verifyAccessToken)
 app.use("/api", AppRoutes);
 
@@ -56,14 +56,12 @@ app.use("/api", AppRoutes);
 //Handling the incorrect route
 app.use((req, res, next)=>{
     const error = new ApiErrorResponse(404,"InCorrect Route");
-    // we need to pass the error as a argument
     next(error);
 })
 
-
 // Global error handeling
 app.use((err, req, res, next) => {
-    console.log("error is from middleware", err)
+    console.log("error is from central error", err)
     const statusCode = err.status || err.statusCode || err.StatusCode  || 500;  // Default to 500 if undefined
     return res.status(statusCode).json(new ApiErrorResponse(statusCode, err.message|| err.ErrorMessage || "Internal Server Error"));
 });

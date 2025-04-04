@@ -88,6 +88,7 @@ export const AddUpdateBrandMasterQuery = async (model) => {
 //////////////////////////  GetBrandQuery  //////////////////////////////////////////////////////////////
 
 export const GetBrandQuery = async (model) => {
+  try {
   const { BrandMaster } = await getTenantDBModels();
 
   const { brandId, brandname } = model;
@@ -101,7 +102,6 @@ export const GetBrandQuery = async (model) => {
     brandQuery.brandname = { $regex: brandname, $options: "i" };
   }
 
-  try {
     // Fetch brands from the database based on the query
     const brands = await BrandMaster.find(brandQuery);
 

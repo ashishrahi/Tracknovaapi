@@ -25,10 +25,7 @@ router.delete("/DeleteRoleMaster", AuthController.DeleteRoleMaster);
 
 // RolePermissionMasters Routes
 
-router.post(
-  "/AddUpdateRolePermissionMaster",
-  AuthController.AddUpdateRolePermissionMaster
-);
+router.post("/AddUpdateRolePermissionMaster", AuthController.AddUpdateRolePermissionMaster);
 router.post("/GetRolePermissionMaster", AuthController.GetRolePermissionMaster);
 // router.post("/Register", AuthController.Register)
 router.get("/GetRolePermission", AuthController.GetRolePermission);

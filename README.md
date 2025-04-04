@@ -1,3 +1,35 @@
+# Payload for JWT
+```javascript
+const payload = {
+ownerId: isUserRegistered._id, // Company Owner details
+userId: isUserRegistered.users[0]._id, // Company logged in user details
+username: isUserRegistered.users[0].username, // Company loggedin username
+email: isUserRegistered.users[0].email, // company logged in email
+}
+
+```
+# Request body
+- req object have 2 main things
+  - `req.company` for company details
+  - `req.user for` logged in user details
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Learning
 - iisnode file is auto generated when browser opens.
 - No need to provide port because in server we decide what port should be assign.

@@ -354,9 +354,15 @@ function cleanDateFields(uy) {
 cleanDateFields(dataa);
 
 // Log the cleaned data
-console.log(JSON.stringify(dataa));
+const dataaaaa = {
+  name: "khgjk"
+}
+// console.log(JSON.stringify(dataa));
 
 
 import argon2 from "argon2";
 
-console.log(await argon2.hash("SuperAdmin@123"))
+// console.log(await argon2.hash("SuperAdmin@123"));
+
+
+

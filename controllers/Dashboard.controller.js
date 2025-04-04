@@ -211,7 +211,7 @@ export async function getMapBinsWardWise(req, res) {
 
 export async function getvVehicleNo(req, res, next) {
   try {
-    const { ItemMaster} = getTenantDBModels();
+    const { ItemMaster} = await getTenantDBModels();
     const vehicleNumbers = await ItemMaster.aggregate([
       { $match: { ItemFlag: "V" } },
       { $group: { _id: "$VehicleNo" } },
