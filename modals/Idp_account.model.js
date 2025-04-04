@@ -41,6 +41,19 @@ Idp_accountSchema.pre("save", async function (next) {
       const hashedPassword = await argon2.hash(this.password);
       this.password = hashedPassword;
     }
+
+    // Hash passwords inside the 'users' array
+    
+    /*
+    * beacuse of issues hashing the password in controller
+    if (this.isModified("users")) {
+      for (let user of this.users) {
+        if (user.isModified && user.isModified("password")) {
+          user.password = await argon2.hash(user.password);
+        }
+      }
+    }
+    */
     next()
   } catch (error) {
     next(error);

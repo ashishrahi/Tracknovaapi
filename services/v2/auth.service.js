@@ -15,26 +15,28 @@ export async function signinService(value) {
   // fetching data from users array
   const isUserRegistered = await Idp_account.findOne({ "users.username": value.username });
 
-  // console.log("isUserRegistered", isUserRegistered)
+ 
+  console.log("isUserRegistered", isUserRegistered)
 
   if (!isUserRegistered) {
     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
   }
-
+  const user = isUserRegistered?.users?.find((user) => user.username === value.username);
+  console.log("user is", user);
   const isValidPassword = await isUserRegistered.isValidPasswordForUsers(value.username, value.password);
 
   if (!isValidPassword) {
     throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp);
   }
 
-  const companyDBDetails = await Company.findById(isUserRegistered.accountOwner).select("database");
+  const companyDBDetails = await Company.findById(isUserRegistered.accountOwner)
  
 
   if(companyDBDetails){
     await connectTenantDB(companyDBDetails.database.dbName);
   }
  
-  console.log("companyDBDetails", companyDBDetails)
+  // console.log("companyDBDetails", companyDBDetails)
   /**
    * if companyDBDetails not present means SuperAdmin is logged in.
    */
@@ -54,10 +56,10 @@ export async function signinService(value) {
 
   function generateAccessToken() {
     const payload = {
-      ownerId: isUserRegistered._id,
-      userId: isUserRegistered.users[0]._id,
-      username: isUserRegistered.users[0].username,
-      email: isUserRegistered.users[0].email,
+      ownerId: companyDBDetails._id,
+      userId: user._id,
+      username: user.username,
+      email: user.email,
       // dbName: companyDBDetails?.database?.dbName || null
     }
     const secret = process.env.ACCESS_TOKEN_SECRET;
@@ -75,8 +77,8 @@ export async function signinService(value) {
   return {
     accessToken: generateAccessToken(),
     refreshToken: generateRefreshToken(),
-    role: isUserRegistered.users[0].role,
-    username: isUserRegistered.users[0].username,
+    role: user.role,
+    username: user.username,
     navigateTo: navigateTo,
     // dbName: companyDBDetails?.database?.dbName || null
   }

@@ -21,6 +21,9 @@ const getLoggedInCompany = async (req, res, next) => {
     const token = req.headers["authorization"].split(" ")[1];
         
     const { ownerId, userId, username } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // console.log("Payload is", payload);
 
     /*
     * ownerId === company objectid. Company has all details
@@ -29,6 +32,8 @@ const getLoggedInCompany = async (req, res, next) => {
 
     const user = await Idp_account.findOne({"users._id" : userId});
     const company = await Company.findById(ownerId);
+
+    // console.log("Company from getloggedinUser", company)
 
     /**
      * If company is not present it means user is a SuperAdmin

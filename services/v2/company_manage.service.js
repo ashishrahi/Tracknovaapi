@@ -11,6 +11,8 @@ import { getTenantDBModels } from "../../db/index.js";
 import { EmpMasterController } from "../../controllers/index.js";
 import { AddUpdateEmployeeQuery, UpsertEmpPermissionQuery } from "../../utils/DBQueries/index.js";
 import EmpMaster from "../../modals/EmpMaster.model.js";
+import sendMailService from "../../utils/emailService/nodeMailer.js";
+import argon2 from "argon2";
 
 //--------- registerService -------->
 export async function registerService(value) {
@@ -71,7 +73,7 @@ export async function registerService(value) {
         if (!isIdpAlreadyGenerated) {
             console.log("idp creation start")
             const newIdpData = new Idp_account({
-                username: adminUserName,
+                username: newCompanyData.admin.email,
                 /**
                  * we need to fetch same password as before and sent it  
                  * current generation again password and sent it
@@ -81,7 +83,7 @@ export async function registerService(value) {
                 users: [
                     {
                         username: adminUserName,
-                        password: generatedPassword,
+                        password: await argon2.hash(generatedPassword),
                         email: value.admin.email,
                         role: value.admin.role,
                     }
@@ -216,6 +218,30 @@ export async function registerService(value) {
         if(upsertAdminPermissionAndCreatingAdminAccount.status !== 1){
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create admin and their permissions");
         }
+
+        /**
+         * Now send mail to newlu created user.
+         */
+
+        const from = process.env.NODEMAILER_EMAIL_USER;
+        let to = "saurabhkushwaha9889@gmail.com";
+        let subject = `👤 New User Added`
+        let html = `
+            <h2>👤 New User Added</h2>
+            <p><strong>Username:</strong> ${adminUserName}</p>
+            <p><strong>Password:</strong> ${generatedPassword}</p>
+            <p><strong>Email:</strong> ${value.admin.email}</p>
+            <p><strong>Role:</strong> ${value.admin.role}</p>
+            <p>User has been successfully added to the account: <strong>${value.companyName}</strong></p>
+        `;
+        // let mailOption = {
+        //   mailType: model.status, // it should be like immediately, schedules
+        //   mailSendStartDate: model.fromDate,
+        //   mailSendFinishDate: model.toDate,
+        //   mailSendFinishTime: model.toTime,
+        // };
+        await sendMailService(from, to, subject, "I am text", html)
+
         
         return resgiteredNewCompany;
     } catch (error) {

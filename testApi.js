@@ -362,7 +362,7 @@ const dataaaaa = {
 
 import argon2 from "argon2";
 
-// console.log(await argon2.hash("SuperAdmin@123"));
+console.log(await argon2.hash("Rakesh@123"));
 
 
 
