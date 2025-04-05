@@ -131,8 +131,8 @@ export async function getCentralDBModels() {
 
 
 export async function connectTenantDB(dbName) {
-    tenantDBName = dbName
     try {
+    tenantDBName = dbName;
         // await mongoose.connection.close(); // close existing connection;
         if (tenant_db) {
             console.log(`🔄 Reusing existing connection for ${tenantDBName}`);
@@ -215,11 +215,11 @@ export async function connectTenantDB(dbName) {
     }
 }
 
-export async function getTenantDBModels() {
+export async function getTenantDBModels(dbName) {
     // console.log("🛠 Checking TenantDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
     if (!TenantDBModels) {
         console.log("⏳ Connecting to MongoDB Again for tenant connection...");
-        return await connectTenantDB(tenantDBName);
+        return await connectTenantDB(dbName || tenantDBName);
     }
     return TenantDBModels;
 }

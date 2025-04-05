@@ -64,6 +64,9 @@ export async function Register(req, res, next) {
 export async function login(req, res, next) {
   try {
     const modal = req.body;
+
+
+    
     const { response, refreshToken } = await loginQuery(modal);
     const successResponse = new CommonResponse(
       1,
@@ -223,10 +226,19 @@ export async function Refresh(req, res, next) {
 //------------Logout---------->
 export async function Logout(req, res, next) {
   try {
+
+    const user = req.user;
+    const { tenant_db } = await getTenantDBModels();
+
+    console.log("tenant_db", tenant_db)
+    
+    let navigateTo;
+    user.users[0]["role"] === "SuperAdmin" ? navigateTo = "/company" : navigateTo = "login" ;
+    
+    // await tenant_db.close();
     res.clearCookie("refreshToken");
-    await connectMongoDB();
     return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "User successfully logged out", {
-      navigateTo: "/login"
+      navigateTo
     }))
   } catch (error) {
     const statusCode = error.StatusCode || StatusCodes.INTERNAL_SERVER_ERROR;

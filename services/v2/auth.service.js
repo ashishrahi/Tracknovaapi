@@ -16,13 +16,13 @@ export async function signinService(value) {
   const isUserRegistered = await Idp_account.findOne({ "users.username": value.username });
 
  
-  console.log("isUserRegistered", isUserRegistered)
+  // console.log("isUserRegistered", isUserRegistered)
 
   if (!isUserRegistered) {
     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
   }
   const user = isUserRegistered?.users?.find((user) => user.username === value.username);
-  console.log("user is", user);
+  // console.log("user is", user);
   const isValidPassword = await isUserRegistered.isValidPasswordForUsers(value.username, value.password);
 
   if (!isValidPassword) {
@@ -43,7 +43,7 @@ export async function signinService(value) {
 
   function generateRefreshToken() {
     const payload = {
-      userId: isUserRegistered.users[0]._id,
+      userId: user._id,
     }
     const secret = process.env.REFRESH_TOKEN_SECRET;
     const option = {
@@ -56,7 +56,7 @@ export async function signinService(value) {
 
   function generateAccessToken() {
     const payload = {
-      ownerId: companyDBDetails._id,
+      ownerId: companyDBDetails?._id || "SuperAdmin",
       userId: user._id,
       username: user.username,
       email: user.email,

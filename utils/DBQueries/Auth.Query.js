@@ -10,21 +10,22 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
+import { connectTenantDB } from "../../db/connectMongoDB.js";
 
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
   try {
-    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
+
     const { username, password } = model;
+
+    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
 
     let response;
 
     // Find user by username
     const user = await AspNetUsers.findOne({ UserName: username }).select("-PasswordHash");
     
-    console.log("aspnetusers", user)
-
     if (!user) {
       throw new ApiErrorResponse(
         StatusCodes.UNAUTHORIZED,

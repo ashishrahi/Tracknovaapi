@@ -4,6 +4,7 @@ import { validateRegisterCompanyModel } from "../../utils/validation/joi.js";
 import { companyManageControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js";
 import { v2CompanyManageService } from "../../services/index.js";
 import { connectTenantDB } from "../../db/connectMongoDB.js";
+import { getCentralDBModels } from "../../db/index.js";
 
 import loadTenantModels from "../../utils/tenant-models/loadTenantModels.js";
 // For registering new company
@@ -30,6 +31,10 @@ export async function register(req, res, next) {
 // For getting all new company
 export async function find(req, res, next) {
     try {
+        const user = req.user;
+        if(user?.users[0]["role"] !== "SuperAdmin"){
+            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "You are not allowed to get company data")
+        }
         const companies = await v2CompanyManageService.findService();
         return res.json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.findCompany, companies))
 
@@ -54,32 +59,45 @@ export async function switchCompanyDatabase(req, res, next) {
 export async function switchCompanyDatabaseWithDbName(req, res, next) {
     try {
         // const company = req.company;
-        const { dbName } = req.body; // Extract dbName from request
+        const { Idp_account, Company } = await getCentralDBModels()
+        const { dbName, ownerId, adminName } = req.body; // Extract dbName from request
 
-        if (!dbName) {
-            next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Database name is required"));
+        if (!dbName || !ownerId) {
+            next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Database name && OwnerId are required"));
             // return res.status(400).json({ message: "Database name is required" });
+        }
+
+        // const company = await Company.findById(ownerId);
+
+        // if(!company){
+        //     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Company not exists. Choose correct one.")
+        // }
+     
+        // req.company = company;
+       
+        const idpAccount = await Idp_account.findOne({accountOwner: ownerId});
+        
+
+        const adminUserName = adminName.split(" ")[0].toLowerCase();
+
+        const user = idpAccount.users.find((user) => user.username === (adminUserName + "_admin"));
+        if(!user){
+            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "User not found");
         }
 
         const tenantDB = await connectTenantDB(dbName);
 
-        
+        console.log("new tenetdb connected", tenantDB);
 
         if (!tenantDB) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
         }
-        // Create a new connection if not already established
-        // const db = mongoose.createConnection(`${process.env.MONGODB_SERVER_URI}/${database.dbName}`);
 
-        // if(!db){
-        //   throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
-        // }
-        // console.log("Tenant Db", tenantDB);
-        // // connections[database.dbName] = db;
-        // req.db = tenantDB;
-        // loadTenantModels(tenantDB);
-        // console.log(`🔹 Connected to database: ${dbName}`);
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, `Connected to database: ${dbName}`, dbName))
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, `Connected to database: ${dbName}`, {
+            navigateTo: "/home",
+            username: user.username,
+            dbName: dbName,
+        }))
     } catch (error) {
         throw error;
     }
