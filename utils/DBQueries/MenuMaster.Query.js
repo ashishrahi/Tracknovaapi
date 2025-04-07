@@ -150,14 +150,14 @@ export const AddUpdateMenuMasterQuery = async (model) => {
   } catch (error) {
     if (error.code === 11000) {
       return {
-        isSuccess: 0,
+        isSuccess: false,
         internalSuccess: "",
         mesg: `Menu Name ${newMenu.MenuName} Already Exists`,
       };
     } else {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
         mesg: error.message,
       };
     }

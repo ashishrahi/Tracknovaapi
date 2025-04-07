@@ -134,15 +134,16 @@ export const GetFuelTypeQuery = async (model) => {
 
 /////////////////////////// DeleteFuelTypeQuery //////////////////////////////////////////////////////////////////
 
-export const DeleteFuelTypeQuery = async (model) => {
+export const DeleteFuelTypeQuery = async (fuelTypeId) => {
   try {
     const { FuelType } = await getTenantDBModels();
-
+    console.log("fuelTypeId",fuelTypeId)
     // Check FuelTypeId value, if it is 0, set it to -1
-    const fuelTypeId = model.fuelTypeId === 0 ? -1 : model.fuelTypeId;
+    // const fuelTypeId = model.fuelTypeId === 0 ? -1 : model.fuelTypeId;
 
     // Find and delete the fuel type document based on FuelTypeId
     const result = await FuelType.findOneAndDelete({ FuelTypeId: fuelTypeId });
+    console.log('result:',result)
 
     if (!result) {
       return {

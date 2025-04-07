@@ -134,10 +134,9 @@ export const GetCountryMasterQuery = async (model) => {
 
       return {
         isSuccess: true,
-        //    internalSuccess:false,
+        internalSuccess:false,
         mesg: "Country Data has been fetched successfully",
         insertedId: "",
-        internalSuccess: false,
         data: countryList,
       };
     } else {
@@ -165,7 +164,7 @@ export const GetCountryMasterQuery = async (model) => {
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: false,
       mesg: error.message,
     };
   }
@@ -206,14 +205,14 @@ export const DeleteCountryQuery = async (countryId) => {
     } else {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
+        internalSuccess: false,
         mesg: `Country ${countryId} not found!`,
       };
     }
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: error.message,
     };
   }

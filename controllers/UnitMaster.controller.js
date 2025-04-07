@@ -60,6 +60,7 @@ export async function GetUnitMaster(req,res){
 export async function DeleteUnitMaster(req,res){
     try {
         const modal = req.body;
+        console.log('modal',modal)
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await DeleteUnitMasterQuery(modal);
         const successResponse = new ReturnData(
             isSuccess,

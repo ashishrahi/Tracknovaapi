@@ -23,9 +23,9 @@ export const AddUpdateUnitMasterQuery = async (modal) => {
 
     if (existingUnit) {
         // Update existing unit
-        existingUnit.UnitName = modal.unitName || existingUnit.UnitName;
-        existingUnit.UnitShortname = modal.unitShortname || existingUnit.UnitShortname;
-        existingUnit.UpdatedBy = modal.updatedBy || existingUnit.UpdatedBy;
+        existingUnit.UnitName = modal.unitName ;
+        existingUnit.UnitShortname = modal.unitShortname ;
+        existingUnit.UpdatedBy = modal.updatedBy ;
 
        const unit = await existingUnit.save();
 
@@ -155,19 +155,19 @@ export const DeleteUnitMasterQuery = async (modal) => {
   try {
     const { UnitMaster } = await getTenantDBModels();
 
-    const units = await UnitMaster.find({ UnitId: modal.UnitId });
+    const units = await UnitMaster.find({ UnitId: modal.unitId });
     if (units.length > 0) {
-      await UnitMaster.deleteMany({ UnitId: modal.UnitId });
+      await UnitMaster.deleteMany({ UnitId: modal.unitId });
       return {
         isSuccess: true,
         internalSuccess: StatusCodes.OK,
-        mesg: `UnitMaster with id ${modal.UnitId} deleted successfully`,
+        mesg: `UnitMaster with id ${modal.unitId} deleted successfully`,
       };
     } else {
       return {
         isSuccess: false,
         internalSuccess:StatusCodes.NOT_FOUND,
-        mesg: `UnitMaster with id ${modal.UnitId} not found`,
+        mesg: `UnitMaster with id ${modal.unitId} not found`,
       };
     }
   } catch (error) {

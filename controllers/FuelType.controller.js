@@ -58,10 +58,9 @@ export async function GetFuelType(req, res) {
 /////////////////////////////////////// DeleteFuelType //////////////////////////////////////////////////////////////////
 export async function DeleteFuelType(req, res) {
   try {
-    const model = req.body;
-    const {isSuccess, id, createUpdate, msg, data } = await DeleteFuelTypeQuery(
-      model
-    );
+    const {fuelTypeId} = req.body;
+    
+    const {isSuccess, id, createUpdate, msg, data } = await DeleteFuelTypeQuery(fuelTypeId);
     const successResponse = new DBReturn(
       isSuccess,
       id,

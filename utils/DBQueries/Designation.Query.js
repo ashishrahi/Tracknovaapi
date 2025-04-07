@@ -30,8 +30,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
 
     if (designation) {
       // Update existing designation
-      designation.DesignationName =
-        designationName.trim() || designation.DesignationName;
+      designation.DesignationName = designationName.trim() || designation.DesignationName;
       designation.DesignationCode =
         designationCode || designation.DesignationCode;
       designation.CreatedBy = designationCode || designation.CreatedBy;
@@ -53,7 +52,6 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         return {
           isSuccess: 0,
           internalSuccess: "",
-          statusCode: StatusCodes.CONFLICT,
           mesg: `${existingDesignation.DesignationName} Already Exist`,
           insertedId: "",
           data: existingDesignation,
@@ -65,8 +63,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         DesignationId: -1,
       });
       const newDesignationId = maxIdDesignation
-        ? maxIdDesignation.DesignationId + 1
-        : 1;
+        ? maxIdDesignation.DesignationId + 1 : 1;
 
       const newDesignation = new Designation({
         DesignationId:
@@ -99,13 +96,13 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
     if (error.code === 11000) {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.CONFLICT,
-        message: `${data.DesignationName}" Already Exist`,
+        internalSuccess: "",
+        mesg: `${data.DesignationName}" Already Exist`,
       };
     }
 
     return {
-      isSuccess: false,
+      isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: error.message,
     };
