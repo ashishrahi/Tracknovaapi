@@ -24,12 +24,12 @@ export const CampaignTemplateSchema = new mongoose.Schema({
         CreatedBy: {
           type: String,
           trim: true,
-          required: [true, "Please provide valid CreatedBy user name."],
+          // required: [true, "Please provide valid CreatedBy user name."],
         },
         UpdatedBy: {
           type: String,
           trim: true,
-          required: [true, "Please provide valid UpdatedBy user name."],
+          // required: [true, "Please provide valid UpdatedBy user name."],
         }
       
     },{ timestamps: true, collection: "CampaignTemplate" } 

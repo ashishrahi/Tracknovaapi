@@ -243,7 +243,8 @@ async function DeleteCommGroup(req, res) {
   } catch (error) {
     // await session.abortTransaction();
     // session.endSession();
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(0, error.message);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json( {success: false,
+      message: error.message});
     // { Status: "Failed", Error: error.message });
   }
 }

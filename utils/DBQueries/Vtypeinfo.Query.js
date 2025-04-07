@@ -9,10 +9,10 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
 
   try {
     const { ItemMaster, VehicleTypeChild } = await getTenantDBModels();
-
-    if (modal.VehicleTypeId !== 0 && modal.id === 0) {
+     console.log('modal:',modal)
+    if (modal.vehicleTypeId !== 0 && modal.id === 0) {
       const findUse = await ItemMaster.findOne({
-        VehicleTypeId: modal.VehicleTypeId,
+        VehicleTypeId: modal.vehicleTypeId,
         NTRecord: 'y'
       });
       if (findUse) {
@@ -23,7 +23,7 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
         }
       }
 
-      const existingRecord = await VehicleTypeChild.findOne({ VehicleTypeId: modal.VehicleTypeId });
+      const existingRecord = await VehicleTypeChild.find({ VehicleTypeId: modal.vehicleTypeId });
 
       if (existingRecord.length > 0) {
         return {
@@ -38,9 +38,9 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
     // Check for duplicate records when id is 0
     if (modal.id === 0) {
       const duplicate = await VehicleTypeChild.findOne({
-        EffectiveDate: modal.EffectiveDate,
-        VehicleTypeId: modal.VehicleTypeId,
-        PetroId: modal.PetroId,
+        EffectiveDate: modal.effectiveDate,
+        VehicleTypeId: modal.vehicleTypeId,
+        PetroId: modal.petroId,
         id: { $ne: modal.id }
       });
 
@@ -57,8 +57,19 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
       const lastRecord = await VehicleTypeChild.findOne().sort({ id: -1 }).exec();
       modal.id = (lastRecord?.id || 0) + 1;
 
+      const modalToSave = {
+        ...modal,
+        EffectiveDate: modal.effectiveDate,
+        PetroName: modal.petroName,
+        PetroId: modal.petroId,
+        SessionD1: modal.sessionD1,
+        SessionD2: modal.sessionD2,
+        VehicleTypeId: modal.vehicleTypeId,
+        VehicleTypeName: modal.vehicleTypeName,
+      };
+
       // Add new record
-      const newVtypeInfo = new VehicleTypeChild(modal);
+      const newVtypeInfo = new VehicleTypeChild(modalToSave);
       await newVtypeInfo.save();
 
       return {
@@ -70,7 +81,7 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
     } else {
       // Check if vehicle type is in use before updating
       const findUse = await ItemMaster.findOne({
-        VehicleTypeId: modal.VehicleTypeId,
+        VehicleTypeId: modal.vehicleTypeId,
         NTRecord: 'y'
       });
 
@@ -85,9 +96,11 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
 
       // Find and update existing record
       const existingRecord = await VehicleTypeChild.findOne({ id: modal.id }).lean();
+  
 
       if (existingRecord) {
-        await VehicleTypeChild.updateOne({ id: modal.id }, { $set: modal });
+        
+        await VehicleTypeChild.updateOne({ id: modal.id }, { $set: modalToSave });
 
         return {
           isSuccess: true,
@@ -185,10 +198,10 @@ export const DeleteVtypeinfoQuery = async (modal) => {
   try {
     const { ItemMaster, VehicleTypeChild, VehicleTypeMaster} = await getTenantDBModels();
 
-    const { vehicleTypeId } = modal;
+    const { id } = modal;
 
     // Check if VehicleTypeId exists in ItemMaster
-    const itemExists = await ItemMaster.findOne({ VehicleTypeId: vehicleTypeId });
+    const itemExists = await ItemMaster.findOne({ VehicleTypeId: id });
     if (itemExists) {
       return {
         isSuccess: false,
@@ -198,7 +211,7 @@ export const DeleteVtypeinfoQuery = async (modal) => {
     }
 
     // Check if VehicleTypeId exists in VehicleTypeChild
-    const childExists = await VehicleTypeChild.findOne({ VehicleTypeId: vehicleTypeId });
+    const childExists = await VehicleTypeChild.findOne({ VehicleTypeId: id });
     if (childExists) {
       return {
         isSuccess: false,
@@ -208,7 +221,7 @@ export const DeleteVtypeinfoQuery = async (modal) => {
     }
 
     // Delete from VehicleTypeMaster
-    const deletedVehicle = await VehicleTypeMaster.findOneAndDelete({ VehicleTypeId: vehicleTypeId });
+    const deletedVehicle = await VehicleTypeMaster.findOneAndDelete({ VehicleTypeId: id });
 
     if (!deletedVehicle) {
       return {

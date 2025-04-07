@@ -7,9 +7,10 @@ import { getTenantDBModels } from "../db/index.js";
 //-----------AddUpdateVehicleType------>
 async function AddUpdateVehicleType(req, res, next) {
   try {
-    const {VehicleTypeMaster, } = await getTenantDBModels()
+    const {VehicleTypeMaster } = await getTenantDBModels()
 
     const model = req.body;
+    console.log('model:',model)
     // const db = mongoose.connection.db; // Get MongoDB connection
     // const vehicleTypeCollection = db.collection("VehicleTypes"); // Collection name
 
@@ -35,7 +36,7 @@ async function AddUpdateVehicleType(req, res, next) {
         return res
           .status(StatusCodes.OK)
           .json(
-            new DBReturn(true, null, null, "Successfully Added",   newDoc)
+            new DBReturn(true, null, null, `${newDoc.vehicleTypename} Successfully Added`,   newDoc)
           );
       } else {
         const error = new Error("Failed to save. Please try again");
@@ -48,20 +49,19 @@ async function AddUpdateVehicleType(req, res, next) {
 
     const updatedFields = {};
 
-    // Add the fields from the request body if they exist
-    if (model.vehicleTypename) updatedFields.VehicleTypename = model.vehicleTypename;
-    if (model.shortName) updatedFields.ShortName = model.shortName;
-    if (model.vehicleCode) updatedFields.VehicleCode = model.vehicleCode;
-    if (model.createdBy) updatedFields.CreatedBy = model.createdBy;
-    if (model.updatedBy) updatedFields.UpdatedBy = model.updatedBy;
+// Dynamically add fields only if they exist and are not null/undefined
+if (model.vehicleTypename) updatedFields.VehicleTypename = model.vehicleTypename;
+if (model.shortName) updatedFields.ShortName = model.shortName;
+if (model.vehicleCode) updatedFields.VehicleCode = model.vehicleCode;
+if (model.createdBy) updatedFields.CreatedBy = model.createdBy;
+if (model.updatedBy) updatedFields.UpdatedBy = model.updatedBy;
 
-    const updatedDoc = await VehicleTypeMaster.findOneAndUpdate(
-      { VehicleTypeId: model.vehicleTypeId },
-      {
-        $set: updatedFields,
-      },
-      { new: true }
-    );
+const updatedDoc = await VehicleTypeMaster.findOneAndUpdate(
+  { VehicleTypeId: model.vehicleTypeId },
+  { $set: updatedFields },
+  { new: true }
+);
+
     if (!updatedDoc) {
       const error = new Error("This Document is not present");
       error.status = StatusCodes.NOT_FOUND;
@@ -88,7 +88,7 @@ async function AddUpdateVehicleType(req, res, next) {
 async function GetVehicleType(req, res, next){
         
       try {
-    const {VehicleTypeMaster, } = await getTenantDBModels()
+    const {VehicleTypeMaster,ItemMaster } = await getTenantDBModels()
 
         const model = req.body;
         
@@ -128,6 +128,7 @@ async function DeleteVehicleType(req, res, next){
     const {VehicleTypeMaster, } = await getTenantDBModels()
 
         const model = req.body;
+        // console.log('model:',model)
         if (model.vehicleTypeId === 0) {
             const error = new Error("Invalid VehicleTypeId");
             error.status = StatusCodes.BAD_REQUEST;
@@ -166,12 +167,13 @@ async function AddUpdateEscrapVehicleType(req, res, next){
       // const vehicleTypeCollection = db.collection('VehicleTypeMaster');
       // const itemMasterCollection = db.collection('ItemMaster');
       // const eScarpVehicleTypeCollection = db.collection('v01_VehicleType');
-      const {VehicleTypeMaster,vehicleTypeCollection } = await getTenantDBModels()
+      const {VehicleTypeMaster,vehicleTypeCollection,ItemMaster } = await getTenantDBModels()
 
       const model = req.body;
+      console.log('model:',model)
       let escrVehtypename = '';
       if (model.EScarp) {
-          escrVehtypename = model.EScarpPrevValue || '';
+          escrVehtypename = model.eScarpPrevValue || '';
       }
 
       let updateVt = true;

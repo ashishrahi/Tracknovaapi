@@ -9,8 +9,8 @@ export const VehicleTypeChildSchema = new mongoose.Schema(
     PetroId: { type: Number, required: true },
     PetroName: { type: String, required: true, trim: true },  // Added trim for PetroName
     EffectiveDate: { type: Date, required: true },
-    CreatedBy: { type: String, required: true, trim: true },  // Trim to remove extra spaces
-    UpdatedBy: { type: String, required: true, trim: true },
+    CreatedBy: { type: String,  trim: true },  // Trim to remove extra spaces
+    UpdatedBy: { type: String,  trim: true },
     FuelAlloted: { type: Number },
   },
   {
