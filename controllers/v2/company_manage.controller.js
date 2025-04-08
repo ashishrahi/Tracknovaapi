@@ -5,8 +5,8 @@ import { companyManageControllerResponse as apiTextResponse } from "../../utils/
 import { v2CompanyManageService } from "../../services/index.js";
 import { connectTenantDB } from "../../db/connectMongoDB.js";
 import { getCentralDBModels } from "../../db/index.js";
+import { database } from "agenda/dist/agenda/database.js";
 
-import loadTenantModels from "../../utils/tenant-models/loadTenantModels.js";
 // For registering new company
 export async function register(req, res, next) {
     try {
@@ -39,7 +39,7 @@ export async function find(req, res, next) {
         return res.json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.findCompany, companies))
 
     } catch (error) {
-        throw error;
+        next(error);
     }
 
 }
@@ -52,7 +52,7 @@ export async function switchCompanyDatabase(req, res, next) {
             redirect: "/home",
         });
     } catch (error) {
-        throw error;
+        next(error);
     }
 }
 
@@ -60,12 +60,16 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
     try {
         // const company = req.company;
         const { Idp_account, Company } = await getCentralDBModels()
-        const { dbName, ownerId, adminName } = req.body; // Extract dbName from request
+        const { ownerId, adminName } = req.body; // Extract dbName from request
 
-        if (!dbName || !ownerId) {
+        const { database } = await Company.findOne({_id: ownerId}, {"database.dbName" : 1});
+
+        console.log("database", database);
+        if (!database.dbName || !ownerId) {
             next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Database name && OwnerId are required"));
             // return res.status(400).json({ message: "Database name is required" });
         }
+
 
         // const company = await Company.findById(ownerId);
 
@@ -75,30 +79,33 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
      
         // req.company = company;
        
-        const idpAccount = await Idp_account.findOne({accountOwner: ownerId});
+        const idpAccount = await Idp_account.findOne({accountOwner: ownerId}, {users: {$slice: 1}, username: 1});
         
-        const adminUserName = adminName.split(" ")[0].toLowerCase();
+        // const adminUserName = adminName.split(" ")[0].toLowerCase();
 
-        const user = idpAccount.users.find((user) => user.username === (adminUserName + "_admin"));
-        if(!user){
-            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "User not found");
-        }
+        const username = idpAccount.users[0].username;
+        // console.log("User from switch company", user);
 
-        const tenantDB = await connectTenantDB(dbName);
+        // const user = idpAccount.users.find((user) => user.username === adminUserName);
+        // if(user.length !> 0){
+        //     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "User not found");
+        // }
 
-        console.log("new tenetdb connected", tenantDB.name);
+        const tenantDB = await connectTenantDB(database.dbName);
+
+        console.log("new tenetdb connected", database.dbName);
 
         if (!tenantDB) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
         }
 
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, `Connected to database: ${dbName}`, {
+        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, `Connected to database: ${database.dbName}`, {
             navigateTo: "/home",
-            username: user.username,
-            dbName: dbName,
+            username: username,
+            dbName: database.dbName,
         }))
     } catch (error) {
-        throw error;
+        next(error);
     }
 }
 
