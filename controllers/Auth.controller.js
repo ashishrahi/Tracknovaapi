@@ -230,12 +230,13 @@ export async function Logout(req, res, next) {
     const user = req.user;
     const { tenant_db } = await getTenantDBModels();
 
-    console.log("tenant_db", tenant_db)
+    // console.log("Users from logout", user)
+    
     
     let navigateTo;
     user.users[0]["role"] === "SuperAdmin" ? navigateTo = "/company" : navigateTo = "login" ;
     
-    // await tenant_db.close();
+    await tenant_db.close();
     res.clearCookie("refreshToken");
     return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "User successfully logged out", {
       navigateTo

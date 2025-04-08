@@ -3,7 +3,7 @@ import { ApiErrorResponse, ApiSuccessResponse } from "../../utils/apiResponse/in
 import { validateSigninModel } from "../../utils/validation/joi.js";
 import { v2AuthService } from "../../services/index.js";
 import { authControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js"
-import { connectMongoDB } from "../../db/connectMongoDB.js";
+import { getTenantDBModels } from "../../db/index.js"
 
 
 //------- signin ----------->
@@ -36,13 +36,14 @@ export async function signin(req, res, next) {
 
 export async function logout(req, res, next){
     try {
+        const { tenant_db } = await getTenantDBModels()
+        await tenant_db.close();
         res.clearCookie("refreshToken");
-        connectMongoDB();
         return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "User successfully logged out", {
             navigateTo: "/login"
         }))
     } catch (error) {
-        
+        next(error);
     }
 }
 

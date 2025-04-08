@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 const excludedRoutes = [
   // "/api/Auth/login", 
   "/api/Auth/Refresh", 
-  "/api/Auth/Logout", 
+  // "/api/Auth/Logout", 
   "/api/v2/auth/signin"];
 
 const getLoggedInCompany = async (req, res, next) => {
@@ -29,6 +29,7 @@ const getLoggedInCompany = async (req, res, next) => {
 
     const { ownerId, userId, username } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
+    // console.table({ownerId, userId, username})
     // console.log("Payload is", payload);
 
     /*
