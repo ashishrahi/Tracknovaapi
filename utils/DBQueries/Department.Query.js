@@ -46,8 +46,8 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        insertedId: "",
         mesg: `${existingDepartment.DepartmentName} Successfully Updated`,
+        insertedId: "",
         data: newData,
       };
     } else {
@@ -71,6 +71,7 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
           isSuccess: 0,
           internalSuccess: "",
           mesg: `Department Name ${departmentExists.DepartmentName} Already Exists`,
+          insertedId:"",
           data: departmentExists,
         };
       }
@@ -105,15 +106,16 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        insertedId: "",
         mesg: `${newDepartment.DepartmentName} Department Successfully Added`,
+        insertedId: "",
         data: newData,
       };
     }
   } catch (err) {
     return {
       isSuccess: 0,
-      message: `${model.DepartmentName} Already Exists`,
+      internalSuccess:"",
+      mesg: `${model.DepartmentName} Already Exists`,
     };
   }
 };
@@ -183,7 +185,7 @@ export const DeleteDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `DepartmentId ${model.departmentId} Successfully deleted`,
+        mesg: `Department Successfully deleted`,
         insertedId: "",
       };
     } else {
@@ -198,10 +200,7 @@ export const DeleteDepartmentMasterQuery = async (model) => {
     return {
       isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      mesg:
-        err.message +
-        ";" +
-        (err.innerException ? err.innerException : err.message),
+      mesg:  err.message +";" +(err.innerException ? err.innerException : err.message),
     };
   }
 };

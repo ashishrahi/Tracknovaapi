@@ -134,7 +134,7 @@ export const GetStatebyCountryQuery = async (model) => {
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: error.message,
     };
   }
@@ -208,7 +208,7 @@ export const GetStateQuery = async (model) => {
   } catch (err) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in AddUpdateStateQuery: ${err.message}`,
     };
   }
@@ -232,7 +232,7 @@ export const GetStatesByCountryQuery = async (CountryId) => {
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in AddUpdateStateQuery: ${err.message}`,
     };
   }
@@ -259,14 +259,14 @@ export const DeleteStateQuery = async (model) => {
     } else {
       return {
         isSuccess: false,
-        statusCode: StatusCodes.NOT_FOUND,
+        internalSuccess: StatusCodes.NOT_FOUND,
         mesg: `StateId ${model.stateId} not found`,
       };
     }
   } catch (error) {
     return {
       isSuccess: false,
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      internalSuccess: StatusCodes.INTERNAL_SERVER_ERROR,
       mesg: `Error in DeleteStateQuery: ${error.message}`,
     };
   }

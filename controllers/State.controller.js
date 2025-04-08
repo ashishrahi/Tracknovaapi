@@ -25,7 +25,7 @@ export async function AddUpdateState(req,res){
         const apiErrorResponse = new ApiErrorResponse(
             StatusCodes.BAD_REQUEST,
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }
 
@@ -54,8 +54,6 @@ export async function GetStatebyCountry(req,res){
 
 
 /////////////////////////////////////////////////// GetState //////////////////////////////////////////////////////////////////
-
-
 export async function GetState(req,res){
     try {
         const model = req.body;
@@ -73,12 +71,11 @@ export async function GetState(req,res){
         const apiErrorResponse = new ApiErrorResponse(
              StatusCodes.BAD_REQUEST, 
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }
 
 //////////////////////////////////////////////////// DeleteState //////////////////////////////////////////////////////////////////
-
 export async function DeleteState(req,res){
     try {
         const model = req.body;
@@ -96,6 +93,6 @@ export async function DeleteState(req,res){
         const apiErrorResponse = new ApiErrorResponse(
             StatusCodes.BAD_REQUEST,
              error.message);
-        res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
     }
 }

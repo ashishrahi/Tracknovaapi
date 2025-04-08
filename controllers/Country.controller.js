@@ -61,10 +61,9 @@ export async function GetCountryMaster(req, res) {
 
 export async function DeleteCountryMaster(req, res) {
   try {
-    const model = req.body;
-    const { isSuccess, internalSuccess, mesg, insertedId, data  } = await DeleteCountryQuery(
-      model
-    );
+    const {countryId} = req.body;
+    // console.log("model:",countryId)
+    const { isSuccess, internalSuccess, mesg, insertedId, data  } = await DeleteCountryQuery(countryId);
     const successResponse = new ReturnData(
       isSuccess,
       internalSuccess,

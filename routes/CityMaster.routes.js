@@ -11,6 +11,6 @@ router.post(
 
 router.post("/Cities/:StateId", CityMasterController.GetCitiesByState);
 router.post("/GetDistrictMaster", CityMasterController.GetCityMaster);
-router.delete("/DeleteDistrictMaster", CityMasterController.DeleteCityMaster);
+router.delete("/DeleteDistrict", CityMasterController.DeleteCityMaster);
 
 export default router;

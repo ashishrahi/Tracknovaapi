@@ -39,7 +39,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
       return {
         isSuccess: true,
         internalSuccess: "",
-        message: `${existingCity.CityName} City Updated Successfully `,
+        mesg: `${existingCity.CityName} City Updated Successfully `,
         data: existingCity,
       };
     } else {
@@ -75,7 +75,7 @@ export const AddUpdateCityMasterQuery = async (model) => {
       return {
         isSuccess: true,
         internalSuccess: "",
-        message: `${newCityList.cityName} City Created Successfully `,
+        mesg: `${newCityList.cityName} City Created Successfully `,
         insertedId: "",
         data: newCityList,
       };
@@ -127,6 +127,7 @@ export const GetCitiesByStateQuery = async (model) => {
 };
 
 ////////////////////////////////////////////  GetCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const GetCityMasterQuery = async (model) => {
   try {
     const { CityMaster, StateMaster } = await getTenantDBModels();

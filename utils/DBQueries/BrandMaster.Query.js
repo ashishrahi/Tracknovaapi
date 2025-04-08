@@ -126,17 +126,18 @@ export const DeleteBrandQuery = async (model) => {
     const { BrandMaster } = await getTenantDBModels();
 
     let { brandId } = model;
+    // console.log('brandId',brandId)
 
-    if (!brandId || brandId === 0) {
-      brandId = -1;
-    }
+    // if (!brandId || brandId === 0) {
+    //   brandId = -1;
+    // }
 
     // Find and delete the brand by brandId
     const brand = await BrandMaster.findOneAndDelete({ brandId: brandId });
 
     if (!brand) {
       return {
-        isSuccess: 0,
+        isSuccess: false,
         id: brandId.brandId,
         createUpdate: "BrandId not deleted ",
         msg: `brandId${brandId} not found`,
@@ -144,7 +145,7 @@ export const DeleteBrandQuery = async (model) => {
     }
 
     return {
-      isSuccess: 1,
+      isSuccess: true,
       id: brandId.brandId,
       createUpdate: "BrandId not deleted ",
       msg: `brandId ${brandId} deleted successfully`,

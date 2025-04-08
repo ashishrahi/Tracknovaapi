@@ -19,8 +19,8 @@ export async function AddUpdateDepartmentMaster(req, res) {
     const successResponse = new ReturnData(
       isSuccess,
       internalSuccess,
-      insertedId,
       mesg,
+      insertedId,
       data
     );
     res.status(StatusCodes.CREATED).json(successResponse);
