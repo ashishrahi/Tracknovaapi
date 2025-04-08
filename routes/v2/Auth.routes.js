@@ -5,7 +5,8 @@ import { switchDatabase } from "../../middlewares/index.js"
 
 const router = express.Router();
 
-// for inserting loggedInCompany in req body;
+
 router.post("/signin",  v2AuthController.signin);
+router.post("/logout", v2AuthController.logout)
 
 export default router;

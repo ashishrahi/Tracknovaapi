@@ -366,3 +366,4 @@ console.log(await argon2.hash("Rakesh@123"));
 
 
 
+console.log("HJXYU8265e".toUpperCase());

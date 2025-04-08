@@ -86,7 +86,7 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
 
         const tenantDB = await connectTenantDB(dbName);
 
-        console.log("new tenetdb connected", tenantDB);
+        console.log("new tenetdb connected", tenantDB.name);
 
         if (!tenantDB) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)

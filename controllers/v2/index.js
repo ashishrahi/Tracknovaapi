@@ -1,11 +1,12 @@
-import { signin } from "./auth.controller.js";
+import { signin, logout } from "./auth.controller.js";
 import { register, find, switchCompanyDatabase, switchCompanyDatabaseWithDbName} from "./company_manage.controller.js";
 import { addCountry, getCountry, deleteCountry } from "./country.controller.js";
 import { addState, getState, stateList, deleteState } from "./state.controller.js";
 import { getCity, addCity, cityList, deleteCity  } from "./city.controller.js";
 
 export const v2AuthController = {
-    signin: signin
+    signin: signin,
+    logout: logout
 }
 
 export const v2CompanyManageController = {
