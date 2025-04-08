@@ -71,7 +71,7 @@ export async function registerService(value) {
         */
 
         if (!isIdpAlreadyGenerated) {
-            console.log("idp creation start")
+          
             const newIdpData = new Idp_account({
                 username: newCompanyData.admin.email,
                 /**

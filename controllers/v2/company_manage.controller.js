@@ -11,7 +11,7 @@ import loadTenantModels from "../../utils/tenant-models/loadTenantModels.js";
 export async function register(req, res, next) {
     try {
         const model = req.body;
-        console.log("Model is for", model)
+        
         const { value, error } = validateRegisterCompanyModel(model);
 
         if (error) {
@@ -77,7 +77,6 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
        
         const idpAccount = await Idp_account.findOne({accountOwner: ownerId});
         
-
         const adminUserName = adminName.split(" ")[0].toLowerCase();
 
         const user = idpAccount.users.find((user) => user.username === (adminUserName + "_admin"));

@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 const excludedRoutes = [
   // "/api/Auth/login", 
   "/api/Auth/Refresh", 
-  // "/api/Auth/Logout", 
+  "/api/Auth/Logout", 
   "/api/v2/auth/signin"];
 
 const getLoggedInCompany = async (req, res, next) => {
