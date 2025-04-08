@@ -10,20 +10,22 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
+import { connectTenantDB } from "../../db/connectMongoDB.js";
 
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
   try {
-    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
+
     const { username, password } = model;
+
+    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
 
     let response;
 
     // Find user by username
-    const user = await AspNetUsers.findOne({ UserName: username });
-    console.log("user is ", user)
-
+    const user = await AspNetUsers.findOne({ UserName: username }).select("-PasswordHash");
+    
     if (!user) {
       throw new ApiErrorResponse(
         StatusCodes.UNAUTHORIZED,
@@ -39,17 +41,19 @@ export const loginQuery = async (model) => {
     // }
 
     // AspUser => EmpMaster => RoleId
-    const empRoleId = await EmpMaster.findOne({ UserId: user.Id }).select(
+    const empRoleId = await EmpMaster.findOne({ UserId: user.Id })
+    .select(
       "RoleId"
     );
-    // console.log("empROleid", empRoleId)
+    console.log("empROleid", empRoleId)
     // // Fetch user roles
     const roles = await AspNetRoles.find({
-      Id: {
-        $in: [empRoleId.RoleId],
-        // ["82763a68-4d8d-4358-96a5-c2d2981e3d0a"]
-        // emp.RoleId
-      },
+      // Id: {
+      //   $in: [empRoleId.RoleId],
+      //   // ["82763a68-4d8d-4358-96a5-c2d2981e3d0a"]
+      //   // emp.RoleId
+      // },
+      Id: empRoleId.RoleId
     });
     // console.log("roles: ", roles)
     const rolesString = roles.map((role) => role.Name);

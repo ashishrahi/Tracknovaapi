@@ -347,7 +347,7 @@ async function NTCurrent(req, res) {
 //-------------VehCurrStat----------->
 // Done
 async function VehCurrStat(req, res) {
-  const {NTCurrentDay, ItemMaster } = await getTenantDBModels()
+  const { NTCurrentDay, ItemMaster } = await getTenantDBModels()
 
   const vehAll = await NTCurrentDay.aggregate([
     {

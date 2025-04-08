@@ -67,8 +67,9 @@ export async function GetEmployee(req, res, next) {
 export async function UpsertEmpPermission(req, res, next) {
   try {
     const model = req.body;
+    const company = req.company
     const response =
-      await UpsertEmpPermissionQuery(model, res);
+      await UpsertEmpPermissionQuery(model, res, company);
     // const successResponse = new ApiSuccessResponse(
     //   isSuccess,
     //   statusCode,

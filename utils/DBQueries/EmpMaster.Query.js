@@ -6,16 +6,18 @@ import {
   AddUpdateUserPermissionMasterQuery,
   RegisterQuery,
 } from "../DBQueries/Auth.Query.js";
-import { getTenantDBModels } from "../../db/index.js";
-
+import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
+import mongoose from "mongoose";
+import argon2 from "argon2";
+import sendMailService from "../emailService/nodeMailer.js";
 //---------AddUpdateEmployeeQuery------>
 
 export const AddUpdateEmployeeQuery = async (model) => {
   try {
     const { EmpMaster } = await getTenantDBModels();
 
-    let response = {}; 
-    
+    let response = {};
+
     // Check if Employee Exists
     const existingEmployee = await EmpMaster.findOne(
       { EmpName: model.empName, EmpMobileNo: model.empMobileNo }
@@ -136,7 +138,7 @@ export const GetEmployeeQuery = async (model) => {
         },
       },
       // Lookup State
-      {  
+      {
         $lookup: {
           from: "StateMaster",
           localField: "EmpStateId",
@@ -242,7 +244,7 @@ export const GetEmployeeQuery = async (model) => {
 
 /////////////////////////////////////////////// UpsertEmpPermissionQuery //////////////////////////////////////////////////////////////////
 
-export const UpsertEmpPermissionQuery = async (model, res) => {
+export const UpsertEmpPermissionQuery = async (model, res, company) => {
   let response = { status: "Failed", message: "" };
   try {
     const { EmpMaster, UserPermission } = await getTenantDBModels();
@@ -299,6 +301,70 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
           StatusCodes.BAD_REQUEST,
           upsertResponse.message
         );
+
+      const { Idp_account } = await getCentralDBModels();
+
+      console.log("company is", company)
+
+      const newUser = {
+        username: model.registerModel?.username?.trim(),
+        password: await argon2.hash(model.registerModel?.password?.trim()),
+        email: model.registerModel?.email,
+        role: model.registerModel?.role,
+        _id: new mongoose.Types.ObjectId(), // generating ObjectId manually
+      };
+
+
+      if(company && company !== "SuperAdmin" ){
+        const isInserted = await Idp_account.findOneAndUpdate({ "accountOwner": company._id }, {
+          "$push": { users: newUser }
+        });
+
+
+        /**
+         * Infor the user
+         */
+        const from = process.env.NODEMAILER_EMAIL_USER;
+      let to = "saurabhkushwaha9889@gmail.com";
+      let subject = `<h2>👤 New User Added</h2>`
+      let html = `
+        <h2>👤 New User Added</h2>
+        <p><strong>Username:</strong> ${newUser.username}</p>
+        <p><strong>Username:</strong> ${model.registerModel?.password}</p>
+        <p><strong>Email:</strong> ${newUser.email}</p>
+        <p><strong>Role:</strong> ${newUser.role}</p>
+        <p>User has been successfully added to the account: <strong>${model?.companyName || "New Company"}</strong></p>
+      `;
+      // let mailOption = {
+      //   mailType: model.status, // it should be like immediately, schedules
+      //   mailSendStartDate: model.fromDate,
+      //   mailSendFinishDate: model.toDate,
+      //   mailSendFinishTime: model.toTime,
+      // };
+      await sendMailService(from, to, subject, "I am text", html)
+
+
+      }
+      
+     
+      const from = process.env.NODEMAILER_EMAIL_USER;
+      let to = "saurabhkushwaha9889@gmail.com";
+      let subject = `<h2>👤 New User Added</h2>`
+      let html = `
+        <h2>👤 New User Added</h2>
+        <p><strong>Username:</strong> ${newUser.username}</p>
+        <p><strong>Username:</strong> ${model.registerModel?.password}</p>
+        <p><strong>Email:</strong> ${newUser.email}</p>
+        <p><strong>Role:</strong> ${newUser.role}</p>
+        <p>User has been successfully added to the account: <strong>${model?.companyName || "New Company"}</strong></p>
+      `;
+      // let mailOption = {
+      //   mailType: model.status, // it should be like immediately, schedules
+      //   mailSendStartDate: model.fromDate,
+      //   mailSendFinishDate: model.toDate,
+      //   mailSendFinishTime: model.toTime,
+      // };
+      await sendMailService(from, to, subject, "I am text", html)
     }
 
     // If UserId already exists, just update permissions
@@ -322,17 +388,17 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
 
           insertOne: {
             document: {
-              UserId: model.userId || model.UserId ,
-              MenuId: perm.menuId || model.MenuId ,
-              ParentId: perm.parentId || model.ParentId ,
-              IsAdd: perm.isAdd || model.IsAdd ,
-              IsEdit: perm.isEdit || model.IsEdit ,
-              IsDel: perm.isDel || model.IsDel ,
-              IsView: perm.isView || model.IsView ,
-              IsPrint: perm.isPrint || model.IsPrint ,
-              IsExport: perm.isExport || model.IsExport ,
-              isPost: perm.isPost || model.isPost ,
-              IsRelease: perm.isRelease || model.IsRelease ,
+              UserId: model.userId || model.UserId,
+              MenuId: perm.menuId || model.MenuId,
+              ParentId: perm.parentId || model.ParentId,
+              IsAdd: perm.isAdd || model.IsAdd,
+              IsEdit: perm.isEdit || model.IsEdit,
+              IsDel: perm.isDel || model.IsDel,
+              IsView: perm.isView || model.IsView,
+              IsPrint: perm.isPrint || model.IsPrint,
+              IsExport: perm.isExport || model.IsExport,
+              isPost: perm.isPost || model.isPost,
+              IsRelease: perm.isRelease || model.IsRelease,
             },
           },
         }));
@@ -343,22 +409,28 @@ export const UpsertEmpPermissionQuery = async (model, res) => {
       response.status = 1;
       response.message = "Permissions has successfully updated";
 
-      return response;
+
     }
-    console.log("Without if block ");
+
     // Update Employee Data
 
     const empUpdateResult = await EmpMaster.findOneAndUpdate(
       { Empid: model.empid },
       {
         $set: {
-          UserId: model.registerModel.id,
+          UserId: model.userId || model.registerModel.id,
           RoleId: model.roleId,
           // UserPermission: model.UserPermission,
         },
       },
       { new: true }
     );
+    // console.log("empUpdateResult", empUpdateResult)
+    // await connectMongoDB();
+
+
+
+
 
     // if (!empUpdateResult) throw new Error("Employee not found");
 

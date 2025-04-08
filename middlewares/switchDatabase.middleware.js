@@ -20,9 +20,9 @@ async function switchDatabase(req, res, next) {
     //     return new ApiSuccessResponse(true, StatusCodes.OK, "Login Successfull", { redirect: "/company", message: "Super Admin Dashboard" } )
     //  }
 
-    console.log("company from switchdatabase", company)
+    
     const { database } = company;
-    console.log("database from switchdatabase", database)
+    
     // If already connected, attach it to the request
     const tenantDB = await connectTenantDB(dbName);
 

@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import sendMail from "../utils/nodeMailer/nodeMailer.js";
 import dotnetLikeData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import {
   CommGroup,
@@ -27,7 +26,7 @@ import {
   CommonResponse,
   ApiErrorResponse,
 } from "../utils/apiResponse/index.js";
-import mongoose from "mongoose";
+
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import sendMailService from "../utils/emailService/nodeMailer.js";
 
