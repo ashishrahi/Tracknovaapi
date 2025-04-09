@@ -11,7 +11,9 @@ const excludedRoutes = [
   // "/api/Auth/login", 
   "/api/Auth/Refresh", 
   // "/api/Auth/Logout", 
-  "/api/v2/auth/signin"];
+  "/api/v2/auth/signin",
+  "/api/v2/auth/refresh",
+];
 
 const getLoggedInCompany = async (req, res, next) => {
   try {

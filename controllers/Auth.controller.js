@@ -74,14 +74,15 @@ export async function login(req, res, next) {
       response,
       response.data.permissions.length
     );
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None", // ✅ Required for cross-site requests
-    };
+    // removing refreshToken from here because added in out layer security
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None", // ✅ Required for cross-site requests
+    // };
 
     return res.status(StatusCodes.OK)
-      .cookie("refreshToken", refreshToken, options)
+      // .cookie("refreshToken", refreshToken, options)
       .json(successResponse);
   } catch (error) {
     return next(new ApiErrorResponse(error.StatusCode || StatusCodes.BAD_REQUEST, error.ErrorMessage || error.message));
