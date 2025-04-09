@@ -12,6 +12,7 @@ export const AspNetUsersSchema = new mongoose.Schema( {
     },
     UserName: {
       type: String,
+      lowercase: true,
       required: true,
       trim: true,
       unique: true, // Ensures unique usernames

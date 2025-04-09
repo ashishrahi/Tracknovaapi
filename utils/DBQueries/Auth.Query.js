@@ -10,8 +10,8 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
-import { connectTenantDB } from "../../db/connectMongoDB.js";
-
+import { connectTenantDB} from "../../db/connectMongoDB.js";
+import { getCentralDBModels } from "../../db/index.js";
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
@@ -25,7 +25,7 @@ export const loginQuery = async (model) => {
 
     // Find user by username
     const user = await AspNetUsers.findOne({ UserName: username }).select("-PasswordHash");
-    
+    console.log("user from login", user)
     if (!user) {
       throw new ApiErrorResponse(
         StatusCodes.UNAUTHORIZED,
@@ -134,20 +134,13 @@ export const RegisterQuery = async (model, res) => {
     const userExists = await AspNetUsers.findOne({ UserName: model.username });
 
     if (userExists) {
-      // return res
-      //   .status(StatusCodes.CONFLICT)
-      //   .json(
-      //     new ApiErrorResponse(
-      //       StatusCodes.CONFLICT,
-      //       "UserId or UserName already exists! Try other one."
-      //     )
-      //   );
       throw new ApiErrorResponse(
         StatusCodes.CONFLICT,
         "UserId or UserName already exists! Try other one."
       );
     }
-    console.log("asp user", model);
+
+   
     // Create new user
     const newUser = new AspNetUsers({
       Id: model.id,

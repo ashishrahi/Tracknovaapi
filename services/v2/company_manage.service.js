@@ -60,10 +60,15 @@ export async function registerService(value) {
         console.log(`Password is ${generatedPassword}`);
 
         // userName for Admin. It is also unique.
-        const adminUserName = (value.admin.name.split(" ")[0] + "_admin").toLowerCase();
+        
+        /**
+         * Username is AdminName + last 4 digit of phone number.
+         */
+        const adminUserName = (value.admin.name.split(" ")[0].toLowerCase() + value.admin.phone.slice(6));
+        
         const isIdpAlreadyGenerated = await Idp_account.findOne({ username: adminUserName });
 
-        console.log("isIdpAlreadyGenerated", isIdpAlreadyGenerated);
+       
 
         /**
          * If isIdpAlreadyGenerated already exists, It means one account has multiple company or database
