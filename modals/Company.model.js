@@ -18,7 +18,7 @@ export const CompanySchema = new mongoose.Schema({
 
   pan: {
     type: String,
-    match: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // PAN format validation
+    // match: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // PAN format validation
     uppercase: true,
     trim: true
   },

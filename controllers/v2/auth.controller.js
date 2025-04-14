@@ -52,7 +52,8 @@ export async function refresh(req, res, next) {
     try {
         const { Idp_account } = await getCentralDBModels();
 
-        const oldRefreshToken = req.cookies.refreshToken;
+        const oldRefreshToken = req?.cookies?.refreshToken;
+        
         if (!oldRefreshToken) throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Refresh token required");
 
         // we are not storing refreshToken inside db we used httpOnly Cookie

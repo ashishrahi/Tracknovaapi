@@ -315,7 +315,7 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
       };
 
 
-      if(company && company !== "SuperAdmin" ){
+      if (company && company !== "SuperAdmin") {
         const isInserted = await Idp_account.findOneAndUpdate({ "accountOwner": company._id }, {
           "$push": { users: newUser }
         });
@@ -325,28 +325,28 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
          * Infor the user
          */
         const from = process.env.NODEMAILER_EMAIL_USER;
-      let to = "saurabhkushwaha9889@gmail.com";
-      let subject = `<h2>👤 New User Added</h2>`
-      let html = `
+        let to = "saurabhkushwaha9889@gmail.com";
+        let subject = `<h2>👤 New User Added</h2>`
+        let html = `
         <h2>👤 New User Added</h2>
         <p><strong>Username:</strong> ${newUser.username}</p>
-        <p><strong>Username:</strong> ${model.registerModel?.password}</p>
+        <p><strong>Username:</strong> ${model?.registerModel?.password}</p>
         <p><strong>Email:</strong> ${newUser.email}</p>
         <p><strong>Role:</strong> ${newUser.role}</p>
         <p>User has been successfully added to the account: <strong>${model?.companyName || "New Company"}</strong></p>
       `;
-      // let mailOption = {
-      //   mailType: model.status, // it should be like immediately, schedules
-      //   mailSendStartDate: model.fromDate,
-      //   mailSendFinishDate: model.toDate,
-      //   mailSendFinishTime: model.toTime,
-      // };
-      await sendMailService(from, to, subject, "I am text", html)
+        // let mailOption = {
+        //   mailType: model.status, // it should be like immediately, schedules
+        //   mailSendStartDate: model.fromDate,
+        //   mailSendFinishDate: model.toDate,
+        //   mailSendFinishTime: model.toTime,
+        // };
+        await sendMailService(from, to, subject, "I am text", html)
 
 
       }
-      
-     
+
+
       const from = process.env.NODEMAILER_EMAIL_USER;
       let to = "saurabhkushwaha9889@gmail.com";
       let subject = `<h2>👤 New User Added</h2>`

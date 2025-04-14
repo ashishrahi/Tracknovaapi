@@ -255,16 +255,19 @@ export async function Logout(req, res, next) {
 //-------------GetUSER---------->
 export async function GetUSER(req, res, next) {
   try {
-    const { EmpMaster } = await getTenantDBModels();
+    const { EmpMaster, AspNetUsers } = await getTenantDBModels();
     const user = req.user;
-    if (!user) {
+
+    const aspNetUserId = await AspNetUsers.findOne({UserName: user.users[0]["username"]}, {Id : 1, _id:0});
+
+    const EmployeeDetails = await EmpMaster.findOne({UserId: aspNetUserId.Id}, {ImageFile: 0, SignatureFile: 0})
+
+    console.log("User from GetUser Auth Controller", EmployeeDetails)
+    if (!EmployeeDetails) {
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
     }
-    const userFullDetails = await EmpMaster.findOne({ UserId: user.Id })
-      .select("-ImageFile -SignatureFile")
-      .lean();
 
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", EmployeeDetails))
 
   } catch (error) {
     const statusCode = error.StatusCode;

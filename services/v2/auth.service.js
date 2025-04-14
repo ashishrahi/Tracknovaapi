@@ -191,6 +191,7 @@ export async function refreshService(userId) {
         expiration: Number(process.env.ACCESS_TOKEN_EXPIRY) / 1000, // 5 years
         isSuccess: true,
         navigateTo: navigateTo,
+        role: userDetail.users[0].role,
         message: "Login Successful",
         data: {
           userDetail: {

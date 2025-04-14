@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 
 const excludedRoutes = [
   // "/api/Auth/login", 
-  "/api/Auth/Refresh", 
+  "/api/Auth/Refresh",
   // "/api/Auth/Logout", 
   "/api/v2/auth/signin",
   "/api/v2/auth/refresh",
@@ -24,7 +24,7 @@ const getLoggedInCompany = async (req, res, next) => {
     if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied due to access token not provided"));
 
     const token = req.headers["authorization"].split(" ")[1];
-    
+
     /**
      * for SuperAdmin JWT token ownerId is "SuperAdmin"
     */
@@ -39,17 +39,17 @@ const getLoggedInCompany = async (req, res, next) => {
     * userId === idp_accounts have users array.
     */
 
-    const user = await Idp_account.findOne({"users._id" : userId}, {"users.$" : 1, accountOwner: 1});
-   
+    const user = await Idp_account.findOne({ "users._id": userId }, { "users.$": 1, accountOwner: 1 });
 
-    
+
+
     /**
      * If ownerId is not present it means SuperAdmin is logged in.
     */
-   
-   let company;
-   if(ownerId !== "SuperAdmin"){
-     company = await Company.findById(ownerId);
+
+    let company;
+    if (ownerId !== "SuperAdmin") {
+      company = await Company.findById(ownerId);
     }
     // console.log("user from getLoggedInuser", user );
     // console.log("company from getLoggedInuser", company );
@@ -67,9 +67,15 @@ const getLoggedInCompany = async (req, res, next) => {
     req.company = company || "SuperAdmin";
     req.user = user;
     next()
-  } catch (error) {
-    error.ErrorMessage = error.ErrorMessage || error.message;
-    next(error)
+  } catch (err) {
+    if (err.name === "JsonWebTokenError") {
+      // JsonWebTokenError this errors contains actual error msg, we should avoid to provide actual error
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied"));
+  } else if(err.name === "TokenExpiredError"){
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Session expired, please login again"))
+  }else {
+      return next(err) 
+  }
   }
 };
 
