@@ -101,6 +101,7 @@ import {
 // CountryMaster
 import {
   AddUpdateCountryMaster,
+  ImportCountries,
   GetCountryMaster,
   DeleteCountryMaster,
 } from "./Country.controller.js";
@@ -365,6 +366,7 @@ export const BrandController = {
 
 export const CountryMasterController = {
   AddUpdateCountryMaster: AddUpdateCountryMaster,
+  ImportCountries:ImportCountries,
   GetCountryMaster: GetCountryMaster,
   DeleteCountryMaster: DeleteCountryMaster,
 };

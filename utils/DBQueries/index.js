@@ -9,7 +9,7 @@ import { AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery} from "./Brand
 import { AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery } from "./BinLocation.Query.js"
 
 // CountryMaster Queries
-import { AddUpdateCountryMasterQuery,GetCountryMasterQuery,DeleteCountryQuery } from "./CountryMaster.Query.js";
+import { AddUpdateCountryMasterQuery,ImportCountriesQuery,GetCountryMasterQuery,DeleteCountryQuery } from "./CountryMaster.Query.js";
 
 
 
@@ -54,7 +54,7 @@ export {
     getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery,
     AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery,
     AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery,
-    AddUpdateCountryMasterQuery,GetCountryMasterQuery,DeleteCountryQuery,
+    AddUpdateCountryMasterQuery,ImportCountriesQuery,GetCountryMasterQuery,DeleteCountryQuery,
     AddUpdateDepartmentMasterQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery,
     AddUpdateDesignationMasterQuery, GetDesignationMasterQuery, DeleteDesignationMasterQuery,
     GetDeviceTypeQuery,
