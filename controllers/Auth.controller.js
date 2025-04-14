@@ -74,14 +74,15 @@ export async function login(req, res, next) {
       response,
       response.data.permissions.length
     );
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None", // ✅ Required for cross-site requests
-    };
+    // removing refreshToken from here because added in out layer security
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None", // ✅ Required for cross-site requests
+    // };
 
     return res.status(StatusCodes.OK)
-      .cookie("refreshToken", refreshToken, options)
+      // .cookie("refreshToken", refreshToken, options)
       .json(successResponse);
   } catch (error) {
     return next(new ApiErrorResponse(error.StatusCode || StatusCodes.BAD_REQUEST, error.ErrorMessage || error.message));
@@ -254,16 +255,19 @@ export async function Logout(req, res, next) {
 //-------------GetUSER---------->
 export async function GetUSER(req, res, next) {
   try {
-    const { EmpMaster } = await getTenantDBModels();
+    const { EmpMaster, AspNetUsers } = await getTenantDBModels();
     const user = req.user;
-    if (!user) {
+
+    const aspNetUserId = await AspNetUsers.findOne({UserName: user.users[0]["username"]}, {Id : 1, _id:0});
+
+    const EmployeeDetails = await EmpMaster.findOne({UserId: aspNetUserId.Id}, {ImageFile: 0, SignatureFile: 0})
+
+    console.log("User from GetUser Auth Controller", EmployeeDetails)
+    if (!EmployeeDetails) {
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Please login or create acount first."))
     }
-    const userFullDetails = await EmpMaster.findOne({ UserId: user.Id })
-      .select("-ImageFile -SignatureFile")
-      .lean();
 
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", userFullDetails))
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", EmployeeDetails))
 
   } catch (error) {
     const statusCode = error.StatusCode;

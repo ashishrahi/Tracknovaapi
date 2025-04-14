@@ -7,6 +7,7 @@ import {
   BinLocation,
   AreaWardMaster,
 } from "../../modals/index.js";
+import { getTenantDBModels } from "../../db/index.js";
 
 //----------------------- Dashboard_Query ------------------------->
 
@@ -173,9 +174,10 @@ export const getVehicleQuery = async (vehicleNo) => {
 
 //----------------------- BinLocationQuery ------------------------->
 
-// binQueries.js
+
 export const BinLocationQuery = async (flag) => {
   try {
+    const { BinLocation } = await getTenantDBModels();
     let queryResult;
     let newData;
 
@@ -210,10 +212,10 @@ export const BinLocationQuery = async (flag) => {
           },
         },
       ]);
-      newData = formattedData(queryResult);
+      queryResult = formattedData(queryResult);
     }
 
-    return newData;
+    return queryResult;
   } catch (error) {
     throw new Error(error.message);
   }

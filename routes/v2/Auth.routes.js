@@ -7,6 +7,7 @@ const router = express.Router();
 
 
 router.post("/signin",  v2AuthController.signin);
-router.post("/logout", v2AuthController.logout)
+router.post("/logout", v2AuthController.logout);
+router.post("/refresh", v2AuthController.refresh);
 
 export default router;
