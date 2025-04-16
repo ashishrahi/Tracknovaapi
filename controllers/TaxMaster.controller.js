@@ -5,6 +5,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateTaxMasterQuery,
+    ImportTaxMastersQuery,
     GetTaxMasterQuery,
     DeleteTaxMasterQuery,
 } from "../utils/DBQueries/TaxMaster.Query.js";
@@ -31,6 +32,31 @@ export async function AddUpdateTaxMaster(req,res){
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }
 }
+
+///////////////////////////////////////////////////  ImportTaxMasters  ////////////////////////////////////////////////////////
+
+export async function ImportTaxMasters(req,res){
+    try {
+        const model = req.body;
+        const { isSuccess, internalSuccess, mesg , insertedId, data } = await ImportTaxMastersQuery(model);
+        const successResponse = new ReturnData(
+            isSuccess,
+            internalSuccess,
+            mesg,
+            insertedId,
+            data
+        );
+        res.status(StatusCodes.CREATED).json(successResponse);
+
+    } catch (error) {
+        const apiErrorResponse = new ApiErrorResponse(
+             StatusCodes.BAD_REQUEST, 
+             error.message);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
+    }
+}
+
+
 
 //////////////////////////////////////////////////////  GetTaxMaster  ////////////////////////////////////////////////////////
 

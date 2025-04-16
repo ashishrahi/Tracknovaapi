@@ -3,7 +3,7 @@
 import { getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery } from "./Dashboard.Query.js";
 
 // BrandMaster Queries
-import { AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery} from "./BrandMaster.Query.js";
+import { AddUpdateBrandMasterQuery,ImportBrandsQuery,GetBrandQuery,DeleteBrandQuery} from "./BrandMaster.Query.js";
 
 // BinLocation Queries
 import { AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery } from "./BinLocation.Query.js"
@@ -15,10 +15,10 @@ import { AddUpdateCountryMasterQuery,ImportCountriesQuery,GetCountryMasterQuery,
 
 
 // DepartmentMaster Queries
-import { AddUpdateDepartmentMasterQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery } from "./Department.Query.js";
+import { AddUpdateDepartmentMasterQuery,ImportDepartmentsQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery } from "./Department.Query.js";
 
 // DesignationMaster Queries
-import { AddUpdateDesignationMasterQuery,GetDesignationMasterQuery,DeleteDesignationMasterQuery } from "./Designation.Query.js";
+import { AddUpdateDesignationMasterQuery,ImportDesignationQuery,GetDesignationMasterQuery,DeleteDesignationMasterQuery } from "./Designation.Query.js";
 
 //DeviceTypeQuery
 import {GetDeviceTypeQuery} from './DeviceType.Query.js'
@@ -30,7 +30,7 @@ import {AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteE
 import {AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery} from './GeoFencing.Query.js'
 
 //CityMasterQuery
-import {AddUpdateCityMasterQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
+import {AddUpdateCityMasterQuery,ImportCitiesQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery} from './CityMaster.Query.js'
 
 //FuelCorrectionQuery
 import {AddUpdateFuelCorrectionQuery,GetVehListQuery} from './FuelCorrection.Query.js'
@@ -52,21 +52,23 @@ import {VehicleFuelDateRange} from "./VehicleFuelDateRangePipeline.js"
 export {
     
     getDashboardQuery,getVehicleQuery,BinLocationQuery,BinsByWardNumberQuery,
-    AddUpdateBrandMasterQuery,GetBrandQuery,DeleteBrandQuery,
+    AddUpdateBrandMasterQuery,ImportBrandsQuery,GetBrandQuery,DeleteBrandQuery,
     AddUpdateBinLocationQuery,GetBinLocationQuery,DeleteBinLocationQuery,
     AddUpdateCountryMasterQuery,ImportCountriesQuery,GetCountryMasterQuery,DeleteCountryQuery,
-    AddUpdateDepartmentMasterQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery,
-    AddUpdateDesignationMasterQuery, GetDesignationMasterQuery, DeleteDesignationMasterQuery,
+    AddUpdateDepartmentMasterQuery,ImportDepartmentsQuery,GetDepartmentMasterQuery,DeleteDepartmentMasterQuery,
+    AddUpdateDesignationMasterQuery,ImportDesignationQuery ,GetDesignationMasterQuery, DeleteDesignationMasterQuery,
     GetDeviceTypeQuery,
     AddUpdateEmployeeQuery,GetEmployeeQuery,UpsertEmpPermissionQuery,DeleteEmployeeQuery,
     AddUpdateGeoFencingQuery,GetGeoFencingQuery,DeleteGeoFencingQuery,
-    AddUpdateCityMasterQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery,
+    AddUpdateCityMasterQuery,ImportCitiesQuery,GetCitiesByStateQuery,GetCityMasterQuery,DeleteCityMasterQuery,
     AddUpdateFuelCorrectionQuery,GetVehListQuery,
     AddUpdatePetrolPumpQuery,GetPetrolPumpVehicleQuery,GetPetrolPumpQuery,DeletePetrolPumpQuery,
     AddUpdateSettingQuery,GetSettingQuery,DeleteSettingQuery
 
 }
 
+
+// Pipelines
 export const VehicleMovingControllerPipeline = {
     VehicleMovingStatusdetnew: VehicleMovingStatusdetnew,
     trackDetailsNT: trackDetailsNT

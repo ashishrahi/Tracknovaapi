@@ -8,6 +8,9 @@ router.post(
   "/AddUpdateDepartmentmaster",
   DepartmentController.AddUpdateDepartmentMaster
 );
+
+router.post("/ImportDepartments", DepartmentController.ImportDepartments);
+
 router.post("/GetDepartmentmaster", DepartmentController.GetDepartmentMaster);
 router.delete(
   "/DeleteDepartmentmaster",

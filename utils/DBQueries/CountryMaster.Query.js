@@ -149,7 +149,7 @@ export const ImportCountriesQuery = async (model) => {
     };
 
   } catch (error) {
-    console.error("CSV Import Failed:", error);
+    console.error("CSV Import Failed:", error.message);
     return {
       isSuccess: false,
       statusCode: 500,

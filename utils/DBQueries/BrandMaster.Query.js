@@ -85,6 +85,57 @@ export const AddUpdateBrandMasterQuery = async (model) => {
   }
 };
 
+//////////////////////////  ImportBrandsQuery  ////////////////////////////////
+
+export const ImportBrandsQuery = async (model) => {
+  
+  try {
+    const { BrandMaster } = await getTenantDBModels();
+    let inserted = 0;
+    let skipped = 0;
+    for (const brand of model) {
+      const {brandName,brandCode,brandShortname} = brand;
+      let inserted = 0;
+      let skipped = 0;
+      // Find BrandMaster
+      const existing = await BrandMaster.findOne({brandname:brandName})
+      //  Check BrandMaster Exist
+      if(existing){
+        skipped++
+        continue;
+      }
+      // Find Last BrandId
+      const lastBrandId = await BrandMaster.findOne().sort({brandId:-1}).limit(1)
+      const nextBrandId = lastBrandId ? lastBrandId.brandId+1 : 1
+      // Create BrandMaster
+      await BrandMaster.create({
+        brandId:nextBrandId,
+        brandshortname:brandShortname,
+        brandname:brandName,
+        brandCode:brandCode
+      })
+      inserted++
+    }
+    return {
+      isSuccess: true,
+      mesg: `Total ${inserted} CSV data import successfully`,
+      inserted,
+      skipped,
+    };
+
+
+  } catch (error) {
+    console.error('error:',error)
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      msg: error.message,
+    };
+  }
+
+}
+
+
 //////////////////////////  GetBrandQuery  //////////////////////////////////////////////////////////////
 
 export const GetBrandQuery = async (model) => {

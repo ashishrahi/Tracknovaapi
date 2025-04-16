@@ -109,6 +109,47 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
   }
 };
 
+////////////////////////////////////////////// ImportDesignationQuery //////////////////////////////////////////////////////////////////
+
+export const ImportDesignationQuery = async (model) => {
+  try {
+    const { Designation } = await getTenantDBModels();
+    let inserted = 0;
+    let skipped = 0
+    for (const designation of model) {
+      const {designationName,designationCode} = designation
+      const existing = await Designation.findOne({DesignationName : designationName})
+      if (existing) {
+        skipped++;
+        continue;
+      }
+      const lastDesignation = await Designation.findOne().sort({DesignationId:-1})
+      const nextDesignation = lastDesignation ? lastDesignation.DesignationId + 1 : 1
+      
+      // insert new designation
+      await Designation.create({
+        DesignationId:nextDesignation,
+        DesignationName:designationName,
+        DesignationCode:designationCode
+      })
+    }
+    return {
+      isSuccess: true,
+      mesg: `CSV import successful`,
+      inserted,
+      skipped,
+    };
+    
+  } catch (error) {
+    console.log('error:',error)
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      msg: error.message,
+    };
+  }
+}
+
 /////////////////////////////////////////////  GetDesignationMasterQuery //////////////////////////////////////////////////////////////////
 
 export const GetDesignationMasterQuery = async (model) => {

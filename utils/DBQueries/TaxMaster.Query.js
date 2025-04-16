@@ -84,6 +84,50 @@ return{
         
     }
 }
+
+/////////////////////////////////////////// ImportTaxMastersQuery //////////////////////////////////////////////////////////////////
+
+export const ImportTaxMastersQuery = async (model) => {
+    try {
+        const { TaxMaster } = await getTenantDBModels();
+        let inserted = 0;
+        let skipped = 0;
+            // Iterate over Model for getting a taxmaster object
+            for (const taxmaster of model) {
+            // destructure of taxmaster
+         const {taxName,taxPercentage,effectiveDate} = taxmaster
+             // Check taxname exist 
+            const existing = await TaxMaster.findOne({TaxName:taxName})
+            // taxname exist then skipped
+            if (existing) {
+                skipped++;
+                continue;
+            }
+            // Sort TaxMaster in decreasing order
+            const lastTax = await TaxMaster.findOne().sort({TaxId:-1}).limit(1)
+            // assign new TaxId
+            const nextTaxId = lastTax ? lastTax.TaxId +1 : 1;
+            //create new Tax
+            await TaxMaster.create({
+                TaxId:nextTaxId,
+                TaxName:taxName,
+                TaxPercentage:taxPercentage,
+                EffectiveDate:effectiveDate,
+            })
+            return {
+                isSuccess: true,
+                mesg: `CSV import successful`,
+                inserted,
+                skipped,
+              };
+        }
+    } catch (error) {
+        console.error('error',error)
+        
+    }
+}
+
+
 //////////////////////////////////////////// GetTaxMasterQuery //////////////////////////////////////////////////////////////////
 
 export const GetTaxMasterQuery = async (model) => {
