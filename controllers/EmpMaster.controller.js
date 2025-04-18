@@ -6,6 +6,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateEmployeeQuery,
+  ImportEmployeeQuery,
   GetEmployeeQuery,
   UpsertEmpPermissionQuery,
   DeleteEmployeeQuery,
@@ -17,6 +18,30 @@ export async function AddUpdateEmployee(req, res, next) {
     const model = req.body;
     // console.log("model:",model)
     const response  = await AddUpdateEmployeeQuery(model);
+  
+    const successResponse = new CommonResponse(
+      1,
+      response.message,
+      response.data
+    );
+    return res.status(StatusCodes.OK).json(successResponse);
+  } catch (err) {
+    const msg = err.message || err.ErrorMessage
+    const statusCode = err.StatusCode
+    console.log(err)
+    // error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(statusCode, msg));
+  }
+}
+
+//--------------------ImportEmployee---------->
+
+ImportEmployee
+export async function ImportEmployee(req, res, next) {
+  try {
+    const model = req.body;
+    // console.log("model:",model)
+    const response  = await ImportEmployeeQuery(model);
   
     const successResponse = new CommonResponse(
       1,

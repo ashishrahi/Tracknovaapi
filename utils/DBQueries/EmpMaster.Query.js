@@ -100,6 +100,33 @@ export const AddUpdateEmployeeQuery = async (model) => {
   }
 };
 
+//---------ImportEmployeeQuery------>
+
+export const ImportEmployeeQuery = async (model) => {
+  // try {
+  //   const { EmpMaster, Department, Designation,CountryMaster } = await getTenantDBModels();
+  //   let skipped = 0;
+  //   let isInserted = 0;
+  //   for (const employee of model) {
+  //     // Employee exist or not
+  //     const existing = await EmpMaster.findOne({ EmpName: empName });
+  //     if (existing) {
+  //       continue;
+  //     }
+  //     // Department exist to get DepartmentId
+  //     const department = await Department.findOne({ DepartmentName: model.empDeptName});
+  //     //  Designation Exist to get DesignationId
+  //     const designation = await Designation.findOne({DesignationName: model.designationName});
+  //     // Country exist get CountryId
+  //     const country = await CountryMaster.findOne({CountryName:model.empCountryName})
+     
+
+  //   }
+  // } catch (error) {
+  //   console.log("error:", error);
+  // }
+};
+
 //---------GetEmployeeQuery------>
 
 export const GetEmployeeQuery = async (model) => {
@@ -314,19 +341,20 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
         _id: new mongoose.Types.ObjectId(), // generating ObjectId manually
       };
 
-
       if (company && company !== "SuperAdmin") {
-        const isInserted = await Idp_account.findOneAndUpdate({ "accountOwner": company._id }, {
-          "$push": { users: newUser }
-        });
-
+        const isInserted = await Idp_account.findOneAndUpdate(
+          { accountOwner: company._id },
+          {
+            $push: { users: newUser },
+          }
+        );
 
         /**
          * Infor the user
          */
         const from = process.env.NODEMAILER_EMAIL_USER;
         let to = "saurabhkushwaha9889@gmail.com";
-        let subject = `<h2>👤 New User Added</h2>`
+        let subject = `<h2>👤 New User Added</h2>`;
         let html = `
         <h2>👤 New User Added</h2>
         <p><strong>Username:</strong> ${newUser.username}</p>
@@ -343,11 +371,8 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
         //   mailSendFinishDate: model.toDate,
         //   mailSendFinishTime: model.toTime,
         // };
-        await sendMailService(from, to, subject, "I am text", html)
-
-
+        await sendMailService(from, to, subject, "I am text", html);
       }
-
 
       const from = process.env.NODEMAILER_EMAIL_USER;
       let to = "saurabhkushwaha9889@gmail.com";

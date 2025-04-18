@@ -129,6 +129,7 @@ import { GetDeviceType } from "./DeviceType.controller.js";
 // EmpMaster
 import {
   AddUpdateEmployee,
+  ImportEmployee,
   GetEmployee,
   UpsertEmpPermission,
   DeleteEmployee,
@@ -408,6 +409,7 @@ export const DeviceTypeController = {
 
 export const EmpMasterController = {
   AddUpdateEmployee: AddUpdateEmployee,
+  ImportEmployee:ImportEmployee,
   GetEmployee: GetEmployee,
   UpsertEmpPermission: UpsertEmpPermission,
   DeleteEmployee: DeleteEmployee,

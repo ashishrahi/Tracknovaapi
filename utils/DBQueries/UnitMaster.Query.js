@@ -203,12 +203,13 @@ export const DeleteUnitMasterQuery = async (modal) => {
     const { UnitMaster } = await getTenantDBModels();
 
     const units = await UnitMaster.find({ UnitId: modal.unitId });
+    const unit = units.map((u)=>u.UnitName)
     if (units.length > 0) {
       await UnitMaster.deleteMany({ UnitId: modal.unitId });
       return {
         isSuccess: true,
         internalSuccess: StatusCodes.OK,
-        mesg: `UnitMaster with id ${modal.unitId} deleted successfully`,
+        mesg: `${unit} has been deleted successfully`,
       };
     } else {
       return {
