@@ -182,9 +182,10 @@ export const DeleteBrandQuery = async (model) => {
     // if (!brandId || brandId === 0) {
     //   brandId = -1;
     // }
-
+   
     // Find and delete the brand by brandId
     const brand = await BrandMaster.findOneAndDelete({ brandId: brandId });
+    
 
     if (!brand) {
       return {
@@ -199,7 +200,7 @@ export const DeleteBrandQuery = async (model) => {
       isSuccess: true,
       id: brandId.brandId,
       createUpdate: "BrandId not deleted ",
-      msg: `brandId ${brandId} deleted successfully`,
+      msg: `${brandname} deleted successfully`,
     };
   } catch (error) {
     return {

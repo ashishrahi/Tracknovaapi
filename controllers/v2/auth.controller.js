@@ -13,6 +13,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import sendMailService from "../../utils/emailService/nodeMailer.js";
 import argon2 from "argon2";
+import axios from "axios"
 //------- signin ----------->
 
 export async function signin(req, res, next) {
@@ -138,7 +139,30 @@ export async function createSuperAdmin(req, res, next) {
 export async function forgotPassword(req, res, next) {
   try {
     const { Idp_account } = await getCentralDBModels();
-    const { username } = req.body;
+    const { username ,captchaResponse  } = req.body;
+
+    // GOOGLE_CAPTCHA_SECRET_KEY
+   
+    const captchaSecret = process.env.GOOGLE_CAPTCHA_SECRET_KEY;
+
+    // Verify CAPTCHA
+   const captchaValidationResponse = await axios.post(
+    'https://www.google.com/recaptcha/api/siteverify',
+    null,
+    {
+      params: {
+        secret: captchaSecret,
+        response: captchaResponse
+      }
+    }
+  );
+   // if status is not true 
+  if (!captchaValidationResponse.data.success) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid CAPTCHA'
+    });
+  }
 
     // 1. Check user existence
     const existingUser = await Idp_account.findOne({
@@ -209,7 +233,6 @@ export async function resetPassword(req, res, next) {
     try {
         const { Idp_account } = await getCentralDBModels();
         const { token, password } = req.body;
-        console.log('newPassword :',password )
     
         // if (!token || !newPassword) {
         //   return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid request" });
