@@ -1,6 +1,6 @@
 import { probWireTamp , getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTS, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getDashboard, getVehicleCurrentDay, getVehicleDistance, getAllBins, getMapBinsWardWise, getvVehicleNo } from "./Dashboard.controller.js";
-import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
+import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId,AddEmailSetting, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
 import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from "./ItemTypeMaster.controller.js";
@@ -130,6 +130,7 @@ import { GetDeviceType } from "./DeviceType.controller.js";
 import {
   AddUpdateEmployee,
   ImportEmployee,
+  Empstatus,
   GetEmployee,
   UpsertEmpPermission,
   DeleteEmployee,
@@ -409,6 +410,7 @@ export const DeviceTypeController = {
 
 export const EmpMasterController = {
   AddUpdateEmployee: AddUpdateEmployee,
+  Empstatus:Empstatus,
   ImportEmployee:ImportEmployee,
   GetEmployee: GetEmployee,
   UpsertEmpPermission: UpsertEmpPermission,
@@ -512,6 +514,7 @@ AddUpdateSetting,
 
 export const CommController = {
     GetCommGroup: GetCommGroup,
+    AddEmailSetting: AddEmailSetting,
     UpsertCommGroup: UpsertCommGroup,
     DeleteCommGroup: DeleteCommGroup,
     GetCommGroupByEmpId: GetCommGroupByEmpId,

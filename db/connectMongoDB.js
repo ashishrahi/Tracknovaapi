@@ -78,7 +78,7 @@ let tenantDBName = null;
 // mongoose.set("debug", true); 
 
 export async function connectMongoDB() {
-    if (central_db) return CentralDBModels; // ✅ Reuse existing connection
+    if (central_db) return CentralDBModels; 
     try {
         central_db = await mongoose
             .createConnection(`${uri}/central_db`)
@@ -97,8 +97,7 @@ export async function connectMongoDB() {
             StateMaster: central_db.model("StateMaster", StateMasterSchema),
             CityMaster: central_db.model("CityMaster", CityMasterSchema),
             Menu: central_db.model("Menu", MenuSchema),
-
-        };
+            };
 
 
         return CentralDBModels;
@@ -128,7 +127,6 @@ export async function getCentralDBModels() {
 
 
 //-------- connectTenantDB ----------->
-
 
 export async function connectTenantDB(dbName) {
     try {

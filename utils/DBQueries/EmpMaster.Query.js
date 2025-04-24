@@ -1,6 +1,6 @@
 import { AspNetUsers, EmpMaster, UserPermission } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse } from "../apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../apiResponse/index.js";
 import { AuthController } from "../../controllers/index.js";
 import {
   AddUpdateUserPermissionMasterQuery,
@@ -127,6 +127,34 @@ export const ImportEmployeeQuery = async (model) => {
   // }
 };
 
+// EmpstatusQuery
+export const EmpstatusQuery = async (model) => {
+  try {
+    const { EmpMaster } = await getTenantDBModels();
+    const { id, status } = model;
+    // Check if Employee exists
+    const existingEmp = await EmpMaster.findOne({ Empid: id });
+    if (!existingEmp) {
+      throw new ApiSuccessResponse(StatusCodes.NOT_FOUND, "Employee not found");
+    }
+
+    // Update Employee Status
+    await EmpMaster.findOneAndUpdate(
+      { Empid: id },
+      { $set: { EmpStatus: status } },
+      { new: true } // Optional: return updated doc
+    );
+
+    // Return success response
+    return new ApiSuccessResponse(StatusCodes.OK, "Employee status has been successfully updated");
+  } catch (error) {
+    console.error("Error updating employee status:", error);
+    throw error;
+  }
+}
+
+
+
 //---------GetEmployeeQuery------>
 
 export const GetEmployeeQuery = async (model) => {
@@ -240,11 +268,12 @@ export const GetEmployeeQuery = async (model) => {
           updatedOn: "$UpdatedOn",
           userId: "$UserId",
           roleId: "$RoleId",
-          // imageFile: "$Image",
-          // signatureFile: "$SignatureFile",
+          imageFile: "$ImageFile",
+          signatureFile: "$SignatureFile",
           email: "$Email",
           dlno: "$DLNo",
           gender: "$Gender",
+          status:"$Status",
           departmentName: "$Department.DepartmentName",
           designationName: "$Designation.DesignationName",
           empStateName: "$State.StateName",

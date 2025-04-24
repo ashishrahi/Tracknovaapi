@@ -5,9 +5,9 @@ export const EmailSettingSchema = new mongoose.Schema({
     type: Number,
     required: true,
     unique: true,
-    min: 1, // Ensures Id is positive
+    min: 1,
   },
-  Name: {
+ UserName: {
     type: String,
     required: true,
     trim: true,
@@ -20,7 +20,7 @@ export const EmailSettingSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, "Invalid email format"], // Regex for valid email
+    match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
   },
   Password: {
     type: String,
@@ -41,16 +41,16 @@ export const EmailSettingSchema = new mongoose.Schema({
     min: 1,
     max: 65535,
   },
-  IsTls: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  IsSSl: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
+  // IsTls: {
+  //   type: Boolean,
+  //   required: true,
+  //   default: false,
+  // },
+  // IsSSl: {
+  //   type: Boolean,
+  //   required: true,
+  //   default: false,
+  // },
   IsActive: {
     type: Boolean,
     required: true,

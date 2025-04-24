@@ -13,13 +13,13 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import sendMailService from "../../utils/emailService/nodeMailer.js";
 import argon2 from "argon2";
-import axios from "axios"
+import axios from "axios";
 //------- signin ----------->
 
 export async function signin(req, res, next) {
   try {
     const model = req.body;
-    // console.log("model is", model)
+    console.log("model is", model);
     const { value, error } = validateSigninModel(model);
     if (error) {
       throw new ApiErrorResponse(
@@ -139,30 +139,31 @@ export async function createSuperAdmin(req, res, next) {
 export async function forgotPassword(req, res, next) {
   try {
     const { Idp_account } = await getCentralDBModels();
-    const { username ,captchaResponse  } = req.body;
+    const { username, captchaResponse } = req.body;
 
     // GOOGLE_CAPTCHA_SECRET_KEY
-   
+
     const captchaSecret = process.env.GOOGLE_CAPTCHA_SECRET_KEY;
 
     // Verify CAPTCHA
-   const captchaValidationResponse = await axios.post(
-    'https://www.google.com/recaptcha/api/siteverify',
-    null,
-    {
-      params: {
-        secret: captchaSecret,
-        response: captchaResponse
+    const captchaValidationResponse = await axios.post(
+      "https://www.google.com/recaptcha/api/siteverify",
+      null,
+      {
+        params: {
+          secret: captchaSecret,
+          response: captchaResponse,
+        },
       }
+    );
+    // if status is not true
+    if (!captchaValidationResponse.data.success) {
+      return res
+        .status(400)
+        .json(
+          new ApiErrorResponse(StatusCodes.NOT_FOUND, "Invalid CAPTCHA", false)
+        );
     }
-  );
-   // if status is not true 
-  if (!captchaValidationResponse.data.success) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Invalid CAPTCHA'
-    });
-  }
 
     // 1. Check user existence
     const existingUser = await Idp_account.findOne({
@@ -170,7 +171,11 @@ export async function forgotPassword(req, res, next) {
     });
 
     if (!existingUser) {
-      return res.status(StatusCodes.NOT_FOUND).json({ msg: "User not Found" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json(
+          new ApiErrorResponse(StatusCodes.NOT_FOUND, "User not Found", false)
+        );
     }
 
     // 2. Find the user in the array
@@ -181,7 +186,13 @@ export async function forgotPassword(req, res, next) {
     if (!targetUser) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ msg: "User not Found in account" });
+        .json(
+          new ApiErrorResponse(
+            StatusCodes.NOT_FOUND,
+            "User not Found in account",
+            false
+          )
+        );
     }
 
     // 3. Generate token
@@ -217,62 +228,106 @@ export async function forgotPassword(req, res, next) {
 
     await sendMailService(from, to, subject, "Reset password", html);
 
-    const successResponse = new CommonResponse(1, "Password reset link sent");
-    return res.status(StatusCodes.OK).json(successResponse);
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        new ApiSuccessResponse(
+          true,
+          StatusCodes.OK,
+          "📧 Password reset link sent to mail"
+        )
+      );
   } catch (error) {
     console.error("Forgot password error:", error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "Something went wrong" });
+      .json(
+        new ApiErrorResponse(
+          StatusCodes.NOT_FOUND,
+          "Something went wrong",
+          false
+        )
+      );
   }
 }
 
 // Reset-Password
 
 export async function resetPassword(req, res, next) {
-    try {
-        const { Idp_account } = await getCentralDBModels();
-        const { token, password } = req.body;
-    
-        // if (!token || !newPassword) {
-        //   return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid request" });
-        // }   
-        // Hash the token received from user
-        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-        console.log('hashedToken:',hashedToken)
-    
-        // Find the account with matching hashed token and valid expiry
-        const account = await Idp_account.findOne({
-          "users.resetToken": hashedToken,
-          "users.tokenExpires": { $gt: Date.now() },
-        });
-        if (!account) {
-          return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Token is invalid or has expired" });
-        }
-    
-        // Find the exact user within the array
-        const user = account.users.find(
-          (user) => user.resetToken === hashedToken && user.tokenExpires > Date.now()
+  try {
+    const { Idp_account } = await getCentralDBModels();
+    const { token, password } = req.body;
+
+    // if (!token || !newPassword) {
+    //   return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid request" });
+    // }
+    // Hash the token received from user
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Find the account with matching hashed token and valid expiry
+    const account = await Idp_account.findOne({
+      "users.resetToken": hashedToken,
+      "users.tokenExpires": { $gt: Date.now() },
+    });
+    if (!account) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          new ApiErrorResponse(
+            StatusCodes.NOT_FOUND,
+            "Token is invalid or has expired",
+            false
+          )
         );
-    
-        if (!user) {
-          return res.status(StatusCodes.BAD_REQUEST).json({ msg: "User not found or token expired" });
-        }
-    
-        // Hash and update the new password
-        user.password = await argon2.hash(password);
-    
-        // Clear reset token fields
-        user.resetToken = undefined;
-        user.tokenExpires = undefined;
-    
-        // Save updated user
-        await account.save();
-    
-        const successResponse = new CommonResponse(1, "Password has been reset successfully");
-        return res.status(StatusCodes.OK).json(successResponse);
-      } catch (error) {
-        console.error("Reset password error:", error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: "Something went wrong" });
-      }
+    }
+
+    // Find the exact user within the array
+    const user = account.users.find(
+      (user) =>
+        user.resetToken === hashedToken && user.tokenExpires > Date.now()
+    );
+
+    if (!user) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          new ApiErrorResponse(
+            StatusCodes.NOT_FOUND,
+            "User not found or token expired",
+            false
+          )
+        );
+    }
+
+    // Hash and update the new password
+    user.password = await argon2.hash(password);
+
+    // Clear reset token fields
+    user.resetToken = undefined;
+    user.tokenExpires = undefined;
+
+    // Save updated user
+    await account.save();
+
+    return res
+      .status(StatusCodes.OK)
+      .json(
+        new ApiSuccessResponse(
+          true,
+          StatusCodes.OK,
+          "Password has been reset successfully"
+        )
+      );
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(
+        new ApiErrorResponse(
+          StatusCodes.NOT_FOUND,
+          "Something went wrong",
+          false
+        )
+      );
+  }
 }
