@@ -6,6 +6,8 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateEmployeeQuery,
+  ImportEmployeeQuery,
+  EmpstatusQuery,
   GetEmployeeQuery,
   UpsertEmpPermissionQuery,
   DeleteEmployeeQuery,
@@ -33,11 +35,57 @@ export async function AddUpdateEmployee(req, res, next) {
   }
 }
 
+//--------------------ImportEmployee---------->
+
+export async function ImportEmployee(req, res, next) {
+  try {
+    const model = req.body;
+    // console.log("model:",model)
+    const response  = await ImportEmployeeQuery(model);
+  
+    const successResponse = new CommonResponse(
+      1,
+      response.message,
+      response.data
+    );
+    return res.status(StatusCodes.OK).json(successResponse);
+  } catch (err) {
+    const msg = err.message || err.ErrorMessage
+    const statusCode = err.StatusCode
+    console.log(err)
+    // error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(statusCode, msg));
+  }
+}
+
+//--------------------Empstatus---------->
+
+export async function Empstatus(req, res, next) {
+  try {
+    const model = req.body;
+    // console.log("model:",model)
+    const response  = await EmpstatusQuery(model);
+  
+    const successResponse = new CommonResponse(
+      1,
+      response.message,
+      response.data
+    );
+    return res.status(StatusCodes.OK).json(successResponse);
+  } catch (err) {
+    const msg = err.message || err.ErrorMessage
+    const statusCode = err.StatusCode
+    console.log(err)
+    // error.status = err.statusCode || err.StatusCode || StatusCodes.BAD_REQUEST;
+    return next(new ApiErrorResponse(statusCode, msg));
+  }
+}
+
+
 //-------------------GetEmployee------->
 
 export async function GetEmployee(req, res, next) {
   try {
-    console.log("get employee starts")
     const model = req.body;
     const response = await GetEmployeeQuery(model);
 

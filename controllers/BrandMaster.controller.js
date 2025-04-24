@@ -5,14 +5,38 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBrandMasterQuery,
+  ImportBrandsQuery,
   GetBrandQuery,
   DeleteBrandQuery,
 } from "../utils/DBQueries/index.js";
 
+// AddUpdate Brand
 export async function AddUpdateBrandMaster(req, res) {
   try {
     const model = req.body;
     const { isSuccess, id, createUpdate, msg, data } = await AddUpdateBrandMasterQuery(model);
+    const apiResponse = new DBReturn(
+      isSuccess,
+      id,
+      createUpdate,
+      msg,
+      data
+    );
+    res.status(StatusCodes.CREATED).json(apiResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      StatusCodes.BAD_REQUEST,
+      error.message
+    );
+    res.status(errorResponse.StatusCode).json(errorResponse);
+  }
+}
+
+// ImportBrands
+export async function ImportBrands(req, res) {
+  try {
+    const model = req.body;
+    const { isSuccess, id, createUpdate, msg, data } = await ImportBrandsQuery(model);
     const apiResponse = new DBReturn(
       isSuccess,
       id,

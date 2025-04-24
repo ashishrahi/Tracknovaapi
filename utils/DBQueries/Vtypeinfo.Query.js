@@ -9,7 +9,6 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
 
   try {
     const { ItemMaster, VehicleTypeChild } = await getTenantDBModels();
-     console.log('modal:',modal)
     if (modal.vehicleTypeId !== 0 && modal.id === 0) {
       const findUse = await ItemMaster.findOne({
         VehicleTypeId: modal.vehicleTypeId,
@@ -79,6 +78,16 @@ export const AddUpdateVtypeinfoQuery = async (modal) => {
         data: newVtypeInfo,
       }
     } else {
+      const modalToSave = {
+        ...modal,
+        EffectiveDate: modal.effectiveDate,
+        PetroName: modal.petroName,
+        PetroId: modal.petroId,
+        SessionD1: modal.sessionD1,
+        SessionD2: modal.sessionD2,
+        VehicleTypeId: modal.vehicleTypeId,
+        VehicleTypeName: modal.vehicleTypeName,
+      };
       // Check if vehicle type is in use before updating
       const findUse = await ItemMaster.findOne({
         VehicleTypeId: modal.vehicleTypeId,

@@ -242,8 +242,9 @@ async function DeleteCommGroup(req, res) {
   } catch (error) {
     // await session.abortTransaction();
     // session.endSession();
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json( {success: false,
-      message: error.message});
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: error.message });
     // { Status: "Failed", Error: error.message });
   }
 }
@@ -335,11 +336,67 @@ async function GetAllEmailSetting(req, res) {
       .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message));
   }
 }
+// AddEmailSetting
+
+async function AddEmailSetting(req, res, next) {
+  try {
+    const { EmailSetting } = await getTenantDBModels();
+    let { Id, userName, email, password, host, port, isActive } = req.body;
+    let response = {};
+    let updated;
+
+    if (Id == 0) {
+      const emailSettingId = await EmailSetting.findOne().sort({ Id: -1 }).limit(1);
+      const newEmailSettingId = emailSettingId ? emailSettingId.Id + 1 : 1;
+
+      const newEmailSetting = new EmailSetting({
+        Id: newEmailSettingId,
+        UserName: userName,
+        Email: email,
+        Password: password,
+        Host: host,
+        Port: port,
+        IsActive: isActive,
+      });
+
+      const savedEmailSetting = await newEmailSetting.save();
+      response.status = 1;
+      response.message = `${savedEmailSetting.UserName} Email Settings Added Successfully`;
+      response.data = savedEmailSetting;
+      return res.status(StatusCodes.OK).json(response);
+    } else {
+      const existing = await EmailSetting.findOne({ Id: Id });
+      if (existing) {
+        const updatedEmailSettings = await EmailSetting.findOneAndUpdate(
+          { Id: Id },
+          {
+            UserName: userName,
+            Email: email,
+            Password: password,
+            Host: host,
+            Port: port,
+            IsActive: isActive,
+          },
+          { new: true }
+        );
+
+        response.status = 1;
+        response.message = `Email Settings updated successfully`;
+        response.data = updatedEmailSettings;
+        return res.status(StatusCodes.OK).json(response);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 
 //-------------UpsertEmailSetting-------->
 async function UpsertEmailSetting(req, res, next) {
   try {
     const { EmailSetting } = await getTenantDBModels();
+    //  Getting Data from Model
     const model = req.body;
     // let updated;
     // console.log('model:',model)
@@ -600,7 +657,7 @@ async function UpsertCampaign(req, res, next) {
 
         return newGroup;
       });
-      console.log("listGroups", listGroups[0].GroupId);
+      // console.log("listGroups", listGroups[0].GroupId);
       const isSuccess = await CampaignDetail.insertMany(listGroups);
 
       if (isSuccess.length < 0) {
@@ -704,7 +761,7 @@ async function UpsertCampaign(req, res, next) {
           to += email + ", ";
         }
       }
-
+// Send Email Service from it
       const isSucessToSendMail = await sendMailService(
         from,
         to,
@@ -805,8 +862,7 @@ async function DeleteCampaign(req, res) {
 //-------------GetCampaignTemplate-------->
 async function GetCampaignTemplate(req, res) {
   try {
- 
-    const { CampaignTemplate } = await getTenantDBModels()
+    const { CampaignTemplate } = await getTenantDBModels();
 
     let query = {};
     const {
@@ -1171,7 +1227,11 @@ async function GetMasters(req, res, next) {
       ItemTypeMaster,
       ItemCategoryMaster,
       UnitMaster,
-      TaxMaster,EmpMaster,BrandMaster,FuelType,VehicleTypeMaster
+      TaxMaster,
+      EmpMaster,
+      BrandMaster,
+      FuelType,
+      VehicleTypeMaster,
     } = await getTenantDBModels();
 
     let mastersData = {};
@@ -1212,7 +1272,7 @@ async function UpsertSmsSetting(req, res) {
   try {
     const { SmsSetting } = await getTenantDBModels();
 
-  const model = req.body;
+    const model = req.body;
 
     await SmsSetting.updateMany({}, { $set: { IsActive: false } }); // Deactivate all
     await SmsSetting.findOneAndUpdate(
@@ -1235,6 +1295,7 @@ export {
   UpsertCommGroup,
   DeleteCommGroup,
   GetCommGroupByEmpId,
+  AddEmailSetting,
   GetAllEmailSetting,
   UpsertEmailSetting,
   GetAllSmsSetting,

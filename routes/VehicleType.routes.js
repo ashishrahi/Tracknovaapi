@@ -3,6 +3,8 @@ import { VehicleTypeController } from "../controllers/index.js";
 const router = express.Router();
 
 router.post("/AddUpdateVehicleType", VehicleTypeController.AddUpdateVehicleType);
+router.post("/ImportVehicleType", VehicleTypeController.ImportVehicleType);
+
 router.post("/GetVehicleType", VehicleTypeController.GetVehicleType);
 router.delete("/DeleteVehicleType", VehicleTypeController.DeleteVehicleType);
 

@@ -5,6 +5,7 @@ const router = express.Router();
 
 // BinManage Routes
 router.post("/AddUpdateFuelType", FuelTypeController.AddUpdateFuelType);
+router.post("/ImportFuelType", FuelTypeController.ImportFuelType);
 router.post("/GetFuelType", FuelTypeController.GetFuelType);
 router.delete("/DeleteFuelType", FuelTypeController.DeleteFuelType);
 

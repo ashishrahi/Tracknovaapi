@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 export const CommGroupSchema = new mongoose.Schema({
     GroupId: mongoose.Schema.Types.Int32,
     Name: {

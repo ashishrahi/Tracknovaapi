@@ -101,6 +101,73 @@ export const AddUpdateCityMasterQuery = async (model) => {
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+export const ImportCitiesQuery = async (model) => {
+  try {
+    const { StateMaster,CityMaster } = await getTenantDBModels();
+    let inserted = 0;
+    let skipped = 0;
+
+    if (!Array.isArray(model) || model.length === 0) {
+      throw new Error("Invalid input: model must be a non-empty array.");
+    }
+
+    for (const city of model) {
+      const { cityName, stateName, createdBy, updatedBy } = city;
+
+      if (!cityName || !stateName) {
+        skipped++;
+        continue;
+      }
+
+      // Check for existing state
+      const existing = await CityMaster.findOne({ CityName: cityName });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+        // Find State ID
+        const state = await StateMaster.findOne({ StateName: stateName });
+        if (!state) {
+          skipped++;
+          continue;
+        }
+
+      // Get next StateId
+      const lastCity = await CityMaster.findOne().sort({ StateId: -1 }).limit(1);
+      const nextCityId = lastCity ? lastCity.CityId + 1 : 1;
+
+      await CityMaster.create({
+        CityId: nextCityId,
+        CityName:city.cityName,
+        StateId: state.StateId,
+        CreatedBy: createdBy || null,
+        UpdatedBy: updatedBy || null,
+      });
+
+      inserted++;
+    }
+
+    return {
+      isSuccess: true,
+      mesg: `CSV import successful`,
+      inserted,
+      skipped,
+    };
+  } catch (error) {
+    console.error("CSV Import Failed:", error);
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      mesg: error.message,
+    };
+  }
+}
+
+
+///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const GetCitiesByStateQuery = async (model) => {
   try {
     const { CityMaster } = await getTenantDBModels();

@@ -3,6 +3,7 @@ const router = express.Router();
 import { UnitMasterController } from "../controllers/index.js";
 
 router.post("/AddUpdateUnitMaster", UnitMasterController.AddUpdateUnitMaster);
+router.post("/ImportUnits", UnitMasterController.ImportUnits);
 router.post("/GetUnitMaster", UnitMasterController.GetUnitMaster);
 router.delete("/DeleteUnitMaster", UnitMasterController.DeleteUnitMaster);
 

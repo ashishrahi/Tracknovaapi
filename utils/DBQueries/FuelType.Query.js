@@ -87,6 +87,49 @@ export const AddUpdateFuelTypeQuery = async (model) => {
   }
 };
 
+/////////////////////////// ImportFuelTypeQuery //////////////////////////////////////////////////////////////////
+
+export const ImportFuelTypeQuery = async (model) => {
+
+  try {
+    const { FuelType } = await getTenantDBModels();
+    let inserted = 0;
+    let skipped = 0;
+    for (const fueltype of model) {
+      const {fueltypeName, fuelCode, fuelShortname,} = fueltype
+      const existing = await FuelType.findOne({FuelTypename:fueltypeName})
+      if (existing) {
+        skipped++;
+        continue;
+      }
+      const lastFuelId = await FuelType.findOne().sort({FuelTypeId:-1}).limit(1)
+      const nextFuelId = lastFuelId ? lastFuelId.FuelTypeId + 1 : 1
+      await FuelType.create({
+        FuelTypeId:nextFuelId,
+        FuelTypename:fueltypeName,
+        ShortName:fuelShortname,
+        FuelCode:fuelCode,
+      })
+      inserted++
+    }
+    return {
+      isSuccess: true,
+      mesg: `CSV ${inserted} data import successfully`,
+      inserted,
+      skipped,
+    };
+  
+  
+  } catch (error) {
+    console.error('error:',error)
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      msg: error.message,
+    };
+  }
+}
+
 //////////////////////////  GetFuelTypeQuery  //////////////////////////////////////////////////////////////////
 
 export const GetFuelTypeQuery = async (model) => {

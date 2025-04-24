@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 
-
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587, // TLS

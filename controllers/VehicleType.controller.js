@@ -83,6 +83,52 @@ const updatedDoc = await VehicleTypeMaster.findOneAndUpdate(
     return next(err);
   }
 }
+// ImportVehicleType
+async function ImportVehicleType(req, res, next) {
+  try {
+  const {VehicleTypeMaster } = await getTenantDBModels()
+  const model = req.body
+  let skipped = 0;
+  let inserted = 0;
+  for (const fueltype of model) {
+    
+    // Destructure of FuelType
+    const{vehicletypeName, vehicleCode, vehicleShortname} = fueltype
+    
+    // Check VehicleType Object
+    const existing = await VehicleTypeMaster.findOne({VehicleTypename:vehicletypeName})
+    
+    // Is VehicleTypeMaster Exist
+    if (existing) {
+      skipped++;
+      continue;
+    }
+    const lastVehicletypeId = await VehicleTypeMaster.findOne().sort({VehicleTypeId:-1})
+    const nextVehicletypeId = lastVehicletypeId ? lastVehicletypeId.VehicleTypeId + 1 : 1
+    await VehicleTypeMaster.create({
+      ShortName:vehicleShortname,
+      VehicleCode:vehicleCode,
+      VehicleTypeId:nextVehicletypeId,
+      VehicleTypename:vehicletypeName,
+    })
+     inserted++
+  }
+  return res
+  .status(StatusCodes.OK)
+  .json(
+    new ApiSuccessResponse(
+      true,
+      StatusCodes.OK,
+      "Csv file uploaded successfully .",
+    ))
+  } catch (error) {
+    const err = new Error(error.message);
+    err.status = StatusCodes.BAD_REQUEST;
+    return next(err);
+  }
+}
+
+
 
 //-----------GetVehicleType------>
 async function GetVehicleType(req, res, next){
@@ -333,4 +379,4 @@ async function GetEscrapVehicleType(req, res, next){
    }
 }
 
-export { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType };
+export { AddUpdateVehicleType,ImportVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType };

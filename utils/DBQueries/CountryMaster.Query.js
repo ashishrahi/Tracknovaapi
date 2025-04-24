@@ -109,6 +109,58 @@ export const AddUpdateCountryMasterQuery = async (model) => {
   }
 };
 
+///////////////////////////// ImportCountriesQuery ///////////////////////////////
+
+export const ImportCountriesQuery = async (model) => {
+  try {
+    const { CountryMaster } = await getTenantDBModels();
+
+    let inserted = 0;
+    let skipped = 0;
+
+    for (const country of model) {
+      // Check if a country with the same CountryName already exists
+      const existing = await CountryMaster.findOne({ CountryName: country.countryName });
+
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      // Find last CountryId and increment
+      const lastCountry = await CountryMaster.findOne().sort({ CountryId: -1 }).limit(1);
+      const nextCountryId = lastCountry ? lastCountry.CountryId + 1 : 1;
+
+      // Insert new country with mapped fields
+      await CountryMaster.create({
+        CountryId: nextCountryId,
+        CountryName: country.countryName,
+        CountryCode: country.countryCode,
+      });
+
+      inserted++;
+    }
+
+    return {
+      isSuccess: true,
+      mesg: `CSV import successful`,
+      inserted,
+      skipped,
+    };
+
+  } catch (error) {
+    console.error("CSV Import Failed:", error.message);
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      mesg: error.message,
+    };
+  }
+};
+
+
+
+
 //////////////////////////////  GetCountryMasterQuery //////////////////////////////////////////////////
 
 export const GetCountryMasterQuery = async (model) => {
@@ -134,7 +186,7 @@ export const GetCountryMasterQuery = async (model) => {
 
       return {
         isSuccess: true,
-        internalSuccess:false,
+        internalSuccess: false,
         mesg: "Country Data has been fetched successfully",
         insertedId: "",
         data: countryList,

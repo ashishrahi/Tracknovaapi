@@ -13,6 +13,8 @@ const excludedRoutes = [
   // "/api/Auth/Logout", 
   "/api/v2/auth/signin",
   "/api/v2/auth/refresh",
+  "/api/v2/auth/forgot-password",
+  "/api/v2/auth/reset-password"
 ];
 
 const getLoggedInCompany = async (req, res, next) => {

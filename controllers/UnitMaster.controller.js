@@ -6,6 +6,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateUnitMasterQuery,
+    ImportUnitsQuery,
     GetUnitMasterQuery,
     DeleteUnitMasterQuery
 } from "../utils/DBQueries/UnitMaster.Query.js";
@@ -31,6 +32,31 @@ export async function AddUpdateUnitMaster(req,res){
         res.status(apiErrorResponse.statusCode).json(apiErrorResponse);
     }
 }
+
+//////////////////////////////////////// ImportUnits //////////////////////////////////////////
+
+export async function ImportUnits(req,res){
+    try {
+        const modal = req.body;
+        const {isSuccess, internalSuccess, mesg, insertedId, data } = await ImportUnitsQuery(modal);
+        const successResponse = new ReturnData(
+            isSuccess,
+            internalSuccess,
+            mesg,
+            insertedId,
+            data
+        );
+        res.status(StatusCodes.CREATED).json(successResponse);
+
+    } catch (error) {
+        const apiErrorResponse = new ApiErrorResponse(
+            StatusCodes.BAD_REQUEST, 
+            error.message);
+        res.status(apiErrorResponse.StatusCode).json(apiErrorResponse);
+    }
+}
+
+
 
 //////////////////////////////////////// GetUnitMaster //////////////////////////////////////////
 

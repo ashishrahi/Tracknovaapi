@@ -19,6 +19,7 @@ export const Idp_accountSchema = new mongoose.Schema({
     //   message: (value) => (value ,"must be at least 8 characters long and contain at least one letter and one number")
     // },
   },
+
   accountOwner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
@@ -31,9 +32,13 @@ export const Idp_accountSchema = new mongoose.Schema({
       email: { type: String, required: true },
       role: { type: String, required: true },
       // dbName: {type: String, required: true}
-    }
-  ]
-})
+      // ResetToken for Forgort Password
+      resetToken:{type:String},
+      //  The Token Expire of above Token
+      tokenExpires: {type:Date},
+    },
+  ],
+});
 
 Idp_accountSchema.pre("save", async function (next) {
   try {
@@ -43,7 +48,7 @@ Idp_accountSchema.pre("save", async function (next) {
     }
 
     // Hash passwords inside the 'users' array
-    
+
     /*
     * beacuse of issues hashing the password in controller
     if (this.isModified("users")) {
@@ -54,11 +59,11 @@ Idp_accountSchema.pre("save", async function (next) {
       }
     }
     */
-    next()
+    next();
   } catch (error) {
     next(error);
   }
-})
+});
 
 Idp_accountSchema.methods.isValidPassword = async function (plainTextPassword) {
   try {
@@ -68,29 +73,29 @@ Idp_accountSchema.methods.isValidPassword = async function (plainTextPassword) {
     console.error("Error verifying password:", error);
     return false; // Return false if verification fails
   }
-}
+};
 
-Idp_accountSchema.methods.isValidPasswordForUsers = async function ( username, plainTextPassword) {
+Idp_accountSchema.methods.isValidPasswordForUsers = async function (
+  username,
+  plainTextPassword
+) {
   try {
     // console.table({plainTextPassword, username})
     // Find the user inside the 'users' array
-    const user = this.users.find(user => user.username === username);
+    const user = this.users.find((user) => user.username === username);
     // console.log("User from mongoose middleware", user)
     if (!user) {
       console.error("User not found.");
       return false;
     }
-  
+
     const isValid = await argon2.verify(user.password, plainTextPassword);
     return isValid;
   } catch (error) {
     console.error("Error verifying password:", error);
     return false; // Return false if verification fails
   }
-}
-
-
-
+};
 
 const Idp_account = mongoose.model("Idp_account", Idp_accountSchema);
 

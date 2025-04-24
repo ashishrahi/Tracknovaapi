@@ -1,6 +1,6 @@
 import { probWireTamp , getVehicleNotMoved, sample, SmpCurr, Geofence, NTCurrent, VehCurrStat, GetDashData,GetNTDashboard, GetTopFuelCons, GetTopFuelConsNT, GetTopFuelConsNTS, GetTopFuelConsNTOnOff, GetRunningStatus, GetLongIdleVeh, GetVehicleMovement } from "./NTRead.controller.js";
 import { getDashboard, getVehicleCurrentDay, getVehicleDistance, getAllBins, getMapBinsWardWise, getvVehicleNo } from "./Dashboard.controller.js";
-import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
+import { GetCommGroup, UpsertCommGroup, DeleteCommGroup, GetCommGroupByEmpId,AddEmailSetting, GetAllEmailSetting, UpsertEmailSetting, GetAllSmsSetting, GetCampaignDetailById, GetCampaign, UpsertCampaign, DeleteCampaign, GetCampaignTemplate, UpsertCampaignTemplate, DeleteCampaignTemplate, GetEventSetting, UpsertEventSetting, DeleteEventSetting, GetMasters, UpsertSmsSetting } from "./Comm.controller.js";
 import { AddUpdateItemCategory, GetItemCategory, DeleteItemCategory } from "./ItemCategory.controller.js"
 import { AddUpdateItemMaster, GetItemMaster, DeleteItemMaster } from "./ItemMaster.controller.js";
 import { AddUpdateItemTypeMaster, GetItemTypeMaster, DeleteItemTypeMaster } from "./ItemTypeMaster.controller.js";
@@ -12,7 +12,7 @@ import { VehicleFuelDateRange } from "./VehicleFuelDateRange.controller.js"
 
 import { VehicleTrack, VehicleMovingTrackStatusdetnew, GetVechicleMileageSummary,GetDevTamp,VehicleFuelConsumenew, VehicleDetailSummarynew } from "./VehicleMoving.controller.js";
 
-import { AddUpdateVehicleType, GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType } from "./VehicleType.controller.js";
+import { AddUpdateVehicleType,ImportVehicleType ,GetVehicleType, DeleteVehicleType, AddUpdateEscrapVehicleType, DeleteEscrapVehicleType, GetEscrapVehicleType } from "./VehicleType.controller.js";
 
 import { AddUpdateVendorMaster, GetVendorMaster, DeleteVendorMaster } from "./VendorMaster.controller.js";
 import { GetPeriods } from "./Period.controller.js";
@@ -94,6 +94,7 @@ import { AddUpdateBinManage, GetBinManage } from "./BinManage.controller.js";
 // Brand
 import {
   AddUpdateBrandMaster,
+  ImportBrands,
   GetBrand,
   DeleteBrand,
 } from "./BrandMaster.controller.js";
@@ -101,6 +102,7 @@ import {
 // CountryMaster
 import {
   AddUpdateCountryMaster,
+  ImportCountries,
   GetCountryMaster,
   DeleteCountryMaster,
 } from "./Country.controller.js";
@@ -108,6 +110,7 @@ import {
 // DepartmentMaster
 import {
   AddUpdateDepartmentMaster,
+  ImportDepartments,
   GetDepartmentMaster,
   DeleteDepartmentMaster,
 } from "./Department.controller.js";
@@ -115,6 +118,7 @@ import {
 // DesignationMaster
 import {
   AddUpdateDesignationmaster,
+  ImportDesignation,
   GetDesignationmaster,
   DeleteDesignationmaster,
 } from "./Designation.controller.js";
@@ -125,6 +129,8 @@ import { GetDeviceType } from "./DeviceType.controller.js";
 // EmpMaster
 import {
   AddUpdateEmployee,
+  ImportEmployee,
+  Empstatus,
   GetEmployee,
   UpsertEmpPermission,
   DeleteEmployee,
@@ -133,6 +139,7 @@ import {
 // EmpMaster
 import {
   AddUpdateFuelType,
+  ImportFuelType,
   GetFuelType,
   DeleteFuelType,
 } from "./FuelType.controller.js";
@@ -166,6 +173,7 @@ import {
 // CityMaster
 import {
   AddUpdateCityMaster,
+  ImportCities,
   GetCitiesByState,
   GetCityMaster,
   DeleteCityMaster,
@@ -223,6 +231,7 @@ import {
 // State
 import {
   AddUpdateState,
+  ImportStates,
   GetState,
   GetStatebyCountry,
   DeleteState,
@@ -233,6 +242,7 @@ import {
 // TaxMaster
 import {
   AddUpdateTaxMaster,
+  ImportTaxMasters,
   GetTaxMaster,
   DeleteTaxMaster,
 } from "./TaxMaster.controller.js";
@@ -251,6 +261,7 @@ import {
 // UnitMaster
 import {
   AddUpdateUnitMaster,
+  ImportUnits,
   GetUnitMaster,
   DeleteUnitMaster
 } from "./UnitMaster.controller.js";
@@ -357,6 +368,7 @@ export const BinManageController = {
 
 export const BrandController = {
   AddUpdateBrandMaster: AddUpdateBrandMaster,
+  ImportBrands:ImportBrands,
   GetBrand: GetBrand,
   DeleteBrand: DeleteBrand,
 };
@@ -365,6 +377,7 @@ export const BrandController = {
 
 export const CountryMasterController = {
   AddUpdateCountryMaster: AddUpdateCountryMaster,
+  ImportCountries:ImportCountries,
   GetCountryMaster: GetCountryMaster,
   DeleteCountryMaster: DeleteCountryMaster,
 };
@@ -373,6 +386,7 @@ export const CountryMasterController = {
 
 export const DepartmentController = {
   AddUpdateDepartmentMaster: AddUpdateDepartmentMaster,
+  ImportDepartments:ImportDepartments,
   GetDepartmentMaster: GetDepartmentMaster,
   DeleteDepartmentMaster: DeleteDepartmentMaster,
 };
@@ -381,6 +395,7 @@ export const DepartmentController = {
 
 export const DesignationController = {
   AddUpdateDesignationmaster: AddUpdateDesignationmaster,
+  ImportDesignation:ImportDesignation,
   GetDesignationmaster: GetDesignationmaster,
   DeleteDesignationmaster: DeleteDesignationmaster,
 };
@@ -395,6 +410,8 @@ export const DeviceTypeController = {
 
 export const EmpMasterController = {
   AddUpdateEmployee: AddUpdateEmployee,
+  Empstatus:Empstatus,
+  ImportEmployee:ImportEmployee,
   GetEmployee: GetEmployee,
   UpsertEmpPermission: UpsertEmpPermission,
   DeleteEmployee: DeleteEmployee,
@@ -404,6 +421,7 @@ export const EmpMasterController = {
 
 export const FuelTypeController = {
   AddUpdateFuelType: AddUpdateFuelType,
+  ImportFuelType:ImportFuelType,
   GetFuelType: GetFuelType,
   DeleteFuelType: DeleteFuelType,
 };
@@ -427,6 +445,7 @@ export const HandheldMasterController = {
 
 export const CityMasterController = {
   AddUpdateCityMaster: AddUpdateCityMaster,
+  ImportCities:ImportCities,
   GetCitiesByState:GetCitiesByState,
   GetCityMaster: GetCityMaster,
   DeleteCityMaster: DeleteCityMaster,
@@ -495,6 +514,7 @@ AddUpdateSetting,
 
 export const CommController = {
     GetCommGroup: GetCommGroup,
+    AddEmailSetting: AddEmailSetting,
     UpsertCommGroup: UpsertCommGroup,
     DeleteCommGroup: DeleteCommGroup,
     GetCommGroupByEmpId: GetCommGroupByEmpId,
@@ -570,6 +590,7 @@ export const VehicleMovingController = {
 
 export const VehicleTypeController = {
     AddUpdateVehicleType: AddUpdateVehicleType,
+    ImportVehicleType:ImportVehicleType,
     GetVehicleType: GetVehicleType,
     DeleteVehicleType: DeleteVehicleType,
     AddUpdateEscrapVehicleType: AddUpdateEscrapVehicleType,
@@ -589,6 +610,7 @@ export const VendorMasterController = {
 
 export const StateController ={
 AddUpdateState,
+ImportStates,
 GetStatebyCountry,
   GetState,
   DeleteState,
@@ -598,6 +620,7 @@ GetStatebyCountry,
 
 export const TaxMasterController ={
 AddUpdateTaxMaster,
+ImportTaxMasters,
   GetTaxMaster,
   DeleteTaxMaster
 }
@@ -621,6 +644,7 @@ export const TripStartController ={
 export const UnitMasterController ={
 
 AddUpdateUnitMaster,
+ImportUnits,
   GetUnitMaster,
   DeleteUnitMaster
 }

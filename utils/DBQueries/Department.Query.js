@@ -120,6 +120,49 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
   }
 };
 
+/////////////////////////////////// ImportDepartmentsQuery //////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ImportDepartmentsQuery = async (model) => {
+  try {
+    const { Department } = await getTenantDBModels();
+      let inserted = 0;
+      let skipped = 0; 
+      for (const department of model) {
+        const { departmentName, departmentCode } = department;
+        const existing = await Department.findOne({DepartmentName : departmentName})
+        if (existing) {
+          skipped++;
+          continue;
+        }
+        const lastDepartId = await Department.findOne().sort({DepartmentId:-1}).limit(1)
+        const nextDepartId = lastDepartId ? lastDepartId.DepartmentId + 1 : 1
+        await Department.create({
+          DepartmentId:nextDepartId,
+          DepartmentName:departmentName,
+          DepartmentCode:departmentCode
+        })
+      }
+
+      return {
+        isSuccess: true,
+        mesg: `CSV import successful`,
+        inserted,
+        skipped,
+      };
+
+    
+  } catch (error) {
+    console.log('error:',error)
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      msg: error.message,
+    };
+  }
+}
+
+
+
 /////////////////////////////////// GetDepartmentMasterQuery //////////////////////////////////////////////////////////////////
 export const GetDepartmentMasterQuery = async (model) => {
   try {

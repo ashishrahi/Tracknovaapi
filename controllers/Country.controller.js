@@ -5,6 +5,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateCountryMasterQuery,
+  ImportCountriesQuery,
   GetCountryMasterQuery,
   DeleteCountryQuery,
 } from "../utils/DBQueries/index.js";
@@ -16,6 +17,32 @@ export async function AddUpdateCountryMaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data} =
       await AddUpdateCountryMasterQuery(model);
+    const successResponse = new ReturnData(
+      isSuccess,
+      internalSuccess,
+      mesg,
+      insertedId,
+      data
+    );
+    res.status(StatusCodes.OK).json(successResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      StatusCodes.BAD_REQUEST,
+      error.message
+    );
+    res.status(errorResponse.StatusCode).json(errorResponse);
+  }
+}
+
+
+// ImportCountries
+
+export async function ImportCountries(req, res) {
+  try {
+    const model = req.body;
+    
+    const { isSuccess, internalSuccess, mesg, insertedId, data} =
+      await ImportCountriesQuery(model);
     const successResponse = new ReturnData(
       isSuccess,
       internalSuccess,

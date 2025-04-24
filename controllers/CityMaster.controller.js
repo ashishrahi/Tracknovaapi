@@ -5,6 +5,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
     AddUpdateCityMasterQuery,
+    ImportCitiesQuery,
     GetCitiesByStateQuery,
     GetCityMasterQuery,
     DeleteCityMasterQuery,
@@ -33,6 +34,31 @@ export async function AddUpdateCityMaster(req, res) {
       res.status(errorResponse.StatusCode).json(errorResponse);
     }
   }
+
+//////////////////////////////////// ImportCities //////////////////////////////////////////////////////////////////
+
+export async function ImportCities(req, res) {
+  try {
+    const model = req.body;
+    const { isSuccess, internalSuccess, mesg, insertedId,data } =
+      await ImportCitiesQuery(model);
+    const successResponse = new ReturnData(
+      isSuccess,
+      internalSuccess,
+      mesg,
+      insertedId,
+      data
+    );
+    res.status(StatusCodes.CREATED).json(successResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      StatusCodes.BAD_REQUEST,
+      error.message
+    );
+    res.status(errorResponse.StatusCode).json(errorResponse);
+  }
+}
+  
 
 //////////////////////////////////// GetCitiesByState //////////////////////////////////////////////////////////////////
 

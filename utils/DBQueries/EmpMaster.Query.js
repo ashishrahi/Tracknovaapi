@@ -1,6 +1,6 @@
 import { AspNetUsers, EmpMaster, UserPermission } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse } from "../apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../apiResponse/index.js";
 import { AuthController } from "../../controllers/index.js";
 import {
   AddUpdateUserPermissionMasterQuery,
@@ -99,6 +99,61 @@ export const AddUpdateEmployeeQuery = async (model) => {
     throw error;
   }
 };
+
+//---------ImportEmployeeQuery------>
+
+export const ImportEmployeeQuery = async (model) => {
+  // try {
+  //   const { EmpMaster, Department, Designation,CountryMaster } = await getTenantDBModels();
+  //   let skipped = 0;
+  //   let isInserted = 0;
+  //   for (const employee of model) {
+  //     // Employee exist or not
+  //     const existing = await EmpMaster.findOne({ EmpName: empName });
+  //     if (existing) {
+  //       continue;
+  //     }
+  //     // Department exist to get DepartmentId
+  //     const department = await Department.findOne({ DepartmentName: model.empDeptName});
+  //     //  Designation Exist to get DesignationId
+  //     const designation = await Designation.findOne({DesignationName: model.designationName});
+  //     // Country exist get CountryId
+  //     const country = await CountryMaster.findOne({CountryName:model.empCountryName})
+     
+
+  //   }
+  // } catch (error) {
+  //   console.log("error:", error);
+  // }
+};
+
+// EmpstatusQuery
+export const EmpstatusQuery = async (model) => {
+  try {
+    const { EmpMaster } = await getTenantDBModels();
+    const { id, status } = model;
+    // Check if Employee exists
+    const existingEmp = await EmpMaster.findOne({ Empid: id });
+    if (!existingEmp) {
+      throw new ApiSuccessResponse(StatusCodes.NOT_FOUND, "Employee not found");
+    }
+
+    // Update Employee Status
+    await EmpMaster.findOneAndUpdate(
+      { Empid: id },
+      { $set: { EmpStatus: status } },
+      { new: true } // Optional: return updated doc
+    );
+
+    // Return success response
+    return new ApiSuccessResponse(StatusCodes.OK, "Employee status has been successfully updated");
+  } catch (error) {
+    console.error("Error updating employee status:", error);
+    throw error;
+  }
+}
+
+
 
 //---------GetEmployeeQuery------>
 
@@ -213,11 +268,12 @@ export const GetEmployeeQuery = async (model) => {
           updatedOn: "$UpdatedOn",
           userId: "$UserId",
           roleId: "$RoleId",
-          // imageFile: "$Image",
-          // signatureFile: "$SignatureFile",
+          imageFile: "$ImageFile",
+          signatureFile: "$SignatureFile",
           email: "$Email",
           dlno: "$DLNo",
           gender: "$Gender",
+          status:"$Status",
           departmentName: "$Department.DepartmentName",
           designationName: "$Designation.DesignationName",
           empStateName: "$State.StateName",
@@ -304,7 +360,7 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
 
       const { Idp_account } = await getCentralDBModels();
 
-      console.log("company is", company)
+      console.log("company is", company);
 
       const newUser = {
         username: model.registerModel?.username?.trim(),
@@ -314,26 +370,29 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
         _id: new mongoose.Types.ObjectId(), // generating ObjectId manually
       };
 
-
       if (company && company !== "SuperAdmin") {
-        const isInserted = await Idp_account.findOneAndUpdate({ "accountOwner": company._id }, {
-          "$push": { users: newUser }
-        });
-
+        const isInserted = await Idp_account.findOneAndUpdate(
+          { accountOwner: company._id },
+          {
+            $push: { users: newUser },
+          }
+        );
 
         /**
          * Infor the user
          */
         const from = process.env.NODEMAILER_EMAIL_USER;
         let to = "saurabhkushwaha9889@gmail.com";
-        let subject = `<h2>👤 New User Added</h2>`
+        let subject = `<h2>👤 New User Added</h2>`;
         let html = `
         <h2>👤 New User Added</h2>
         <p><strong>Username:</strong> ${newUser.username}</p>
         <p><strong>Username:</strong> ${model?.registerModel?.password}</p>
         <p><strong>Email:</strong> ${newUser.email}</p>
         <p><strong>Role:</strong> ${newUser.role}</p>
-        <p>User has been successfully added to the account: <strong>${model?.companyName || "New Company"}</strong></p>
+        <p>User has been successfully added to the account: <strong>${
+          model?.companyName || "New Company"
+        }</strong></p>
       `;
         // let mailOption = {
         //   mailType: model.status, // it should be like immediately, schedules
@@ -341,22 +400,21 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
         //   mailSendFinishDate: model.toDate,
         //   mailSendFinishTime: model.toTime,
         // };
-        await sendMailService(from, to, subject, "I am text", html)
-
-
+        await sendMailService(from, to, subject, "I am text", html);
       }
-
 
       const from = process.env.NODEMAILER_EMAIL_USER;
       let to = "saurabhkushwaha9889@gmail.com";
-      let subject = `<h2>👤 New User Added</h2>`
+      let subject = `<h2>👤 New User Added</h2>`;
       let html = `
         <h2>👤 New User Added</h2>
         <p><strong>Username:</strong> ${newUser.username}</p>
         <p><strong>Username:</strong> ${model.registerModel?.password}</p>
         <p><strong>Email:</strong> ${newUser.email}</p>
         <p><strong>Role:</strong> ${newUser.role}</p>
-        <p>User has been successfully added to the account: <strong>${model?.companyName || "New Company"}</strong></p>
+        <p>User has been successfully added to the account: <strong>${
+          model?.companyName || "New Company"
+        }</strong></p>
       `;
       // let mailOption = {
       //   mailType: model.status, // it should be like immediately, schedules
@@ -364,7 +422,7 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
       //   mailSendFinishDate: model.toDate,
       //   mailSendFinishTime: model.toTime,
       // };
-      await sendMailService(from, to, subject, "I am text", html)
+      await sendMailService(from, to, subject, "I am text", html);
     }
 
     // If UserId already exists, just update permissions
@@ -385,7 +443,6 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
       // );
       if (model.userPermission?.length > 0) {
         const bulkOps = model?.userPermission?.map((perm) => ({
-
           insertOne: {
             document: {
               UserId: model.userId || model.UserId,
@@ -408,8 +465,6 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
       }
       response.status = 1;
       response.message = "Permissions has successfully updated";
-
-
     }
 
     // Update Employee Data
@@ -427,10 +482,6 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
     );
     // console.log("empUpdateResult", empUpdateResult)
     // await connectMongoDB();
-
-
-
-
 
     // if (!empUpdateResult) throw new Error("Employee not found");
 

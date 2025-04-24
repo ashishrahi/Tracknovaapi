@@ -115,6 +115,76 @@ export const AddUpdateStateQuery = async (model) => {
   }
 };
 
+///////////////////////////////////////////////   ImportStatesQuery  //////////////////////////////////////////////////////////////////
+
+
+export const ImportStatesQuery = async (model) => {
+  try {
+    const { StateMaster, CountryMaster } = await getTenantDBModels();
+
+    let inserted = 0;
+    let skipped = 0;
+
+    if (!Array.isArray(model) || model.length === 0) {
+      throw new Error("Invalid input: model must be a non-empty array.");
+    }
+
+    for (const state of model) {
+      const { countryName, stateName, stateCode, createdBy, updatedBy } = state;
+
+      if (!countryName || !stateName || !stateCode) {
+        skipped++;
+        continue;
+      }
+
+      // Check for existing state
+      const existing = await StateMaster.findOne({ StateName: stateName });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      // Find country ID
+      const country = await CountryMaster.findOne({ CountryName: countryName });
+      if (!country) {
+        skipped++;
+        continue;
+      }
+
+      // Get next StateId
+      const lastState = await StateMaster.findOne().sort({ StateId: -1 }).limit(1);
+      const nextStateId = lastState ? lastState.StateId + 1 : 1;
+
+      await StateMaster.create({
+        StateId: nextStateId,
+        StateName: stateName.trim(),
+        StateCode: stateCode,
+        CountryId: country.CountryId,
+        CreatedBy: createdBy || null,
+        UpdatedBy: updatedBy || null,
+      });
+
+      inserted++;
+    }
+
+    return {
+      isSuccess: true,
+      mesg: `CSV import successful`,
+      inserted,
+      skipped,
+    };
+
+  } catch (error) {
+    console.error("CSV Import Failed:", error);
+    return {
+      isSuccess: false,
+      statusCode: 500,
+      mesg: error.message,
+    };
+  }
+};
+
+
 ///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
 
 export const GetStatebyCountryQuery = async (model) => {

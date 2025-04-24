@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const EmpMasterSchema = new mongoose.Schema({
-  Empid: { type: Number, unique: true }, // Unique Employee ID
+  Empid: { type: Number, unique: true }, 
   EmpName: {
     type: String,
     // required: true, 

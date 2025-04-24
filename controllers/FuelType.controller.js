@@ -6,6 +6,7 @@ import {
 } from "../utils/apiResponse/index.js";
 import {
   AddUpdateFuelTypeQuery,
+  ImportFuelTypeQuery,
   GetFuelTypeQuery,
   DeleteFuelTypeQuery,
 } from "../utils/DBQueries/FuelType.Query.js";
@@ -33,6 +34,30 @@ export async function AddUpdateFuelType(req, res) {
   }
 }
 
+/////////////////////////////////////// ImportFuelType //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+export async function ImportFuelType(req, res) {
+  try {
+    const model = req.body;
+    const { isSuccess, id, createUpdate, msg, data } =
+      await ImportFuelTypeQuery(model);
+    const successResponse = new DBReturn(
+      isSuccess,
+      id,
+      createUpdate,
+      msg,
+      data
+    );
+    res.status(StatusCodes.OK).json(successResponse);
+  } catch (error) {
+    const errorResponse = new ApiErrorResponse(
+      StatusCodes.BAD_REQUEST,
+      error.message
+    );
+    res.status(errorResponse.StatusCode).json(errorResponse);
+  }
+}
 ///////////////////////////////////////  GetFuelType //////////////////////////////////////////////////////////////////
 export async function GetFuelType(req, res) {
   try {
