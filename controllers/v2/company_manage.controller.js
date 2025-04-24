@@ -5,8 +5,7 @@ import { companyManageControllerResponse as apiTextResponse } from "../../utils/
 import { v2CompanyManageService } from "../../services/index.js";
 import { connectTenantDB } from "../../db/connectMongoDB.js";
 import { getCentralDBModels } from "../../db/index.js";
-import { database } from "agenda/dist/agenda/database.js";
-
+import { getTenantDBModels } from "../../db/index.js"
 // For registering new company
 export async function register(req, res, next) {
     try {
@@ -60,6 +59,8 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
     try {
         // const company = req.company;
         const { Idp_account, Company } = await getCentralDBModels()
+        const { tenant_db } = await getTenantDBModels();
+       
         const { ownerId, adminName } = req.body; // Extract dbName from request
 
         const { database } = await Company.findOne({_id: ownerId}, {"database.dbName" : 1});
@@ -90,14 +91,16 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
         // if(user.length !> 0){
         //     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "User not found");
         // }
-
-        const tenantDB = await connectTenantDB(database.dbName);
+        if(tenant_db){
+            await tenant_db.close();
+        }
+        await connectTenantDB(database.dbName);
 
         console.log("new tenetdb connected", database.dbName);
 
-        if (!tenantDB) {
-            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
-        }
+        // if (!tenantDB) {
+        //     throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
+        // }
 
         return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, `Connected to database: ${database.dbName}`, {
             navigateTo: "/home",
