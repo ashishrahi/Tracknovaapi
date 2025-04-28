@@ -131,7 +131,7 @@ export async function refresh(req, res, next) {
 export async function createSuperAdmin(req, res, next) {
   try {
     const model = req.body;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 // Forgot-Password
@@ -144,11 +144,10 @@ export async function forgotPassword(req, res, next) {
     // GOOGLE_CAPTCHA_SECRET_KEY
 
     const captchaSecret = process.env.GOOGLE_CAPTCHA_SECRET_KEY;
+    const url = process.env.GOOGLE_CAPTCHA_URL
 
     // Verify CAPTCHA
-    const captchaValidationResponse = await axios.post(
-      "https://www.google.com/recaptcha/api/siteverify",
-      null,
+    const captchaValidationResponse = await axios.post(url, null,
       {
         params: {
           secret: captchaSecret,
@@ -157,27 +156,26 @@ export async function forgotPassword(req, res, next) {
       }
     );
     // if status is not true
-    if (!captchaValidationResponse.data.success) {
+    if (!captchaValidationResponse.status === 200) {
       return res
-        .status(400)
+        .status(StatusCodes.BAD_REQUEST)
         .json(
-          new ApiErrorResponse(StatusCodes.NOT_FOUND, "Invalid CAPTCHA", false)
+          new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Invalid CAPTCHA")
         );
     }
 
     // 1. Check user existence
-    const existingUser = await Idp_account.findOne({
-      "users.username": username,
-    });
+    const existingUser = await Idp_account.findOne({ "users.username": username }, { "users.$": 1 });
 
     if (!existingUser) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json(
-          new ApiErrorResponse(StatusCodes.NOT_FOUND, "User not Found", false)
+          new ApiErrorResponse(StatusCodes.NOT_FOUND, "User not Found")
         );
     }
 
+    console.log("existingUser", existingUser)
     // 2. Find the user in the array
     const targetUser = existingUser.users.find(
       (user) => user.username === username
@@ -189,8 +187,7 @@ export async function forgotPassword(req, res, next) {
         .json(
           new ApiErrorResponse(
             StatusCodes.NOT_FOUND,
-            "User not Found in account",
-            false
+            "User not Found in account"
           )
         );
     }
@@ -203,13 +200,23 @@ export async function forgotPassword(req, res, next) {
     targetUser.resetToken = hashedToken;
     targetUser.tokenExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
 
-    await existingUser.save();
+    const updatedUser = await Idp_account.updateOne({ "users.username": username }, {
+      $set: {
+        "users.$.resetToken": hashedToken,
+        "users.$.tokenExpires": Date.now() + 15 * 60 * 1000
+      }
+    })
 
-    const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+    if (!updatedUser.acknowledged || updatedUser.modifiedCount !== 1) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try Again!! Some error occured"))
+    }
+
+    const resetUrl = process.env.RESET_LINK
+    const resetLink = `${resetUrl}token=${token}`;
 
     // 5. Send email
     const from = process.env.NODEMAILER_EMAIL_USER;
-    const to = "ashishrahi05@gmail.com";
+    const to = "saurabhkushwaha9889@gmail.com";
     const subject = `Reset Your Password`;
     const html = `
           <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
@@ -238,21 +245,11 @@ export async function forgotPassword(req, res, next) {
         )
       );
   } catch (error) {
-    console.error("Forgot password error:", error);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(
-        new ApiErrorResponse(
-          StatusCodes.NOT_FOUND,
-          "Something went wrong",
-          false
-        )
-      );
+    next(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }
 }
 
 // Reset-Password
-
 export async function resetPassword(req, res, next) {
   try {
     const { Idp_account } = await getCentralDBModels();
