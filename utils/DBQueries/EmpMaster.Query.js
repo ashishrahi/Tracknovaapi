@@ -103,28 +103,104 @@ export const AddUpdateEmployeeQuery = async (model) => {
 //---------ImportEmployeeQuery------>
 
 export const ImportEmployeeQuery = async (model) => {
-  // try {
-  //   const { EmpMaster, Department, Designation,CountryMaster } = await getTenantDBModels();
-  //   let skipped = 0;
-  //   let isInserted = 0;
-  //   for (const employee of model) {
-  //     // Employee exist or not
-  //     const existing = await EmpMaster.findOne({ EmpName: empName });
-  //     if (existing) {
-  //       continue;
-  //     }
-  //     // Department exist to get DepartmentId
-  //     const department = await Department.findOne({ DepartmentName: model.empDeptName});
-  //     //  Designation Exist to get DesignationId
-  //     const designation = await Designation.findOne({DesignationName: model.designationName});
-  //     // Country exist get CountryId
-  //     const country = await CountryMaster.findOne({CountryName:model.empCountryName})
-     
+  try {
+      const { EmpMaster, Department, Designation, CountryMaster, StateMaster, CityMaster } = await getTenantDBModels();
+      let skipped = 0;
+      let inserted = 0;
+      console.log('model:',model)
+      for (const employee of model) {
+      // Employee exist or not
+      const existingEmployee = await EmpMaster.findOne(
+        { EmpName: employee.empName, EmpMobileNo: employee.empMobileNo })
+      if (existingEmployee) {
+        skipped++
+        continue;
+      }
+      // Department exist to get DepartmentId
+      const department = await Department.findOne({ DepartmentName: employee.empDeptName
+      });
+      // department not exist
+      if (!department) {
+        return{
+          status:0,
+          message:`${department.DepartmentName} department not exist`
+         }}
+      
+      //  Designation Exist to get DesignationId
+      const designation = await Designation.findOne({DesignationName: employee.empDesignation});
+      if (!designation) {
+        return{
+          status:0,
+          message:`${designation.DesignationName} designation not exist`
+         }}
+      
+      
+      // Country exist get CountryId
+      const country = await CountryMaster.findOne({CountryName:employee.empCountry})
+      if (!country) {
+        return{
+          status:0,
+          message:`${country.CountryName} country not exist`
+         }}
 
-  //   }
-  // } catch (error) {
-  //   console.log("error:", error);
-  // }
+      // State exist get StateId
+      const state = await StateMaster.findOne({StateName:employee.empState})
+      if (!state) {
+        return{
+          status:0,
+          message:`${state.StateMaster} state not exist`
+         }}
+
+      // City exist get CityId
+      const city = await CityMaster.findOne({CityName:employee.empCity})
+      if (!city) {
+        return{
+          status:0,
+          message:`${city.CityName} city not exist`
+         }}
+
+      // Generated EmpId
+      const lastEmp = await EmpMaster.findOne().sort({ Empid: -1 }).limit(1);
+      const nextEmpId = lastEmp ? lastEmp.Empid + 1 : 1;
+        // Insert new country with mapped fields
+        await EmpMaster.create({
+          Empid: nextEmpId,
+          EmpName: employee.empName,
+          EmpCode: employee.empCode,
+          EmpPerAddress:employee.empPerAddress,
+          EmpLocalAddress:employee.empLocalAddress,
+          EmpFatherName: employee.empFatherName,
+          EmpMotherName: employee.empMotherName,
+          EmpMobileNo: employee.empMobileNo,
+          EmpPanNumber: employee.empPanNumber,
+          EmpAddharNo: employee.empAddharNo,
+          EmpDob: employee.empDob,
+          EmpJoiningDate: employee.empJoiningDate,
+          EmpRetirementDate: employee.empretirementDate,
+          EmpDesignationId: designation.DesignationId,
+          EmpDeptId: department.empdeptId,
+          EmpStateId: state.StateId,
+          EmpCountryID: country.CountryId,
+          EmpCityId: city.CityId,
+          EmpPincode: employee.empPincode,
+          Email: employee.email,
+          DLNo: employee.dlno,
+          Gender: employee.gender
+        });
+      inserted++;
+
+     }
+ return{
+  status:1,
+  message:"Data imported Successfully"
+ }
+
+  } catch (error) {
+    return{
+      status:0,
+      message:error.message
+     }
+  }
 };
 
 // EmpstatusQuery

@@ -40,7 +40,7 @@ export async function AddUpdateEmployee(req, res, next) {
 export async function ImportEmployee(req, res, next) {
   try {
     const model = req.body;
-    // console.log("model:",model)
+    console.log("model:",model)
     const response  = await ImportEmployeeQuery(model);
   
     const successResponse = new CommonResponse(

@@ -10,7 +10,6 @@ router.post(
 );
 
 router.post("/ImportCities", CityMasterController.ImportCities);
-
 router.post("/Cities/:StateId", CityMasterController.GetCitiesByState);
 router.post("/GetDistrictMaster", CityMasterController.GetCityMaster);
 router.delete("/DeleteDistrict", CityMasterController.DeleteCityMaster);
