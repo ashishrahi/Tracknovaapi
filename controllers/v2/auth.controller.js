@@ -175,7 +175,6 @@ export async function forgotPassword(req, res, next) {
         );
     }
 
-    console.log("existingUser", existingUser)
     // 2. Find the user in the array
     const targetUser = existingUser.users.find(
       (user) => user.username === username
@@ -264,16 +263,15 @@ export async function resetPassword(req, res, next) {
     // Find the account with matching hashed token and valid expiry
     const account = await Idp_account.findOne({
       "users.resetToken": hashedToken,
-      "users.tokenExpires": { $gt: Date.now() },
-    });
+      "users.tokenExpires": { $gt: Date.now() }
+    }, { "users.$": 1 });
     if (!account) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.NOT_FOUND)
         .json(
           new ApiErrorResponse(
             StatusCodes.NOT_FOUND,
-            "Token is invalid or has expired",
-            false
+            "Token is invalid or has expired"
           )
         );
     }
@@ -297,14 +295,29 @@ export async function resetPassword(req, res, next) {
     }
 
     // Hash and update the new password
-    user.password = await argon2.hash(password);
+    // user.password = await argon2.hash(password);
 
     // Clear reset token fields
-    user.resetToken = undefined;
-    user.tokenExpires = undefined;
+    // user.resetToken = null;
+    // user.tokenExpires = null;
 
     // Save updated user
-    await account.save();
+    const updatedUser = await Idp_account.updateOne({
+      "users.resetToken": hashedToken,
+      "users.tokenExpires": { $gt: Date.now() }
+    }, {
+      $set: {
+        "users.$.password": await argon2.hash(password), // new hashed password
+      },
+      $unset: {
+        "users.$.resetToken": null,
+        "users.$.tokenExpires": null
+      }
+    })
+
+    if (!updatedUser.acknowledged || updatedUser.modifiedCount !== 1) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try Again!! Some error occured"))
+    }
 
     return res
       .status(StatusCodes.OK)
@@ -317,14 +330,10 @@ export async function resetPassword(req, res, next) {
       );
   } catch (error) {
     console.error("Reset password error:", error);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(
-        new ApiErrorResponse(
-          StatusCodes.NOT_FOUND,
-          "Something went wrong",
-          false
-        )
-      );
+
+    next(new ApiErrorResponse(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    ))
   }
 }

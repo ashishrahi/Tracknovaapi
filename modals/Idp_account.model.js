@@ -33,9 +33,9 @@ export const Idp_accountSchema = new mongoose.Schema({
       role: { type: String, required: true },
       // dbName: {type: String, required: true}
       // ResetToken for Forgort Password
-      resetToken:{type:String},
+      resetToken:{ type:String , default: null},
       //  The Token Expire of above Token
-      tokenExpires: {type:Date},
+      tokenExpires: {type:Date, default: null},
     },
   ],
 });
