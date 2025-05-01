@@ -12,7 +12,7 @@ import { EmpMasterController } from "../../controllers/index.js";
 import { AddUpdateEmployeeQuery, UpsertEmpPermissionQuery } from "../../utils/DBQueries/index.js";
 import EmpMaster from "../../modals/EmpMaster.model.js";
 import sendMailService from "../../utils/emailService/nodeMailer.js";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 
 //--------- registerService -------->
 export async function registerService(value) {
@@ -88,7 +88,7 @@ export async function registerService(value) {
                 users: [
                     {
                         username: adminUserName,
-                        password: await argon2.hash(generatedPassword),
+                        password: bcrypt.hashSync(generatedPassword, 10),
                         email: value.admin.email,
                         role: value.admin.role,
                     }
