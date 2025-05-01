@@ -8,7 +8,8 @@ import {
 } from "../DBQueries/Auth.Query.js";
 import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
 import mongoose from "mongoose";
-import argon2 from "argon2";
+// import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import sendMailService from "../emailService/nodeMailer.js";
 //---------AddUpdateEmployeeQuery------>
 
@@ -440,7 +441,7 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
 
       const newUser = {
         username: model.registerModel?.username?.trim(),
-        password: await argon2.hash(model.registerModel?.password?.trim()),
+        password: await bcrypt.hash(model.registerModel?.password?.trim(), 10),
         email: model.registerModel?.email,
         role: model.registerModel?.role,
         _id: new mongoose.Types.ObjectId(), // generating ObjectId manually

@@ -371,4 +371,6 @@
 // console.log("9889840089".slice(6))
 
 
+import bcrypt from "bcryptjs";
 
+console.log(bcrypt.hashSync("SuperAdmin@123", 10))

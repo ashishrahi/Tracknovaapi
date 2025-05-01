@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import argon2 from "argon2";
+// import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 
 export const Idp_accountSchema = new mongoose.Schema({
   username: {
@@ -43,7 +44,7 @@ export const Idp_accountSchema = new mongoose.Schema({
 Idp_accountSchema.pre("save", async function (next) {
   try {
     if (this.isModified("password")) {
-      const hashedPassword = await argon2.hash(this.password);
+      const hashedPassword = bcrypt.hashSync(this.password);
       this.password = hashedPassword;
     }
 
@@ -67,7 +68,7 @@ Idp_accountSchema.pre("save", async function (next) {
 
 Idp_accountSchema.methods.isValidPassword = async function (plainTextPassword) {
   try {
-    const isValid = await argon2.verify(this.password, plainTextPassword);
+    const isValid = bcrypt.compareSync(this.password, plainTextPassword);
     return isValid;
   } catch (error) {
     console.error("Error verifying password:", error);
@@ -89,7 +90,8 @@ Idp_accountSchema.methods.isValidPasswordForUsers = async function (
       return false;
     }
 
-    const isValid = await argon2.verify(user.password, plainTextPassword);
+    const isValid = bcrypt.compareSync(plainTextPassword, user.password);
+    console.log("Is valid pass", isValid)
     return isValid;
   } catch (error) {
     console.error("Error verifying password:", error);

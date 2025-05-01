@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
-import loadTenantModels from "../utils/tenant-models/loadTenantModels.js";
 import {
     Idp_accountSchema,
     CompanySchema,

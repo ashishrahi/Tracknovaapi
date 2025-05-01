@@ -12,7 +12,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import sendMailService from "../../utils/emailService/nodeMailer.js";
-import argon2 from "argon2";
 import axios from "axios";
 //------- signin ----------->
 
@@ -307,7 +306,8 @@ export async function resetPassword(req, res, next) {
       "users.tokenExpires": { $gt: Date.now() }
     }, {
       $set: {
-        "users.$.password": await argon2.hash(password), // new hashed password
+        // "users.$.password": await argon2.hash(password), // new hashed password
+        "users.$.password": bcrypt.hashSync(password, 10), // new hashed password
       },
       $unset: {
         "users.$.resetToken": null,
