@@ -109,16 +109,19 @@ export const ImportEmployeeQuery = async (model) => {
       let inserted = 0;
       console.log('model:',model)
       for (const employee of model) {
+      const{empName, empCode, empFatherName, empMotherName, empMobileNo, empEmail, empPanNumber, empPerAddress,
+        empLocalAddress, empStatus, empAddharNo, empDob, empJoiningDate, empretirementDate, empDesignation,
+        empDepartment, empState, empCountry, empCity, empPincode, empDlno,empGender
+      } = employee;
       // Employee exist or not
       const existingEmployee = await EmpMaster.findOne(
-        { EmpName: employee.empName, EmpMobileNo: employee.empMobileNo })
+        { EmpName: employee.empName, EmpMobileNo: empMobileNo })
       if (existingEmployee) {
         skipped++
         continue;
       }
       // Department exist to get DepartmentId
-      const department = await Department.findOne({ DepartmentName: employee.empDeptName
-      });
+      const department = await Department.findOne({ DepartmentName:empDepartment});
       // department not exist
       if (!department) {
         return{
@@ -127,7 +130,7 @@ export const ImportEmployeeQuery = async (model) => {
          }}
       
       //  Designation Exist to get DesignationId
-      const designation = await Designation.findOne({DesignationName: employee.empDesignation});
+      const designation = await Designation.findOne({DesignationName: empDesignation});
       if (!designation) {
         return{
           status:0,
@@ -136,7 +139,7 @@ export const ImportEmployeeQuery = async (model) => {
       
       
       // Country exist get CountryId
-      const country = await CountryMaster.findOne({CountryName:employee.empCountry})
+      const country = await CountryMaster.findOne({CountryName:empCountry})
       if (!country) {
         return{
           status:0,
@@ -144,7 +147,7 @@ export const ImportEmployeeQuery = async (model) => {
          }}
 
       // State exist get StateId
-      const state = await StateMaster.findOne({StateName:employee.empState})
+      const state = await StateMaster.findOne({StateName:empState})
       if (!state) {
         return{
           status:0,
@@ -152,7 +155,7 @@ export const ImportEmployeeQuery = async (model) => {
          }}
 
       // City exist get CityId
-      const city = await CityMaster.findOne({CityName:employee.empCity})
+      const city = await CityMaster.findOne({CityName:empCity})
       if (!city) {
         return{
           status:0,
@@ -165,27 +168,27 @@ export const ImportEmployeeQuery = async (model) => {
         // Insert new country with mapped fields
         await EmpMaster.create({
           Empid: nextEmpId,
-          EmpName: employee.empName,
-          EmpCode: employee.empCode,
-          EmpPerAddress:employee.empPerAddress,
-          EmpLocalAddress:employee.empLocalAddress,
-          EmpFatherName: employee.empFatherName,
-          EmpMotherName: employee.empMotherName,
-          EmpMobileNo: employee.empMobileNo,
-          EmpPanNumber: employee.empPanNumber,
-          EmpAddharNo: employee.empAddharNo,
-          EmpDob: employee.empDob,
-          EmpJoiningDate: employee.empJoiningDate,
-          EmpRetirementDate: employee.empretirementDate,
+          EmpName: empName,
+          EmpCode: empCode,
+          EmpPerAddress: empPerAddress,
+          EmpLocalAddress: empLocalAddress,
+          EmpFatherName: empFatherName,
+          EmpMotherName: empMotherName,
+          EmpMobileNo: empMobileNo,
+          EmpPanNumber: empPanNumber,
+          EmpAddharNo: empAddharNo,
+          EmpDob: empDob,
+          EmpJoiningDate: empJoiningDate,
+          EmpRetirementDate: empretirementDate,
           EmpDesignationId: designation.DesignationId,
           EmpDeptId: department.empdeptId,
           EmpStateId: state.StateId,
           EmpCountryID: country.CountryId,
           EmpCityId: city.CityId,
-          EmpPincode: employee.empPincode,
-          Email: employee.email,
-          DLNo: employee.dlno,
-          Gender: employee.gender
+          EmpPincode: empPincode,
+          Email: empEmail,
+          DLNo: empDlno,
+          Gender: empGender
         });
       inserted++;
 
