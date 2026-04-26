@@ -273,4 +273,4 @@ ORDER BY trackdate;`,
 ```
 
 
-``` EmpId Get method Controller: GetCommGroupByEmpId```
+``` EmpId Get method Controller: GetCommGroupByEmpId```# Tracknovaapi
