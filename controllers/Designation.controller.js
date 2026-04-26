@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse, ReturnData } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateDesignationMasterQuery,
   ImportDesignationQuery,
@@ -13,7 +13,7 @@ export async function AddUpdateDesignationmaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await AddUpdateDesignationMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -38,7 +38,7 @@ export async function ImportDesignation(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await ImportDesignationQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -62,7 +62,7 @@ export async function GetDesignationmaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetDesignationMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -86,7 +86,7 @@ export async function DeleteDesignationmaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await DeleteDesignationMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,

@@ -1,13 +1,19 @@
 import { StatusCodes } from "http-status-codes";
 import { getTenantDBModels } from "../../db/index.js";
 
+const OVERSPEED_VIEW_COLLECTION =
+  process.env.VEHICLE_OVERSPEED_COLLECTION || "VehicleTrackForOverSpeed";
 
 //////////////////////////////////////////////// GetOverSpeedAlertQuery /////////////////////////////////////////////////////
 
 export const GetOverSpeedAlertQuery = async (modal) => {
 
     try {
-        const data = await VehicleTrackForOverSpeed.find();
+        const { tenant_db } = await getTenantDBModels();
+        const data = await tenant_db.db
+            .collection(OVERSPEED_VIEW_COLLECTION)
+            .find({})
+            .toArray();
         return{
             isSuccess: true,
             statusCode: StatusCodes.OK,

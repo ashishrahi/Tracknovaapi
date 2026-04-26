@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { Geofencing } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 ////////////////////////////// AddUpdateGeoFencingQuery //////////////////////////////////

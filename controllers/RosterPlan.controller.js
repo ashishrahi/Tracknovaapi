@@ -1,10 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse,
-  ReturnData
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateRosterPlanQuery,
     GetRosterPlanQuery,
@@ -17,7 +12,7 @@ export async function AddUpdateRosterPlan(req,res){
     try {
         const model = req.body;
         const { status, message, data } = await AddUpdateRosterPlanQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -39,7 +34,7 @@ export async function GetRosterPlan(req,res){
     try {
         const model = req.body;
         const { status, message, data,  rowCount, pageNo, pageSize} = await GetRosterPlanQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -63,7 +58,7 @@ export async function DeleteRosterPlan(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId } = await DeleteRosterPlanQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

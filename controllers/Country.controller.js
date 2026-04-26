@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateCountryMasterQuery,
   ImportCountriesQuery,
@@ -17,7 +14,7 @@ export async function AddUpdateCountryMaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data} =
       await AddUpdateCountryMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -43,7 +40,7 @@ export async function ImportCountries(req, res) {
     
     const { isSuccess, internalSuccess, mesg, insertedId, data} =
       await ImportCountriesQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -67,7 +64,7 @@ export async function GetCountryMaster(req, res) {
 
     const {  isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetCountryMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -91,7 +88,7 @@ export async function DeleteCountryMaster(req, res) {
     const {countryId} = req.body;
     // console.log("model:",countryId)
     const { isSuccess, internalSuccess, mesg, insertedId, data  } = await DeleteCountryQuery(countryId);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,

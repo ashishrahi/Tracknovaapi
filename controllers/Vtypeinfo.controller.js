@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateVtypeinfoQuery,
     getVtypeinfoQuery,
@@ -39,7 +35,7 @@ export async function getVtypeinfo(req,res){
     try {
         const modal = req.body;
         const {  message, data } = await getVtypeinfoQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             true,
             message,
             data

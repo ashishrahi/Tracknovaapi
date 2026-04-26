@@ -5,6 +5,6 @@ import { TaxMasterController } from "../controllers/index.js";
 router.post("/AddUpdateTaxMaster", TaxMasterController.AddUpdateTaxMaster);
 router.post("/ImportTaxMasters", TaxMasterController.ImportTaxMasters);
 router.post("/GetTaxMaster", TaxMasterController.GetTaxMaster);
-router.delete("/DeleteTaxMaster", TaxMasterController.DeleteTaxMaster);
+router.post("/DeleteTaxMaster", TaxMasterController.DeleteTaxMaster);
 
 export default router;

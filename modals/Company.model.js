@@ -51,18 +51,57 @@ export const CompanySchema = new mongoose.Schema({
   },
 
   subscription: {
-    plan: { type: String, required: true, enum: ["Basic", "Pro", "Enterprise"] },
+    plan: { type: String, required: true, enum: ["Basic", "Pro", "Enterprise", "Trial"] },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
-    status: { type: String, required: true, enum: ["Active", "Suspended", "Expired"], default: "Active" }
+    status: { type: String, required: true, enum: ["Pending", "Active", "Suspended", "Expired"], default: "Active" },
+    billing: {
+      provider: { type: String, enum: ["stripe", "razorpay"], default: "razorpay" },
+      customerId: { type: String, trim: true, default: "" },
+      subscriptionId: { type: String, trim: true, default: "" },
+      autoRenew: { type: Boolean, default: true },
+    }
   },
 
   database: {
     dbName: { type: String, required: true, unique: [true, "This Db name already present"], trim: true },
     backupEnabled: { type: Boolean, default: false }
-  }
+  },
+
+  /**
+   * Tenant-scoped login: short code (e.g. KANPUR1). Unique when set; backfilled by migration for existing companies.
+   */
+  companyCode: {
+    type: String,
+    trim: true,
+    uppercase: true,
+    maxlength: 20,
+  },
+  /**
+   * URL-style workspace identifier (e.g. kanpur-corp). Unique when set; pair with companyCode for SaaS sign-in.
+   */
+  workspaceSlug: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    maxlength: 64,
+  },
+
+  /**
+   * Optional per-tenant login page branding (SaaS subdomain login). All fields optional.
+   */
+  loginBranding: {
+    logoUrl: { type: String, trim: true, maxlength: 2_200_000 },
+    /** Hex color, e.g. #2563EB */
+    primaryColor: { type: String, trim: true, maxlength: 32 },
+    /** Shown in help/support; optional override of company email. */
+    supportEmail: { type: String, trim: true, lowercase: true, maxlength: 254 },
+  },
 },
   { timestamps: true });
+
+CompanySchema.index({ companyCode: 1 }, { unique: true, sparse: true });
+CompanySchema.index({ workspaceSlug: 1 }, { unique: true, sparse: true });
 
 const Company = mongoose.model("Company", CompanySchema);
 

@@ -1,7 +1,6 @@
 
 import { StatusCodes } from "http-status-codes";
-import { ApiSuccessResponse,ReturnData } from "../utils/apiResponse/index.js";
-import { VendorMaster } from "../modals/index.js"
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { getTenantDBModels } from "../db/index.js";
 
@@ -99,7 +98,7 @@ async function GetVendorMaster(req, res, next){
 
 
         const msg = vendors.length > 0 ?  "Data Successfully fetched" : "No Record Found"
-        return res.status(StatusCodes.OK).json(new ReturnData(true, StatusCodes.OK, msg,null ,newData));
+        return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, StatusCodes.OK, msg,null ,newData));
 
     } catch (error) {
         const err = new Error(error.message);

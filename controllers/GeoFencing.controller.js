@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  CommonResponse,
-  ApiErrorResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateGeoFencingQuery,
   GetGeoFencingQuery,
@@ -16,7 +13,7 @@ export async function AddUpdateGeoFencing(req, res) {
     const model = req.body;
     const { status, message, data} =
       await AddUpdateGeoFencingQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -38,7 +35,7 @@ export async function GetGeoFencing(req, res) {
     const { status, message, data } = await GetGeoFencingQuery(
       model
     );
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -60,7 +57,7 @@ export async function DeleteGeoFencing(req, res) {
     const model = req.body;
     const { status, message, data } =
       await DeleteGeoFencingQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

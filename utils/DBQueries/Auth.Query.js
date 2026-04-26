@@ -1,17 +1,21 @@
-import {
-  UserPermission,
-  RolePermission,
-  Menu,
-  AspNetRoles,
-  EmpMaster,
-  AspNetUsers,
-} from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../apiResponse/index.js";
 import { getTenantDBModels } from "../../db/index.js";
+import {
+  getRequestTenantDbName,
+  setRequestTenantDbName,
+} from "../../db/tenantContext.js";
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
-import { connectTenantDB} from "../../db/connectMongoDB.js";
-import { getCentralDBModels } from "../../db/index.js";
+
+function resolveBodyTenantDbName(/** @type {Record<string, unknown>} */ model) {
+  const dbName =
+    (typeof model?.dbName === "string" && model.dbName) ||
+    (typeof model?.tenantDbName === "string" && model.tenantDbName) ||
+    getRequestTenantDbName() ||
+    (typeof process.env.DEFAULT_TENANT_DB === "string" && process.env.DEFAULT_TENANT_DB) ||
+    null;
+  return dbName;
+}
 
 //-----------------loginQuery-------->
 export const loginQuery = async (model) => {
@@ -19,6 +23,14 @@ export const loginQuery = async (model) => {
 
     const { username, password } = model;
 
+    const dbName = resolveBodyTenantDbName(model);
+    if (!dbName) {
+      throw new ApiErrorResponse(
+        StatusCodes.BAD_REQUEST,
+        "Missing tenant database. Send dbName or tenantDbName in the request body, authenticate with a company that has a database, or set DEFAULT_TENANT_DB."
+      );
+    }
+    setRequestTenantDbName(dbName);
     const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
 
     let response;
@@ -112,7 +124,7 @@ export const loginQuery = async (model) => {
       },
     };
     // console.log("response from query", response)
-    return { response: response, refreshToken: user.generateRefreshToken() };
+    return { response: response, refreshToken: user.generateRefreshToken(dbName) };
   } catch (error) {
     console.log("Login Error: ", error);
     throw new ApiErrorResponse(
@@ -128,6 +140,14 @@ export const loginQuery = async (model) => {
 
 export const RegisterQuery = async (model, res) => {
   try {
+    const dbName = resolveBodyTenantDbName(model);
+    if (!dbName) {
+      throw new ApiErrorResponse(
+        StatusCodes.BAD_REQUEST,
+        "Missing tenant database. Send dbName or tenantDbName in the request body, or set DEFAULT_TENANT_DB."
+      );
+    }
+    setRequestTenantDbName(dbName);
     const { AspNetUsers } = await getTenantDBModels();
 
     // Check if user already exists
@@ -582,7 +602,7 @@ export const AddUpdateRoleMasterQuery = async (modal) => {
       }
     } else {
       // Insert new role
-      console.log("for upsert permission", modal);
+      // console.log("for upsert permission", modal);
       modal.Id = crypto.randomUUID();
       updatedRole = new AspNetRoles({
         Id: modal.Id,
@@ -690,7 +710,7 @@ export const DeleteRoleMasterQuery = async (RoleId) => {
 
 export const AddUpdateRolePermissionMasterQuery = async (modal) => {
   try {
-    const { RolePermission } = getTenantDBModels();
+    const { RolePermission } = await getTenantDBModels();
     const { roleId } = modal;
 
     // Validation: RoleId required
@@ -796,7 +816,7 @@ export const AddUpdateRolePermissionMasterQuery = async (modal) => {
 
 export const GetRolePermissionMasterQuery = async (modal) => {
   try {
-    const { RolePermission } = getTenantDBModels();
+    const { RolePermission } = await getTenantDBModels();
     const { RoleId } = modal;
 
     if (RoleId === "-1") {

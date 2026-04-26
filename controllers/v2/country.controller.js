@@ -1,13 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { v2CountryService } from "../../services/index.js";
-import { ApiErrorResponse, ReturnData } from "../../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../../utils/apiResponse/index.js";
 
 // addCountry
 export async function addCountry(req, res) {
     try {
       const model = req.body;
       const { isSuccess, internalSuccess, mesg, insertedId, data} = await v2CountryService.addCountry(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -30,7 +30,7 @@ export async function getCountry(req, res) {
       const model = req.body;  
       const {  isSuccess, internalSuccess, mesg, insertedId, data } =
         await v2CountryService.getCountry(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -53,7 +53,7 @@ export async function getCountry(req, res) {
       const model = req.body;  
       const {  isSuccess, internalSuccess, mesg, insertedId, data } =
         await v2CountryService.deleteCountry(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,

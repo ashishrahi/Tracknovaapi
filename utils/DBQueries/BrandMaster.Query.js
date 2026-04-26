@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import BrandMaster from "../../modals/BrandMaster.model.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 //////////////////////////  AddUpdateBrandMasterQuery  ////////////////////////////////

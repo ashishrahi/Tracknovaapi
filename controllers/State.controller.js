@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse,ReturnData} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateStateQuery,
     ImportStatesQuery,
@@ -13,7 +13,7 @@ export async function AddUpdateState(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await AddUpdateStateQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -35,7 +35,7 @@ export async function ImportStates(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await ImportStatesQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -59,7 +59,7 @@ export async function GetStatebyCountry(req,res){
         const model = req.params;
         // console.log("model:",model)
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetStatebyCountryQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -82,7 +82,7 @@ export async function GetState(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetStateQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -104,7 +104,7 @@ export async function DeleteState(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await DeleteStateQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

@@ -83,6 +83,8 @@ export const AspNetUsersSchema = new mongoose.Schema( {
     },
   },{timestamps: true, collection: "AspNetUsers"});
 
+const BCRYPT_HASH_RE = /^\$2[aby]\$\d{2}\$/;
+
 // Pre-save middleware to automatically set NormalizedEmail
 AspNetUsersSchema.pre('save', async function (next) {
     try {
@@ -93,10 +95,13 @@ AspNetUsersSchema.pre('save', async function (next) {
       if (this.isModified('UserName') || this.isNew) {
         this.NormalizedUserName = this.UserName.toUpperCase(); // Convert Email to uppercase
       }
-      // generating hashed password
-      const salt = bcrypt.genSaltSync(10);
-      const hashedPassword = bcrypt.hashSync(this.PasswordHash, salt);
-      this.PasswordHash = hashedPassword;
+      if (this.isModified("PasswordHash")) {
+        const v = this.PasswordHash;
+        if (typeof v === "string" && v.length > 0 && !BCRYPT_HASH_RE.test(v)) {
+          const salt = bcrypt.genSaltSync(10);
+          this.PasswordHash = bcrypt.hashSync(v, salt);
+        }
+      }
 
       next();
     } catch (error) {
@@ -125,10 +130,11 @@ AspNetUsersSchema.methods.generateAccessToken =  function (){
   return token;
 }
 
-AspNetUsersSchema.methods.generateRefreshToken =  function (){
+AspNetUsersSchema.methods.generateRefreshToken = function (/** @type {string | undefined} */ dbName) {
   const payload = {
-    Id: this.Id
-  }
+    Id: this.Id,
+    ...(dbName ? { dbName: String(dbName) } : {}),
+  };
   const secret = process.env.REFRESH_TOKEN_SECRET;
   const option = {
     expiresIn: process.env.REFRESH_TOKEN_EXPIRY,

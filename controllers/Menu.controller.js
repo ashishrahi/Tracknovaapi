@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
  AddUpdateMenuMasterQuery,
  GetMenuMasterQuery,
@@ -17,7 +14,7 @@ export async function AddUpdateMenuMaster(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await AddUpdateMenuMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -41,7 +38,7 @@ export async function GetMenuMaster(req,res){
     try {
         const model = req.body;
         const {isSuccess, internalSuccess, mesg, insertedId, data } = await GetMenuMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -64,7 +61,7 @@ export async function GetParentMenuMaster(req,res){
     try {
         const model = req.body;
         const {isSuccess, internalSuccess, mesg, insertedId, data } = await GetParentMenuMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -87,7 +84,7 @@ export async function GetChildMenuMaster(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetChildMenuMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -109,7 +106,7 @@ export async function DeleteMenuMaster(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId} = await DeleteMenuMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

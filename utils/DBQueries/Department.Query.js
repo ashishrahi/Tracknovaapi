@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import { Department } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
+import { ERROR, SUCCESS } from "../messages/message.js";
 
 /////////////////////////////////// AddUpdateDepartmentMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 export const AddUpdateDepartmentMasterQuery = async (model) => {
@@ -46,7 +46,10 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `${existingDepartment.DepartmentName} Successfully Updated`,
+        mesg: SUCCESS.UPDATE_WITH_NAME(
+          "department",
+          existingDepartment.DepartmentName
+        ),
         insertedId: "",
         data: newData,
       };
@@ -70,8 +73,11 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
         return {
           isSuccess: 0,
           internalSuccess: "",
-          mesg: `Department Name ${departmentExists.DepartmentName} Already Exists`,
-          insertedId:"",
+          mesg: ERROR.ALREADY_EXISTS_WITH_NAME(
+            "department",
+            departmentExists.DepartmentName
+          ),
+          insertedId: "",
           data: departmentExists,
         };
       }
@@ -106,7 +112,10 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `${newDepartment.DepartmentName} Department Successfully Added`,
+        mesg: SUCCESS.CREATE_WITH_NAME(
+          "department",
+          newDepartment.DepartmentName
+        ),
         insertedId: "",
         data: newData,
       };
@@ -114,8 +123,8 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
   } catch (err) {
     return {
       isSuccess: 0,
-      internalSuccess:"",
-      mesg: `${model.DepartmentName} Already Exists`,
+      internalSuccess: "",
+      mesg: ERROR.ALREADY_EXISTS_WITH_NAME("department", model.DepartmentName),
     };
   }
 };
@@ -125,43 +134,43 @@ export const AddUpdateDepartmentMasterQuery = async (model) => {
 export const ImportDepartmentsQuery = async (model) => {
   try {
     const { Department } = await getTenantDBModels();
-      let inserted = 0;
-      let skipped = 0; 
-      for (const department of model) {
-        const { departmentName, departmentCode } = department;
-        const existing = await Department.findOne({DepartmentName : departmentName})
-        if (existing) {
-          skipped++;
-          continue;
-        }
-        const lastDepartId = await Department.findOne().sort({DepartmentId:-1}).limit(1)
-        const nextDepartId = lastDepartId ? lastDepartId.DepartmentId + 1 : 1
-        await Department.create({
-          DepartmentId:nextDepartId,
-          DepartmentName:departmentName,
-          DepartmentCode:departmentCode
-        })
+    let inserted = 0;
+    let skipped = 0;
+    for (const department of model) {
+      const { departmentName, departmentCode } = department;
+      const existing = await Department.findOne({
+        DepartmentName: departmentName,
+      });
+      if (existing) {
+        skipped++;
+        continue;
       }
+      const lastDepartId = await Department.findOne()
+        .sort({ DepartmentId: -1 })
+        .limit(1);
+      const nextDepartId = lastDepartId ? lastDepartId.DepartmentId + 1 : 1;
+      await Department.create({
+        DepartmentId: nextDepartId,
+        DepartmentName: departmentName,
+        DepartmentCode: departmentCode,
+      });
+    }
 
-      return {
-        isSuccess: true,
-        mesg: `CSV import successful`,
-        inserted,
-        skipped,
-      };
-
-    
+    return {
+      isSuccess: true,
+      mesg: SUCCESS.FETCH_ALL("department"),
+      inserted,
+      skipped,
+    };
   } catch (error) {
-    console.log('error:',error)
+    console.log("error:", error);
     return {
       isSuccess: false,
       statusCode: 500,
       msg: error.message,
     };
   }
-}
-
-
+};
 
 /////////////////////////////////// GetDepartmentMasterQuery //////////////////////////////////////////////////////////////////
 export const GetDepartmentMasterQuery = async (model) => {
@@ -199,7 +208,7 @@ export const GetDepartmentMasterQuery = async (model) => {
     return {
       isSuccess: 1,
       internalSuccess: "",
-      mesg: `Department Details of ${result.DepartmentName} department has been fetched successfully`,
+      mesg: SUCCESS.FETCH_ONE("department",result.DepartmentName),
       insertedId: "",
       data: newData,
     };
@@ -228,14 +237,14 @@ export const DeleteDepartmentMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `Department Successfully deleted`,
+        mesg: SUCCESS.DELETE("department"),
         insertedId: "",
       };
     } else {
       return {
         isSuccess: 0,
         internalSuccess: "",
-        mesg: `DepartmentId ${model.departmentId} not found`,
+        mesg: ERROR.NOT_FOUND("department"),
         insertedId: "",
       };
     }
@@ -243,7 +252,10 @@ export const DeleteDepartmentMasterQuery = async (model) => {
     return {
       isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      mesg:  err.message +";" +(err.innerException ? err.innerException : err.message),
+      mesg:
+        err.message +
+        ";" +
+        (err.innerException ? err.innerException : err.message),
     };
   }
 };

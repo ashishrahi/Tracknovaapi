@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import AppRoutes from "./routes/index.js";
 import cors from "cors";
-import { connectMongoDB, connectTenantDB} from "./db/connectMongoDB.js";
+import { connectMongoDB } from "./db/connectMongoDB.js";
+import { runWithTenantContext } from "./db/tenantContext.js";
 import compression from "compression";
 import { ApiErrorResponse } from "./utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
@@ -11,11 +12,16 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import limiter from "./utils/rate-limiter/rateLimiter.js";
 import { getLoggedInCompany } from "./middlewares/index.js";
+import { startSubscriptionExpiryJob } from "./jobs/subscriptionExpiry.job.js";
 
 
 dotenv.configDotenv();
 
 const app = express();
+
+app.use((req, res, next) => {
+    runWithTenantContext(() => next());
+});
 
 connectMongoDB().catch((error) => {
     console.error("Failed to connect to MongoDB:", error.message || error.ErrorMessage);
@@ -32,12 +38,20 @@ app.use((req, res, next) => {
     }
     next();
 });
+const defaultCorsOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://103.12.1.132:8205",
+];
+const corsOrigins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(/[\s,]+/).map((s) => s.trim()).filter(Boolean)
+    : defaultCorsOrigins;
+
 app.use(cors({
-    origin: ["http://localhost:3000", "http://103.12.1.132:8205" ],  // Allow frontend origin
-    // origin: "*",  // Allow frontend origin
-    methods: ["GET","POST","DELETE"],
+    origin: corsOrigins,
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true  // Allow sending cookies with requests
+    credentials: true,
 }));
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true, limit: "50mb"}));
@@ -71,6 +85,7 @@ app.use((err, req, res, next) => {
 
 
 const PORT = process.env.PORT;
-app.listen(PORT, ()=>{
-    console.log(`App is listening from port ${PORT}`)
+app.listen(PORT, () => {
+    console.log(`App is listening from port ${PORT}`);
+    startSubscriptionExpiryJob();
 });

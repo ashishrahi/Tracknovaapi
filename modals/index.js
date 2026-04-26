@@ -29,6 +29,11 @@ import AspNetUsers from "./AspNetUsers.model.js";
 import SubscriptionRequest from "./SubscriptionRequest.model.js";
 import Company from "./Company.model.js"
 import Idp_account from "./Idp_account.model.js";
+import SaasSubscriptionInvoice from "./SaasSubscriptionInvoice.model.js";
+import TenantUsageMetric from "./TenantUsageMetric.model.js";
+import SupportTicket from "./SupportTicket.model.js";
+import LifecycleEmailLog from "./LifecycleEmailLog.model.js";
+import ImpersonationSession from "./ImpersonationSession.model.js";
 
 
 
@@ -109,12 +114,18 @@ export {
     // VehicleTypeMaster,
     VehicleTypeChild,
     //-----SAAS Related----->
-    SubscriptionRequest
+    SubscriptionRequest,
+    SaasSubscriptionInvoice,
+    TenantUsageMetric,
+    SupportTicket,
+    LifecycleEmailLog,
+    ImpersonationSession
 }
 
 //----------Import Schemas------------>
 
 import { CompanySchema } from "./Company.model.js";
+import { CompanyAuditLogSchema } from "./CompanyAuditLog.model.js";
 import { AspNetRolesSchema } from "./AspNetRoles.modal.js";
 import { AreaWardMasterSchema } from "./AreaWardMaster.modal.js";
 import { AspNetUsersSchema } from "./AspNetUsers.model.js";
@@ -159,6 +170,11 @@ import { RouteAreaDetailSchema } from "./RouteAreaDetail.modal.js";
 import { SmsSettingSchema } from "./SmsSetting.model.js";
 import { StateMasterSchema } from "./StateMaster.modal.js";
 import { SubscriptionRequestSchema } from "./SubscriptionRequest.model.js";
+import { SaasSubscriptionInvoiceSchema } from "./SaasSubscriptionInvoice.model.js";
+import { TenantUsageMetricSchema } from "./TenantUsageMetric.model.js";
+import { SupportTicketSchema } from "./SupportTicket.model.js";
+import { LifecycleEmailLogSchema } from "./LifecycleEmailLog.model.js";
+import { ImpersonationSessionSchema } from "./ImpersonationSession.model.js";
 import { SummaryNTSchema } from "./SummaryNT.model.js";
 import { TaxMasterSchema } from "./TaxMaster.model.js";
 import { tc_usersSchema } from "./TC_User.modal.js";
@@ -171,4 +187,4 @@ import { VehicleTypeMasterSchema } from "./VehicleTypeMaster.model.js";
 import { VendorMasterSchema } from "./VendorMaster.model.js";
 import { ZoneMasterSchema } from "./ZoneMaster.model.js";
 
-export { Idp_accountSchema, CompanySchema, AspNetRolesSchema, AreaWardMasterSchema, AspNetUsersSchema, BinLocationSchema, BrandMasterSchema, CampaignSchema, CampaignDetailSchema, CampaignTemplateSchema, CityMasterSchema, CommGroupSchema, CommMembersSchema, ContractorMasterSchema,CountryMasterSchema, DepartmentSchema, DesignationSchema, DeviceTypeSchema, EmailSettingSchema, EmpMasterSchema, EventSettingSchema, FuelCorrectionSchema, FuelTypeSchema, GeofencingSchema, HandheldMasterSchema, HelpCreateSchema,ItemCategoryMasterSchema, ItemMasterSchema,ItemTypeMasterSchema, MenuSchema, NodeSchema, NodePermissionSchema, NTSchema, NTCurrentDaySchema, PeriodSchema, Petrol_Pump_tblSchema, RolePermissionSchema, RosterPlanSchema,RosterPlanDetailSchema, RouteSchema, RouteAreaBinDetailSchema, RouteAreaDetailSchema, SmsSettingSchema, StateMasterSchema, SubscriptionRequestSchema, SummaryNTSchema, TaxMasterSchema, tc_usersSchema, UnitMasterSchema, UserPermissionSchema, VehicleAddTempInfoSchema, VehicleTypeChildSchema, VehicleTypeMasterSchema, VendorMasterSchema, ZoneMasterSchema           }
+export { Idp_accountSchema, CompanySchema, CompanyAuditLogSchema, AspNetRolesSchema, AreaWardMasterSchema, AspNetUsersSchema, BinLocationSchema, BrandMasterSchema, CampaignSchema, CampaignDetailSchema, CampaignTemplateSchema, CityMasterSchema, CommGroupSchema, CommMembersSchema, ContractorMasterSchema,CountryMasterSchema, DepartmentSchema, DesignationSchema, DeviceTypeSchema, EmailSettingSchema, EmpMasterSchema, EventSettingSchema, FuelCorrectionSchema, FuelTypeSchema, GeofencingSchema, HandheldMasterSchema, HelpCreateSchema,ItemCategoryMasterSchema, ItemMasterSchema,ItemTypeMasterSchema, MenuSchema, NodeSchema, NodePermissionSchema, NTSchema, NTCurrentDaySchema, PeriodSchema, Petrol_Pump_tblSchema, RolePermissionSchema, RosterPlanSchema,RosterPlanDetailSchema, RouteSchema, RouteAreaBinDetailSchema, RouteAreaDetailSchema, SmsSettingSchema, StateMasterSchema, SubscriptionRequestSchema, SaasSubscriptionInvoiceSchema, TenantUsageMetricSchema, SupportTicketSchema, LifecycleEmailLogSchema, ImpersonationSessionSchema, SummaryNTSchema, TaxMasterSchema, tc_usersSchema, UnitMasterSchema, UserPermissionSchema, VehicleAddTempInfoSchema, VehicleTypeChildSchema, VehicleTypeMasterSchema, VendorMasterSchema, ZoneMasterSchema }

@@ -7,12 +7,15 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "esbuild app.js --bundle --platform=node --outfile=dist/index.js"
+    "build": "esbuild app.js --bundle --platform=node --outfile=dist/index.js",
+    "test": "node --test tests/tenant-parallel.test.js tests/company-register-joi.test.js tests/company-signup-employee.test.js tests/workspace-slug.test.js tests/tenant-resolve.test.js tests/track-nova-username.test.js",
+    "migrate:tenant-auth": "node scripts/migrate-tenant-auth.mjs"
   },
   "author": "MSSPL_Saurabh_Kushwaha",
   "license": "ISC",
   "dependencies": {
     "agenda": "^5.0.0",
+    "argon2": "^0.44.0",
     "axios": "^1.8.4",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.5",

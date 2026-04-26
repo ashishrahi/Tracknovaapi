@@ -1,4 +1,3 @@
-import { AspNetUsers, EmpMaster, UserPermission } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse, ApiSuccessResponse } from "../apiResponse/index.js";
 import { AuthController } from "../../controllers/index.js";
@@ -7,14 +6,30 @@ import {
   RegisterQuery,
 } from "../DBQueries/Auth.Query.js";
 import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
+import { IDP_USERNAME_COLLATION } from "../tenantLogin.js";
 import mongoose from "mongoose";
 // import argon2 from "argon2";
 import bcrypt from "bcryptjs";
 import sendMailService from "../emailService/nodeMailer.js";
+import {validateEmpMaster} from '../validation/empMasterValidator.js'
 //---------AddUpdateEmployeeQuery------>
 
-export const AddUpdateEmployeeQuery = async (model) => {
+export const AddUpdateEmployeeQuery = async (input) => {
   try {
+    const { __companyRegistration, ...model } = input || {};
+
+    // Full Joi validation for API/HR flows. Company public signup omits many fields; those use __companyRegistration.
+    if (!__companyRegistration) {
+      const { error } = validateEmpMaster(model);
+      if (error) {
+        return {
+          isSuccess: false,
+          internalSuccess: false,
+          mesg: error.details[0].message,
+        };
+      }
+    }
+
     const { EmpMaster } = await getTenantDBModels();
 
     let response = {};
@@ -72,6 +87,7 @@ export const AddUpdateEmployeeQuery = async (model) => {
 
       response.data = newUser;
       response.message = "Employee Successfully Added";
+      response.isSuccess = true;
     } else {
       // Update Existing Employee
       console.log("validFormedData", validFormedData);
@@ -93,6 +109,7 @@ export const AddUpdateEmployeeQuery = async (model) => {
       }
 
       response.message = "Employee Successfully Updated";
+      response.isSuccess = true;
     }
 
     return response;
@@ -215,7 +232,7 @@ export const EmpstatusQuery = async (model) => {
     // Check if Employee exists
     const existingEmp = await EmpMaster.findOne({ Empid: id });
     if (!existingEmp) {
-      throw new ApiSuccessResponse(StatusCodes.NOT_FOUND, "Employee not found");
+      throw new ApiErrorResponse(StatusCodes.NOT_FOUND, "Employee not found");
     }
 
     // Update Employee Status
@@ -225,8 +242,12 @@ export const EmpstatusQuery = async (model) => {
       { new: true } // Optional: return updated doc
     );
 
-    // Return success response
-    return new ApiSuccessResponse(StatusCodes.OK, "Employee status has been successfully updated");
+    return new ApiSuccessResponse(
+      true,
+      StatusCodes.OK,
+      "Employee status has been successfully updated",
+      null
+    );
   } catch (error) {
     console.error("Error updating employee status:", error);
     throw error;
@@ -442,8 +463,12 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
 
       console.log("company is", company);
 
+      const normalizedUsername = String(model.registerModel?.username ?? "")
+        .toLowerCase()
+        .trim();
+
       const newUser = {
-        username: model.registerModel?.username?.trim(),
+        username: normalizedUsername,
         password: await bcrypt.hash(model.registerModel?.password?.trim(), 10),
         email: model.registerModel?.email,
         role: model.registerModel?.role,
@@ -451,6 +476,18 @@ export const UpsertEmpPermissionQuery = async (model, res, company) => {
       };
 
       if (company && company !== "SuperAdmin") {
+        const dupe = await Idp_account
+          .findOne({
+            accountOwner: company._id,
+            "users.username": normalizedUsername,
+          })
+          .collation(IDP_USERNAME_COLLATION);
+        if (dupe) {
+          throw new ApiErrorResponse(
+            StatusCodes.CONFLICT,
+            "This username is already in use for this company."
+          );
+        }
         const isInserted = await Idp_account.findOneAndUpdate(
           { accountOwner: company._id },
           {

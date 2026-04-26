@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { ItemMaster } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 // # RouteVehicleMapping #TripMaster

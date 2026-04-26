@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
-import { ContractorMaster, ItemMaster, VehicleAddTempInfo } from "../modals/index.js";
-import {ApiErrorResponse, ApiSuccessResponse, CommonResponse, ReturnData} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 // import {ApiSuccessResponse} from "../utils/apiResponse/ApiSuccessResponse.js";
 import { getTenantDBModels } from "../db/index.js";
 
@@ -72,7 +71,7 @@ async function AddUpdateItemMaster( req, res, next){
               }                                    
               ).save(); // save({session})
             // await session.commitTransaction();
-            return res.status(StatusCodes.OK).json(new CommonResponse(true, "Successfully Added",savedData));
+            return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(true, "Successfully Added",savedData));
         } else{
             // now updating
         const entity = await ItemMaster.findOne({ ItemMasterId: model.itemMasterId })
@@ -326,7 +325,7 @@ async function GetItemMaster(req, res, next){
        
     // 
         const message = response.length > 0 ? "Data fetched successfully" : "No records found."
-        return res.status(StatusCodes.OK).json(new ReturnData(true, false, message, null, response));
+        return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, false, message, null, response));
     } catch (err) {
         const error = new Error(err.message);
         error.status = StatusCodes.BAD_REQUEST;
@@ -370,7 +369,7 @@ async function DeleteItemMaster(req, res, next){
             const deleteResult = await ItemMaster.deleteOne({ ItemMasterId: itemMasterId });
 
             if (deleteResult.deletedCount === 1) {
-                return res.status(StatusCodes.OK).json(new ReturnData(true ,true, "Successfully Deleted", false, null))
+                return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true ,true, "Successfully Deleted", false, null))
                
             } else {
                 const error = new Error("ItemMaster not found.");

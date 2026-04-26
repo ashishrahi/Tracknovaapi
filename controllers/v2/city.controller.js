@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { v2CityService } from "../../services/index.js";
-import { ApiErrorResponse, ReturnData } from "../../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../../utils/apiResponse/index.js";
 
 // AddCity
 
@@ -9,7 +9,7 @@ export async function addCity(req, res) {
       const model = req.body;
       const {  isSuccess, internalSuccess, mesg, insertedId, data } =
         await v2CityService.addCity(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -32,7 +32,7 @@ export async function cityList(req, res) {
     const model = req.body;
     const {  isSuccess, internalSuccess, mesg, insertedId, data } =
       await v2CityService.cityList(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -58,7 +58,7 @@ export async function getCity(req, res) {
   
       const {  isSuccess, internalSuccess, mesg, insertedId, data } =
         await v2CityService.getCitybyState(stateId);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -81,7 +81,7 @@ export async function deleteCity(req, res) {
     const model = req.body;
     const {  isSuccess, internalSuccess, mesg, insertedId, data } =
       await v2CityService.deleteCity(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,

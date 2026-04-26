@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateRoutesQuery,
     GetRoutesQuery,
@@ -18,7 +15,7 @@ export async function AddUpdateRoutes(req,res){
     try {
         const model = req.body;
         const { status, message, data, } = await AddUpdateRoutesQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -39,7 +36,7 @@ export async function GetRoutes(req,res){
     try {
         const model = req.body;
         const { status, message, data,pageNo,pageSize,totalCount } = await GetRoutesQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -63,7 +60,7 @@ export async function DeleteRoutes(req,res){
     try {
         const model = req.body;
         const { status, message, data,} = await DeleteRoutesQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,

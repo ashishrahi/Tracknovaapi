@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { Designation } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
+import {validateDesignation} from "../validation/designationValidation.js"
+import { ERROR, SUCCESS } from "../messages/message.js";
 
 ////////////////////////////////////////////// AddUpdateDesignationMasterQuery //////////////////////////////////////////////////////////////////
 
@@ -15,15 +16,17 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       createdBy,
     } = model;
 
-    if (!designationName) {
-      return {
-        isSuccess: 0,
-        internalSuccess: "",
-        mesg: "Designation Name is required",
-        insertedId: "",
-        data: null,
-      };
-    }
+        // Validation of JOI
+        const {error} = validateDesignation(model)
+        //  Validation of Error
+        if (error) {
+          return{
+            isSuccess: 1,
+            internalSuccess: "",
+            mesg: error.details[0].message,
+      
+          }
+        }
 
     let designation = await Designation.findOne({
       DesignationId: designationId,
@@ -40,7 +43,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `${updated.DesignationName} Successfully Updated`,
+        mesg: SUCCESS.UPDATE_WITH_NAME('employee',designation.DesignationName),
         insertedId: updated._id,
         data: updated,
       };
@@ -53,7 +56,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
         return {
           isSuccess: 0,
           internalSuccess: "",
-          mesg: `${existingDesignation.DesignationName} Already Exists`,
+          mesg: ERROR.ALREADY_EXISTS_WITH_NAME("designation",existingDesignation.Designation),
           insertedId: "",
           data: existingDesignation,
         };
@@ -75,7 +78,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `${saved.DesignationName} has been Successfully Added`,
+        mesg: SUCCESS.CREATE_WITH_NAME("designation",saved.DesignationName),        
         insertedId: saved._id,
         data: {
           designationId: saved.DesignationId,
@@ -91,7 +94,7 @@ export const AddUpdateDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 0,
         internalSuccess: "",
-        mesg: "Designation Already Exists (Duplicate Key)",
+        mesg: ERROR.ALREADY_EXISTS("designation"),
         insertedId: "",
         data: null,
       };
@@ -134,7 +137,7 @@ export const ImportDesignationQuery = async (model) => {
     }
     return {
       isSuccess: true,
-      mesg: `CSV import successful`,
+      mesg: SUCCESS.FETCH_ALL("designation"),
       inserted,
       skipped,
     };
@@ -172,7 +175,7 @@ export const GetDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `Designations has been fetched successfully`,
+        mesg: SUCCESS.FETCH_ALL('designations'),
         insertedId: "",
         data: newData,
       };
@@ -192,7 +195,7 @@ export const GetDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `${data.DesignationName} details has been fetched successfully`,
+        mesg: SUCCESS.FETCH_ONE_WITH_NAME("designation",data.DesignationName),
         insertedId: "",
         data: newData,
       };
@@ -201,7 +204,7 @@ export const GetDesignationMasterQuery = async (model) => {
     return {
       isSuccess: 0,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      mesg: "An unexpected error occurred",
+      mesg: err.message,
     };
   }
 };
@@ -210,6 +213,7 @@ export const GetDesignationMasterQuery = async (model) => {
 
 export const DeleteDesignationMasterQuery = async (model) => {
   try {
+
     const { Designation } = await getTenantDBModels();
     const designation = await Designation.find({
       DesignationId: model.designationId,
@@ -221,14 +225,14 @@ export const DeleteDesignationMasterQuery = async (model) => {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `DesignationId ${designation.DesignationName} Successfully deleted`,
+        mesg: SUCCESS.DELETE_WITH_NAME("designation",designation.DesignationName),
         insertedId: "",
       };
     } else {
       return {
         isSuccess: 1,
         internalSuccess: "",
-        mesg: `DesignationId "${designation.designationName}" Not Found!`,
+        mesg: ERROR.NOT_FOUND("designation"),
       };
     }
   } catch (error) {

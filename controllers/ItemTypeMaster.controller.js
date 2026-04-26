@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ItemTypeMaster } from "../modals/index.js";
-import { ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { getTenantDBModels } from "../db/index.js";
 
@@ -75,7 +74,7 @@ async function GetItemTypeMaster(req, res, next){
 
         const response = formattedData(data)
     
-        return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched", null , response))
+        return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data fetched", null , response))
       } catch (error) {
         
         return res.json({

@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
  AddUpdatePetrolPumpQuery,
  GetPetrolPumpVehicleQuery,
@@ -16,7 +13,7 @@ export async function AddUpdatePetrolPump(req,res){
     try {
         const model = req.body;
         const { status, message, data } = await AddUpdatePetrolPumpQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -37,7 +34,7 @@ export async function GetPetrolPumpVehicle(req,res){
     try {
         const model = req.body;
         const { status, message, data } = await GetPetrolPumpVehicleQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -59,7 +56,7 @@ export async function GetPetrolPump(req,res){
     try {
         const model = req.body;
         const { status, message, data } = await GetPetrolPumpQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -81,7 +78,7 @@ export async function DeletePetrolPump(req,res){
     try {
         const model = req.body;
         const { status, message, data} = await DeletePetrolPumpQuery(model);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,

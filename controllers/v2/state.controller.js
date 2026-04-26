@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { v2StateService } from "../../services/index.js";
-import { ApiErrorResponse, ReturnData } from "../../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../../utils/apiResponse/index.js";
 
 // addState
 export async function addState(req, res) {
@@ -8,7 +8,7 @@ export async function addState(req, res) {
     const model = req.body;
 
     const {  isSuccess, internalSuccess, mesg, insertedId, data } = await v2StateService.addState(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -34,7 +34,7 @@ export async function getState(req, res) {
   
       const {  isSuccess, internalSuccess, mesg, insertedId, data } =
         await v2StateService.getStatebyCountry(countryId);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -57,7 +57,7 @@ export async function stateList(req, res) {
    try {
           const model = req.body;
           const { isSuccess, internalSuccess, mesg, insertedId, data} = await v2StateService.stateList(model);
-          const successResponse = new ReturnData(
+          const successResponse = ApiSuccessResponse.returnData(
               isSuccess,
               internalSuccess,
               mesg,
@@ -82,7 +82,7 @@ export async function deleteState(req, res) {
   try {
          const model = req.body;
          const { isSuccess, internalSuccess, mesg, insertedId, data} = await v2StateService.deleteState(model);
-         const successResponse = new ReturnData(
+         const successResponse = ApiSuccessResponse.returnData(
              isSuccess,
              internalSuccess,
              mesg,

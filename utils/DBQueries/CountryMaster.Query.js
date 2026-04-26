@@ -1,21 +1,26 @@
 import { StatusCodes } from "http-status-codes";
-import { CountryMaster } from "../../modals/index.js";
-import { StateMaster } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
+import {validateCountryMaster} from "../validation/countryMasterValidator.js"
+import { SUCCESS, ERROR } from "../messages/message.js";
 
 /////////////////////////////// AddUpdateCountryMasterQuery ///////////////////////////////
 
 export const AddUpdateCountryMasterQuery = async (model) => {
   try {
-    const { CountryMaster } = await getTenantDBModels();
+      //  Validation By JOI
+        const{error} = validateCountryMaster(model)
+      // Error Handling by JOI
+        if (error) {
+          return{
+            isSuccess: false,
+            internalSuccess: false,
+            mesg: error.details[0].message,
+          }
+        }
 
-    if (!model.countryName) {
-      return {
-        isSuccess: true,
-        internalSuccess: false,
-        mesg: "Country Name Is Required",
-      };
-    }
+
+    const { CountryMaster } = await getTenantDBModels();
+    
 
     // Try to find an existing record by CountryId
     const existingCountry = await CountryMaster.findOne({
@@ -41,11 +46,11 @@ export const AddUpdateCountryMasterQuery = async (model) => {
         updatedBy: existingCountry.UpdatedBy,
         createdBy: existingCountry.CreatedBy,
       };
-
+       
       return {
         isSuccess: true,
         internalSuccess: false,
-        mesg: `Country ${existingCountry.CountryName} Successfully Updated`,
+        mesg: SUCCESS.UPDATE("country"),
         insertedId: "",
         data: updatedCountry,
       };
@@ -68,7 +73,7 @@ export const AddUpdateCountryMasterQuery = async (model) => {
         return {
           isSuccess: false,
           internalSuccess: "true",
-          mesg: `Country ${countryNameExists.CountryName} Already Exists`,
+          mesg: ERROR.ALREADY_EXISTS_WITH_NAME("country",countryNameExists.CountryName),
           insertedId: "",
           data: countryNameExists,
         };
@@ -95,12 +100,19 @@ export const AddUpdateCountryMasterQuery = async (model) => {
       return {
         isSuccess: true,
         internalSuccess: false,
-        mesg: `Country ${newCountryname.countryName} has been Added successfully`,
+        mesg: SUCCESS.CREATE_WITH_NAME("country",newCountryname.countryName),
         insertedId: "",
         data: newCountryname,
       };
     }
   } catch (error) {
+    if (error.code === 11000) {
+      return {
+        isSuccess: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        mesg: ERROR.ALREADY_EXISTS("country"),
+      };
+    }
     return {
       isSuccess: false,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -143,7 +155,7 @@ export const ImportCountriesQuery = async (model) => {
 
     return {
       isSuccess: true,
-      mesg: `CSV import successful`,
+      mesg: SUCCESS.FETCH_ALL("countries"),
       inserted,
       skipped,
     };
@@ -187,7 +199,7 @@ export const GetCountryMasterQuery = async (model) => {
       return {
         isSuccess: true,
         internalSuccess: false,
-        mesg: "Country Data has been fetched successfully",
+        mesg: SUCCESS.FETCH_ALL("countries"),
         insertedId: "",
         data: countryList,
       };
@@ -208,7 +220,7 @@ export const GetCountryMasterQuery = async (model) => {
       return {
         isSuccess: true,
         internalSuccess: false,
-        mesg: `Country ${country.CountryName} details has been fetched successfully`,
+        mesg: SUCCESS.FETCH_ONE_WITH_NAME("country",countryDetail.countryName),
         insertedId: "",
         data: countryDetail,
       };
@@ -252,13 +264,13 @@ export const DeleteCountryQuery = async (countryId) => {
       return {
         isSuccess: true,
         internalSuccess: true,
-        mesg: `Country ${country.CountryName} deleted successfully.`,
+        mesg: SUCCESS.DELETE_WITH_NAME("country",country.CountryName),
       };
     } else {
       return {
         isSuccess: false,
         internalSuccess: false,
-        mesg: `Country ${countryId} not found!`,
+        mesg: ERROR.NOT_FOUND("country"),
       };
     }
   } catch (error) {

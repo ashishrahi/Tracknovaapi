@@ -3,9 +3,24 @@ import { ApiErrorResponse, ApiSuccessResponse } from "../../utils/apiResponse/in
 import { validateRegisterCompanyModel } from "../../utils/validation/joi.js";
 import { companyManageControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js";
 import { v2CompanyManageService } from "../../services/index.js";
-import { connectTenantDB } from "../../db/connectMongoDB.js";
-import { getCentralDBModels } from "../../db/index.js";
-import { getTenantDBModels } from "../../db/index.js"
+import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
+import mongoose from "mongoose";
+
+function assertSuperAdmin(user) {
+    if (user?.users[0]["role"] !== "SuperAdmin") {
+        throw new ApiErrorResponse(StatusCodes.FORBIDDEN, "SuperAdmin access required");
+    }
+}
+
+function actorFromRequest(req) {
+    const u0 = req.user?.users?.[0];
+    return {
+        userId: u0?._id ?? null,
+        username: u0?.username ?? req.user?.username ?? "unknown",
+        role: u0?.role ?? null,
+    };
+}
+
 // For registering new company
 export async function register(req, res, next) {
     try {
@@ -27,20 +42,255 @@ export async function register(req, res, next) {
     }
 }
 
-// For getting all new company
+// SuperAdmin company list: server-side pagination, sort, and filter
 export async function find(req, res, next) {
     try {
-        const user = req.user;
-        if(user?.users[0]["role"] !== "SuperAdmin"){
-            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "You are not allowed to get company data")
-        }
-        const companies = await v2CompanyManageService.findService();
-        return res.json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.findCompany, companies))
-
+        assertSuperAdmin(req.user);
+        const {
+            page = 1,
+            pageSize = 25,
+            search = "",
+            status = "all",
+            sortField = "companyName",
+            sortOrder = "asc",
+        } = req.query;
+        const result = await v2CompanyManageService.findCompaniesPaginatedService({
+            page: Number(page) || 1,
+            pageSize: Number(pageSize) || 25,
+            search: String(search),
+            status: String(status),
+            sortField: String(sortField),
+            sortOrder: String(sortOrder),
+        });
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: apiTextResponse.findCompany,
+                data: result.items,
+                pageNo: result.page,
+                pageSize: result.pageSize,
+                totalCount: result.total,
+            })
+        );
     } catch (error) {
         next(error);
     }
+}
 
+export async function listStats(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const stats = await v2CompanyManageService.getCompanyListStatsService();
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: stats,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getById(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const one = await v2CompanyManageService.getCompanyByIdService(id);
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: one,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function updateById(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const model = req.body;
+        const { value, error } = validateRegisterCompanyModel(model);
+        if (error) {
+            throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.details[0].message);
+        }
+        const updated = await v2CompanyManageService.updateCompanyByIdService(
+            id,
+            value,
+            actorFromRequest(req)
+        );
+        return res.json(
+            new ApiSuccessResponse(true, StatusCodes.OK, "Company updated", updated)
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getUsage(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const company = await v2CompanyManageService.getCompanyByIdService(id);
+        const dbName = company?.database?.dbName;
+        const usage = await v2CompanyManageService.getTenantUsageSnapshotService(dbName);
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: usage,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getTenantUsers(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const company = await v2CompanyManageService.getCompanyByIdService(id);
+        const dbName = company?.database?.dbName;
+        const { page, pageSize, sortField, sortOrder } = req.query;
+        const r = await v2CompanyManageService.getTenantUsersPageService(dbName, {
+            page: Number(page) || 1,
+            pageSize: Number(pageSize) || 25,
+            sortField: String(sortField || "EmpName"),
+            sortOrder: String(sortOrder || "asc"),
+        });
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: r.items,
+                pageNo: r.page,
+                pageSize: r.pageSize,
+                totalCount: r.total,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getTenantVehicles(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const company = await v2CompanyManageService.getCompanyByIdService(id);
+        const dbName = company?.database?.dbName;
+        const { page, pageSize, sortField, sortOrder } = req.query;
+        const r = await v2CompanyManageService.getTenantVehiclesPageService(dbName, {
+            page: Number(page) || 1,
+            pageSize: Number(pageSize) || 25,
+            sortField: String(sortField || "VehicleNo"),
+            sortOrder: String(sortOrder || "asc"),
+        });
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: r.items,
+                pageNo: r.page,
+                pageSize: r.pageSize,
+                totalCount: r.total,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getAuditLogs(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        const { page, pageSize } = req.query;
+        const r = await v2CompanyManageService.getCompanyAuditLogPageService(id, {
+            page: Number(page) || 1,
+            pageSize: Number(pageSize) || 25,
+        });
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: r.items,
+                pageNo: r.page,
+                pageSize: r.pageSize,
+                totalCount: r.total,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function bulkAction(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { action, ids } = req.body || {};
+        const result = await v2CompanyManageService.bulkCompanyActionService(
+            String(action),
+            Array.isArray(ids) ? ids : [],
+            req.user
+        );
+        if (action === "export") {
+            return res.json(
+                new ApiSuccessResponse({
+                    isSuccess: true,
+                    statusCode: StatusCodes.OK,
+                    message: "OK",
+                    data: result,
+                })
+            );
+        }
+        return res.json(
+            new ApiSuccessResponse({
+                isSuccess: true,
+                statusCode: StatusCodes.OK,
+                message: "OK",
+                data: result,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function remove(req, res, next) {
+    try {
+        assertSuperAdmin(req.user);
+        const { id } = req.params;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            try {
+                await v2CompanyManageService.logCompanyAuditEntry({
+                    companyId: new mongoose.Types.ObjectId(id),
+                    action: "deleted",
+                    details: { source: "single" },
+                    actor: actorFromRequest(req),
+                });
+            } catch (e) {
+                console.warn("company audit (delete)", e?.message);
+            }
+        }
+        const result = await v2CompanyManageService.deleteCompanyByIdService(id);
+        return res.json(new ApiSuccessResponse(true, StatusCodes.OK, "Company removed", result));
+    } catch (error) {
+        next(error);
+    }
 }
 
 // For switching company database.
@@ -58,17 +308,15 @@ export async function switchCompanyDatabase(req, res, next) {
 export async function switchCompanyDatabaseWithDbName(req, res, next) {
     try {
         // const company = req.company;
-        const { Idp_account, Company } = await getCentralDBModels()
-        const { tenant_db } = await getTenantDBModels();
+        const { Idp_account, Company } = await getCentralDBModels();
        
         const { ownerId, adminName } = req.body; // Extract dbName from request
 
         const { database } = await Company.findOne({_id: ownerId}, {"database.dbName" : 1});
 
         console.log("database", database);
-        if (!database.dbName || !ownerId) {
-            next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Database name && OwnerId are required"));
-            // return res.status(400).json({ message: "Database name is required" });
+        if (!database?.dbName || !ownerId) {
+            return next(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Database name && OwnerId are required"));
         }
 
 
@@ -91,10 +339,7 @@ export async function switchCompanyDatabaseWithDbName(req, res, next) {
         // if(user.length !> 0){
         //     throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, "User not found");
         // }
-        if(tenant_db){
-            await tenant_db.close();
-        }
-        await connectTenantDB(database.dbName);
+        await getTenantDBModels(database.dbName);
 
         console.log("new tenetdb connected", database.dbName);
 

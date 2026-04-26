@@ -4,39 +4,90 @@ import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { authControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js"
 import jwt from "jsonwebtoken";
 import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
-import { connectTenantDB } from "../../db/connectMongoDB.js";
-import Company from "../../modals/Company.model.js";
 import mongoose from "mongoose";
 import { GetUserPermissionMasterQuery } from "../../utils/DBQueries/Auth.Query.js";
+import {
+  findIdpCandidatesByUsername,
+  findIdpForTenantSignIn,
+  normalizeCompanyCode,
+  normalizeSignInUsername,
+  normalizeWorkspaceSlug,
+  resolveCompanyFromTenantSignIn,
+  findEmbeddedUserBySignInName,
+} from "../../utils/tenantLogin.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 
 export async function signinService(value) {
 
-  const { Idp_account, Company } = await getCentralDBModels(); // geting models
-  value.username.toLowerCase();
+  const { Idp_account, Company } = await getCentralDBModels();
+  const username = normalizeSignInUsername(value.username);
+  const codeRaw = value.companyCode != null && String(value.companyCode).trim() !== "" ? value.companyCode : "";
+  const slugRaw = value.workspaceSlug != null && String(value.workspaceSlug).trim() !== "" ? value.workspaceSlug : "";
+  const hasTenantHint = Boolean(codeRaw || slugRaw);
+  const normalizedCode = normalizeCompanyCode(codeRaw);
+  const normalizedSlug = normalizeWorkspaceSlug(slugRaw);
 
-  // fetching data from users array
-  const isUserRegistered = await Idp_account.findOne({ "users.username": value.username });
+  const company = hasTenantHint
+    ? await resolveCompanyFromTenantSignIn(Company, {
+        companyCode: normalizedCode,
+        workspaceSlug: normalizedSlug,
+      })
+    : null;
 
-  if (!isUserRegistered) {
-    throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
+  if (hasTenantHint && !company) {
+    throw new ApiErrorResponse(
+      StatusCodes.BAD_REQUEST,
+      "Workspace not found. Use your signup workspace id."
+    );
   }
-  const user = isUserRegistered?.users?.find((user) => user.username === value.username);
-  // console.log("user is", user);
-  const isValidPassword = await isUserRegistered.isValidPasswordForUsers(value.username, value.password);
 
-  if (!isValidPassword) {
-    throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp);
+  let isUserRegistered;
+  if (company) {
+    isUserRegistered = await findIdpForTenantSignIn(
+      Idp_account,
+      company._id,
+      username
+    );
+    if (!isUserRegistered) {
+      throw new ApiErrorResponse(
+        StatusCodes.BAD_REQUEST,
+        apiTextResponse.notFoundInWorkspace
+      );
+    }
+    const ok = await isUserRegistered.isValidPasswordForUsers(username, value.password);
+    if (!ok) {
+      throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp);
+    }
+  } else {
+    /**
+     * Legacy: no tenant hint — still supported for existing clients; may require matching a password
+     * across several IdP documents when the same username exists in multiple tenants.
+     */
+    const idpCandidates = await findIdpCandidatesByUsername(Idp_account, username);
+    if (!idpCandidates.length) {
+      throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
+    }
+    for (const doc of idpCandidates) {
+      const ok = await doc.isValidPasswordForUsers(username, value.password);
+      if (ok) {
+        isUserRegistered = doc;
+        break;
+      }
+    }
+    if (!isUserRegistered) {
+      throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, apiTextResponse.inValidIdp);
+    }
+  }
+
+  const user = findEmbeddedUserBySignInName(isUserRegistered.users, username);
+  if (!user) {
+    throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, apiTextResponse.notFound);
   }
 
   const companyDBDetails = await Company.findOne({ _id: isUserRegistered.accountOwner }, { database: 1 });
 
-
-  if (companyDBDetails) {
-    await connectTenantDB(companyDBDetails.database.dbName);
-  }
 
   // console.log("companyDBDetails", companyDBDetails)
   /**
@@ -73,8 +124,7 @@ export async function signinService(value) {
     return token;
   }
 
-  let navigateTo;
-  isUserRegistered.users[0].role === "Admin" ? (navigateTo = "/home") : (navigateTo = "/company");
+  const navigateTo = user.role === "Admin" ? "/home" : "/company";
 
   return {
     accessToken: generateAccessToken(),

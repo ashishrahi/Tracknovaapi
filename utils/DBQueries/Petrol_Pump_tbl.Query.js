@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { Petrol_Pump_tbl, ItemMaster } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 /////////////////////////////////////// AddUpdatePetrolPumpQuery //////////////////////////////////////////////////////////////////

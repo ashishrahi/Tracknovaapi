@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateCityMasterQuery,
     ImportCitiesQuery,
@@ -18,7 +15,7 @@ export async function AddUpdateCityMaster(req, res) {
       const model = req.body;
       const { isSuccess, internalSuccess, mesg, insertedId,data } =
         await AddUpdateCityMasterQuery(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -42,7 +39,7 @@ export async function ImportCities(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId,data } =
       await ImportCitiesQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -67,7 +64,7 @@ export async function GetCitiesByState(req, res) {
     const model = req.params;
     // console.log('model:',model)
     const { isSuccess, internalSuccess, mesg, insertedId,data } = await GetCitiesByStateQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -91,7 +88,7 @@ export async function GetCityMaster(req, res) {
       const model = req.body;
       const { isSuccess, internalSuccess, mesg, insertedId,data  } =
         await GetCityMasterQuery(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,
@@ -116,7 +113,7 @@ export async function DeleteCityMaster(req, res) {
       const model = req.body;
       const { isSuccess, internalSuccess, mesg, insertedId } =
         await DeleteCityMasterQuery(model);
-      const successResponse = new ReturnData(
+      const successResponse = ApiSuccessResponse.returnData(
         isSuccess,
         internalSuccess,
         mesg,

@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateTaxMasterQuery,
     ImportTaxMastersQuery,
@@ -16,7 +13,7 @@ export async function AddUpdateTaxMaster(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg , insertedId, data } = await AddUpdateTaxMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -39,7 +36,7 @@ export async function ImportTaxMasters(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg , insertedId, data } = await ImportTaxMastersQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -64,7 +61,7 @@ export async function GetTaxMaster(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg , insertedId, data} = await GetTaxMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -87,7 +84,7 @@ export async function DeleteTaxMaster(req,res){
     try {
         const model = req.body;
         const {isSuccess, internalSuccess, mesg , insertedId, data} = await DeleteTaxMasterQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

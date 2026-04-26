@@ -1,11 +1,22 @@
 import { StatusCodes } from "http-status-codes";
-import { CityMaster, StateMaster } from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
+import { validatecityMaster } from "../validation/cityMasterValidation.js";
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const AddUpdateCityMasterQuery = async (model) => {
   try {
+    // JOI Validation
+    const { error } = validatecityMaster(model);
+    // JOI Error
+    if (error) {
+      return {
+        isSuccess: false,
+        internalSuccess: "",
+        mesg: error.message[0].message,
+      };
+    }
+
     const { CityMaster } = await getTenantDBModels();
 
     // Validate CityName
@@ -22,6 +33,20 @@ export const AddUpdateCityMasterQuery = async (model) => {
         isSuccess: false,
         internalSuccess: "",
         mesg: "City Id is required",
+      };
+    }
+    // sameCityName should not exist
+    const duplicateCity = await CityMaster.findOne({
+      CityName: { $regex: new RegExp(`^${model.cityName}$`, "i") },
+      CityId: { $ne: model.cityId },
+    });
+
+    if (duplicateCity) {
+      return {
+        isSuccess: false,
+        internalSuccess: "",
+        mesg: `${duplicateCity.CityName} city already exists.`,
+        data: duplicateCity,
       };
     }
 
@@ -101,10 +126,9 @@ export const AddUpdateCityMasterQuery = async (model) => {
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 export const ImportCitiesQuery = async (model) => {
   try {
-    const { StateMaster,CityMaster } = await getTenantDBModels();
+    const { StateMaster, CityMaster } = await getTenantDBModels();
     let inserted = 0;
     let skipped = 0;
 
@@ -127,20 +151,22 @@ export const ImportCitiesQuery = async (model) => {
         continue;
       }
 
-        // Find State ID
-        const state = await StateMaster.findOne({ StateName: stateName });
-        if (!state) {
-          skipped++;
-          continue;
-        }
+      // Find State ID
+      const state = await StateMaster.findOne({ StateName: stateName });
+      if (!state) {
+        skipped++;
+        continue;
+      }
 
       // Get next StateId
-      const lastCity = await CityMaster.findOne().sort({ StateId: -1 }).limit(1);
+      const lastCity = await CityMaster.findOne()
+        .sort({ StateId: -1 })
+        .limit(1);
       const nextCityId = lastCity ? lastCity.CityId + 1 : 1;
 
       await CityMaster.create({
         CityId: nextCityId,
-        CityName:city.cityName,
+        CityName: city.cityName,
         StateId: state.StateId,
         CreatedBy: createdBy || null,
         UpdatedBy: updatedBy || null,
@@ -163,8 +189,7 @@ export const ImportCitiesQuery = async (model) => {
       mesg: error.message,
     };
   }
-}
-
+};
 
 ///////////////////////////////////// AddUpdateCityMasterQuery //////////////////////////////////////////////////////////////////////////////////////////////////
 

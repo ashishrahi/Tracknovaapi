@@ -1,15 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse, ApiSuccessResponse, ReturnData } from "../utils/apiResponse/index.js";
-import {
-  // NTCurrentDay,
-  NT,
-  ItemMaster,
-  VehicleTypeMaster,
-  ZoneMaster,
-  Department,
-  Geofencing,
-  EmpMaster
-} from "../modals/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { GetNTDashboardPipeline, NTCurrentPipeline } from "../utils/DBQueries/NTReadControllerPipeline.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { getTenantDBModels } from "../db/index.js";
@@ -17,12 +7,13 @@ import { getTenantDBModels } from "../db/index.js";
 //----------- Sample ---------------->
 async function sample(req, res, next) {
   try {
+  const { NTCurrentDay } = await getTenantDBModels();
   const { devid } = req.query;
     if (!devid) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json(
-          new ApiErrorResponse(true, StatusCodes.NOT_FOUND, "Devid is must needed.")
+          new ApiErrorResponse(StatusCodes.NOT_FOUND, "Devid is must needed.")
         );
     }
 
@@ -50,14 +41,14 @@ async function sample(req, res, next) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ReturnData(true, true, "No data found", null, [])
+          ApiSuccessResponse.returnData(true, true, "No data found", null, [])
         );
     }
 
     return res
       .status(StatusCodes.OK)
       .json(
-        new ReturnData(
+        ApiSuccessResponse.returnData(
           true,
           StatusCodes.OK,
           "Data Fetch Successfully",
@@ -77,7 +68,7 @@ async function sample(req, res, next) {
 async function SmpCurr(req, res) {
 
   try {
-  const {NTCurrentDay, } = await getTenantDBModels()
+  const { NTCurrentDay, NT } = await getTenantDBModels();
 
   const { trackdate } = req.query;
 
@@ -120,7 +111,7 @@ async function SmpCurr(req, res) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ReturnData(
+          ApiSuccessResponse.returnData(
             true,
             true,
             "Data Fetched Successfully",
@@ -185,7 +176,7 @@ async function SmpCurr(req, res) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new ReturnData(
+          ApiSuccessResponse.returnData(
             true,
             true,
             "Data Fetched Successfully",
@@ -226,7 +217,7 @@ async function Geofence(req, res) {
     const geofencingData = await Geofencing.find(filter);
     const response = formattedData(geofencingData)
     // Step 3: Return response
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Feteched Successfully", null, response));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data Feteched Successfully", null, response));
 
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
@@ -434,7 +425,7 @@ async function VehCurrStat(req, res) {
   return res
     .status(StatusCodes.OK)
     .json(
-      new ReturnData(
+      ApiSuccessResponse.returnData(
         true, true,
         "Data fetched successfully",
         null,
@@ -501,12 +492,12 @@ async function GetDashData(req, res) {
     // Step 3: Handle NTCurrent response
     if (!dret) {
 
-      return res.status(StatusCodes.NO_CONTENT).json(new ReturnData(true, true, "No data found", null));
+      return res.status(StatusCodes.NO_CONTENT).json(ApiSuccessResponse.returnData(true, true, "No data found", null));
 
     }
 
     // Step 4: Construct response
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "fetched successfully", null, { lisGeofencing: formattedGeoFence, listNTSumm: NtcurrentData }))
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "fetched successfully", null, { lisGeofencing: formattedGeoFence, listNTSumm: NtcurrentData }))
 
 
   } catch (error) {
@@ -521,7 +512,7 @@ async function GetDashData(req, res) {
 async function getVehicleNotMoved(req, res, next) {
 
  try {
-  const { ItemMaster } = await getTenantDBModels()
+  const { ItemMaster, NT, VehicleTypeMaster, ZoneMaster } = await getTenantDBModels();
 
    // const client = new MongoClient('mongodb://localhost:27017');
    //   await client.connect();
@@ -722,7 +713,7 @@ async function getVehicleNotMoved(req, res, next) {
      }
    });
    // const data = formattedData(lsv)
-   return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", lsv.length, lsv));
+   return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data Fetched Successfully", lsv.length, lsv));
  
  
  } catch (error) {
@@ -971,7 +962,7 @@ async function GetNTDashboard(req, res) {
     const ntList = await GetNTDashboardPipeline()
     const data = ntList.filter((nt) => nt.VehicleNo);
     const newData = formattedData(data)
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, newData));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data Fetched Successfully", null, newData));
   } catch (error) {
     return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }
@@ -1016,9 +1007,9 @@ async function GetTopFuelCons(req, res) {
       fuelTankCapacity: "", // Add default value
     }));
     const data = result // formattedData(result);
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched Successfully", null, data))
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data fetched Successfully", null, data))
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message, null, StatusCodes.NOT_FOUND,))
+    return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }
 }
 
@@ -1052,7 +1043,7 @@ async function GetTopFuelConsNT(req, res) {
       Fuel: fu.Fuel,
       flag: fu.flag,
     }));
-    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(StatusCodes.OK, StatusCodes.OK, "default", result));
+    return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", result));
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
   }
@@ -1098,9 +1089,9 @@ async function GetTopFuelConsNTS(req, res, next) {
       flag: fu.flag
     }));
 
-    return res.json(new ReturnData(true, true, "fetched", null, responseData));
+    return res.json(ApiSuccessResponse.returnData(true, true, "fetched", null, responseData));
   } catch (error) {
-    return res.status(500).json(new ApiErrorResponse(error.message, StatusCodes.BAD_REQUEST));
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, error.message));
   }
 
 }
@@ -1150,7 +1141,7 @@ async function GetTopFuelConsNTOnOff(req, res) {
     const newData = formattedData(result)
 
     // return res.json({"count": newData.length})
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data Fetched Successfully", null, newData));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data Fetched Successfully", null, newData));
 
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
@@ -1174,6 +1165,7 @@ async function probWireTamp(req, res) {
           )
         );
     }
+    const { NT } = await getTenantDBModels();
     const result = await NT.aggregate([
       {
         $match: {
@@ -1310,19 +1302,12 @@ async function probWireTamp(req, res) {
       console.log("I am executed")
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json(new ApiErrorResponse(new ReturnData(
-          true,
-          true,
-          "Data not Found",
-          null,
-          result
-          // encryptData(result)
-        )));
+        .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Data not Found"));
     }
     return res
       .status(StatusCodes.OK)
       .json(
-        new ReturnData(
+        ApiSuccessResponse.returnData(
           true,
           true,
           "Data fetched successfully",
@@ -1367,9 +1352,9 @@ async function GetRunningStatus(req, res) {
         throw new Error("Invalid status provided");
     }
     const newData = formattedData(filter)
-    return res.status(StatusCodes.OK).json(new ReturnData(true, false, null, "Data Fetch Successfully", newData));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, false, null, "Data Fetch Successfully", newData));
   } catch (error) {
-    return res.status(StatusCodes.OK).json(new ApiErrorResponse(error.message, StatusCodes.NOT_FOUND))
+    return res.status(StatusCodes.NOT_FOUND).json(new ApiErrorResponse(StatusCodes.NOT_FOUND, error.message))
   }
 }
 
@@ -1422,9 +1407,9 @@ async function GetLongIdleVeh(req, res) {
       fuelTankCapacity: "", // Same as in C# code
     }));
 
-    return res.status(StatusCodes.OK).json(new ReturnData(true, true, "Data fetched successfully", null, formattedData));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.returnData(true, true, "Data fetched successfully", null, formattedData));
   } catch (error) {
-    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message, null, StatusCodes.BAD_REQUEST))
+    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.message))
   }
 }
 
@@ -1442,6 +1427,8 @@ async function GetVehicleMovement(req, res) {
       return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Date range should be less than a month."));
     }
 
+    const { ItemMaster, NT, Department, ZoneMaster } = await getTenantDBModels();
+
     // **Step 1: Get List of Relevant Vehicles (ItemMaster + EmpMaster)**
     const vehicles = await ItemMaster.aggregate([
       {
@@ -1456,8 +1443,8 @@ async function GetVehicleMovement(req, res) {
       {
         $match: {
           ItemFlag: "V",
-          ...(deptId ? { "empData.EmpDeptId": request.deptId } : {}),
-          ...(zoneId ? { VZoneID: request.zoneId } : {}),
+          ...(deptId ? { "empData.EmpDeptId": deptId } : {}),
+          ...(zoneId ? { VZoneID: zoneId } : {}),
         },
       },
       {
@@ -1531,7 +1518,9 @@ async function GetVehicleMovement(req, res) {
     return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "default", ntData))
 
   } catch (error) {
-    return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.status, error.message))
+    return res.status(error.status || error.statusCode || StatusCodes.BAD_REQUEST).json(
+      new ApiErrorResponse(error.status || error.statusCode || StatusCodes.BAD_REQUEST, error.message)
+    )
   }
 }
 

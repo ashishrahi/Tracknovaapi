@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { GetDeviceTypeQuery } from "../utils/DBQueries/DeviceType.Query.js";
 ///////////////////////////////////////////////// GetDeviceType //////////////////////////////////////////////////
 
@@ -17,7 +13,7 @@ export async function GetDeviceType(req, res) {
 
     // console.log("got data after query: ", { status, message, data, pageNo, pageSize, rowCount })
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

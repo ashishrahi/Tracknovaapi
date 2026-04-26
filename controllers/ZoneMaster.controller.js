@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-  ReturnData
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateZoneMasterQuery,
     GetZoneMasterQuery,
@@ -19,7 +15,7 @@ export async function AddUpdateZoneMaster(req,res){
     try {
         const modal = req.body;
         const { status, message, data} = await AddUpdateZoneMasterQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -37,7 +33,7 @@ export async function GetZoneMaster(req,res){
     try {
         const modal = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await GetZoneMasterQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -60,7 +56,7 @@ export async function DeleteZoneMaster(req,res){
     try {
         const modal = req.body;
         const { isSuccess, internalSuccess, mesg , insertedId, data} = await DeleteZoneMasterQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

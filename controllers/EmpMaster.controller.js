@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateEmployeeQuery,
   ImportEmployeeQuery,
@@ -20,7 +16,7 @@ export async function AddUpdateEmployee(req, res, next) {
     // console.log("model:",model)
     const response  = await AddUpdateEmployeeQuery(model);
   
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       response.message,
       response.data
@@ -43,7 +39,7 @@ export async function ImportEmployee(req, res, next) {
     console.log("model:",model)
     const response  = await ImportEmployeeQuery(model);
   
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       response.message,
       response.data
@@ -66,7 +62,7 @@ export async function Empstatus(req, res, next) {
     // console.log("model:",model)
     const response  = await EmpstatusQuery(model);
   
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       response.message,
       response.data
@@ -89,18 +85,14 @@ export async function GetEmployee(req, res, next) {
     const model = req.body;
     const response = await GetEmployeeQuery(model);
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       response.status,
-      response.message, 
-      response.data, 
-    //   response.status,
-    //   StatusCodes.OK,
-    //   "default",
-    //   response.data,
+      response.message,
+      response.data,
+      null,
       response.pageNo,
       response.pageSize,
       response.rowCount
-    // 
     )
     return res.status(StatusCodes.OK).json(successResponse);
   } catch (err) {
@@ -124,7 +116,7 @@ export async function UpsertEmpPermission(req, res, next) {
     //   message,
     //   data 
     // );
-    return res.status(200).json(new CommonResponse(1, response.message,  response.data, response.rowCount));
+    return res.status(200).json(ApiSuccessResponse.common(1, response.message,  response.data, response.rowCount));
   } catch (error) {
       // return res.status(StatusCodes.BAD_REQUEST).json(new ApiErrorResponse(error.message))
       const code = error.StatusCode || error.statusCode;

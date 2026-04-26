@@ -45,7 +45,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
     // console.log('startDate', startDate)
     // console.log('endDate', endDate)
     // Fetch all collections that start with 'evts_'
-    const collections = await tenant_db.connection.db.listCollections().toArray();
+    const collections = await tenant_db.db.listCollections().toArray();
 
     const relevantCollections = collections
       .map((col) => col.name)
@@ -56,7 +56,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
     let aggregatedData = [];
 
     for (const collectionName of relevantCollections) {
-      const collection = tenant_db.connection.db.collection(collectionName);
+      const collection = tenant_db.db.collection(collectionName);
 
       const data = await collection
         .aggregate([
@@ -86,7 +86,7 @@ export const GetvVehicletrackHisQuery = async (modal) => {
 
 
     // Fetch vehicle details from ItemMaster
-    const itemMasterMap = await tenant_db.connection.db
+    const itemMasterMap = await tenant_db.db
       .collection("ItemMaster")
       .find({}, { projection: { devid: 1, VehicleNo: 1, EmpId: 1 } })
       .toArray()

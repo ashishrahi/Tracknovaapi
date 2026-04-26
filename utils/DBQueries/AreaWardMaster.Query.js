@@ -1,14 +1,7 @@
-import {
-  AreaWardMaster,
-  ZoneMaster,
-  RouteAreaDetail,
-  RouteAreaBinDetail,
-  BinLocation,
-} from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 
 import { getTenantDBModels } from "../../db/index.js";
-
+import {SUCCESS,ERROR} from '../../utils/messages/message.js'
 //////////////////////////////////////////////// AddUpdateAreaWardMasterQuery /////////////////////////////////////////////////////
 
 export const AddUpdateAreaWardMasterQuery = async (modal) => {
@@ -24,8 +17,9 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
 
       if (existingRecord) {
         return {
-          status: 0,
-          message: `Area Name ${modal.areaName} and Ward Number ${modal.wardNumber} combination already exists`,
+          isSuccess:false,
+          statusCode:StatusCodes.CONFLICT,
+          message:ERROR.ALREADY_EXISTS("wardnumber",modal.wardNumber)
         };
       }
 
@@ -63,7 +57,8 @@ export const AddUpdateAreaWardMasterQuery = async (modal) => {
       };
 
       return {
-        status: 1,
+        isSuccess: true,
+        statusCode: StatusCodes.CREATED,
         message: `Area ${newRecord.AreaName} and Ward ${newRecord.WardNumber} Successfully Added`,
         data: newData,
       };

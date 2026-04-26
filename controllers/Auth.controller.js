@@ -1,11 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse,
-  DBReturn,
-  ReturnData
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   //  Login
   loginQuery,
@@ -30,11 +24,8 @@ import {
 
 
 import jwt from "jsonwebtoken";
-import AspNetUsers from "../modals/AspNetUsers.model.js";
-import EmpMaster from "../modals/EmpMaster.model.js";
-import { AspNetRoles } from "../modals/AspNetRoles.modal.js";
 import { getTenantDBModels } from "../db/index.js";
-import { connectMongoDB } from "../db/connectMongoDB.js";
+import { setRequestTenantDbName } from "../db/tenantContext.js";
 
 // import { RoleMaster } from "../modals/RoleMaster.modal.js";
 
@@ -68,7 +59,7 @@ export async function login(req, res, next) {
 
     
     const { response, refreshToken } = await loginQuery(modal);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       "Login Successful",
       response,
@@ -99,7 +90,20 @@ export async function Refresh(req, res, next) {
     // we are not storing refreshToken inside db we used httpOnly Cookie
     // const storedToken = await RefreshToken.findOne({ token: oldRefreshToken });
     // if (!storedToken) return res.status(403).json({ message: "Invalid refresh token" });
-    const tokenData = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+    const tokenData = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const dbName =
+      (typeof tokenData?.dbName === "string" && tokenData.dbName) ||
+      (typeof process.env.DEFAULT_TENANT_DB === "string" && process.env.DEFAULT_TENANT_DB) ||
+      null;
+    if (!dbName) {
+      throw new ApiErrorResponse(
+        StatusCodes.UNAUTHORIZED,
+        "Refresh token is missing tenant context. Please sign in again."
+      );
+    }
+    setRequestTenantDbName(dbName);
+    const { AspNetUsers, EmpMaster, AspNetRoles } = await getTenantDBModels();
 
     const user = await AspNetUsers.findOne({ Id: tokenData.Id }).select("-PasswordHash");
 
@@ -107,7 +111,7 @@ export async function Refresh(req, res, next) {
       throw new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "User not found");
     }
 
-    const refreshToken = user.generateRefreshToken();
+    const refreshToken = user.generateRefreshToken(dbName);
     const accessToken = user.generateAccessToken();
     // const { username, password } = model;
     // console.log(model)
@@ -199,7 +203,7 @@ export async function Refresh(req, res, next) {
 
 
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       "login successful",
       response
@@ -229,7 +233,6 @@ export async function Logout(req, res, next) {
   try {
 
     const user = req.user;
-    const { tenant_db } = await getTenantDBModels();
 
     // console.log("Users from logout", user)
     
@@ -237,7 +240,7 @@ export async function Logout(req, res, next) {
     let navigateTo;
     user.users[0]["role"] === "SuperAdmin" ? navigateTo = "/company" : navigateTo = "login" ;
     
-    await tenant_db.close();
+    // Tenant DB connections are pooled and shared; do not close on logout
     res.clearCookie("refreshToken");
     return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, "User successfully logged out", {
       navigateTo
@@ -249,7 +252,7 @@ export async function Logout(req, res, next) {
     next(new ApiErrorResponse(statusCode, msg, stack));
   }
   // res.clearCookie("refreshToken");
-  // return res.status(StatusCodes.OK).json(new CommonResponse(1, "User loggedOut Successfully"))
+  // return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(1, "User loggedOut Successfully"))
 }
 
 //-------------GetUSER---------->
@@ -306,7 +309,7 @@ export async function AddUpdateUserPermissionMaster(req, res) {
     const modal = req.body;
     const { isSuccess, id, createUpdate, msg, data } = await AddUpdateUserPermissionMasterQuery(modal);
 
-    const successResponse = new DBReturn(
+    const successResponse = ApiSuccessResponse.dbReturn(
       isSuccess,
       id,
       createUpdate,
@@ -329,7 +332,7 @@ export async function GetUserPermissionMaster(req, res) {
   try {
     const modal = req.body;
     const { isSuccess, id, createUpdate, msg, data } = await GetUserPermissionMasterQuery(modal);
-    const successResponse = new DBReturn(
+    const successResponse = ApiSuccessResponse.dbReturn(
       isSuccess,
       id,
       createUpdate,
@@ -396,7 +399,7 @@ export async function AddUpdateRoleMaster(req, res) {
   try {
     const modal = req.body;
     const rtd = await AddUpdateRoleMasterQuery(modal);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       rtd.isSuccess,
       rtd.isSuccess,
       rtd.mesg,
@@ -415,7 +418,7 @@ export async function GetRoleMaster(req, res) {
     const { status, message, data } = await GetRoleMasterQuery();
 
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -460,7 +463,7 @@ export async function AddUpdateRolePermissionMaster(req, res) {
   try {
     const modal = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } = await AddUpdateRolePermissionMasterQuery(modal);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -483,7 +486,7 @@ export async function GetRolePermissionMaster(req, res) {
   try {
     const modal = req.query;
     const { isSuccess, internalSuccess, mesg, insertedId, data } = await GetRolePermissionMasterQuery(modal);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -506,7 +509,7 @@ export async function GetRolePermission(req, res) {
   try {
     const modal = req.query;
     const { status, message, data, rowCount } = await GetRolePermissionQuery(modal);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

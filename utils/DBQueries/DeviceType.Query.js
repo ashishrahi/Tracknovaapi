@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { DeviceType } from "../../modals/DeviceType.modal.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 ///////////////////////////////// GetDeviceTypeQuery //////////////////////////////////////////

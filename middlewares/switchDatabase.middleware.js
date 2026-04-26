@@ -1,51 +1,54 @@
-import mongoose from "mongoose";
-import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import { StatusCodes } from "http-status-codes";
-import { middlewareResponse as apiResponse } from "../utils/static-response-message/index.js";
 import { connectTenantDB } from "../db/connectMongoDB.js";
-// import { Request, Response, NextFunction } from "express";
+import { setRequestTenantDbName } from "../db/tenantContext.js";
 
-let connections = {}; // Store active connections
-
+/**
+ * Binds a tenant connection for the current request and middleware chain.
+ * Expects getLoggedInCompany to have set `req.company` and JWT context.
+ */
 async function switchDatabase(req, res, next) {
   try {
     const company = req.company;
-    console.log("company is", company);
 
     if (!company) {
-      next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please Login"));
+      return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please Login"));
     }
 
-    //  if(company && company.admin.role === "SuperAdmin"){
-    //     return new ApiSuccessResponse(true, StatusCodes.OK, "Login Successfull", { redirect: "/company", message: "Super Admin Dashboard" } )
-    //  }
+    if (company === "SuperAdmin") {
+      return next(
+        new ApiErrorResponse(StatusCodes.BAD_REQUEST, "No tenant context for this operation")
+      );
+    }
 
-    
-    const { database } = company;
-    
-    // If already connected, attach it to the request
+    const dbName = company?.database?.dbName;
+    if (!dbName) {
+      return next(
+        new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Company database is not configured")
+      );
+    }
+
+    setRequestTenantDbName(dbName);
     const tenantDB = await connectTenantDB(dbName);
 
     if (!tenantDB) {
-      throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
+      throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to open tenant database");
     }
-    // Create a new connection if not already established
-    // const db = mongoose.createConnection(`${process.env.MONGODB_SERVER_URI}/${database.dbName}`);
 
-    // if(!db){
-    //   throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiResponse.failedDbConnection)
-    // }
-
-    // connections[database.dbName] = db;
     req.db = tenantDB;
-
-    console.log(`🔹 Connected to database: ${database.dbName}`);
+    console.log(`🔹 Tenant models bound for database: ${dbName}`);
     next();
   } catch (error) {
     console.error("Database switching error:", error);
-    return res.status(500).json(new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Error switching database"));
+    return res
+      .status(500)
+      .json(
+        new ApiErrorResponse(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error?.message || "Error switching database"
+        )
+      );
   }
-};
-
+}
 
 export default switchDatabase;

@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
  AddHelpCreationQuery,
  GetHelpCreationQuery,
@@ -16,7 +13,7 @@ export async function AddHelpCreation(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await AddHelpCreationQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -38,7 +35,7 @@ export async function GetHelpCreation(req,res){
     try {
         const model = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await GetHelpCreationQuery(model);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
               isSuccess,
               internalSuccess,
               mesg,

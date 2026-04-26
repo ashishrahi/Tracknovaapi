@@ -1,12 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 
-import { ApiErrorResponse, ApiSuccessResponse, CommonResponse } from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { getDashboardQuery, getVehicleQuery, BinLocationQuery, BinsByWardNumberQuery } from "../utils/DBQueries/index.js";
 
 
 
-import ItemMaster from "../modals/ItemMaster.model.js";
-import { NT } from "../modals/NT.model.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { getTenantDBModels } from "../db/index.js";
 //-------------- getDashboard ------>
@@ -40,7 +38,7 @@ export async function getVehicleCurrentDay(req, res) {
 
   try {
     const retDat = await getVehicleQuery(vehicleNo);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       "VehicleCurrentDay data fetched successfully",
       retDat,
@@ -60,7 +58,7 @@ export async function getVehicleCurrentDay(req, res) {
 
 export async function getVehicleDistance(req, res) {
   try {
-    const { ItemMaster, NT } = getTenantDBModels()
+    const { ItemMaster, NT } = await getTenantDBModels()
     /**
      * parameterValues[0] = vehicle no
      * 1 = startdate
@@ -159,7 +157,7 @@ export async function getVehicleDistance(req, res) {
     );
     const data = formattedData(resultCursor)
     // const result1 = await resultCursor.lean();
-    return res.status(200).json(new CommonResponse(1, "Data Fetched Successfully", data, data?.length));
+    return res.status(200).json(ApiSuccessResponse.common(1, "Data Fetched Successfully", data, data?.length));
   } catch (error) {
     // console.log(error)
     return res
@@ -174,7 +172,7 @@ export async function getAllBins(req, res) {
     const result = await BinLocationQuery(flag);
 
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       'AllBins data fetched successfully',
       result,
@@ -195,7 +193,7 @@ export async function getMapBinsWardWise(req, res) {
     const filter = req.query;
     const binLocations = await BinsByWardNumberQuery(filter.wardNumber);
 
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       1,
       'MapBinsWardWise data fetched successfully',
       binLocations,
@@ -221,7 +219,7 @@ export async function getvVehicleNo(req, res, next) {
     return res
       .status(StatusCodes.OK)
       .json(
-        new CommonResponse(1, "Data Successfully Fetched", vehicleNumbers, vehicleNumbers.length)
+        ApiSuccessResponse.common(1, "Data Successfully Fetched", vehicleNumbers, vehicleNumbers.length)
       );
   } catch (error) {
     console.log(error);

@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateNewNodeMasterQuery,
     GetAllNodesQuery,
@@ -16,7 +13,7 @@ async function AddUpdateNewNodeMaster(req, res){
     try {
         const modal = req.body;
         const { status, message, data, } = await AddUpdateNewNodeMasterQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -37,7 +34,7 @@ export async function GetAllNodes(req,res){
     try {
         const modal = req.body;
         const { status, message, data, } = await GetAllNodesQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,
@@ -58,7 +55,7 @@ export async function DeleteNode(req,res){
     try {
         const modal = req.body;
         const { status, message, data, } = await DeleteNodeQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,

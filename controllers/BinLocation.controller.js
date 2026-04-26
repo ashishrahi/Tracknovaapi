@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBinLocationQuery,
   GetBinLocationQuery,
@@ -16,7 +13,7 @@ export async function AddUpdateBinLocation(req, res) {
     const model = req.body;
     const { status, message, data } =
       await AddUpdateBinLocationQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -38,7 +35,7 @@ export async function GetBinLocation(req, res) {
     const model = req.body;
     const {status, message, data,rowCount } =
       await GetBinLocationQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -61,7 +58,7 @@ export async function DeleteBinLocation(req, res) {
     const model = req.body;
     const { status, message, data  } =
       await DeleteBinLocationQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

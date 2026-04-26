@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     GetvVehicletrackHisQuery,
 } from "../utils/DBQueries/vVehicletrackHis.Query.js";
@@ -14,7 +10,7 @@ export async function GetvVehicletrackHis(req,res){
     try {
         const modal = req.body;
         const { status, message, data} = await GetvVehicletrackHisQuery(modal);
-        const successResponse = new CommonResponse(
+        const successResponse = ApiSuccessResponse.common(
             status,
             message,
             data,

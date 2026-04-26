@@ -1,36 +1,42 @@
-import { StateMaster } from "../../modals/index.js";
 import { StatusCodes } from "http-status-codes";
 import { getTenantDBModels } from "../../db/index.js";
-
+import { validateStateMaster } from "../validation/stateMasterValidation.js";
 
 ///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
 
 export const AddUpdateStateQuery = async (model) => {
   try {
-    const { StateMaster } = await getTenantDBModels();
+    // Joi validation
+    let { error } = validateStateMaster(model);
 
+    // Joi Error Message
+    if (error) {
+      return {
+        isSuccess: false,
+        internalSuccess: false,
+        mesg: error.details[0].message,
+      };
+    }
+    // Tenant Database
+    const { StateMaster } = await getTenantDBModels();
+    //  Destructure of model
     const { stateId, stateName, stateCode, countryId, createdBy, updatedBy } =
       model;
 
-    if (!stateName) {
-      return {
+    // Duplicity of State
+    const duplicityState = await StateMaster.findOne({
+      StateName: { $regex: new RegExp(`^${stateName}$`, "i") },
+      StateId: { $ne: stateId },
+    });
+    if (duplicityState) {
+      return{
         isSuccess: false,
-        internalSuccess: false,
-        mesg: "State Name is required",
-        insertedId: null,
-        data: null,
-      };
-    }
-    if (!stateId || stateId === 0) {
-      return {
-        isSuccess: false,
-        internalSuccess: false,
-        mesg: "State ID is required",
-        insertedId: null,
-        data: null,
-      };
+        internalSuccess: true,
+        mesg: `"${duplicityState.StateName}" state already exist`,
+      }
     }
 
+    // Existence of State by StateId
     let state = await StateMaster.findOne({ StateId: stateId });
 
     if (state) {
@@ -117,7 +123,6 @@ export const AddUpdateStateQuery = async (model) => {
 
 ///////////////////////////////////////////////   ImportStatesQuery  //////////////////////////////////////////////////////////////////
 
-
 export const ImportStatesQuery = async (model) => {
   try {
     const { StateMaster, CountryMaster } = await getTenantDBModels();
@@ -152,7 +157,9 @@ export const ImportStatesQuery = async (model) => {
       }
 
       // Get next StateId
-      const lastState = await StateMaster.findOne().sort({ StateId: -1 }).limit(1);
+      const lastState = await StateMaster.findOne()
+        .sort({ StateId: -1 })
+        .limit(1);
       const nextStateId = lastState ? lastState.StateId + 1 : 1;
 
       await StateMaster.create({
@@ -173,7 +180,6 @@ export const ImportStatesQuery = async (model) => {
       inserted,
       skipped,
     };
-
   } catch (error) {
     console.error("CSV Import Failed:", error);
     return {
@@ -184,7 +190,6 @@ export const ImportStatesQuery = async (model) => {
   }
 };
 
-
 ///////////////////////////////////////////////   AddUpdateStateQuery  //////////////////////////////////////////////////////////////////
 
 export const GetStatebyCountryQuery = async (model) => {
@@ -192,7 +197,7 @@ export const GetStatebyCountryQuery = async (model) => {
     const { StateMaster } = await getTenantDBModels();
 
     const { CountryId } = model;
-    const stateList = await StateMaster.find({CountryId:CountryId})
+    const stateList = await StateMaster.find({ CountryId: CountryId });
     //  const newList = stateList.map((statename)=>statename.StateName)
     return {
       isSuccess: true,

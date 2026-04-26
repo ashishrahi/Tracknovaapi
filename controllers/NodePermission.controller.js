@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { NodePermission } from "../modals/index.js";
 import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { getTenantDBModels } from "../db/index.js";
 

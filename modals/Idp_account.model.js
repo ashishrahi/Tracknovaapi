@@ -1,6 +1,31 @@
 import mongoose from "mongoose";
-// import argon2 from "argon2";
+import argon2 from "argon2";
 import bcrypt from "bcryptjs";
+import { findEmbeddedUserBySignInName } from "../utils/tenantLogin.js";
+
+/**
+ * Passwords in DB may be Argon2 (older path), bcrypt (current), or legacy plaintext.
+ */
+export async function verifyStoredPassword(stored, plain) {
+  if (typeof stored !== "string" || typeof plain !== "string") {
+    return false;
+  }
+  if (plain.length === 0) return false;
+  if (stored.startsWith("$argon2")) {
+    try {
+      return await argon2.verify(stored, plain);
+    } catch {
+      return false;
+    }
+  }
+  if (
+    stored.length === 60 &&
+    (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$"))
+  ) {
+    return bcrypt.compareSync(plain, stored);
+  }
+  return stored === plain;
+}
 
 export const Idp_accountSchema = new mongoose.Schema({
   username: {
@@ -41,6 +66,15 @@ export const Idp_accountSchema = new mongoose.Schema({
   ],
 });
 
+/**
+ * One login name per tenant (accountOwner): use case-insensitive collation in queries
+ * (see utils/tenantLogin.js — same locale/strength as this index).
+ */
+Idp_accountSchema.index(
+  { accountOwner: 1, "users.username": 1 },
+  { unique: true, collation: { locale: "en", strength: 2 } }
+);
+
 Idp_accountSchema.pre("save", async function (next) {
   try {
     if (this.isModified("password")) {
@@ -68,11 +102,10 @@ Idp_accountSchema.pre("save", async function (next) {
 
 Idp_accountSchema.methods.isValidPassword = async function (plainTextPassword) {
   try {
-    const isValid = bcrypt.compareSync(this.password, plainTextPassword);
-    return isValid;
+    return await verifyStoredPassword(this.password, plainTextPassword);
   } catch (error) {
     console.error("Error verifying password:", error);
-    return false; // Return false if verification fails
+    return false;
   }
 };
 
@@ -81,21 +114,17 @@ Idp_accountSchema.methods.isValidPasswordForUsers = async function (
   plainTextPassword
 ) {
   try {
-    // console.table({plainTextPassword, username})
-    // Find the user inside the 'users' array
-    const user = this.users.find((user) => user.username === username);
-    // console.log("User from mongoose middleware", user)
+    const uname = String(username ?? "")
+      .toLowerCase()
+      .trim();
+    const user = findEmbeddedUserBySignInName(this.users, uname);
     if (!user) {
-      console.error("User not found.");
       return false;
     }
-
-    const isValid = bcrypt.compareSync(plainTextPassword, user.password);
-    console.log("Is valid pass", isValid)
-    return isValid;
+    return await verifyStoredPassword(user.password, plainTextPassword);
   } catch (error) {
     console.error("Error verifying password:", error);
-    return false; // Return false if verification fails
+    return false;
   }
 };
 

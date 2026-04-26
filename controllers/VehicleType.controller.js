@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { VehicleTypeMaster, ItemMaster } from "../modals/index.js";
-import { ApiSuccessResponse, CommonResponse, DBReturn } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { getTenantDBModels } from "../db/index.js";
 
 
@@ -36,7 +35,7 @@ async function AddUpdateVehicleType(req, res, next) {
         return res
           .status(StatusCodes.OK)
           .json(
-            new DBReturn(true, null, null, `${newDoc.vehicleTypename} Successfully Added`,   newDoc)
+            ApiSuccessResponse.dbReturn(true, null, null, `${newDoc.vehicleTypename} Successfully Added`,   newDoc)
           );
       } else {
         const error = new Error("Failed to save. Please try again");
@@ -159,7 +158,7 @@ async function GetVehicleType(req, res, next){
         });
         return newObj;
       });
-       return res.status(StatusCodes.OK).json(new CommonResponse(1,  msg, response))
+       return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(1,  msg, response))
 
       } catch (error) {
         const err = new Error(error.message)
@@ -248,7 +247,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
           const newInsertedDoc = await newDoc.save(); 
 
           // await vehicleTypeCollection.insertOne(model, { session });
-          return res.status(StatusCodes.OK).json(new CommonResponse(true, 'Successfully Added', newInsertedDoc) );
+          return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(true, 'Successfully Added', newInsertedDoc) );
       } else {
           const finduse = await ItemMaster.findOne({ VehicleTypeId: model.vehicleTypeId, NTRecord: 'y' }
             // , { session }
@@ -267,7 +266,7 @@ async function AddUpdateEscrapVehicleType(req, res, next){
               } }
                 // , { session }
               );
-              return res.status(StatusCodes.OK).json(new CommonResponse(true,  "Successfully Updated") )
+              return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(true,  "Successfully Updated") )
               // res.Status = 'Success';
               // res.Message = 'Successfully Updated';
           } else {
@@ -370,7 +369,7 @@ async function GetEscrapVehicleType(req, res, next){
 
     let msg;
     rowCount > 0 ? msg = "Data fetched" : msg = "No Record Found!!"
-    return res.status(StatusCodes.OK).json(new CommonResponse(true,  msg, response, rowCount))
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(true,  msg, response, rowCount))
 
    } catch (error) {
      const err = new Error(error.message)

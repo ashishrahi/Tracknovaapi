@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorResponse, CommonResponse } from "../utils/apiResponse/index.js";
-import { ItemCategoryMaster } from "../modals/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import { getTenantDBModels } from "../db/index.js";
 
@@ -142,12 +141,12 @@ async function GetItemCategory(req, res) {
       response.data = newData;
       response.message = "No record found";
       response.rowCount = itemCategoryResult.length;
-      return res.status(StatusCodes.OK).json(new CommonResponse(1, response.message, response.data, response.rowCount  ));
+      return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(1, response.message, response.data, response.rowCount  ));
     }
     response.data = formattedData(itemCategoryResult);
     response.message = "Data fetched";
     response.rowCount = itemCategoryResult.length;
-    return res.status(StatusCodes.OK).json(new CommonResponse(1, response.message, response.data, response.rowCount  ));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(1, response.message, response.data, response.rowCount  ));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)

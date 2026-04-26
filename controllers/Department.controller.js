@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ReturnData,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateDepartmentMasterQuery,
   ImportDepartmentsQuery,
@@ -17,7 +14,7 @@ export async function AddUpdateDepartmentMaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await AddUpdateDepartmentMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -42,7 +39,7 @@ export async function ImportDepartments(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await ImportDepartmentsQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -67,7 +64,7 @@ export async function GetDepartmentMaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await GetDepartmentMasterQuery(model);
-    const successResponse = new ReturnData(
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,
@@ -91,7 +88,7 @@ export async function DeleteDepartmentMaster(req, res) {
     const model = req.body;
     const { isSuccess, internalSuccess, mesg, insertedId, data } =
       await DeleteDepartmentMasterQuery(model);
-    const successResponse = new ReturnData  (
+    const successResponse = ApiSuccessResponse.returnData(
       isSuccess,
       internalSuccess,
       mesg,

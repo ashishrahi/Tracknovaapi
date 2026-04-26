@@ -1,13 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateFuelCorrectionQuery,
     GetVehListQuery,
 } from "../utils/DBQueries/index.js";
-import { CommonResponse } from "../utils/apiResponse/index.js";
+
 
 //////////////////////////// AddUpdateFuelCorrection /////////////////////////////////// 
 
@@ -38,7 +35,7 @@ export async function GetVehList(req, res) {
       // console.log("model",model)
       const { status, message, data,  rowCount} =
         await GetVehListQuery(model);
-      const successResponse = new CommonResponse(
+      const successResponse = ApiSuccessResponse.common(
         status,
         message,
         data,

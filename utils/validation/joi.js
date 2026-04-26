@@ -19,10 +19,22 @@ function validateRegisterCompanyModel(model){
             "number.min": "Fleet size must be at least 1."
         }),
     
-        companyPhone: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
-            "string.pattern.base": "Company phone must be a 10-digit number.",
-            "any.required": "Company phone is required."
-        }),
+        companyPhone: Joi.string()
+            .trim()
+            .required()
+            .custom((value, helpers) => {
+                const digits = String(value).replace(/\D/g, "");
+                let local = digits;
+                if (local.length === 12 && local.startsWith("91")) {
+                    local = local.slice(-10);
+                } else if (local.length > 10) {
+                    local = local.slice(-10);
+                }
+                if (!/^\d{10}$/.test(local)) {
+                    return helpers.error("any.custom", { message: "Company phone must be a valid 10-digit number." });
+                }
+                return local;
+            }),
     
         companyEmail: Joi.string().email().required().messages({
             "string.email": "Invalid email format.",
@@ -68,11 +80,28 @@ function validateRegisterCompanyModel(model){
                 "string.email": "Admin email must be a valid email.",
                 "any.required": "Admin email is required."
             }),
-            phone: Joi.string().trim().pattern(/^[0-9]{10}$/).required().messages({
-                "string.empty": "Phone number cannot be empty.", 
-                "string.pattern.base": "Admin phone must be a 10-digit number.",
-                "any.required": "Admin phone is required."
-            }),
+            phone: Joi.string()
+                .trim()
+                .required()
+                .custom((value, helpers) => {
+                    const digits = String(value).replace(/\D/g, "");
+                    let local = digits;
+                    if (local.length === 12 && local.startsWith("91")) {
+                        local = local.slice(-10);
+                    } else if (local.length > 10) {
+                        local = local.slice(-10);
+                    }
+                    if (!/^\d{10}$/.test(local)) {
+                        return helpers.error("any.custom", {
+                            message: "Admin phone must be a valid 10-digit number (you may use +91 or spaces).",
+                        });
+                    }
+                    return local;
+                })
+                .messages({
+                    "string.empty": "Phone number cannot be empty.",
+                    "any.required": "Admin phone is required.",
+                }),
             role: Joi.string().valid("SuperAdmin", "Admin", "User").required().messages({
                 "any.only": "Role must be one of 'SuperAdmin', 'Admin', or 'User'.",
                 "any.required": "Admin role is required."
@@ -80,8 +109,8 @@ function validateRegisterCompanyModel(model){
         }),
     
         subscription: Joi.object({
-            plan: Joi.string().valid("Basic", "Pro", "Enterprise").required().messages({
-                "any.only": "Subscription plan must be Basic, Pro, or Enterprise.",
+            plan: Joi.string().valid("Basic", "Pro", "Enterprise", "Trial").required().messages({
+                "any.only": "Subscription plan must be Basic, Pro, Enterprise, or Trial.",
                 "any.required": "Subscription plan is required."
             }),
             fromDate: Joi.date().iso().required().messages({
@@ -92,13 +121,24 @@ function validateRegisterCompanyModel(model){
                 "date.greater": "End date must be after the start date.",
                 "any.required": "End date is required."
             }),
-            status: Joi.string().valid("Active", "Suspended", "Expired").default("Active").messages({
-                "any.only": "Subscription status must be Active, Suspended, or Expired."
+            status: Joi.string().valid("Pending", "Active", "Suspended", "Expired").default("Active").messages({
+                "any.only": "Subscription status must be Pending, Active, Suspended, or Expired."
             })
         }),
     
         database: Joi.object({
-            dbName: Joi.string(),
+            // Empty/omitted: server generates a unique name from companyName (public signup).
+            // Non-empty: honored for super-admin / internal create flows; must be valid tenant db name.
+            dbName: Joi.string()
+                .trim()
+                .max(64)
+                .allow("")
+                .optional()
+                .pattern(/^$|^[a-zA-Z0-9_-]{1,64}$/)
+                .messages({
+                    "string.max": "Database name must be at most 64 characters.",
+                    "string.pattern.base": "Invalid database name. Use letters, numbers, underscore, or hyphen only.",
+                }),
             backupEnabled: Joi.string().valid("Active", "Inactive").default("Active")
         })
     });
@@ -108,17 +148,55 @@ function validateRegisterCompanyModel(model){
 
 function validateSigninModel(model){
     const Schema = Joi.object({
-        username: Joi.string().lowercase().required().messages({
-            "any.required": "Email is required"
+        username: Joi.string().required().messages({
+            "any.required": "Username is required"
         }),
-        password: Joi.string().required().messages({ // ✅ FIXED: Use .messages()
+        password: Joi.string().required().messages({
             "string.empty": "Password is required.",
             "any.required": "Password is required."
         }),
-        
+        /**
+         * Optional tenant hint for multi-tenant sign-in. Omit for legacy (username+password only).
+         * At least one of these should be sent for workspace login when duplicate usernames exist across companies.
+         */
+        companyCode: Joi.string().trim().max(20).allow("").optional(),
+        workspaceSlug: Joi.string().trim().max(64).allow("").optional(),
     })
 
     return Schema.validate(model, { abortEarly: true });
 }
 
-export { validateRegisterCompanyModel, validateSigninModel }
+/**
+ * At least one field required. Used by PATCH /v2/tenant/branding.
+ */
+function validatePatchTenantBranding(model) {
+    const hexOrEmpty = Joi.string()
+        .trim()
+        .max(32)
+        .allow(null, "")
+        .custom((value, helpers) => {
+            if (value == null || value === "") return value;
+            if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value)) {
+                return helpers.error("any.custom", { message: "Primary color must be a hex value like #2563EB or #fff." });
+            }
+            return value;
+        });
+
+    const schema = Joi.object({
+        companyName: Joi.string().trim().min(3).max(100).optional(),
+        primaryColor: hexOrEmpty.optional(),
+        supportEmail: Joi.alternatives()
+            .try(Joi.valid(null, ""), Joi.string().trim().max(254).email())
+            .optional(),
+        logoDataUrl: Joi.string().max(2_500_000).allow(null, "").optional(),
+        clearLogo: Joi.boolean().optional(),
+    })
+        .or("companyName", "primaryColor", "supportEmail", "logoDataUrl", "clearLogo")
+        .messages({
+            "object.missing": "At least one branding field is required.",
+        });
+
+    return schema.validate(model, { abortEarly: true, stripUnknown: true });
+}
+
+export { validateRegisterCompanyModel, validateSigninModel, validatePatchTenantBranding }

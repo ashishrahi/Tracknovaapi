@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
+import { getTenantDBModels } from "../../db/index.js";
 // import dotenv from "dotenv";
-import { EmailSetting } from "../../modals/index.js";
 // dotenv.config();
 
 /**
@@ -8,8 +8,7 @@ import { EmailSetting } from "../../modals/index.js";
  * and create a nodemailer transporter using it.
  */
 async function createDynamicTransporter() {
-
-    
+    const { EmailSetting } = await getTenantDBModels();
 const activeSetting = await EmailSetting.findOne({ IsActive: true });
 console.log('activeSetting:',activeSetting)
 if (!activeSetting) {

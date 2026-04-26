@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  CommonResponse
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateHandheldMasterQuery,
   GetHandheldMasterQuery,
@@ -16,7 +12,7 @@ export async function AddUpdateHandheldMaster(req, res) {
     const model = req.body;
     const { status, message, data} =
       await AddUpdateHandheldMasterQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data
@@ -38,7 +34,7 @@ export async function GetHandheldMaster(req, res) {
     const model = req.body;
     const {status, message, data } =
       await GetHandheldMasterQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -60,7 +56,7 @@ export async function DeleteHandheldMaster(req, res) {
     const model = req.body;
     const {status, message, data } =
       await DeleteHandheldMasterQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

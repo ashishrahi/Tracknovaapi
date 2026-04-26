@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { VehicleAddTempInfo } from "../modals/index.js";
-import { ApiSuccessResponse, CommonResponse } from "../utils/apiResponse/index.js";
+import { ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import { getTenantDBModels } from "../db/index.js";
 
 //-------------AddUpdateVehicleAuditInfo------->
@@ -47,7 +46,7 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
         return res
           .status(StatusCodes.CREATED)
           .json(
-            new CommonResponse(
+            ApiSuccessResponse.common(
               true,
               "Added Successfully",
               newVehicle
@@ -100,7 +99,7 @@ async function AddUpdateVehicleAuditInfo(req, res, next) {
       return res
         .status(StatusCodes.OK)
         .json(
-          new CommonResponse(
+          ApiSuccessResponse.common(
             true,
             "Updated Successfully",
             updatedVehicle
@@ -154,7 +153,7 @@ async function GetVehicleAuditInfo(req, res, next) {
     // .skip((pageNo - 1) * pageSize).limit(pageSize);
     let msg;
     data?.length === 0 ? msg = "No Record found" : msg = "Data Fetched Successfully"
-    return res.status(StatusCodes.OK).json(new CommonResponse(true, msg, response, response.length ));
+    return res.status(StatusCodes.OK).json(ApiSuccessResponse.common(true, msg, response, response.length ));
   } catch (err) {
     const error = new Error(err.message);
     error.status = StatusCodes.BAD_REQUEST;

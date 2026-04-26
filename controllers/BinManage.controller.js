@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  CommonResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateBinManageQuery,
   GetBinManageQuery,
@@ -15,7 +12,7 @@ export async function AddUpdateBinManage(req, res) {
     const model = req.body;
     const { status, message, data } =
       await AddUpdateBinManageQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -37,7 +34,7 @@ export async function GetBinManage(req, res) {
     const model = req.body;
 
     const { status, message,data, pageNo, pageSize, rowCount } = await GetBinManageQuery(model);
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,

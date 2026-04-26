@@ -4,23 +4,25 @@ import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import jwt from "jsonwebtoken";
 import { getCentralDBModels } from "../db/index.js";
-import mongoose from "mongoose";
+import { setRequestTenantDbName } from "../db/tenantContext.js";
 
 
 const excludedRoutes = [
-  // "/api/Auth/login", 
+  "/api/Auth/login",
+  "/api/Auth/Register",
   "/api/Auth/Refresh",
-  // "/api/Auth/Logout", 
   "/api/v2/auth/signin",
   "/api/v2/auth/refresh",
   "/api/v2/auth/forgot-password",
-  "/api/v2/auth/reset-password"
+  "/api/v2/auth/reset-password",
+  /** Public tenant self-serve registration (no JWT). */
+  "/api/v2/company/register",
 ];
 
 const getLoggedInCompany = async (req, res, next) => {
   try {
     const { Company, Idp_account } = await getCentralDBModels();
-    if (excludedRoutes.includes(req.path)) {
+    if (excludedRoutes.includes(req.path) || req.path.startsWith("/api/v2/public/")) {
       return next();
     }
     if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied due to access token not provided"));
@@ -67,6 +69,9 @@ const getLoggedInCompany = async (req, res, next) => {
     }
 
     req.company = company || "SuperAdmin";
+    if (req.company && req.company !== "SuperAdmin" && req.company?.database?.dbName) {
+        setRequestTenantDbName(req.company.database.dbName);
+    }
     req.user = user;
     next()
   } catch (err) {

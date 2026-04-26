@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  ReturnData
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
     AddUpdateUnitMasterQuery,
     ImportUnitsQuery,
@@ -16,7 +12,7 @@ export async function AddUpdateUnitMaster(req,res){
     try {
         const modal = req.body;
         const {isSuccess, internalSuccess, mesg, insertedId, data } = await AddUpdateUnitMasterQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -39,7 +35,7 @@ export async function ImportUnits(req,res){
     try {
         const modal = req.body;
         const {isSuccess, internalSuccess, mesg, insertedId, data } = await ImportUnitsQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -64,7 +60,7 @@ export async function GetUnitMaster(req,res){
     try {
         const modal = req.body;
         const { isSuccess, internalSuccess, mesg, insertedId, data} = await GetUnitMasterQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,
@@ -88,7 +84,7 @@ export async function DeleteUnitMaster(req,res){
         const modal = req.body;
         console.log('modal',modal)
         const { isSuccess, internalSuccess, mesg, insertedId, data } = await DeleteUnitMasterQuery(modal);
-        const successResponse = new ReturnData(
+        const successResponse = ApiSuccessResponse.returnData(
             isSuccess,
             internalSuccess,
             mesg,

@@ -1,31 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import dotnetLikeData from "../utils/dotnet-like-format/dotnetLikeData.js";
-import {
-  CommGroup,
-  CommMembers,
-  EmailSetting,
-  SmsSetting,
-  CampaignDetail,
-  Campaign,
-  CampaignTemplate,
-  EventSetting,
-  ZoneMaster,
-  ItemTypeMaster,
-  ItemCategoryMaster,
-  UnitMaster,
-  TaxMaster,
-  EmpMaster,
-  FuelType,
-  BrandMaster,
-  VehicleTypeMaster,
-} from "../modals/index.js";
 import { getTenantDBModels } from "../db/index.js";
 
-import {
-  ApiSuccessResponse,
-  CommonResponse,
-  ApiErrorResponse,
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 
 import formattedData from "../utils/dotnet-like-format/dotnetLikeData.js";
 import sendMailService from "../utils/emailService/nodeMailer.js";
@@ -66,7 +43,7 @@ async function GetCommGroup(req, res) {
   const totalCount = newData.length;
   // Step 5: Return Response
   return res.status(StatusCodes.OK).json(
-    new CommonResponse(
+    ApiSuccessResponse.common(
       1,
       "Data Fetched",
       newData,
@@ -112,7 +89,7 @@ async function UpsertCommGroup(req, res, next) {
       if (existingGroup) {
         return res
           .status(StatusCodes.BAD_REQUEST)
-          .json(new CommonResponse(0, "Record Already Exists!", existingGroup));
+          .json(ApiSuccessResponse.common(0, "Record Already Exists!", existingGroup));
 
         //   {
         //   Status: "Failed",
@@ -139,7 +116,7 @@ async function UpsertCommGroup(req, res, next) {
 
       return res
         .status(StatusCodes.CREATED)
-        .json(new CommonResponse(1, "Added Successfully", newGroup));
+        .json(ApiSuccessResponse.common(1, "Added Successfully", newGroup));
       //   {
       //   Status: "Success",
       //   Message: "Added Successfully",
@@ -164,12 +141,12 @@ async function UpsertCommGroup(req, res, next) {
       if (!updatedGroup) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json(new CommonResponse(0, "Internal error. Try again"));
+          .json(ApiSuccessResponse.common(0, "Internal error. Try again"));
         // { Status: "Failed", Message: "Internal error. Try again" };
       }
 
       return res.status(StatusCodes.OK).json(
-        new CommonResponse(1, "Updated successfully", updatedGroup)
+        ApiSuccessResponse.common(1, "Updated successfully", updatedGroup)
         //   {
         //   Status: "Success",
         //   Message: "Updated Successfully",
@@ -191,7 +168,7 @@ async function UpsertCommGroup(req, res, next) {
 async function DeleteCommGroup(req, res) {
   // let session;
   try {
-    const { CommGroup } = await getTenantDBModels();
+    const { CommGroup, CommMembers } = await getTenantDBModels();
 
     const model = req.body;
 
@@ -230,13 +207,13 @@ async function DeleteCommGroup(req, res) {
     if (!deletedGroup) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json(new CommonResponse(0, "GroupId not found!"));
+        .json(ApiSuccessResponse.common(0, "GroupId not found!"));
       // { Status: "Failed", Message: "GroupId not found!" });
     }
 
     return res
       .status(StatusCodes.OK)
-      .json(new CommonResponse(1, "Deleted Successfully"));
+      .json(ApiSuccessResponse.common(1, "Deleted Successfully"));
     //   { Status: "Success", Message: "Deleted Successfully" }
     // );
   } catch (error) {
@@ -329,7 +306,7 @@ async function GetAllEmailSetting(req, res) {
     const newData = dotnetLikeData(result);
     return res
       .status(StatusCodes.OK)
-      .json(new CommonResponse(1, "Data Fetch Succesffuly !", newData));
+      .json(ApiSuccessResponse.common(1, "Data Fetch Succesffuly !", newData));
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -582,7 +559,7 @@ async function GetCampaign(req, res) {
     const totalCount = await Campaign.countDocuments(query);
 
     return res.status(StatusCodes.OK).json(
-      new CommonResponse(1, "message", data, totalCount, pageNo, pageSize)
+      ApiSuccessResponse.common(1, "message", data, totalCount, pageNo, pageSize)
       //   {
       //   Data: campaigns,
       //   Status: "Success",
@@ -887,7 +864,7 @@ async function GetCampaignTemplate(req, res) {
     const totalCount = data.length;
 
     return res.status(StatusCodes.OK).json(
-      new CommonResponse(
+      ApiSuccessResponse.common(
         1,
         "Fetch Successfully",
         data,
@@ -1099,7 +1076,7 @@ async function GetEventSetting(req, res) {
     const newData = dotnetLikeData(eventSettings);
 
     return res.status(StatusCodes.OK).json(
-      new CommonResponse(
+      ApiSuccessResponse.common(
         1,
         "Fetch Successfully",
         newData,
@@ -1159,7 +1136,7 @@ async function UpsertEventSetting(req, res) {
       await newEvent.save();
       return res
         .status(StatusCodes.OK)
-        .json(new CommonResponse(1, "Added Successfully"));
+        .json(ApiSuccessResponse.common(1, "Added Successfully"));
     } else {
       await EventSetting.findOneAndUpdate(
         { EventId: model.eventId },
@@ -1177,7 +1154,7 @@ async function UpsertEventSetting(req, res) {
       );
       return res
         .status(StatusCodes.OK)
-        .json(new CommonResponse(1, "Updated Successfully"));
+        .json(ApiSuccessResponse.common(1, "Updated Successfully"));
     }
   } catch (error) {
     const status = error.StatusCode;

@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { FuelCorrection } from "../../modals/index.js";
 import { VehicleTrack } from "../../controllers/VehicleMoving.controller.js";
 import { VehicleMovingStatusdetnew } from "./VehicleMovingControllerPipeline.js";
 import { VehicleMovingControllerPipeline } from "./index.js";
@@ -13,7 +12,6 @@ export const GetVehListQuery = async (model) => {
   try {
     const filter = model; // Assuming data is sent in the body
 
-    //   let resp = { ...CommonResponse };
     // let { condition1, date1, date2, list1, listInt1, flag } = filter;
 
     // let d1, d2;

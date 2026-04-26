@@ -4,6 +4,7 @@ import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import {
     Idp_accountSchema,
     CompanySchema,
+    CompanyAuditLogSchema,
     AspNetRolesSchema,
     AreaWardMasterSchema,
     AspNetUsersSchema,
@@ -47,6 +48,11 @@ import {
     SmsSettingSchema,
     StateMasterSchema,
     SubscriptionRequestSchema,
+    SaasSubscriptionInvoiceSchema,
+    TenantUsageMetricSchema,
+    SupportTicketSchema,
+    LifecycleEmailLogSchema,
+    ImpersonationSessionSchema,
     SummaryNTSchema,
     TaxMasterSchema,
     tc_usersSchema,
@@ -59,187 +65,372 @@ import {
     ZoneMasterSchema,
 } from "../modals/index.js";
 import dotenv from "dotenv";
+import { getRequestTenantDbName } from "./tenantContext.js";
 
 dotenv.config();
 
 const uri = String(process.env.MONGODB_SERVER_URI);
 
-// For Cental DB
-let central_db = null;
-let CentralDBModels = {}; // Store models
+const MONGO_OPTIONS = {
+    maxPoolSize: Number(process.env.TENANT_DB_MAX_POOL) || 10,
+    minPoolSize: 0,
+    maxIdleTimeMS: Number(process.env.MONGO_MAX_IDLE_TIME_MS) || 120000,
+    serverSelectionTimeoutMS: 30000,
+};
 
-// For Tenant DB
-let tenant_db = null;
-let TenantDBModels = {};
+const TENANT_IDLE_MS = Number(process.env.TENANT_DB_IDLE_MS) || 20 * 60 * 1000;
+const SWEEP_INTERVAL_MS = Number(process.env.TENANT_DB_SWEEP_MS) || 60 * 1000;
+const MAX_CACHED_TENANTS = Number(process.env.TENANT_MAX_CACHED) || 100;
 
-let tenantDBName = null;
+const DB_NAME_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
 
-// mongoose.set("debug", true); 
+/** @type {import('mongoose').Connection | null} */
+let centralDb = null;
+/** @type {Record<string, unknown>} */
+let centralModels = {};
 
-export async function connectMongoDB() {
-    if (central_db) return CentralDBModels; 
-    try {
-        central_db = await mongoose
-            .createConnection(`${uri}/central_db`)
-            .asPromise();
-        console.log(
-            `✅ Connected to Central DB: ${central_db.name} and central_db ready state is `,
-            central_db.readyState
-        );
+/**
+ * @typedef {Object} TenantEntry
+ * @property {import('mongoose').Connection} connection
+ * @property {Record<string, unknown> & { tenant_db: import('mongoose').Connection }} models
+ * @property {number} lastUsed
+ */
 
+/** @type {Map<string, TenantEntry>} */
+const tenantByName = new Map();
+/** In-flight createConnection per dbName — concurrency-safe coalescing */
+const creatingTenant = new Map();
+/** @type {NodeJS.Timeout | null} */
+let sweepTimer = null;
 
-        // Define models once
-        CentralDBModels = {
-            Company: central_db.model("Company", CompanySchema),
-            Idp_account: central_db.model("Idp_account", Idp_accountSchema),
-            CountryMaster: central_db.model("CountryMaster", CountryMasterSchema),
-            StateMaster: central_db.model("StateMaster", StateMasterSchema),
-            CityMaster: central_db.model("CityMaster", CityMasterSchema),
-            Menu: central_db.model("Menu", MenuSchema),
-            };
+/**
+ * @param {string | undefined} name
+ * @returns {boolean}
+ */
+export function isValidTenantDatabaseName(name) {
+    return typeof name === "string" && DB_NAME_PATTERN.test(name);
+}
 
-
-        return CentralDBModels;
-    } catch (error) {
-        console.error("❌ Database Connection Error:", error.message);
+function assertValidDatabaseName(name) {
+    if (!isValidTenantDatabaseName(name)) {
         throw new ApiErrorResponse(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            error.message
+            StatusCodes.BAD_REQUEST,
+            "Invalid or missing tenant database name"
         );
+    }
+    return name;
+}
+
+/**
+ * @param {import('mongoose').Connection} conn
+ */
+function buildCentralModels(conn) {
+    return {
+        Company: conn.model("Company", CompanySchema),
+        CompanyAuditLog: conn.model("CompanyAuditLog", CompanyAuditLogSchema),
+        Idp_account: conn.model("Idp_account", Idp_accountSchema),
+        CountryMaster: conn.model("CountryMaster", CountryMasterSchema),
+        StateMaster: conn.model("StateMaster", StateMasterSchema),
+        CityMaster: conn.model("CityMaster", CityMasterSchema),
+        Menu: conn.model("Menu", MenuSchema),
+        SaasSubscriptionInvoice: conn.model("SaasSubscriptionInvoice", SaasSubscriptionInvoiceSchema),
+        TenantUsageMetric: conn.model("TenantUsageMetric", TenantUsageMetricSchema),
+        SupportTicket: conn.model("SupportTicket", SupportTicketSchema),
+        LifecycleEmailLog: conn.model("LifecycleEmailLog", LifecycleEmailLogSchema),
+        ImpersonationSession: conn.model("ImpersonationSession", ImpersonationSessionSchema),
+    };
+}
+
+/**
+ * @param {import('mongoose').Connection} conn
+ */
+function buildTenantModels(conn) {
+    const m = {
+        tenant_db: conn,
+        Company: conn.model("Company", CompanySchema),
+        Idp_account: conn.model("Idp_account", Idp_accountSchema),
+        AreaWardMaster: conn.model("AreaWardMaster", AreaWardMasterSchema),
+        AspNetRoles: conn.model("AspNetRoles", AspNetRolesSchema),
+        AspNetUsers: conn.model("AspNetUsers", AspNetUsersSchema),
+        BinLocation: conn.model("BinLocation", BinLocationSchema),
+        BrandMaster: conn.model("brandMaster", BrandMasterSchema),
+        Campaign: conn.model("Campaign", CampaignSchema),
+        CampaignDetail: conn.model("CampaignDetail", CampaignDetailSchema),
+        CampaignTemplate: conn.model("CampaignTemplate", CampaignTemplateSchema),
+        CityMaster: conn.model("CityMaster", CityMasterSchema),
+        CommGroup: conn.model("CommGroup", CommGroupSchema),
+        CommMembers: conn.model("CommMembers", CommMembersSchema),
+        ContractorMaster: conn.model("ContractorMaster", ContractorMasterSchema),
+        CountryMaster: conn.model("CountryMaster", CountryMasterSchema),
+        Department: conn.model("Department", DepartmentSchema),
+        Designation: conn.model("Designation", DesignationSchema),
+        DeviceType: conn.model("DeviceType", DeviceTypeSchema),
+        EmailSetting: conn.model("EmailSetting", EmailSettingSchema),
+        EmpMaster: conn.model("EmpMaster", EmpMasterSchema),
+        EventSetting: conn.model("EventSetting", EventSettingSchema),
+        FuelCorrection: conn.model("FuelCorrection", FuelCorrectionSchema),
+        FuelType: conn.model("FuelType", FuelTypeSchema),
+        Geofencing: conn.model("Geofencing", GeofencingSchema),
+        HandheldMaster: conn.model("HandheldMaster", HandheldMasterSchema),
+        HelpCreate: conn.model("HelpCreate", HelpCreateSchema),
+        ItemCategoryMaster: conn.model("ItemCategoryMaster", ItemCategoryMasterSchema),
+        ItemMaster: conn.model("ItemMaster", ItemMasterSchema),
+        ItemTypeMaster: conn.model("ItemTypeMaster", ItemTypeMasterSchema),
+        Menu: conn.model("Menu", MenuSchema),
+        Node: conn.model("Node", NodeSchema),
+        NodePermission: conn.model("NodePermission", NodePermissionSchema),
+        NT: conn.model("NT", NTSchema),
+        NTCurrentDay: conn.model("NTCurrentDay", NTCurrentDaySchema),
+        Period: conn.model("Period", PeriodSchema),
+        Petrol_Pump_tbl: conn.model("Petrol_Pump_tbl", Petrol_Pump_tblSchema),
+        RolePermission: conn.model("RolePermission", RolePermissionSchema),
+        RosterPlan: conn.model("RosterPlan", RosterPlanSchema),
+        RosterPlanDetail: conn.model("RosterPlanDetail", RosterPlanDetailSchema),
+        Route: conn.model("Route", RouteSchema),
+        RouteAreaBinDetail: conn.model("RouteAreaBinDetail", RouteAreaBinDetailSchema),
+        RouteAreaDetail: conn.model("RouteAreaDetail", RouteAreaDetailSchema),
+        SmsSetting: conn.model("SmsSetting", SmsSettingSchema),
+        StateMaster: conn.model("StateMaster", StateMasterSchema),
+        SubscriptionRequest: conn.model("SubscriptionRequest", SubscriptionRequestSchema),
+        SummaryNT: conn.model("SummaryNT", SummaryNTSchema),
+        TaxMaster: conn.model("TaxMaster", TaxMasterSchema),
+        tc_users: conn.model("tc_users", tc_usersSchema),
+        UnitMaster: conn.model("UnitMaster", UnitMasterSchema),
+        UserPermission: conn.model("UserPermission", UserPermissionSchema),
+        VehicleAddTempInfo: conn.model("VehicleAddTempInfo", VehicleAddTempInfoSchema),
+        VehicleTypeChild: conn.model("VehicleTypeChild", VehicleTypeChildSchema),
+        VehicleTypeMaster: conn.model("VehicleTypeMaster", VehicleTypeMasterSchema),
+        VendorMaster: conn.model("VendorMaster", VendorMasterSchema),
+        ZoneMaster: conn.model("ZoneMaster", ZoneMasterSchema),
+    };
+    m.vehicleTypeCollection = conn.db.collection(m.VehicleTypeMaster.collection.name);
+    return m;
+}
+
+/**
+ * @param {import('mongoose').Connection} conn
+ * @param {string} label
+ */
+function wireConnectionEvents(conn, label) {
+    conn.on("error", (err) => {
+        console.error(`MongoDB connection error [${label}]:`, err?.message || err);
+    });
+    conn.on("disconnected", () => {
+        console.warn(`MongoDB disconnected [${label}]`);
+    });
+}
+
+/**
+ * @returns {string | null}
+ */
+function resolveTenantDbName(/** @type {string | undefined} */ explicit) {
+    if (explicit) {
+        return assertValidDatabaseName(explicit);
+    }
+    const fromRequest = getRequestTenantDbName();
+    if (fromRequest) {
+        return assertValidDatabaseName(fromRequest);
+    }
+    return null;
+}
+
+/**
+ * Closes the least-recently-used tenant connection when the cache is full.
+ */
+function evictLruIfNeeded(/** @type {string} */ aboutToAdd) {
+    if (tenantByName.size < MAX_CACHED_TENANTS || tenantByName.has(aboutToAdd)) {
+        return;
+    }
+    let bestKey = null;
+    let bestTime = Infinity;
+    for (const [name, ent] of tenantByName) {
+        if (name === aboutToAdd) {
+            return;
+        }
+        if (ent.lastUsed < bestTime) {
+            bestTime = ent.lastUsed;
+            bestKey = name;
+        }
+    }
+    if (bestKey) {
+        const ent = tenantByName.get(bestKey);
+        if (ent) {
+            void ent.connection.close().then(() => {
+                console.log(`[tenant] LRU evicted closed: ${bestKey}`);
+            });
+            tenantByName.delete(bestKey);
+        }
+    }
+}
+
+async function createTenantEntry(dbName) {
+    const url = `${uri}/${dbName}`;
+    const connection = await mongoose.createConnection(url, MONGO_OPTIONS).asPromise();
+    wireConnectionEvents(connection, `tenant:${dbName}`);
+
+    const entry = {
+        connection,
+        models: buildTenantModels(connection),
+        lastUsed: Date.now(),
+    };
+    tenantByName.set(dbName, entry);
+    console.log(
+        `✅ Tenant connection ready: ${dbName} (cached: ${tenantByName.size}, readyState=${connection.readyState})`
+    );
+    return entry;
+}
+
+/**
+ * @returns {Promise<TenantEntry>}
+ */
+async function getOrCreateTenantEntry(dbName) {
+    const name = assertValidDatabaseName(dbName);
+    const existing = tenantByName.get(name);
+    if (existing && existing.connection.readyState === 1) {
+        existing.lastUsed = Date.now();
+        return existing;
+    }
+    if (existing) {
+        tenantByName.delete(name);
+        await existing.connection.close().catch(() => {});
+    }
+
+    const pending = creatingTenant.get(name);
+    if (pending) {
+        return pending;
+    }
+
+    evictLruIfNeeded(name);
+
+    const p = (async () => {
+        return createTenantEntry(name);
+    })();
+
+    creatingTenant.set(name, p);
+    try {
+        return await p;
+    } finally {
+        creatingTenant.delete(name);
     }
 }
 
 /**
- * Get models safely after ensuring connection
+ * @returns {Promise<Record<string, unknown> & { tenant_db: import('mongoose').Connection }>}
  */
-
-export async function getCentralDBModels() {
-    // console.log("🛠 Checking CentralDBModels:", Object.keys(CentralDBModels)); // ✅ Check loaded models
-
-    if (!central_db) {
-        console.log("⏳ Connecting to MongoDB again...");
-        return await connectMongoDB();
-    }
-
-    return CentralDBModels;
+export async function connectTenantDB(dbName) {
+    const name = assertValidDatabaseName(dbName);
+    const entry = await getOrCreateTenantEntry(name);
+    return entry.models;
 }
 
+/**
+ * @returns {Promise<Record<string, unknown> & { tenant_db: import('mongoose').Connection }>}
+ */
+export async function getTenantDBModels(/** @type {string | undefined} */ dbName) {
+    const resolved = resolveTenantDbName(dbName);
+    if (!resolved) {
+        throw new ApiErrorResponse(
+            StatusCodes.BAD_REQUEST,
+            "Tenant database not in context. Pass dbName, or require Authorization + company with database.dbName, or set tenant in middleware."
+        );
+    }
+    const entry = await getOrCreateTenantEntry(resolved);
+    entry.lastUsed = Date.now();
+    return entry.models;
+}
 
-//-------- connectTenantDB ----------->
-
-export async function connectTenantDB(dbName) {
-    try {
-        tenantDBName = dbName;
-        // await mongoose.connection.close(); // close existing connection;
-        if (tenant_db && tenant_db.readyState === 1) {
-            console.log(`🔄 Reusing existing connection for ${tenantDBName}`);
-            return TenantDBModels;
+function sweepIdleTenants() {
+    const now = Date.now();
+    for (const [name, ent] of tenantByName) {
+        if (now - ent.lastUsed < TENANT_IDLE_MS) {
+            continue;
         }
+        if (creatingTenant.has(name)) {
+            continue;
+        }
+        tenantByName.delete(name);
+        void ent.connection.close().then(() => {
+            console.log(`[tenant] Idle close: ${name} (after ${TENANT_IDLE_MS}ms)`);
+        });
+    }
+}
 
-        console.log(`🔄 Creating new connection for ${tenantDBName}`);
-        tenant_db = await mongoose.createConnection(`${uri}/${tenantDBName}`).asPromise();
+function ensureSweepTimer() {
+    if (sweepTimer) {
+        return;
+    }
+    sweepTimer = setInterval(sweepIdleTenants, SWEEP_INTERVAL_MS);
+    if (sweepTimer.unref) {
+        sweepTimer.unref();
+    }
+}
 
-        TenantDBModels = {
-            tenant_db: tenant_db,
-            Company: tenant_db.model("Company", CompanySchema),
-            Idp_account: tenant_db.model("Idp_account", Idp_accountSchema),
-            AreaWardMaster: tenant_db.model("AreaWardMaster", AreaWardMasterSchema),
-            AspNetRoles: tenant_db.model("AspNetRoles", AspNetRolesSchema),
-            AspNetUsers: tenant_db.model("AspNetUsers", AspNetUsersSchema),
-            BinLocation: tenant_db.model("BinLocation", BinLocationSchema),
-            BrandMaster: tenant_db.model("brandMaster", BrandMasterSchema),
-            Campaign: tenant_db.model("Campaign", CampaignSchema),
-            CampaignDetail: tenant_db.model("CampaignDetail", CampaignDetailSchema),
-            CampaignTemplate: tenant_db.model("CampaignTemplate", CampaignTemplateSchema),
-            CityMaster: tenant_db.model("CityMaster", CityMasterSchema),
-            CommGroup: tenant_db.model("CommGroup", CommGroupSchema),
-            CommMembers: tenant_db.model("CommMembers", CommMembersSchema),
-            ContractorMaster: tenant_db.model("ContractorMaster", ContractorMasterSchema),
-            CountryMaster: tenant_db.model("CountryMaster", CountryMasterSchema),
-            Department: tenant_db.model("Department", DepartmentSchema),
-            Designation: tenant_db.model("Designation", DesignationSchema),
-            DeviceType: tenant_db.model("DeviceType", DeviceTypeSchema),
-            EmailSetting: tenant_db.model("EmailSetting", EmailSettingSchema),
-            EmpMaster: tenant_db.model("EmpMaster", EmpMasterSchema),
-            EventSetting: tenant_db.model("EventSetting", EventSettingSchema),
-            FuelCorrection: tenant_db.model("FuelCorrection", FuelCorrectionSchema),
-            FuelType: tenant_db.model("FuelType", FuelTypeSchema),
-            Geofencing: tenant_db.model("Geofencing", GeofencingSchema),
-            HandheldMaster: tenant_db.model("HandheldMaster", HandheldMasterSchema),
-            HelpCreate: tenant_db.model("HelpCreate", HelpCreateSchema),
-            // Idp_account
-            ItemCategoryMaster: tenant_db.model("ItemCategoryMaster", ItemCategoryMasterSchema),
-            ItemMaster: tenant_db.model("ItemMaster", ItemMasterSchema),
-            ItemTypeMaster: tenant_db.model("ItemTypeMaster", ItemTypeMasterSchema),
-            Menu: tenant_db.model("Menu", MenuSchema),
-            Node: tenant_db.model("Node", NodeSchema),
-            NodePermission: tenant_db.model("NodePermission", NodePermissionSchema),
-            NT: tenant_db.model("NT", NTSchema),
-            NTCurrentDay: tenant_db.model("NTCurrentDay", NTCurrentDaySchema),
-            Period: tenant_db.model("Period", PeriodSchema),
-            Petrol_Pump_tbl: tenant_db.model("Petrol_Pump_tbl", Petrol_Pump_tblSchema),
-            RolePermission: tenant_db.model("RolePermission", RolePermissionSchema),
-            RosterPlan: tenant_db.model("RosterPlan", RosterPlanSchema),
-            RosterPlanDetail: tenant_db.model("RosterPlanDetail", RosterPlanDetailSchema),
-            Route: tenant_db.model("Route", RouteSchema),
-            RouteAreaBinDetail: tenant_db.model("RouteAreaBinDetail", RouteAreaBinDetailSchema),
-            RouteAreaDetail: tenant_db.model("RouteAreaDetail", RouteAreaDetailSchema),
-            SmsSetting: tenant_db.model("SmsSetting", SmsSettingSchema),
-            StateMaster: tenant_db.model("StateMaster", StateMasterSchema),
-            SubscriptionRequest: tenant_db.model("SubscriptionRequest", SubscriptionRequestSchema),
-            SummaryNT: tenant_db.model("SummaryNT", SummaryNTSchema),
-            TaxMaster: tenant_db.model("TaxMaster", TaxMasterSchema),
-            tc_users: tenant_db.model("tc_users", tc_usersSchema),
-            UnitMaster: tenant_db.model("UnitMaster", UnitMasterSchema),
-            // Users
-            UserPermission: tenant_db.model("UserPermission", UserPermissionSchema),
-            VehicleAddTempInfo: tenant_db.model("VehicleAddTempInfo", VehicleAddTempInfoSchema),
-            VehicleTypeChild: tenant_db.model("VehicleTypeChild", VehicleTypeChildSchema),
-            VehicleTypeMaster: tenant_db.model("VehicleTypeMaster", VehicleTypeMasterSchema),
-            VendorMaster: tenant_db.model("VendorMaster", VendorMasterSchema),
-            // Ward Master    
-            ZoneMaster: tenant_db.model("ZoneMaster", ZoneMasterSchema),
-
-
-        };
-        return TenantDBModels;
+export async function connectMongoDB() {
+    if (centralDb && centralDb.readyState === 1) {
+        return centralModels;
+    }
+    try {
+        if (centralDb) {
+            await centralDb.close().catch(() => {});
+            centralDb = null;
+        }
+        centralDb = await mongoose
+            .createConnection(`${uri}/central_db`, MONGO_OPTIONS)
+            .asPromise();
+        wireConnectionEvents(centralDb, "central_db");
+        centralModels = buildCentralModels(centralDb);
+        ensureSweepTimer();
+        console.log(
+            `✅ Central DB connected: ${centralDb.name} readyState=${centralDb.readyState}`
+        );
+        return centralModels;
     } catch (error) {
-        console.error(`❌ Tenant DB Connection Error (${tenantDBName}):`, error.message);
+        console.error("❌ Central DB connection error:", error?.message || error);
         throw new ApiErrorResponse(
             StatusCodes.INTERNAL_SERVER_ERROR,
-            error.message
+            error?.message || "Database connection failed"
         );
     }
 }
 
-export async function getTenantDBModels(dbName) {
-    // console.log("🛠 Checking TenantDBModels:", Object.keys(TenantDBModels)); // ✅ Check loaded models
-    const dbNameToUse = dbName || tenantDBName;
-    if (!tenant_db || tenant_db.readyState === 0) {
-        console.log("⏳ Connecting to MongoDB Again for tenant connection...");
-        return await connectTenantDB(dbNameToUse);
+export async function getCentralDBModels() {
+    if (!centralDb || centralDb.readyState !== 1) {
+        return connectMongoDB();
     }
-    return TenantDBModels;
+    return centralModels;
 }
 
+export async function closeAllMongoConnections() {
+    const closes = [];
+    if (sweepTimer) {
+        clearInterval(sweepTimer);
+        sweepTimer = null;
+    }
+    if (centralDb) {
+        closes.push(
+            centralDb.close().then(() => {
+                console.log("Central DB connection closed");
+            })
+        );
+        centralDb = null;
+        centralModels = {};
+    }
+    for (const [name, ent] of tenantByName) {
+        closes.push(
+            ent.connection.close().then(() => {
+                console.log(`Tenant connection closed: ${name}`);
+            })
+        );
+    }
+    tenantByName.clear();
+    await Promise.allSettled(closes);
+}
 
-
-mongoose.connection.on("connected", () => {
-    console.log("Mongoose Connected to DB");
-});
-
-mongoose.connection.on("error", (err) => {
-    console.log(err.message);
-});
-
-mongoose.connection.on("disconnected", () => {
-    console.log("Mongoose connection is disconnected");
-});
-
-process.on("SIGINT", async () => {
-    await mongoose.connection.close();
-    console.log("Mongoose connection closed");
+const shutdown = async () => {
+    await closeAllMongoConnections();
     process.exit(0);
-});
+};
 
-
+for (const sig of /** @type {const} */ (["SIGINT", "SIGTERM"])) {
+    process.on(sig, shutdown);
+}

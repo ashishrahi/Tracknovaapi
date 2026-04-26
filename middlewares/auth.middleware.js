@@ -1,7 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
-import AspNetUsers from "../modals/AspNetUsers.model.js";
+import { getTenantDBModels } from "../db/index.js";
+import { getRequestTenantDbName } from "../db/tenantContext.js";
 
 const excludedRoutes = ["/api/Auth/login", "/api/Auth/Refresh", "/api/Auth/Logout"];
 
@@ -18,12 +19,14 @@ async function verifyAccessToken(req, res, next){
         
         const payloadData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     
-        const user = await AspNetUsers.findOne( 
-        { $or: [
-            // { Id: payloadData.Id },
-            { UserName: payloadData.username }
-        ]}).select("-PasswordHash")
-        req.user = user;
+        if (getRequestTenantDbName()) {
+            const { AspNetUsers } = await getTenantDBModels();
+            const user = await AspNetUsers.findOne( 
+            { $or: [
+                { UserName: payloadData.username }
+            ]}).select("-PasswordHash");
+            req.user = user;
+        }
         // console.log(user)
         next()
     } catch (err) {

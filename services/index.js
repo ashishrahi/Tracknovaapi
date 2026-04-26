@@ -1,10 +1,51 @@
-import { registerService, findService, signinService, switchCompanyWithDbNameService, getCountry, getStatebyCountry, addState,  stateList, deleteState, addCity, cityList, getCitybyState, deleteCity, addCountry, deleteCountry, refreshService } from "./v2/index.js";
+import {
+    registerService,
+    findService,
+    deleteCompanyByIdService,
+    updateCompanyByIdService,
+    signinService,
+    switchCompanyWithDbNameService,
+    getCountry,
+    getStatebyCountry,
+    addState,
+    stateList,
+    deleteState,
+    addCity,
+    cityList,
+    getCitybyState,
+    deleteCity,
+    addCountry,
+    deleteCountry,
+    refreshService,
+    findCompaniesPaginatedService,
+    getCompanyListStatsService,
+    getCompanyByIdService,
+    getTenantUsageSnapshotService,
+    getTenantUsersPageService,
+    getTenantVehiclesPageService,
+    getCompanyAuditLogPageService,
+    bulkCompanyActionService,
+    processSubscriptionExpiryService,
+    logCompanyAuditEntry,
+} from "./v2/index.js";
 
 export const v2CompanyManageService = {
     registerService: registerService,
     findService: findService,
-    switchCompanyWithDbNameService: switchCompanyWithDbNameService
-}
+    deleteCompanyByIdService: deleteCompanyByIdService,
+    updateCompanyByIdService: updateCompanyByIdService,
+    switchCompanyWithDbNameService: switchCompanyWithDbNameService,
+    findCompaniesPaginatedService: findCompaniesPaginatedService,
+    getCompanyListStatsService: getCompanyListStatsService,
+    getCompanyByIdService: getCompanyByIdService,
+    getTenantUsageSnapshotService: getTenantUsageSnapshotService,
+    getTenantUsersPageService: getTenantUsersPageService,
+    getTenantVehiclesPageService: getTenantVehiclesPageService,
+    getCompanyAuditLogPageService: getCompanyAuditLogPageService,
+    bulkCompanyActionService: bulkCompanyActionService,
+    processSubscriptionExpiryService: processSubscriptionExpiryService,
+    logCompanyAuditEntry: logCompanyAuditEntry,
+};
 
 export const v2AuthService = {
     signinService: signinService,

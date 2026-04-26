@@ -1,12 +1,4 @@
 import formattedData from "../dotnet-like-format/dotnetLikeData.js";
-//----------------------- All Modals ------------------------->
-
-import {
-  NTCurrentDay,
-  ItemMaster,
-  BinLocation,
-  AreaWardMaster,
-} from "../../modals/index.js";
 import { getTenantDBModels } from "../../db/index.js";
 
 //----------------------- Dashboard_Query ------------------------->
@@ -14,6 +6,7 @@ import { getTenantDBModels } from "../../db/index.js";
 //----------------------- Aggregations for GetDashboardQuery ------------------------->
 
 export const getDashboardQuery = async (CurDate) => {
+  const { NTCurrentDay, ItemMaster } = await getTenantDBModels();
   const summaryNTDash = {
     TrackDate: CurDate,
     IgnitionStatus: "",
@@ -94,6 +87,7 @@ export const getDashboardQuery = async (CurDate) => {
 
 export const getVehicleQuery = async (vehicleNo) => {
   try {
+    const { NTCurrentDay } = await getTenantDBModels();
     const data = await NTCurrentDay.aggregate([
       {
         $lookup: {
@@ -225,6 +219,7 @@ export const BinLocationQuery = async (flag) => {
 
 export const BinsByWardNumberQuery = async (wardNumber) => {
   try {
+    const { BinLocation } = await getTenantDBModels();
     let newData;
     const binLocations = await BinLocation.find({
       "AreaWardMaster.WardNumber": wardNumber,

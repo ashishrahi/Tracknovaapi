@@ -1,9 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ApiErrorResponse,
-  DBReturn,
-  CommonResponse
-} from "../utils/apiResponse/index.js";
+import { ApiErrorResponse, ApiSuccessResponse } from "../utils/apiResponse/index.js";
 import {
   AddUpdateFuelTypeQuery,
   ImportFuelTypeQuery,
@@ -17,7 +13,7 @@ export async function AddUpdateFuelType(req, res) {
     const model = req.body;
     const { isSuccess, id, createUpdate, msg, data } =
       await AddUpdateFuelTypeQuery(model);
-    const successResponse = new DBReturn(
+    const successResponse = ApiSuccessResponse.dbReturn(
       isSuccess,
       id,
       createUpdate,
@@ -42,7 +38,7 @@ export async function ImportFuelType(req, res) {
     const model = req.body;
     const { isSuccess, id, createUpdate, msg, data } =
       await ImportFuelTypeQuery(model);
-    const successResponse = new DBReturn(
+    const successResponse = ApiSuccessResponse.dbReturn(
       isSuccess,
       id,
       createUpdate,
@@ -65,7 +61,7 @@ export async function GetFuelType(req, res) {
     const { status, message, data } = await GetFuelTypeQuery(
       model
     );
-    const successResponse = new CommonResponse(
+    const successResponse = ApiSuccessResponse.common(
       status,
       message,
       data,
@@ -86,7 +82,7 @@ export async function DeleteFuelType(req, res) {
     const {fuelTypeId} = req.body;
     
     const {isSuccess, id, createUpdate, msg, data } = await DeleteFuelTypeQuery(fuelTypeId);
-    const successResponse = new DBReturn(
+    const successResponse = ApiSuccessResponse.dbReturn(
       isSuccess,
       id,
       createUpdate,
