@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ConnectionString } from "mongodb-connection-string-url";
 import { StatusCodes } from "http-status-codes";
 import { ApiErrorResponse } from "../utils/apiResponse/index.js";
 import {
@@ -70,6 +71,19 @@ import { getRequestTenantDbName } from "./tenantContext.js";
 dotenv.config();
 
 const uri = String(process.env.MONGODB_SERVER_URI);
+
+/**
+ * Replaces the default database in the connection string without breaking query options.
+ * String concat like `${uri}/tenant` corrupts `?w=majority` into `w=majority/tenant`.
+ * @param {string} baseUri
+ * @param {string} dbName
+ * @returns {string}
+ */
+function connectionUriForDatabase(baseUri, dbName) {
+    const cs = new ConnectionString(baseUri);
+    cs.pathname = `/${dbName}`;
+    return cs.toString();
+}
 
 const MONGO_OPTIONS = {
     maxPoolSize: Number(process.env.TENANT_DB_MAX_POOL) || 10,
@@ -264,7 +278,7 @@ function evictLruIfNeeded(/** @type {string} */ aboutToAdd) {
 }
 
 async function createTenantEntry(dbName) {
-    const url = `${uri}/${dbName}`;
+    const url = connectionUriForDatabase(uri, dbName);
     const connection = await mongoose.createConnection(url, MONGO_OPTIONS).asPromise();
     wireConnectionEvents(connection, `tenant:${dbName}`);
 
@@ -375,7 +389,7 @@ export async function connectMongoDB() {
             centralDb = null;
         }
         centralDb = await mongoose
-            .createConnection(`${uri}/central_db`, MONGO_OPTIONS)
+            .createConnection(connectionUriForDatabase(uri, "central_db"), MONGO_OPTIONS)
             .asPromise();
         wireConnectionEvents(centralDb, "central_db");
         centralModels = buildCentralModels(centralDb);
