@@ -27,6 +27,9 @@ const getLoggedInCompany = async (req, res, next) => {
     }
     if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied due to access token not provided"));
 
+    /** Tenant workspace from Host (e.g. `tenantResolver`); preserved before JWT overwrites `req.company`. */
+    const tenantResolvedCompany = req.company;
+
     const token = req.headers["authorization"].split(" ")[1];
 
     /**
@@ -66,6 +69,19 @@ const getLoggedInCompany = async (req, res, next) => {
 
     if (!user) {
       return res.status(StatusCodes.UNAUTHORIZED).json(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Please be a valid user"));
+    }
+
+    if (
+      ownerId !== "SuperAdmin" &&
+      company &&
+      tenantResolvedCompany &&
+      typeof tenantResolvedCompany === "object" &&
+      tenantResolvedCompany._id != null &&
+      String(company._id) !== String(tenantResolvedCompany._id)
+    ) {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json(new ApiErrorResponse(StatusCodes.FORBIDDEN, "Tenant mismatch"));
     }
 
     req.company = company || "SuperAdmin";

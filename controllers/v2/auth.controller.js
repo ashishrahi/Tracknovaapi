@@ -38,7 +38,7 @@ export async function signin(req, res, next) {
       );
     }
     const { accessToken, refreshToken, role, navigateTo, username } =
-      await v2AuthService.signinService(value);
+      await v2AuthService.signinService(value, req.company);
     const refreshCookie = getRefreshCookieSetOptions(refreshToken);
 
     return res

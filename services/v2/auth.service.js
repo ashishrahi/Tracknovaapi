@@ -19,7 +19,7 @@ import {
 const ObjectId = mongoose.Types.ObjectId;
 
 
-export async function signinService(value) {
+export async function signinService(value, requestCompany = null) {
 
   const { Idp_account, Company } = await getCentralDBModels();
   const username = normalizeSignInUsername(value.username);
@@ -29,14 +29,17 @@ export async function signinService(value) {
   const normalizedCode = normalizeCompanyCode(codeRaw);
   const normalizedSlug = normalizeWorkspaceSlug(slugRaw);
 
-  const company = hasTenantHint
-    ? await resolveCompanyFromTenantSignIn(Company, {
-        companyCode: normalizedCode,
-        workspaceSlug: normalizedSlug,
-      })
-    : null;
+  // Priority: tenant resolved by middleware (req.company) wins over body hints.
+  const company = requestCompany
+    ? requestCompany
+    : hasTenantHint
+      ? await resolveCompanyFromTenantSignIn(Company, {
+          companyCode: normalizedCode,
+          workspaceSlug: normalizedSlug,
+        })
+      : null;
 
-  if (hasTenantHint && !company) {
+  if (!requestCompany && hasTenantHint && !company) {
     throw new ApiErrorResponse(
       StatusCodes.BAD_REQUEST,
       "Workspace not found. Use your signup workspace id."

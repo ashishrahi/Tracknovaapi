@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import limiter from "./utils/rate-limiter/rateLimiter.js";
 import { getLoggedInCompany } from "./middlewares/index.js";
+import tenantResolver from "./middlewares/tenantResolver.js";
 import { startSubscriptionExpiryJob } from "./jobs/subscriptionExpiry.job.js";
 
 dotenv.configDotenv();
@@ -70,6 +71,7 @@ app.use(compression());
 
 // all routes starts from here
 app.use(limiter);
+app.use(tenantResolver);
 app.use(getLoggedInCompany); // for getting loggedIn company details. When someone logged in.
 // app.use(verifyAccessToken)
 app.use("/api", AppRoutes);

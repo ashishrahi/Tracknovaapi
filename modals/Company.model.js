@@ -88,6 +88,27 @@ export const CompanySchema = new mongoose.Schema({
   },
 
   /**
+   * Custom hostnames for domain-based tenant routing (e.g. app.acme.com). verified after DNS/workflow checks.
+   */
+  customDomains: {
+    type: [
+      {
+        domain: {
+          type: String,
+          required: true,
+          trim: true,
+          lowercase: true,
+        },
+        verified: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+    default: [],
+  },
+
+  /**
    * Optional per-tenant login page branding (SaaS subdomain login). All fields optional.
    */
   loginBranding: {
@@ -102,6 +123,7 @@ export const CompanySchema = new mongoose.Schema({
 
 CompanySchema.index({ companyCode: 1 }, { unique: true, sparse: true });
 CompanySchema.index({ workspaceSlug: 1 }, { unique: true, sparse: true });
+CompanySchema.index({ "customDomains.domain": 1 });
 
 const Company = mongoose.model("Company", CompanySchema);
 
