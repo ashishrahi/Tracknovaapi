@@ -22,7 +22,11 @@ const excludedRoutes = [
 const getLoggedInCompany = async (req, res, next) => {
   try {
     const { Company, Idp_account } = await getCentralDBModels();
-    if (excludedRoutes.includes(req.path) || req.path.startsWith("/api/v2/public/")) {
+    if (
+      excludedRoutes.includes(req.path) ||
+      req.path.startsWith("/api/v2/public/") ||
+      req.path.startsWith("/api/v2/company/status/")
+    ) {
       return next();
     }
     if (!req.headers["authorization"]) return next(new ApiErrorResponse(StatusCodes.UNAUTHORIZED, "Access Denied due to access token not provided"));

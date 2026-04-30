@@ -88,6 +88,15 @@ export const CompanySchema = new mongoose.Schema({
   },
 
   /**
+   * Central-DB provisioning lifecycle after signup ({@link signup.worker.js} tenant setup).
+   */
+  status: {
+    type: String,
+    enum: ["pending", "ready", "failed"],
+    default: "pending",
+  },
+
+  /**
    * Custom hostnames for domain-based tenant routing (e.g. app.acme.com). verified after DNS/workflow checks.
    */
   customDomains: {

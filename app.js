@@ -43,23 +43,36 @@ app.use((req, res, next) => {
   }
   next();
 });
-const defaultCorsOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://103.12.1.132:8205",
-  "https://tracknova.ashishrahidev.site",
-];
-const corsOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(/[\s,]+/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-  : defaultCorsOrigins;
-
 app.use(
   cors({
-    origin: corsOrigins,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      // allow localhost (dev)
+      if (origin.includes("localhost")) {
+        return callback(null, true);
+      }
+
+      // allow all subdomains of ashishrahidev.site
+      try {
+        const url = new URL(origin);
+        const hostname = url.hostname;
+
+        if (
+          hostname === "ashishrahidev.site" ||
+          hostname === "www.ashishrahidev.site" ||
+          hostname.endsWith(".ashishrahidev.site")
+        ) {
+          return callback(null, true);
+        }
+      } catch (e) {
+        return callback(new Error("Invalid origin"));
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-tenant-id", "X-Tenant-Id"],
     credentials: true,
   }),
 );

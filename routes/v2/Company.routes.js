@@ -4,6 +4,7 @@ import { switchDatabase } from "../../middlewares/index.js"
 const router = express.Router();
 
 router.post("/register", v2CompanyManageController.register);
+router.get("/status/:slug", v2CompanyManageController.getCompanyProvisioningStatusBySlug);
 router.post("/bulk", v2CompanyManageController.bulkAction);
 router.get("/stats", v2CompanyManageController.listStats);
 router.get("/switchCompany", switchDatabase, v2CompanyManageController.switchCompanyDatabase);

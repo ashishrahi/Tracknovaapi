@@ -5,6 +5,8 @@ import { companyManageControllerResponse as apiTextResponse } from "../../utils/
 import { v2CompanyManageService } from "../../services/index.js";
 import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
 import mongoose from "mongoose";
+import { buildSignupRedirectUrl } from "../../utils/tenantAppUrl.js";
+import { signupQueue } from "../../jobs/signup.queue.js";
 
 function assertSuperAdmin(user) {
     if (user?.users[0]["role"] !== "SuperAdmin") {
@@ -32,12 +34,63 @@ export async function register(req, res, next) {
             throw new ApiErrorResponse(StatusCodes.BAD_REQUEST, error.details[0].message);
         }
 
-        const resgiteredNewCompany = await v2CompanyManageService.registerService(value)
+        const resgiteredNewCompany = await v2CompanyManageService.registerService(value);
+        try {
+            await signupQueue.add(
+                "signupJob",
+                {
+                    companyId: String(resgiteredNewCompany._id),
+                    adminTemporaryPassword: resgiteredNewCompany.temporaryPassword,
+                },
+                {
+                    jobId: `signup-${String(resgiteredNewCompany._id)}`,
+                    attempts: Number(process.env.SIGNUP_JOB_ATTEMPTS || 5) || 5,
+                    backoff: { type: "exponential", delay: 5000 },
+                    removeOnComplete: { age: 24 * 3600, count: 1000 },
+                    removeOnFail: { age: 7 * 24 * 3600 },
+                }
+            );
+        } catch (queueErr) {
+            console.error("signup queue enqueue failed", queueErr);
+            try {
+                await v2CompanyManageService.deleteCompanyByIdService(String(resgiteredNewCompany._id));
+            } catch (rollbackErr) {
+                console.error(
+                    "signup rollback after queue failure:",
+                    rollbackErr?.message || rollbackErr
+                );
+            }
+            throw new ApiErrorResponse(
+                StatusCodes.SERVICE_UNAVAILABLE,
+                "Registration provisioning is temporarily unavailable. Please try again."
+            );
+        }
 
-        return res.status(StatusCodes.OK).json(new ApiSuccessResponse(true, StatusCodes.OK, apiTextResponse.companycreated, resgiteredNewCompany))
+        const redirectUrl = buildSignupRedirectUrl(resgiteredNewCompany.workspaceSlug);
+        const payload =
+            redirectUrl != null ? { ...resgiteredNewCompany, redirectUrl } : resgiteredNewCompany;
+
+        return res.status(StatusCodes.CREATED).json(
+            new ApiSuccessResponse(true, StatusCodes.CREATED, apiTextResponse.companycreated, payload)
+        );
 
     } catch (error) {
         console.log("error from controller", error)
+        next(error);
+    }
+}
+
+/** Public signup flow: provisioning state by workspace slug (no tenant header required). */
+export async function getCompanyProvisioningStatusBySlug(req, res, next) {
+    try {
+        const raw = req.params?.slug;
+        const { status } = await v2CompanyManageService.getProvisioningStatusByWorkspaceSlug(raw);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            status,
+        });
+    } catch (error) {
         next(error);
     }
 }

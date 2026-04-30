@@ -8,6 +8,7 @@ import {
 } from "./auth.controller.js";
 import {
     register,
+    getCompanyProvisioningStatusBySlug,
     find,
     remove,
     switchCompanyDatabase,
@@ -36,6 +37,7 @@ export const v2AuthController = {
 
 export const v2CompanyManageController = {
     register: register,
+    getCompanyProvisioningStatusBySlug,
     find: find,
     remove: remove,
     switchCompanyDatabase: switchCompanyDatabase,

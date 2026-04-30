@@ -1,29 +1,18 @@
 import { StatusCodes } from "http-status-codes";
-import fs from "fs";
 // import { Company, Idp_account } from "../../modals/index.js";
 import { ApiErrorResponse } from "../../utils/apiResponse/index.js";
 import { companyManageControllerResponse as apiTextResponse } from "../../utils/static-response-message/index.js";
 import generatePassword from "../../utils/password-generator/passwordGenerator.js";
 import { getCentralDBModels, getTenantDBModels } from "../../db/index.js";
-import { setRequestTenantDbName } from "../../db/tenantContext.js";
 import { isValidTenantDatabaseName } from "../../db/connectMongoDB.js";
-import { BRAND } from "../../config/brand.js";
-// import { RegisterQuery } from "../../utils/DBQueries/index.js";
-import { EmpMasterController } from "../../controllers/index.js";
-import { AddUpdateEmployeeQuery, UpsertEmpPermissionQuery } from "../../utils/DBQueries/index.js";
-import sendMailService from "../../utils/emailService/nodeMailer.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { ensureUniqueCompanyCode, ensureUniqueWorkspaceSlug } from "../../utils/companyIdentifiers.js";
+import {
+    findCompanyByWorkspaceSlugWithFallbacks,
+    normalizeWorkspaceSlug,
+} from "../../utils/tenantLogin.js";
 import { buildTrackNovaSignInUsername, normalizeToLocalTenDigits } from "../../utils/trackNovaSignInUsername.js";
-
-function escapeHtml(/** @type {string} */ s) {
-    return String(s)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-}
 
 /**
  * @param {string} companyName
@@ -121,6 +110,7 @@ export async function registerService(value) {
             value.database = { backupEnabled: "Active" };
         }
         const newCompanyData = new Company(value);
+        newCompanyData.status = "pending";
         if (value.database.backupEnabled === "Active") {
             newCompanyData.database.backupEnabled = true
         } else {
@@ -128,8 +118,6 @@ export async function registerService(value) {
         }
         const resolvedDb = await resolveTenantDbName(Company, value.companyName, value.database?.dbName);
         newCompanyData.database.dbName = resolvedDb;
-        // Downstream queries (e.g. AddUpdateEmployeeQuery) call getTenantDBModels() without a name and rely on request context.
-        setRequestTenantDbName(resolvedDb);
 
         const resgiteredNewCompany = await newCompanyData.save();
 
@@ -188,180 +176,7 @@ export async function registerService(value) {
             throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, apiTextResponse.internalError);
         }
 
-
-
-        /**
-         * Now creating a user to access Database
-         * 1. Admin => username: admin
-         *             password: admin
-         * 2. Now giving him a full permissions in later update we will create a seprate permisison page to provide permissions.
-         * 
-         * 3. For Doing all these need to connect with database.
-         * 
-         * 
-         * 
-         */
-
-        const { Menu, AspNetRoles, RolePermission } = await getTenantDBModels(
-            newCompanyData.database.dbName
-        );
-
-        // const admin = await EmpMasterController.AddUpdateEmployee()
-
-        const payload =
-        {
-            "__companyRegistration": true,
-            "userId": null,
-            "empid": 0, // will update inside query
-            "empName": newCompanyData.admin.name,
-            "empCode": "",
-            "empPerAddress": newCompanyData.companyAddress,
-            "empLocalAddress": newCompanyData.companyAddress,
-            // "empFatherName": null,
-            // "empspauseName": null,
-            // "empMotherName": null,
-            "empMobileNo": newCompanyData.admin.phone,
-            "empStatus": "Active",
-            "empPanNumber": newCompanyData.pan,
-            "empAddharNo": newCompanyData.aadhaar,
-            // "empDob": null,
-            "empJoiningDate": Date.now(),
-            // "empretirementDate": null,
-            // "empDesignationId": null,
-            // "empDeptId": null,
-            "empStateId": newCompanyData.state,
-            "empCountryID": newCompanyData.country,
-            "empCityId": newCompanyData.city,
-            "empPincode": newCompanyData.pincode,
-            // "createdBy": null,
-            // "updatedBy": null,
-            "createdOn": "2025-04-01",
-            "updatedOn": "2025-04-01",
-            "roleId": "",
-            "imageFile": "",
-            "email": newCompanyData.admin.email,
-            // "dlno": null,
-            // "gender": null,
-            // "departmentName": "",
-            // "designationName": "",
-            // "empStateName": "",
-            // "empCountryName": "",
-            // "empCityName": "",
-            // "srno": 0,
-            // "empDepName": "",
-            // ---------For Login---------->
-            "registerModel": {
-                "id": "",
-                "username": "",
-                "email": "user@example.com",
-                "password": "1234",
-                "role": ""
-            },
-            "userPermission": []
-        }
-
-        const empResult = await AddUpdateEmployeeQuery(payload); // Emp created
-        if (empResult?.isSuccess === false || (empResult?.mesg && !empResult?.data)) {
-            throw new ApiErrorResponse(
-                StatusCodes.BAD_REQUEST,
-                String(empResult?.mesg || "Could not create company admin employee")
-            );
-        }
-        if (!empResult?.data) {
-            throw new ApiErrorResponse(
-                StatusCodes.INTERNAL_SERVER_ERROR,
-                "Employee creation returned no data"
-            );
-        }
-        const createdEmp = empResult.data;
-        const plain =
-            createdEmp && typeof createdEmp.toObject === "function"
-                ? createdEmp.toObject()
-                : createdEmp;
-        const newEmpid = plain?.Empid ?? plain?.empid;
-        if (newEmpid == null) {
-            throw new ApiErrorResponse(
-                StatusCodes.INTERNAL_SERVER_ERROR,
-                "Employee record is missing Empid"
-            );
-        }
-        payload.empid = newEmpid;
-        delete payload.__companyRegistration;
-
-        // Inserting all menus to show sidebar and for permissions;
-        const menuJsonData = JSON.parse(fs.readFileSync("./utils/db-default-data/Menu.json", "utf-8"));
-
-        const menuResult = await Menu.insertMany(menuJsonData);
-        if(menuResult.insertedCount < 1){
-            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Menu data")
-        }
-
-        // Inserting Role name
-        const roleObject = new AspNetRoles({
-            Id : "e45b5e06-01bc-4881-b748-edf1cff433b3",
-            Name: "Admin",
-            NormalizedName: "ADMIN"
-        });
-
-        const roleName = await roleObject.save();
-        if(!roleName){
-            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Role data")
-        }
-
-
-
-        // Inserting Role's Related Permission;
-        const rolePermissionJsonData = JSON.parse(fs.readFileSync("./utils/db-default-data/RolePermission.json", "utf-8"));
-
-        const rolePermissionResult = await RolePermission.insertMany(rolePermissionJsonData);
-        if(rolePermissionResult.insertedCount < 1){
-            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to insert Role's Permission");
-        }
-
-        // Now finally upserting data.
-       
-        payload.registerModel.username = adminUserName;
-        payload.registerModel.password = generatedPassword;
-        payload.registerModel.email = newCompanyData.admin.email;
-        payload.userPermission = rolePermissionJsonData;
-        payload.roleId = roleName.Id;
-
-        // console.log("Payload resgister model is, payload", payload.registerModel);
-        // console.log("Payload userPermisison is is, payload", payload.userPermission);
-
-        // Upserting admin related permissions
-        const upsertAdminPermissionAndCreatingAdminAccount = await UpsertEmpPermissionQuery(payload); 
-        
-        if(upsertAdminPermissionAndCreatingAdminAccount.status !== 1){
-            throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create admin and their permissions");
-        }
-
-        /**
-         * Now send mail to newlu created user.
-         */
-
-        const from = process.env.NODEMAILER_EMAIL_USER;
-        const to = value.admin.email;
-        const subject = `Your ${BRAND.name} workspace is ready`;
-        const textBody = `Your workspace is ready.
-
-Sign-in username: ${adminUserName}
-Temporary password: ${generatedPassword}
-
-Use these on the ${BRAND.name} login page.`;
-        const html = `
-            <h2>Welcome to ${BRAND.name}</h2>
-            <p>Your company workspace <strong>${escapeHtml(value.companyName)}</strong> is provisioned.</p>
-            <p><strong>Sign-in username (use this on the login page):</strong> ${escapeHtml(adminUserName)}</p>
-            <p><strong>Temporary password:</strong> ${escapeHtml(generatedPassword)}</p>
-            <p>Sign in and complete setup. You can change your password from the app when available.</p>
-            <p><small>Role: ${escapeHtml(String(value.admin.role))}</small></p>
-        `;
-        if (from) {
-            await sendMailService(from, to, subject, textBody, html);
-        } else {
-            console.warn("registerService: NODEMAILER_EMAIL_USER not set; welcome email not sent");
-        }
+        // Tenant provisioning (menus, roles, AspNet identity, employee, welcome email) runs in BullMQ worker.
 
         const companyPlain = resgiteredNewCompany.toObject
             ? resgiteredNewCompany.toObject()
@@ -378,6 +193,34 @@ Use these on the ${BRAND.name} login page.`;
     }
 
 
+}
+
+/**
+ * @param {unknown} slugParam
+ * @returns {Promise<{ status: string }>}
+ */
+export async function getProvisioningStatusByWorkspaceSlug(slugParam) {
+    const { Company } = await getCentralDBModels();
+
+    if (!Company) {
+        throw new ApiErrorResponse(StatusCodes.INTERNAL_SERVER_ERROR, "Try again. Failed to load models");
+    }
+
+    const normalizedSlug = normalizeWorkspaceSlug(slugParam);
+    if (!normalizedSlug) {
+        throw new ApiErrorResponse(StatusCodes.NOT_FOUND, "Company not found");
+    }
+
+    const company = await findCompanyByWorkspaceSlugWithFallbacks(Company, normalizedSlug);
+    if (!company) {
+        throw new ApiErrorResponse(StatusCodes.NOT_FOUND, "Company not found");
+    }
+
+    const raw = /** @type {{ status?: unknown }} */ (company).status;
+    const status =
+        raw === "pending" || raw === "ready" || raw === "failed" ? raw : "ready";
+
+    return { status };
 }
 
 export async function findService() {

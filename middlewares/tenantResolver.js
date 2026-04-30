@@ -6,6 +6,72 @@ import {
   normalizeWorkspaceSlug,
 } from "../utils/tenantLogin.js";
 
+/** @type {readonly string[]} */
+export const PUBLIC_ROUTES = [
+  "/api/v2/company/register",
+  "/api/v2/company/status",
+  "/api/v2/public",
+  "/api/v2/auth",
+  "/api/auth",
+];
+
+const RESERVED_HOSTS = new Set([
+  "ashishrahidev.site",
+  "www.ashishrahidev.site",
+  "api-v1.ashishrahidev.site",
+]);
+
+/**
+ * Keep public/auth endpoints reachable even when host does not map to a tenant.
+ * Tenant-specific APIs should still require a resolvable tenant.
+ *
+ * @param {import("express").Request} req
+ * @returns {boolean}
+ */
+function isProtectedTenantRoute(req) {
+  const raw = String(req.originalUrl || req.url || "").toLowerCase();
+
+  if (!raw) return false;
+  if (req.method === "OPTIONS") return false;
+
+  /** Strip query/hash so `/api/v2/company/register?ref=1` stays public */
+  let path = raw;
+  const qi = path.indexOf("?");
+  if (qi !== -1) path = path.slice(0, qi);
+  const hi = path.indexOf("#");
+  if (hi !== -1) path = path.slice(0, hi);
+
+  const isPublic = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+
+  return !isPublic;
+}
+
+/**
+ * @param {string | string[] | undefined} raw
+ * @returns {string}
+ */
+function normalizeXTenantHeader(raw) {
+  if (typeof raw === "string") return raw.trim();
+  if (Array.isArray(raw) && raw.length) return normalizeXTenantHeader(raw[0]);
+  return "";
+}
+
+/**
+ * @param {import("mongoose").Model} Company
+ * @param {string} normalizedHeader
+ */
+async function lookupCompanyFromXTenantHeader(Company, normalizedHeader) {
+  if (!normalizedHeader) return null;
+  /** MongoDB ObjectId (24 hex) — distinguish from alphanumeric workspace slugs */
+  if (/^[a-fA-F0-9]{24}$/.test(normalizedHeader)) {
+    const byId = await Company.findById(normalizedHeader);
+    if (byId) return byId;
+  }
+  const slug = normalizeWorkspaceSlug(normalizedHeader);
+  if (!slug) return null;
+  return findCompanyByWorkspaceSlugWithFallbacks(Company, slug);
+}
+
 /**
  * Parses `Host` / `host` header: strips port, lowercases ASCII host.
  * Supports bracketed IPv6 (`[2001:db8::1]:443` → `[2001:db8::1]`).
@@ -36,13 +102,11 @@ export function parseHostnameFromHostHeader(raw) {
   }
 
   const normalized = hostOnly.toLowerCase();
-  // Reject accidental spaces, IPv6 zones, empty after parse
   if (!normalized || /[\s#/]/.test(normalized)) return null;
 
   /** Hostnames: labels separated by `.`, alphanumeric + hyphen per label */
   const hostPattern =
     /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/;
-  /** Allow plain `localhost`, single DNS label for dev */
   if (normalized !== "localhost" && !hostPattern.test(normalized)) return null;
 
   return normalized;
@@ -73,22 +137,72 @@ export function subdomainWorkspaceSlug(hostname, baseHostFromEnv) {
 }
 
 /**
- * Resolve tenant from Host: verified custom domain first, then subdomain → workspaceSlug.
- * Sets `req.company` or responds 404 / 503.
+ * Ordered resolution for tests / reuse:
+ * 1) `x-tenant-id` (company id or workspace slug)
+ * 2) verified custom hostname
+ * 3) `{slug}.{TENANT_BASE_HOST}` subdomain
+ *
+ * Reserved apex hosts skip host-derived tenant (SPA/API gateways still send `x-tenant-id`).
+ *
+ * @param {import("mongoose").Model} Company
+ * @param {{
+ *   xTenantRaw: string,
+ *   hostname: string | null,
+ *   tenantBaseHost: string | undefined,
+ * }} input
+ */
+export async function resolveTenantCompanyForRequest(Company, input) {
+  const ht = normalizeXTenantHeader(input.xTenantRaw);
+  if (ht) {
+    const viaHeader = await lookupCompanyFromXTenantHeader(Company, ht);
+    if (viaHeader) return viaHeader;
+  }
+
+  const hostname = input.hostname;
+  if (!hostname) return null;
+
+  const isReserved = RESERVED_HOSTS.has(hostname);
+  if (isReserved) return null;
+
+  let company = await Company.findOne({
+    customDomains: {
+      $elemMatch: { domain: hostname, verified: true },
+    },
+  });
+
+  if (!company) {
+    const slug = subdomainWorkspaceSlug(hostname, input.tenantBaseHost);
+    if (slug) {
+      company = await findCompanyByWorkspaceSlugWithFallbacks(Company, slug);
+    }
+  }
+
+  return company;
+}
+
+/**
+ * Resolve tenant from `x-tenant-id`, then Host (custom domain, then subdomain).
+ * Sets `req.company` / `req.tenant` or responds 404 / 503.
  *
  * @type {import("express").RequestHandler}
  */
 async function tenantResolver(req, res, next) {
   try {
+    req.tenant = null;
+    req.company = null;
+
     const rawHost = req.headers.host ?? req.headers.Host;
     const hostname = parseHostnameFromHostHeader(
       typeof rawHost === "string" ? rawHost : Array.isArray(rawHost) ? rawHost[0] : ""
     );
 
     if (!hostname) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json(new ApiErrorResponse(StatusCodes.BAD_REQUEST, "Missing or invalid Host header"));
+      if (isProtectedTenantRoute(req)) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Tenant not found"));
+      }
+      return next();
     }
 
     const { Company } = await getCentralDBModels();
@@ -103,28 +217,26 @@ async function tenantResolver(req, res, next) {
         );
     }
 
-    /** 1 — verified custom domain (exact host match on stored lowercase domain) */
-    let company = await Company.findOne({
-      customDomains: {
-        $elemMatch: { domain: hostname, verified: true },
-      },
+    const xt =
+      normalizeXTenantHeader(req.headers["x-tenant-id"]) ||
+      normalizeXTenantHeader(req.headers["X-Tenant-Id"]);
+
+    const company = await resolveTenantCompanyForRequest(Company, {
+      xTenantRaw: xt,
+      hostname,
+      tenantBaseHost: process.env.TENANT_BASE_HOST,
     });
 
-    /** 2 — subdomain → workspaceSlug */
     if (!company) {
-      const slug = subdomainWorkspaceSlug(hostname, process.env.TENANT_BASE_HOST);
-
-      if (slug) {
-        company = await findCompanyByWorkspaceSlugWithFallbacks(Company, slug);
+      if (isProtectedTenantRoute(req)) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Tenant not found"));
       }
+      return next();
     }
 
-    if (!company) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json(new ApiErrorResponse(StatusCodes.NOT_FOUND, "Tenant not found"));
-    }
-
+    req.tenant = company;
     req.company = company;
     next();
   } catch (err) {

@@ -20,7 +20,7 @@ import {
   findEmbeddedUserBySignInName,
 } from "../../utils/tenantLogin.js";
 import {
-  getRefreshCookieSetOptions,
+  refreshCookieOptions,
   clearRefreshTokenCookie,
 } from "../../config/refreshCookieOptions.js";
 
@@ -39,11 +39,10 @@ export async function signin(req, res, next) {
     }
     const { accessToken, refreshToken, role, navigateTo, username } =
       await v2AuthService.signinService(value, req.company);
-    const refreshCookie = getRefreshCookieSetOptions(refreshToken);
 
     return res
       .status(StatusCodes.OK)
-      .cookie("refreshToken", refreshToken, refreshCookie)
+      .cookie("refreshToken", refreshToken, refreshCookieOptions)
       .json(
         new ApiSuccessResponse(
           true,
@@ -121,13 +120,12 @@ export async function refresh(req, res, next) {
     const { response, refreshToken } = await v2AuthService.refreshService(
       userId
     );
-    const refreshCookie = getRefreshCookieSetOptions(refreshToken);
 
     const successResponse = ApiSuccessResponse.common(1, "login successful", response);
 
     return res
       .status(StatusCodes.OK)
-      .cookie("refreshToken", refreshToken, refreshCookie)
+      .cookie("refreshToken", refreshToken, refreshCookieOptions)
       .json(successResponse);
   } catch (err) {
     if (err.name === "JsonWebTokenError") {

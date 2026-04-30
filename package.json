@@ -8,8 +8,9 @@
     "dev": "nodemon app.js",
     "start": "node app.js",
     "build": "esbuild app.js --bundle --platform=node --outfile=dist/index.js",
-    "test": "node --test tests/tenant-parallel.test.js tests/company-register-joi.test.js tests/company-signup-employee.test.js tests/workspace-slug.test.js tests/tenant-resolve.test.js tests/track-nova-username.test.js",
-    "migrate:tenant-auth": "node scripts/migrate-tenant-auth.mjs"
+    "test": "node --test tests/tenant-parallel.test.js tests/company-register-joi.test.js tests/company-signup-employee.test.js tests/workspace-slug.test.js tests/tenant-resolve.test.js tests/tenant-resolver-headers.test.js tests/tenant-app-url.test.js tests/track-nova-username.test.js",
+    "migrate:tenant-auth": "node scripts/migrate-tenant-auth.mjs",
+    "worker": "node jobs/signup.worker.js"
   },
   "author": "MSSPL_Saurabh_Kushwaha",
   "license": "ISC",
@@ -18,6 +19,7 @@
     "argon2": "^0.44.0",
     "axios": "^1.8.4",
     "bcryptjs": "^2.4.3",
+    "bullmq": "^5.76.4",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -27,6 +29,7 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
     "http-status-codes": "^2.3.0",
+    "ioredis": "^5.10.1",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
